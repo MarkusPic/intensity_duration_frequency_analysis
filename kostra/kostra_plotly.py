@@ -7,7 +7,7 @@ __license__ = "MIT"
 
 import numpy as np
 import pandas as pd
-from .kostra import Kostra
+from .main_class import Kostra
 from plotly.graph_objs import Contour
 from .plotly_interface import PlotlyAxes, Ax, Scatter
 

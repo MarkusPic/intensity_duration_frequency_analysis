@@ -5,7 +5,7 @@ __email__ = "markus.pichler@tugraz.at"
 __version__ = "0.1"
 __license__ = "MIT"
 
-from .kostra import Kostra
+from .main_class import Kostra
 
 """
 heavy rain as a function of the duration and the return period acc. to DWA-A 531 (2012)

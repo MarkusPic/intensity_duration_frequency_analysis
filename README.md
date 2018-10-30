@@ -8,6 +8,9 @@ for duration steps up to 12 hours (and more) and return period in a range of '0.
 # Usage
 
 ```
-pip3 install --upgrade {PATH_TO_setup.py}
+sudo -H pip3 install git+https://github.com/maxipi/kostra.git
 ```
 
+```
+sudo -H pip3 install --upgrade git+https://github.com/maxipi/kostra.git
+```

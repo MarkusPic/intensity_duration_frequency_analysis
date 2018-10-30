@@ -1,0 +1,6 @@
+#!/usr/bin/env python
+
+from kostra import arg_parser
+
+user = arg_parser.heavy_rain_parser.parse_args()
+print(user)

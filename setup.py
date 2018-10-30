@@ -13,5 +13,5 @@ setup(
     author='pichler',
     author_email='markus.pichler@tugraz.at',
     description='heavy rain as a function of the duration and the return period acc. to DWA-A 531 (2012)',
-    scripts=[],
+    scripts=['bin/kostra'],
 )
