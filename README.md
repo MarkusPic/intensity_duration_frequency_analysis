@@ -1,4 +1,4 @@
-# kostra
+# Heavy Rain Analyysis based on KOSTRA
 heavy rain as a function of the duration and the return period acc. to DWA-A 531 (2012)
 This program reads the measurement data of the rainfall
 and calculates the distribution of the rainfall as a function of the return period and the duration

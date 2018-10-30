@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='kostra',
+    name='heavy_rain_analysis',
     version='0.1',
     packages=find_packages(),
     package_data={
@@ -13,5 +13,5 @@ setup(
     author='pichler',
     author_email='markus.pichler@tugraz.at',
     description='heavy rain as a function of the duration and the return period acc. to DWA-A 531 (2012)',
-    scripts=['bin/kostra'],
+    scripts=['bin/idf_relation'],
 )
