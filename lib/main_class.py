@@ -18,7 +18,7 @@ from .helpers import get_u_w, get_parameter, calculate_u_w, depth_of_rainfall, m
 
 
 ########################################################################################################################
-class Kostra(object):
+class IntensityDurationFrequencyAnalyse(object):
     """
     heavy rain as a function of the duration and the return period acc. to DWA-A 531 (2012)
 

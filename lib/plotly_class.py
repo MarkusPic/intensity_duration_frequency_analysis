@@ -7,14 +7,14 @@ __license__ = "MIT"
 
 import numpy as np
 import pandas as pd
-from .main_class import Kostra
+from .main_class import IntensityDurationFrequencyAnalyse
 from plotly.graph_objs import Contour
 from .plotly_interface import PlotlyAxes, Ax, Scatter
 
 
-class PlotlyKostra(Kostra):
+class PlotlyIntensityDurationFrequencyAnalyse(IntensityDurationFrequencyAnalyse):
     def __init__(self, **kwags):
-        Kostra.__init__(self, **kwags)
+        IntensityDurationFrequencyAnalyse.__init__(self, **kwags)
 
     # ------------------------------------------------------------------------------------------------------------------
     def result_plotly(self, min_duration=1.0, max_duration=8640, xscale="linear"):
