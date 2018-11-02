@@ -12,7 +12,7 @@ import os
 import warnings
 import matplotlib.pyplot as plt
 
-from .sww_helpers import remove_timezone, guess_freq, year_delta
+from .sww_utils import remove_timezone, guess_freq, year_delta
 from .definitions import DWA, ATV, DWA_adv, PARTIAL, ANNUAL
 from .helpers import get_u_w, get_parameter, calculate_u_w, depth_of_rainfall, minutes_readable
 

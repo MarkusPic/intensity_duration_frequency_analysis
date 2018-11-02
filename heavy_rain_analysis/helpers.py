@@ -8,7 +8,7 @@ __license__ = "MIT"
 import pandas as pd
 import numpy as np
 from numpy import NaN
-from .sww_helpers import guess_freq, rain_events
+from .sww_utils import guess_freq, rain_events
 from .definitions import DWA, ATV, DWA_adv, PARTIAL, ANNUAL, LOG1, LOG2, HYP, LIN
 
 # from my_helpers import check

@@ -1,5 +1,8 @@
 from setuptools import setup, find_packages
 
+with open('requirements.txt', 'r') as f:
+    requirements = f.read().splitlines()
+
 setup(
     name='heavy_rain_analysis',
     version='0.1',
@@ -14,4 +17,5 @@ setup(
     author_email='markus.pichler@tugraz.at',
     description='heavy rain as a function of the duration and the return period acc. to DWA-A 531 (2012)',
     scripts=['bin/idf_relation'],
+    install_requires=requirements,
 )
