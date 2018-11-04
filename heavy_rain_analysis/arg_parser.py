@@ -15,49 +15,52 @@ class Borders():
         self.min_ = min_
         self.max_ = max_
         self.unit = unit
-    
+
     def __str__(self):
         s = ''
-        if self.min_:
+        if self.min_ is not None:
             s += '>= {} {unit}'.format(self.min_, unit=self.unit)
-        if self.min_ and self.max_:
+        if self.min_ is not None and self.max_ is not None:
             s += ' and '
-        if self.max_:
+        if self.max_ is not None:
             s += '<= {} {unit}'.format(self.max_, unit=self.unit)
         return s
-    
+
     def __contains__(self, item):
         b = True
-        if self.min_:
+        if self.min_ is not None:
             b &= item >= self.min_
-        if self.max_:
+        if self.max_ is not None:
             b &= item <= self.max_
         return b
-    
+
     def __iter__(self):
         return iter([str(self)])
 
 
-# ------------------------------------------------------------------------------------------------------------------
-heavy_rain_parser = argparse.ArgumentParser()
-heavy_rain_parser.add_argument('-i', '--input',
-                               help='rain input file in nieda format',
-                               required=False)
-heavy_rain_parser.add_argument('-t', '--returnperiod',
-                               help='return period in years',
-                               required=False, type=float, choices=Borders(0.5, 100, 'a'))
-heavy_rain_parser.add_argument('-d', '--duration',
-                               help='duration in minutes',
-                               required=False, type=int, choices=Borders(5, 12 * 60, 'min'))
-heavy_rain_parser.add_argument('-r', '--rainfall',
-                               help='rainfall in mm or Liters/m^2',
-                               required=False, type=float, choices=Borders(0, unit='mm'))
-heavy_rain_parser.add_argument('-ws', '--worksheet',
-                               help='Worksheet used to calculate.',
-                               default=DWA,
-                               required=False, type=str, choices=[ATV, DWA, DWA_adv])
-heavy_rain_parser.add_argument('-kind', '--series_kind',
-                               help='The kind of series used for the calculation. '
-                                    'Calculation with partial series is more precise',
-                               default=PARTIAL,
-                               required=False, type=str, choices=[PARTIAL, ANNUAL])
+########################################################################################################################
+def heavy_rain_parser():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-i', '--input',
+                        help='input file with the rain time series',
+                        required=False)
+    parser.add_argument('-t', '--return_period',
+                        help='return period in years',
+                        required=False, type=float, choices=Borders(0.5, 100, 'a'))
+    parser.add_argument('-d', '--duration',
+                        help='duration in minutes',
+                        required=False, type=int, choices=Borders(5, 12 * 60, 'min'))
+    parser.add_argument('-r', '--rainfall',
+                        help='rainfall in mm or Liter/m^2',
+                        required=False, type=float, choices=Borders(0, unit='mm'))
+    parser.add_argument('-ws', '--worksheet',
+                        help='Worksheet used to calculate.',
+                        default=DWA,
+                        required=False, type=str, choices=[ATV, DWA, DWA_adv])
+    parser.add_argument('-kind', '--series_kind',
+                        help='The kind of series used for the calculation. '
+                             'Calculation with partial series is more precise',
+                        # '({}=annual series; {}=partial series)'.format(ANNUAL, PARTIAL),
+                        default=PARTIAL,
+                        required=False, type=str, choices=[PARTIAL, ANNUAL])
+    return parser.parse_args()

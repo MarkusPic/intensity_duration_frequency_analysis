@@ -11,8 +11,8 @@ ATV = 'ATV-A 121'
 DWA_adv = DWA + ' advektiv'
 
 # base series for calculation
-PARTIAL = 'p'
-ANNUAL = 'a'
+PARTIAL = 'partial'
+ANNUAL = 'annual'
 
 # parameters approach
 LOG1 = 'single_logarithmic'
