@@ -412,6 +412,8 @@ def get_parameter(interim_results, worksheet=DWA):
         parameters = parameter_.copy()
         for index, row in parameters.iterrows():
             it_res = interim_results.loc[row['von']: row['bis']]
+            if it_res.empty:
+                continue
             for p in ['u', 'w']:
                 param = it_res[p].values
                 dur = it_res.index.values

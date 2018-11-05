@@ -32,24 +32,42 @@ pip3 install git+https://github.com/maxipi/kostra.git --upgrade
 > ```idf_relation -h```
 
 ```
-usage: idf_relation [-h] [-i INPUT] [-t {>= 0.5 a and <= 100 a}]
-                    [-d {>= 5 min and <= 720 min}] [-r {>= 0 mm}]
-                    [-ws {ATV-A 121,DWA-A 531,DWA-A 531 advektiv}]
-                    [-kind {partial,annual}]
+usage: idf_relation [-h] -i INPUT [-out OUTPUT] [-t {>= 0.5 a and <= 100 a}]
+                    [-d {>= 5 min and <= 720 min}] [-h_N {>= 0 mm}]
+                    [-ws {ATV-A_121,DWA-A_531,DWA-A_531_advektiv}]
+                    [-kind {partial,annual}] [--r_720_1] [--plot]
+                    [--extended_duration] [--export_table]
 
 optional arguments:
   -h, --help            show this help message and exit
   -i INPUT, --input INPUT
                         input file with the rain time series
+  -out OUTPUT, --output OUTPUT
+                        output path, where to write the results / default:
+                        same as input
   -t {>= 0.5 a and <= 100 a}, --return_period {>= 0.5 a and <= 100 a}
-                        return period in years
+                        return period in years (If two of the three variables
+                        (rainfall, duration, return period) are given, the
+                        third variable is calculated.)
   -d {>= 5 min and <= 720 min}, --duration {>= 5 min and <= 720 min}
-                        duration in minutes
-  -r {>= 0 mm}, --rainfall {>= 0 mm}
-                        rainfall in mm or Liter/m^2
-  -ws {ATV-A 121,DWA-A 531,DWA-A 531 advektiv}, --worksheet {ATV-A 121,DWA-A 531,DWA-A 531 advektiv}
+                        duration in minutes (If two of the three variables
+                        (rainfall, duration, return period) are given, the
+                        third variable is calculated.)
+  -h_N {>= 0 mm}, --height_of_rainfall {>= 0 mm}
+                        rainfall in mm or Liter/m^2 (If two of the three
+                        variables (rainfall, duration, return period) are
+                        given, the third variable is calculated.)
+  -ws {ATV-A_121,DWA-A_531,DWA-A_531_advektiv}, --worksheet {ATV-A_121,DWA-A_531,DWA-A_531_advektiv}
                         Worksheet used to calculate.
   -kind {partial,annual}, --series_kind {partial,annual}
                         The kind of series used for the calculation.
                         Calculation with partial series is more precise
+  --r_720_1             design rainfall with a duration of 720 minutes (=12h)
+                        and a return period of 1 day
+  --plot                get a plot of the idf relationship
+  --extended_duration   add [720, 1080, 1440, 2880, 4320, 5760, 7200, 8640]
+                        (in minutes) to the duration steps which will be
+                        calculated
+  --export_table        get a table of the most frequent used values
 ```
+

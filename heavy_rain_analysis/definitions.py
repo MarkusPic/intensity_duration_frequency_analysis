@@ -6,9 +6,9 @@ __version__ = "0.1"
 __license__ = "MIT"
 
 
-DWA = 'DWA-A 531'
-ATV = 'ATV-A 121'
-DWA_adv = DWA + ' advektiv'
+DWA = 'DWA-A_531'
+ATV = 'ATV-A_121'
+DWA_adv = DWA + '_advektiv'
 
 # base series for calculation
 PARTIAL = 'partial'

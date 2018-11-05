@@ -40,19 +40,31 @@ class Borders():
 
 ########################################################################################################################
 def heavy_rain_parser():
+    calc_help = ' (If two of the three variables ' \
+                '(rainfall, duration, return period) are given, ' \
+                'the third variable is calculated.)'
     parser = argparse.ArgumentParser()
     parser.add_argument('-i', '--input',
                         help='input file with the rain time series',
+                        required=True)
+    parser.add_argument('-out', '--output',
+                        help='output path, where to write the results / default: same as input',
                         required=False)
     parser.add_argument('-t', '--return_period',
-                        help='return period in years',
+                        help='return period in years' + calc_help,
                         required=False, type=float, choices=Borders(0.5, 100, 'a'))
     parser.add_argument('-d', '--duration',
-                        help='duration in minutes',
+                        help='duration in minutes' + calc_help,
                         required=False, type=int, choices=Borders(5, 12 * 60, 'min'))
-    parser.add_argument('-r', '--rainfall',
-                        help='rainfall in mm or Liter/m^2',
+
+    # parser.add_argument('-r', '--rain_flow_rate',
+    #                     help='rainfall in Liter/(s * ha)' + calc_help,
+    #                     required=False, type=float, choices=Borders(0, unit='L/(s*ha)'))
+
+    parser.add_argument('-h_N', '--height_of_rainfall',
+                        help='rainfall in mm or Liter/m^2' + calc_help,
                         required=False, type=float, choices=Borders(0, unit='mm'))
+
     parser.add_argument('-ws', '--worksheet',
                         help='Worksheet used to calculate.',
                         default=DWA,
@@ -63,4 +75,17 @@ def heavy_rain_parser():
                         # '({}=annual series; {}=partial series)'.format(ANNUAL, PARTIAL),
                         default=PARTIAL,
                         required=False, type=str, choices=[PARTIAL, ANNUAL])
+    parser.add_argument('--r_720_1',
+                        help='design rainfall with a duration of 720 minutes (=12h) and a return period of 1 day',
+                        required=False, action='store_true')
+    parser.add_argument('--plot',
+                        help='get a plot of the idf relationship',
+                        required=False, action='store_true')
+    parser.add_argument('--extended_duration',
+                        help='add [720, 1080, 1440, 2880, 4320, 5760, 7200, 8640] (in minutes) to the duration steps which will be calculated',
+                        required=False, action='store_true')
+    parser.add_argument('--export_table',
+                        help='get a table of the most frequent used values',
+                        required=False, action='store_true')
+
     return parser.parse_args()

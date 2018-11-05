@@ -11,6 +11,7 @@ import pandas as pd
 import os
 import warnings
 import matplotlib.pyplot as plt
+from webbrowser import open as show_file
 
 from .sww_utils import remove_timezone, guess_freq, year_delta
 from .definitions import DWA, ATV, DWA_adv, PARTIAL, ANNUAL
@@ -53,7 +54,7 @@ class IntensityDurationFrequencyAnalyse(object):
         else:
             if path.isfile(output_path):
                 output_path = path.dirname(output_path)
-            out_path = path.join(output_path, 'data')
+            out_path = path.join(output_path, '' if self.data_base is None else (self.data_base + '_') + 'data')
 
             if not path.isdir(out_path):
                 os.mkdir(out_path)
@@ -94,9 +95,10 @@ class IntensityDurationFrequencyAnalyse(object):
             return path.join(self._output_path, self._output_filename)
 
     # ------------------------------------------------------------------------------------------------------------------
-    def set_series(self, series, name):
+    def set_series(self, series, name=None):
         self.series = series
-        self.data_base = name
+        if self.data_base is None:
+            self.data_base = name
         
         if not isinstance(series.index, pd.DatetimeIndex):
             raise TypeError('The series has to have a DatetimeIndex.')
@@ -167,8 +169,9 @@ class IntensityDurationFrequencyAnalyse(object):
         
         :param duration: in [min]
         :type duration: float | np.array | pd.Series
-        
-        :param float return_period:
+
+        :param return_period:
+        :type return_period: float
         :return: height of the rainfall in [l/m² = mm]
         """
         u, w = self.get_u_w(duration)
@@ -176,12 +179,20 @@ class IntensityDurationFrequencyAnalyse(object):
     
     # ------------------------------------------------------------------------------------------------------------------
     def print_depth_of_rainfal(self, duration, return_period):
-        print('Resultierende Regenhöhe h_N(T_n={}a, D={}min) = {} mm'
+        """
+        calculate and print the height of the rainfall in [l/m² = mm]
+
+        :param duration: in minutes
+        :type duration: float
+        :param return_period: in years
+        :type return_period: float
+        """
+        print('Resultierende Regenhöhe h_N(T_n={}a, D={}min) = {:0.2f} mm'
               ''.format(return_period, duration, self.depth_of_rainfall(duration, return_period)))
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
-    def r(height_of_rainfall, duration):
+    def h2r(height_of_rainfall, duration):
         """
         calculate the specific rain flow rate in [l/(s*ha)]
         if 2 array-like parameters are give, a element-wise calculation will be made.
@@ -197,16 +208,74 @@ class IntensityDurationFrequencyAnalyse(object):
         :rtype: float | np.array | pd.Series
         """
         return height_of_rainfall / duration * (1000 / 6)
+
+    # ------------------------------------------------------------------------------------------------------------------
+    @staticmethod
+    def r2h(rain_flow_rate, duration):
+        """
+        convert the rain flow rate to the height of rainfall in [mm]
+        if 2 array-like parameters are give, a element-wise calculation will be made.
+        So the length of the array must be the same.
+
+        :param rain_flow_rate: in [l/(s*ha)]
+        :type rain_flow_rate: float | np.array | pd.Series
+
+        :param duration:
+        :type duration: float | np.array | pd.Series
+
+        :return: height of rainfall in [mm]
+        :rtype: float | np.array | pd.Series
+        """
+        return rain_flow_rate * duration / (1000 / 6)
     
     def rain_flow_rate(self, duration, return_period):
-        return self.r(height_of_rainfall=self.depth_of_rainfall(duration=duration, return_period=return_period),
-                      duration=duration)
-    
+        """
+        convert the height of rainfall to the specific rain flow rate in [l/(s*ha)]
+        if 2 array-like parameters are give, a element-wise calculation will be made.
+        So the length of the array must be the same.
+
+        :param duration:
+        :type duration: float | np.array | pd.Series
+
+        :param return_period:
+        :type return_period: float
+
+        :return: specific rain flow rate in [l/(s*ha)]
+        :rtype: float | np.array | pd.Series
+        """
+        return self.h2r(height_of_rainfall=self.depth_of_rainfall(duration=duration, return_period=return_period),
+                        duration=duration)
+
+    def print_rain_flow_rate(self, duration, return_period):
+        """
+        calculate and print the flow rate of the rainfall in [l/(s*ha)]
+
+        :param duration: in minutes
+        :type duration: float
+
+        :param return_period: in years
+        :type return_period: float
+        """
+        print('Resultierende Regenspende r_N(T_n={}a, D={}min) = {:0.2f} L/(s*ha)'
+              ''.format(return_period, duration, self.rain_flow_rate(duration, return_period)))
+
     def r_720_1(self):
         return self.rain_flow_rate(duration=720, return_period=1)
         
     # ------------------------------------------------------------------------------------------------------------------
     def get_return_period(self, height_of_rainfall, duration):
+        """
+        calculate the return period, when the height of rainfall and the duration are given
+
+        :param height_of_rainfall: in [mm]
+        :type height_of_rainfall: float
+
+        :param duration:
+        :type duration: float
+
+        :return: return period
+        :rtype: float
+        """
         u, w = self.get_u_w(duration)
         return np.exp((height_of_rainfall - u) / w)
 
@@ -222,6 +291,11 @@ class IntensityDurationFrequencyAnalyse(object):
         for t in return_periods:
             result_table[t] = self.depth_of_rainfall(result_table.index, t)
         return result_table
+
+    def write_table(self):
+        table = self.result_table(durations=None, return_periods=None)
+        fn = self.output_filename + '_results_h_N.csv'
+        table.to_csv(fn)
 
     # ------------------------------------------------------------------------------------------------------------------
     def measured_points(self, return_time, interim_results=None, max_duration=None):
@@ -250,7 +324,7 @@ class IntensityDurationFrequencyAnalyse(object):
                          data=interim_results['u'] + interim_results['w'] * np.log(return_time))
 
     # ------------------------------------------------------------------------------------------------------------------
-    def result_plot(self, min_duration=5.0, max_duration=720.0, xscale="linear"):
+    def result_plot(self, min_duration=5.0, max_duration=720.0, xscale="linear", fmt='png', show=False):
         duration_steps = np.arange(min_duration, max_duration + 1, 1)
         colors = ['r', 'g', 'b', 'y', 'm']
     
@@ -308,15 +382,18 @@ class IntensityDurationFrequencyAnalyse(object):
         
         fig = ax.get_figure()
         
-        fn = self.output_filename + '_plot.png'
+        fn = self.output_filename + '_plot.' + fmt
 
         height_cm = 21
         width_cm = 29.7
         cm_to_inch = 2.54
         fig.set_size_inches(h=height_cm / cm_to_inch, w=width_cm / cm_to_inch)  # (11.69, 8.27)
         fig.tight_layout()
-        fig.savefig(fn, format=format, dpi=260)
+        fig.savefig(fn, dpi=260)
         plt.close(fig)
+        if show:
+            show_file(fn)
+        return fn
         
     def return_periods_frame(self, series, durations=None):
         if durations is None:
