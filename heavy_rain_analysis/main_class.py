@@ -295,6 +295,9 @@ class IntensityDurationFrequencyAnalyse(object):
     def write_table(self):
         table = self.result_table(durations=None, return_periods=None)
         fn = self.output_filename + '_results_h_N.csv'
+
+        print(table.to_string())
+
         table.to_csv(fn)
 
     # ------------------------------------------------------------------------------------------------------------------
