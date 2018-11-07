@@ -7,7 +7,7 @@ __license__ = "MIT"
 
 import numpy as np
 import pandas as pd
-from .main_class import IntensityDurationFrequencyAnalyse
+from idf_analysis.idf_class import IntensityDurationFrequencyAnalyse
 from plotly.graph_objs import Contour
 from .plotly_interface import PlotlyAxes, Ax, Scatter
 

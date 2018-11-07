@@ -75,17 +75,25 @@ def heavy_rain_parser():
                         # '({}=annual series; {}=partial series)'.format(ANNUAL, PARTIAL),
                         default=PARTIAL,
                         required=False, type=str, choices=[PARTIAL, ANNUAL])
+
     parser.add_argument('--r_720_1',
                         help='design rainfall with a duration of 720 minutes (=12h) and a return period of 1 day',
                         required=False, action='store_true')
+
     parser.add_argument('--plot',
                         help='get a plot of the idf relationship',
                         required=False, action='store_true')
+
     parser.add_argument('--extended_duration',
                         help='add [720, 1080, 1440, 2880, 4320, 5760, 7200, 8640] (in minutes) to the duration steps which will be calculated',
                         required=False, action='store_true')
+
     parser.add_argument('--export_table',
                         help='get a table of the most frequent used values',
+                        required=False, action='store_true')
+
+    parser.add_argument('--unix',
+                        help='export the csv files with a "," as separator and a "." as decimal sign.',
                         required=False, action='store_true')
 
     return parser.parse_args()

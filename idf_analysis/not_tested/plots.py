@@ -30,7 +30,7 @@ def plot_partial_series(events_sort, name, param_u_p, param_w_p):
     plt.plot([x_min, x_max], [param_u_p + param_w_p * x_min, param_u_p + param_w_p * x_max], 'k--',
              color='Grey')
     figure = plot.get_figure()
-    figure.savefig(name + ".jpg")
+    figure.savefig(name + ".png")
 
 
 ########################################################################################################################
@@ -42,7 +42,7 @@ def plot_annual_series(annually_series, param_u_j, param_w_j, name="annual_plot"
              color='Grey')
     figure = plot.get_figure()
     global TIMESTAMP
-    figure.savefig(TIMESTAMP+name+".jpg")
+    figure.savefig(TIMESTAMP+name+".png")
 
 
 ########################################################################################################################

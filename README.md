@@ -1,42 +1,72 @@
-# Heavy Rain Analyysis based on KOSTRA
-heavy rain as a function of the duration and the return period acc. to DWA-A 531 (2012)
+© [Institute of Urban Water Management and Landscape Water Engineering](https://www.tugraz.at), [Graz University of Technology](https://www.tugraz.at/home/) and [Markus Pichler](mailto:markus.pichler@tugraz.at)
+
+
+# Intensity duration frequency analysis (based on KOSTRA)
+heavy rain as a function of the duration and the return period acc. to [DWA-A 531 (2012)](http://www.dwa.de/dwa/shop/shop.nsf/Produktanzeige?openform&produktid=P-DWAA-8XMUY2)
 This program reads the measurement data of the rainfall
 and calculates the distribution of the rainfall as a function of the return period and the duration
 for duration steps up to 12 hours (and more) and return period in a range of '0.5a &lt;= T_n &lt;= 100a'
 
 # Install
 
-See the python packages requirements in the 'requirements.txt'.
+See the python packages requirements in the 'requirements.txt'. (those packages will get installed during the installing process)
 
-To install the packages via github, git must be installed first. (see [https://git-scm.com/](https://git-scm.com/))
+To install the packages via github, [git](https://git-scm.com/) must be installed first.
 
 Otherwise download the package manually via your browser and replace git+xxx.git with the path to the unzipped folder.
 
+I recommend to use Anaconda to install python on Windows and the [Anaconda](https://www.anaconda.com/download/) Prompt for the commandline tool.
 
 ## Fresh install
 
+The script is written in Python3.
+
 ```
-pip3 install git+https://github.com/maxipi/kostra.git
+pip install git+https://github.com/MarkusPic/intensity_duration_frequency_analysis.git
 ```
+
+To install the package only for the local user account, add ```--user``` to the install command.
 
 ## Update package
 
+To update the package, add ```--upgrade``` to the install command.
+
 ```
-pip3 install git+https://github.com/maxipi/kostra.git --upgrade 
+pip install git+https://github.com/MarkusPic/intensity_duration_frequency_analysis.git --upgrade
+```
+
+## Install without git
+
+First download the package as a [zip-file](https://codeload.github.com/MarkusPic/intensity_duration_frequency_analysis/zip/master).
+
+Then unzip the folder.
+
+Now you can install the package with the local files
+
+```
+pip install <PATH_TO_FOLDER>\intensity_duration_frequency_analysis-master
 ```
 
 # Usage
 
+To start the script use following commands in the terminal/Anaconda Prompt
+
+Windows:
+```python -m idf_analysis```
+
+Unix-Like:
+```idf_analysis```
+
 # Commandline tool 
 
-> ```idf_relation -h```
+> ```idf_analysis -h```
 
 ```
-usage: idf_relation [-h] -i INPUT [-out OUTPUT] [-t {>= 0.5 a and <= 100 a}]
+usage: idf_analysis [-h] -i INPUT [-out OUTPUT] [-t {>= 0.5 a and <= 100 a}]
                     [-d {>= 5 min and <= 720 min}] [-h_N {>= 0 mm}]
                     [-ws {ATV-A_121,DWA-A_531,DWA-A_531_advektiv}]
                     [-kind {partial,annual}] [--r_720_1] [--plot]
-                    [--extended_duration] [--export_table]
+                    [--extended_duration] [--export_table] [--unix]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -69,6 +99,8 @@ optional arguments:
                         (in minutes) to the duration steps which will be
                         calculated
   --export_table        get a table of the most frequent used values
+  --unix                export the csv files with a "," as separator and a "."
+                        as decimal sign.
 ```
 
 # Example

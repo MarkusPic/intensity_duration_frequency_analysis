@@ -8,16 +8,25 @@ __license__ = "MIT"
 import pandas as pd
 
 
-def import_series(filename, series_label='precipitation', index_label='datetime'):
+def csv_args(unix=False):
+    if unix:
+        return dict(sep=',', decimal='.')
+    else:
+        return dict(sep=';', decimal=',')
+
+
+def import_series(filename, series_label='precipitation', index_label='datetime', unix=False):
     """
 
     :param filename:
     :param series_label:
     :param index_label:
+    :param unix: whether to use a "," as separator and a "." as decimal sign or ";" and ",".
+    :type unix: bool
     :return:
     """
     if filename.endswith('csv'):
-        ts = pd.read_csv(filename, index_col=0, header=None, squeeze=True, names=[series_label])
+        ts = pd.read_csv(filename, index_col=0, header=None, squeeze=True, names=[series_label], **csv_args(unix))
         ts.index = pd.to_datetime(ts.index)
         ts.index.name = index_label
         return ts

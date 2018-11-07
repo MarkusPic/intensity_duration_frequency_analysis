@@ -1,6 +1,3 @@
-from math import floor
-from pprint import pprint
-
 __author__ = "Markus Pichler"
 __credits__ = ["Markus Pichler"]
 __maintainer__ = "Markus Pichler"
@@ -8,12 +5,11 @@ __email__ = "markus.pichler@tugraz.at"
 __version__ = "0.1"
 __license__ = "MIT"
 
-from .arg_parser import heavy_rain_parser
-from .main_class import IntensityDurationFrequencyAnalyse
-from .definitions import *
-from .in_out import import_series
-import pandas as pd
 from os import path
+from math import floor
+from .arg_parser import heavy_rain_parser
+from .idf_class import IntensityDurationFrequencyAnalyse
+from .in_out import import_series, csv_args
 
 
 def not_none(*args):
@@ -22,7 +18,6 @@ def not_none(*args):
 
 def tool_executor():
     user = heavy_rain_parser()
-    pprint(vars(user))
 
     # --------------------------------------------------------------------------------------------------------------
     d = user.duration
@@ -40,7 +35,7 @@ def tool_executor():
     # --------------------------------------------------------------------------------------------------------------
     idf = IntensityDurationFrequencyAnalyse(series_kind=user.series_kind, worksheet=user.worksheet, output_path=out,
                                             extended_durations=user.extended_duration, output_filename=name,
-                                            auto_save=auto_save)
+                                            auto_save=auto_save, unix=user.unix)
 
     # --------------------------------------------------------------------------------------------------------------
     if user.r_720_1:
