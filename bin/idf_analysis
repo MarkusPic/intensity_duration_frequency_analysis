@@ -7,6 +7,6 @@ __email__ = "markus.pichler@tugraz.at"
 __version__ = "0.1"
 __license__ = "MIT"
 
-from heavy_rain_analysis import tool_executor
+from idf_analysis import tool_executor
 
 tool_executor()

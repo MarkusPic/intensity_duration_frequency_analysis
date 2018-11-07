@@ -6,7 +6,7 @@ __version__ = "0.1"
 __license__ = "MIT"
 
 import argparse
-from heavy_rain_analysis.definitions import DWA, ATV, DWA_adv, PARTIAL, ANNUAL
+from idf_analysis.definitions import DWA, ATV, DWA_adv, PARTIAL, ANNUAL
 
 
 ########################################################################################################################

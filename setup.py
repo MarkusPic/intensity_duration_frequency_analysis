@@ -11,7 +11,7 @@ with open('requirements.txt', 'r') as f:
     requirements = f.read().splitlines()
 
 setup(
-    name='heavy_rain_analysis',
+    name='idf_analysis',
     version='0.1',
     packages=find_packages(),
     package_data={
@@ -23,6 +23,6 @@ setup(
     author='pichler',
     author_email='markus.pichler@tugraz.at',
     description='heavy rain as a function of the duration and the return period acc. to DWA-A 531 (2012)',
-    scripts=['bin/idf_relation'],
+    scripts=['bin/idf_analysis'],
     install_requires=requirements,
 )
