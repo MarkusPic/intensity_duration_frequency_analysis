@@ -26,7 +26,8 @@ def tool_executor():
     out = user.output
     name = path.basename('.'.join(user.input.split('.')[:-1]))
     if out is None:
-        out = path.dirname(user.input)
+        out = ''
+        # out = path.dirname(user.input)
 
     auto_save = False
     if user.plot or user.export_table:
@@ -60,12 +61,16 @@ def tool_executor():
         idf.print_rain_flow_rate(duration=d, return_period=t)
         pass
     elif not_none(d, h):
-        tn = idf.get_return_period(h, d)
-        print('The return period is {:0.1f} years.'.format(tn))
-        idf.print_rain_flow_rate(d, tn)
+        t = idf.get_return_period(h, d)
+        print('The return period is {:0.1f} years.'.format(t))
+        idf.print_depth_of_rainfal(duration=d, return_period=t)
+        idf.print_rain_flow_rate(duration=d, return_period=t)
 
     elif not_none(h, t):
-        pass
+        d = idf.get_duration(h, t)
+        print('The duration is {:0.1f} minutes.'.format(d))
+        idf.print_depth_of_rainfal(duration=d, return_period=t)
+        idf.print_rain_flow_rate(duration=d, return_period=t)
 
     # --------------------------------------------------------------------------------------------------------------
     if user.plot:

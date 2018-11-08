@@ -192,7 +192,7 @@ class IntensityDurationFrequencyAnalyse(object):
         :param return_period: in years
         :type return_period: float
         """
-        print('Resultierende Regenhöhe h_N(T_n={}a, D={}min) = {:0.2f} mm'
+        print('Resultierende Regenhöhe h_N(T_n={:0.1f}a, D={:0.1f}min) = {:0.2f} mm'
               ''.format(return_period, duration, self.depth_of_rainfall(duration, return_period)))
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -261,7 +261,7 @@ class IntensityDurationFrequencyAnalyse(object):
         :param return_period: in years
         :type return_period: float
         """
-        print('Resultierende Regenspende r_N(T_n={}a, D={}min) = {:0.2f} L/(s*ha)'
+        print('Resultierende Regenspende r_N(T_n={:0.1f}a, D={:0.1f}min) = {:0.2f} L/(s*ha)'
               ''.format(return_period, duration, self.rain_flow_rate(duration, return_period)))
 
     def r_720_1(self):
@@ -285,6 +285,25 @@ class IntensityDurationFrequencyAnalyse(object):
         return np.exp((height_of_rainfall - u) / w)
 
     # ------------------------------------------------------------------------------------------------------------------
+    def get_duration(self, height_of_rainfall, return_period):
+        """
+        calculate the return period, when the height of rainfall and the duration are given
+
+        :param height_of_rainfall: in [mm]
+        :type height_of_rainfall: float
+
+        :param duration:
+        :type duration: float
+
+        :return: return period
+        :rtype: float
+        """
+        durs = np.arange(min(self.duration_steps), max(self.duration_steps), 0.5)
+        h = self.depth_of_rainfall(durs, return_period)
+        duration = np.interp(height_of_rainfall, h, durs)
+        return duration
+
+    # ------------------------------------------------------------------------------------------------------------------
     def result_table(self, durations=None, return_periods=None):
         if durations is None:
             durations = self.duration_steps
@@ -303,7 +322,7 @@ class IntensityDurationFrequencyAnalyse(object):
 
         print(table.to_string())
 
-        table.to_csv(fn, **csv_args(self._unix))
+        table.to_csv(fn, **csv_args(self._unix), float_format='%0.2f')
 
     # ------------------------------------------------------------------------------------------------------------------
     def measured_points(self, return_time, interim_results=None, max_duration=None):
