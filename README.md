@@ -1,4 +1,4 @@
-© [Institute of Urban Water Management and Landscape Water Engineering](https://www.tugraz.at), [Graz University of Technology](https://www.tugraz.at/home/) and [Markus Pichler](mailto:markus.pichler@tugraz.at)
+© [Institute of Urban Water Management and Landscape Water Engineering](https://www.sww.tugraz.at), [Graz University of Technology](https://www.tugraz.at/home/) and [Markus Pichler](mailto:markus.pichler@tugraz.at)
 
 
 # Intensity duration frequency analysis (based on KOSTRA)
