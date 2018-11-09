@@ -5,7 +5,7 @@
 heavy rain as a function of the duration and the return period acc. to [DWA-A 531 (2012)](http://www.dwa.de/dwa/shop/shop.nsf/Produktanzeige?openform&produktid=P-DWAA-8XMUY2)
 This program reads the measurement data of the rainfall
 and calculates the distribution of the rainfall as a function of the return period and the duration
-for duration steps up to 12 hours (and more) and return period in a range of '0.5a &lt;= T_n &lt;= 100a'
+for duration steps up to 12 hours (and more) and return period in a range of '0.5a &le; T_n &le; 100a'
 
 # Install
 
