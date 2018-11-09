@@ -11,18 +11,14 @@ for duration steps up to 12 hours (and more) and return period in a range of '0.
 
 See the python packages requirements in the 'requirements.txt'. (those packages will get installed during the installing process)
 
-To install the packages via github, [git](https://git-scm.com/) must be installed first.
-
-Otherwise download the package manually via your browser and replace git+xxx.git with the path to the unzipped folder.
-
-I recommend to use Anaconda to install python on Windows and the [Anaconda](https://www.anaconda.com/download/) Prompt for the commandline tool.
-
-## Fresh install
+I recommend to use [Anaconda](https://www.anaconda.com/download/) to install python on Windows and the Anaconda-Prompt for the commandline tool.
 
 The script is written in Python3.
 
+## Fresh install
+
 ```
-pip install git+https://github.com/MarkusPic/intensity_duration_frequency_analysis.git
+pip install https://codeload.github.com/MarkusPic/intensity_duration_frequency_analysis/zip/master
 ```
 
 To install the package only for the local user account, add ```--user``` to the install command.
@@ -32,19 +28,7 @@ To install the package only for the local user account, add ```--user``` to the 
 To update the package, add ```--upgrade``` to the install command.
 
 ```
-pip install git+https://github.com/MarkusPic/intensity_duration_frequency_analysis.git --upgrade
-```
-
-## Install without git
-
-First download the package as a [zip-file](https://codeload.github.com/MarkusPic/intensity_duration_frequency_analysis/zip/master).
-
-Then unzip the folder.
-
-Now you can install the package with the local files
-
-```
-pip install <PATH_TO_FOLDER>\intensity_duration_frequency_analysis-master
+pip install https://codeload.github.com/MarkusPic/intensity_duration_frequency_analysis/zip/master --upgrade
 ```
 
 # Usage
