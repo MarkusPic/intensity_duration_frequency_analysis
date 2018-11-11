@@ -377,7 +377,7 @@ class IntensityDurationFrequencyAnalyse(object):
 
         fig = ax.get_figure()
 
-        fn = self.output_filename + '_plot.' + fmt
+        fn = self.output_filename + '_idf_plot.' + fmt
 
         cm_to_inch = 2.54
         fig.set_size_inches(h=21 / cm_to_inch, w=29.7 / cm_to_inch)  # (11.69, 8.27)

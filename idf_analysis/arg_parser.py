@@ -77,7 +77,7 @@ def heavy_rain_parser():
                         required=False, type=str, choices=[PARTIAL, ANNUAL])
 
     parser.add_argument('--r_720_1',
-                        help='design rainfall with a duration of 720 minutes (=12h) and a return period of 1 day',
+                        help='design rainfall with a duration of 720 minutes (=12 h) and a return period of 1 day',
                         required=False, action='store_true')
 
     parser.add_argument('--plot',
@@ -85,7 +85,8 @@ def heavy_rain_parser():
                         required=False, action='store_true')
 
     parser.add_argument('--extended_duration',
-                        help='add [720, 1080, 1440, 2880, 4320, 5760, 7200, 8640] (in minutes) to the duration steps which will be calculated',
+                        help='add [720, 1080, 1440, 2880, 4320, 5760, 7200, 8640] (in minutes) '
+                             'to the duration steps which will be calculated',
                         required=False, action='store_true')
 
     parser.add_argument('--export_table',
