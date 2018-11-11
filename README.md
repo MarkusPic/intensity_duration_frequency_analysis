@@ -77,7 +77,7 @@ optional arguments:
                         The kind of series used for the calculation.
                         Calculation with partial series is more precise
   --r_720_1             design rainfall with a duration of 720 minutes (=12 h)
-                        and a return period of 1 day
+                        and a return period of 1 year
   --plot                get a plot of the idf relationship
   --extended_duration   add [720, 1080, 1440, 2880, 4320, 5760, 7200, 8640]
                         (in minutes) to the duration steps which will be
