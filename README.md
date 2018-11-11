@@ -76,7 +76,7 @@ optional arguments:
   -kind {partial,annual}, --series_kind {partial,annual}
                         The kind of series used for the calculation.
                         Calculation with partial series is more precise
-  --r_720_1             design rainfall with a duration of 720 minutes (=12h)
+  --r_720_1             design rainfall with a duration of 720 minutes (=12 h)
                         and a return period of 1 day
   --plot                get a plot of the idf relationship
   --extended_duration   add [720, 1080, 1440, 2880, 4320, 5760, 7200, 8640]
