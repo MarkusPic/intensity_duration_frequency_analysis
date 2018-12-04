@@ -183,7 +183,7 @@ class IntensityDurationFrequencyAnalyse(object):
         return depth_of_rainfall(u, w, self.series_kind, return_period)
 
     # ------------------------------------------------------------------------------------------------------------------
-    def print_depth_of_rainfal(self, duration, return_period):
+    def print_depth_of_rainfall(self, duration, return_period):
         """
         calculate and print the height of the rainfall in [l/m² = mm]
 
@@ -304,7 +304,7 @@ class IntensityDurationFrequencyAnalyse(object):
         return duration
 
     # ------------------------------------------------------------------------------------------------------------------
-    def result_table(self, durations=None, return_periods=None):
+    def result_table(self, durations=None, return_periods=None, add_names=False):
         if durations is None:
             durations = self.duration_steps
 
@@ -314,13 +314,18 @@ class IntensityDurationFrequencyAnalyse(object):
         result_table = pd.DataFrame(index=durations)
         for t in return_periods:
             result_table[t] = self.depth_of_rainfall(result_table.index, t)
+
+        if add_names:
+            result_table.index.name = 'duration (min)'
+            result_table.columns = pd.MultiIndex.from_tuples([(rp, round(1 / rp, 3)) for rp in result_table.columns])
+            result_table.columns.names = ['return period (a)', 'frequency (1/a)']
         return result_table
 
-    def write_table(self):
-        table = self.result_table(durations=None, return_periods=None)
+    def write_table(self, durations=None, return_periods=None, add_names=False):
+        table = self.result_table(durations=durations, return_periods=return_periods, add_names=add_names)
         fn = self.output_filename + '_results_h_N.csv'
 
-        print(table.to_string())
+        print(table.round(1).to_string())
 
         table.to_csv(fn, **csv_args(self._unix), float_format='%0.2f')
 
@@ -351,37 +356,42 @@ class IntensityDurationFrequencyAnalyse(object):
                          data=interim_results['u'] + interim_results['w'] * np.log(return_time))
 
     # ------------------------------------------------------------------------------------------------------------------
-    def result_plot(self, min_duration=5.0, max_duration=720.0, logx=False, fmt='png', show=False):
+    def result_figure(self, min_duration=5.0, max_duration=720.0, logx=False, return_periods=None, color=False):
         duration_steps = np.arange(min_duration, max_duration + 1, 1)
         plt.style.use('bmh')
 
-        return_periods = [0.5, 1, 10, 50, 100]
-        return_periods = [1, 2, 5, 10, 50]
+        if return_periods is None:
+            return_periods = [0.5, 1, 10, 50, 100]
+            return_periods = [1, 2, 5, 10, 50]
 
         table = self.result_table(durations=duration_steps, return_periods=return_periods)
-        ax = table.plot(color='black', logx=logx, legend=False)
+        ax = table.plot(color=(None if color else 'black'), logx=logx, legend=color)
 
         for _, return_time in enumerate(return_periods):
             p = self.measured_points(return_time, max_duration=max_duration)
             ax.plot(p, 'k' + 'x')
 
-            x, y = list(p.tail(1).items())[0]
-            ax.text(x+10, y, '{} a'.format(return_time), verticalalignment='center', horizontalalignment='left',
-                    #bbox=dict(facecolor='white', alpha=1.0, lw=1)
-                    )
+            if not color:
+                x, y = list(p.tail(1).items())[0]
+                ax.text(x + 10, y, '{} a'.format(return_time), verticalalignment='center', horizontalalignment='left',
+                        # bbox=dict(facecolor='white', alpha=1.0, lw=1)
+                        )
 
         ax.tick_params(axis='both', which='both', direction='out')
         ax.set_xlabel('Duration D in (min)')
-        ax.set_ylabel('Rainfall h$_N$ in (mm)')
+        ax.set_ylabel('Rainfall h$\mathsf{_N}$ in (mm)')
         ax.set_title('IDF curves')
 
         fig = ax.get_figure()
 
-        fn = self.output_filename + '_idf_plot.' + fmt
-
         cm_to_inch = 2.54
         fig.set_size_inches(h=21 / cm_to_inch, w=29.7 / cm_to_inch)  # (11.69, 8.27)
         fig.tight_layout()
+        return fig
+
+    def result_plot(self, min_duration=5.0, max_duration=720.0, logx=False, fmt='png', show=False):
+        fig = self.result_figure(min_duration=min_duration, max_duration=max_duration, logx=logx)
+        fn = self.output_filename + '_idf_plot.' + fmt
         fig.savefig(fn, dpi=260)
         plt.close(fig)
         if show:

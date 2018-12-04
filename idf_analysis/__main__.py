@@ -57,19 +57,19 @@ def tool_executor():
 
     # --------------------------------------------------------------------------------------------------------------
     if not_none(d, t):
-        idf.print_depth_of_rainfal(duration=d, return_period=t)
+        idf.print_depth_of_rainfall(duration=d, return_period=t)
         idf.print_rain_flow_rate(duration=d, return_period=t)
         pass
     elif not_none(d, h):
         t = idf.get_return_period(h, d)
         print('The return period is {:0.1f} years.'.format(t))
-        idf.print_depth_of_rainfal(duration=d, return_period=t)
+        idf.print_depth_of_rainfall(duration=d, return_period=t)
         idf.print_rain_flow_rate(duration=d, return_period=t)
 
     elif not_none(h, t):
         d = idf.get_duration(h, t)
         print('The duration is {:0.1f} minutes.'.format(d))
-        idf.print_depth_of_rainfal(duration=d, return_period=t)
+        idf.print_depth_of_rainfall(duration=d, return_period=t)
         idf.print_rain_flow_rate(duration=d, return_period=t)
 
     # --------------------------------------------------------------------------------------------------------------

@@ -8,6 +8,7 @@ __license__ = "MIT"
 import pandas as pd
 import numpy as np
 from numpy import NaN
+from math import e, floor, ceil
 from .sww_utils import guess_freq, rain_events
 from .definitions import DWA, ATV, DWA_adv, PARTIAL, ANNUAL, LOG1, LOG2, HYP, LIN
 
@@ -26,7 +27,8 @@ def delta2min(time_delta):
     :return: delta in [min]
     :rtype: float
     """
-    return time_delta.total_seconds() / 60
+    # time_delta.total_seconds() / 60
+    return time_delta / pd.Timedelta(minutes=1)
 
 
 ########################################################################################################################
@@ -69,10 +71,11 @@ def partial_series(events, measurement_period):
     partially_series = partially_series.sort_values(ascending=False).reset_index(drop=True)
     
     # use only the (2-3 multiplied with the number of measuring years) of the biggest
-    # values in the database (-> acc. to ATV-A 121 chap. 4.3)
+    # values in the database (-> acc. to ATV-A 121 chap. 4.3; DWA-A 531 chap. 4.4)
     # as an requirement for the extreme value distribution
-    threshold_value_years = round(measurement_period * np.exp(1))
-    partially_series = partially_series.iloc[:int(threshold_value_years + 0)].copy()  # 1
+
+    size_threshold_value = int(floor(measurement_period * e))
+    partially_series = partially_series.iloc[:size_threshold_value].copy()  # 1
     
     mean_sample_rainfall = partially_series.mean()
     sample_size = partially_series.count()
@@ -91,12 +94,12 @@ def partial_series(events, measurement_period):
     
     # ------------------------------------------------------------------------------------------------------------------
     log_return_periods = np.log(_plotting_formula(partially_series.index.values + 1, sample_size, measurement_period))
-    ln_t_n_quer = log_return_periods.mean()
+    ln_t_n_mean = log_return_periods.mean()
     
-    w = ((log_return_periods * partially_series).sum() - sample_size * mean_sample_rainfall * ln_t_n_quer) / \
-        ((log_return_periods ** 2).sum() - sample_size * ln_t_n_quer ** 2)
+    w = ((log_return_periods * partially_series).sum() - sample_size * mean_sample_rainfall * ln_t_n_mean) / \
+        ((log_return_periods ** 2).sum() - sample_size * ln_t_n_mean ** 2)
     
-    u = mean_sample_rainfall - w * ln_t_n_quer
+    u = mean_sample_rainfall - w * ln_t_n_mean
     
     return u, w
 
