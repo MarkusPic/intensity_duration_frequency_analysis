@@ -477,11 +477,10 @@ class IntensityDurationFrequencyAnalyse(object):
         if durations is None:
             durations = self.duration_steps
 
-        df = series.to_frame()
+        df = pd.DataFrame(index=series.index)
 
         for d in durations:
             ts_sum = series.rolling(d, center=True, min_periods=1).sum()
             df[minutes_readable(d)] = self.get_return_period(height_of_rainfall=ts_sum, duration=d)
 
-        del df[series.name]
         return df
