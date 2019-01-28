@@ -16,10 +16,10 @@ setup(
     packages=find_packages(),
     package_data={
         # If any package contains *.txt or *.rst files, include them:
-        '': ['*.json', '*.', '*.png', '*.pdf', '*.csv', '*.tex','*.xslx'],
+        '': ['*.json', '*.', '*.png', '*.pdf', '*.csv', '*.tex', '*.xslx'],
     },
-    url='',
-    license='',
+    url='https://github.com/MarkusPic/intensity_duration_frequency_analysis',
+    license='MIT',
     author='pichler',
     author_email='markus.pichler@tugraz.at',
     description='heavy rain as a function of the duration and the return period acc. to DWA-A 531 (2012)',

@@ -6,7 +6,7 @@ __version__ = "0.1"
 __license__ = "MIT"
 
 from .idf_class import IntensityDurationFrequencyAnalyse
-from .__main__ import tool_executor
+from ._cl_script import tool_executor
 """
 heavy rain as a function of the duration and the return period acc. to DWA-A 531 (2012)
 
