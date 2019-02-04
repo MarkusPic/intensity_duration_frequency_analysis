@@ -1,0 +1,752 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>API &mdash; Intensity Duration Frequency Analyse 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Intensity Duration Frequency Analyse" href="example.html" />
+    <link rel="prev" title="Welcome to Intensity Duration Frequency Analyse’s documentation!" href="index.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Intensity Duration Frequency Analyse
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-idf_analysis.calculation_methods">Calculation Methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-idf_analysis.in_out">Input and Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-idf_analysis.sww_utils">SWW Utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main-function">Main Function</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="example.html">Intensity Duration Frequency Analyse</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Intensity Duration Frequency Analyse</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>API</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/api.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast,
+.nboutput.nblast {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast + .nbinput {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="api">
+<h1>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-idf_analysis.calculation_methods">
+<span id="calculation-methods"></span><h2>Calculation Methods<a class="headerlink" href="#module-idf_analysis.calculation_methods" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="idf_analysis.calculation_methods.annual_series">
+<code class="descclassname">idf_analysis.calculation_methods.</code><code class="descname">annual_series</code><span class="sig-paren">(</span><em>events</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/calculation_methods.html#annual_series"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.calculation_methods.annual_series" title="Permalink to this definition">¶</a></dt>
+<dd><p>acc. to DWA-A 531 chap. 5.1.5</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>events</strong> (<em>pd.DataFrame</em>) – </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">parameter u and w from the annual series for a specific duration step as a list</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)">tuple</a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a>]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="idf_analysis.calculation_methods.calculate_u_w">
+<code class="descclassname">idf_analysis.calculation_methods.</code><code class="descname">calculate_u_w</code><span class="sig-paren">(</span><em>file_input</em>, <em>duration_steps</em>, <em>measurement_period</em>, <em>series_kind</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/calculation_methods.html#calculate_u_w"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.calculation_methods.calculate_u_w" title="Permalink to this definition">¶</a></dt>
+<dd><p>statistical analysis for each duration step acc. to DWA-A 531 chap. 5.1
+save the parameters of the distribution function as interim results
+acc. to DWA-A 531 chap. 4.4: use the annual series only for measurement periods over 20 years</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>file_input</strong> (<em>pd.Series</em>) – original nieda-database</li>
+<li><strong>duration_steps</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>] </em><em>| np.ndarray</em>) – in [min]</li>
+<li><strong>measurement_period</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – duration of the series in [a]</li>
+<li><strong>series_kind</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – annual or partial</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">with index = duration and columns = [u, w]</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">pd.DataFrame</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="idf_analysis.calculation_methods.calculate_u_wXX">
+<code class="descclassname">idf_analysis.calculation_methods.</code><code class="descname">calculate_u_wXX</code><span class="sig-paren">(</span><em>file_input</em>, <em>duration_steps</em>, <em>measurement_period</em>, <em>series_kind</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/calculation_methods.html#calculate_u_wXX"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.calculation_methods.calculate_u_wXX" title="Permalink to this definition">¶</a></dt>
+<dd><p>statistical analysis for each duration step acc. to DWA-A 531 chap. 5.1
+save the parameters of the distribution function as interim results
+acc. to DWA-A 531 chap. 4.4: use the annual series only for measurement periods over 20 years</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>file_input</strong> (<em>pd.Series</em>) – original nieda-database</li>
+<li><strong>duration_steps</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>] </em><em>| np.ndarray</em>) – in [min]</li>
+<li><strong>measurement_period</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – duration of the series in [a]</li>
+<li><strong>series_kind</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – annual or partial</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">with index = duration and columns = [u, w]</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">pd.DataFrame</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="idf_analysis.calculation_methods.delta2min">
+<code class="descclassname">idf_analysis.calculation_methods.</code><code class="descname">delta2min</code><span class="sig-paren">(</span><em>time_delta</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/calculation_methods.html#delta2min"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.calculation_methods.delta2min" title="Permalink to this definition">¶</a></dt>
+<dd><p>convert timedelta to float in minutes</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>time_delta</strong> (<em>pd.Timedelta</em>) – </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">delta in [min]</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="idf_analysis.calculation_methods.get_duration_steps">
+<code class="descclassname">idf_analysis.calculation_methods.</code><code class="descname">get_duration_steps</code><span class="sig-paren">(</span><em>worksheet</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/calculation_methods.html#get_duration_steps"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.calculation_methods.get_duration_steps" title="Permalink to this definition">¶</a></dt>
+<dd><p>duration step boundary for the diverse distribution functions</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>worksheet</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)">int</a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)">int</a>]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="idf_analysis.calculation_methods.partial_series">
+<code class="descclassname">idf_analysis.calculation_methods.</code><code class="descname">partial_series</code><span class="sig-paren">(</span><em>events</em>, <em>measurement_period</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/calculation_methods.html#partial_series"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.calculation_methods.partial_series" title="Permalink to this definition">¶</a></dt>
+<dd><p>acc. to DWA-A 531 chap. 5.1.4</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>events</strong> (<em>pd.DataFrame</em>) – </li>
+<li><strong>measurement_period</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">parameter u and w from the partial series for a specific duration step as a list</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)">tuple</a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a>]</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-idf_analysis.in_out">
+<span id="input-and-output"></span><h2>Input and Output<a class="headerlink" href="#module-idf_analysis.in_out" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="idf_analysis.in_out.import_series">
+<code class="descclassname">idf_analysis.in_out.</code><code class="descname">import_series</code><span class="sig-paren">(</span><em>filename</em>, <em>series_label='precipitation'</em>, <em>index_label='datetime'</em>, <em>unix=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/in_out.html#import_series"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.in_out.import_series" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>filename</strong> – </li>
+<li><strong>series_label</strong> – </li>
+<li><strong>index_label</strong> – </li>
+<li><strong>unix</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – whether to use a “,” as separator and a “.” as decimal sign or “;” and “,”.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-idf_analysis.sww_utils">
+<span id="sww-utils"></span><h2>SWW Utils<a class="headerlink" href="#module-idf_analysis.sww_utils" title="Permalink to this headline">¶</a></h2>
+<dl class="exception">
+<dt id="idf_analysis.sww_utils.TimezoneError">
+<em class="property">exception </em><code class="descclassname">idf_analysis.sww_utils.</code><code class="descname">TimezoneError</code><a class="reference internal" href="_modules/idf_analysis/sww_utils.html#TimezoneError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.sww_utils.TimezoneError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Some Error With a Timezone</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="idf_analysis.sww_utils.agg_events">
+<code class="descclassname">idf_analysis.sww_utils.</code><code class="descname">agg_events</code><span class="sig-paren">(</span><em>events</em>, <em>series</em>, <em>agg='sum'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/sww_utils.html#agg_events"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.sww_utils.agg_events" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>events</strong> (<em>pd.DataFrame</em>) – table of events</li>
+<li><strong>series</strong> (<em>pd.Series</em>) – timeseries data</li>
+<li><strong>agg</strong> (<em>str | function</em>) – aggregation of timeseries</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">result of function of every event</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">pd.Series</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="idf_analysis.sww_utils.check_tz">
+<code class="descclassname">idf_analysis.sww_utils.</code><code class="descname">check_tz</code><span class="sig-paren">(</span><em>timezone</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/sww_utils.html#check_tz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.sww_utils.check_tz" title="Permalink to this definition">¶</a></dt>
+<dd><p>check the give timezone</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>timezone</strong> (<em>tzinfo | str</em>) – </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">tzinfo</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="idf_analysis.sww_utils.guess_freq">
+<code class="descclassname">idf_analysis.sww_utils.</code><code class="descname">guess_freq</code><span class="sig-paren">(</span><em>date_time_index</em>, <em>default=Timedelta('0 days 00:01:00')</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/sww_utils.html#guess_freq"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.sww_utils.guess_freq" title="Permalink to this definition">¶</a></dt>
+<dd><p>return most often frequency in the format [minutes]T eg: “1T” when the frequency is one minute</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>date_time_index</strong> (<em>DatetimeIndex</em>) – </li>
+<li><strong>default</strong> (<em>Timedelta</em>) – </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">DateOffset</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="idf_analysis.sww_utils.rain_events">
+<code class="descclassname">idf_analysis.sww_utils.</code><code class="descname">rain_events</code><span class="sig-paren">(</span><em>series</em>, <em>ignore_rain_below=0</em>, <em>min_gap=Timedelta('0 days 04:00:00')</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/sww_utils.html#rain_events"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.sww_utils.rain_events" title="Permalink to this definition">¶</a></dt>
+<dd><p>get rain events as a table with start and end times</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>series</strong> (<em>pd.Series</em>) – rain series</li>
+<li><strong>ignore_rain_below</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – where it is considered as rain</li>
+<li><strong>min_gap</strong> (<em>pd.Timedelta</em>) – 4 hours of no rain between events</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">table of the rain events</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">pd.DataFrame</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="idf_analysis.sww_utils.remove_timezone">
+<code class="descclassname">idf_analysis.sww_utils.</code><code class="descname">remove_timezone</code><span class="sig-paren">(</span><em>df</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/sww_utils.html#remove_timezone"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.sww_utils.remove_timezone" title="Permalink to this definition">¶</a></dt>
+<dd><p>convert the timezone to wintertime and then remove the timezone from the dataframe index, to not get in conflict
+with the plot functions</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>df</strong> (<em>DataFrame</em>) – data</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">converted data</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">DataFrame</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="main-function">
+<h2>Main Function<a class="headerlink" href="#main-function" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse">
+<em class="property">class </em><code class="descclassname">idf_analysis.idf_class.</code><code class="descname">IntensityDurationFrequencyAnalyse</code><span class="sig-paren">(</span><em>series_kind='partial'</em>, <em>worksheet='DWA-A_531'</em>, <em>output_path=None</em>, <em>extended_durations=False</em>, <em>output_filename=None</em>, <em>auto_save=False</em>, <em>unix=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/idf_class.html#IntensityDurationFrequencyAnalyse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse" title="Permalink to this definition">¶</a></dt>
+<dd><p>heavy rain as a function of the duration and the return period acc. to DWA-A 531 (2012)</p>
+<p>This program reads the measurement data of the rainfall
+and calculates the distribution of the rainfall as a function of the return period and the duration</p>
+<p>for duration steps up to 12 hours (and more) and return period in a range of ‘0.5a &lt;= T_n &lt;= 100a’</p>
+<dl class="method">
+<dt id="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.depth_of_rainfall">
+<code class="descname">depth_of_rainfall</code><span class="sig-paren">(</span><em>duration</em>, <em>return_period</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/idf_class.html#IntensityDurationFrequencyAnalyse.depth_of_rainfall"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.depth_of_rainfall" title="Permalink to this definition">¶</a></dt>
+<dd><p>calculate the height of the rainfall in [l/m² = mm]</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>duration</strong> (<em>float | np.array | pd.Series</em>) – in [min]</li>
+<li><strong>return_period</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">height of the rainfall in [l/m² = mm]</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.get_duration">
+<code class="descname">get_duration</code><span class="sig-paren">(</span><em>height_of_rainfall</em>, <em>return_period</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/idf_class.html#IntensityDurationFrequencyAnalyse.get_duration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.get_duration" title="Permalink to this definition">¶</a></dt>
+<dd><p>calculate the return period, when the height of rainfall and the duration are given</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>height_of_rainfall</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – in [mm]</li>
+<li><strong>duration</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">return period</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.get_return_period">
+<code class="descname">get_return_period</code><span class="sig-paren">(</span><em>height_of_rainfall</em>, <em>duration</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/idf_class.html#IntensityDurationFrequencyAnalyse.get_return_period"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.get_return_period" title="Permalink to this definition">¶</a></dt>
+<dd><p>calculate the return period, when the height of rainfall and the duration are given</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>height_of_rainfall</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – in [mm]</li>
+<li><strong>duration</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">return period</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.h2r">
+<em class="property">static </em><code class="descname">h2r</code><span class="sig-paren">(</span><em>height_of_rainfall</em>, <em>duration</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/idf_class.html#IntensityDurationFrequencyAnalyse.h2r"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.h2r" title="Permalink to this definition">¶</a></dt>
+<dd><p>calculate the specific rain flow rate in [l/(s*ha)]
+if 2 array-like parameters are give, a element-wise calculation will be made.
+So the length of the array must be the same.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>height_of_rainfall</strong> (<em>float | np.array | pd.Series</em>) – in [mm]</li>
+<li><strong>duration</strong> (<em>float | np.array | pd.Series</em>) – </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">specific rain flow rate in [l/(s*ha)]</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float | np.array | pd.Series</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.measured_points">
+<code class="descname">measured_points</code><span class="sig-paren">(</span><em>return_time</em>, <em>interim_results=None</em>, <em>max_duration=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/idf_class.html#IntensityDurationFrequencyAnalyse.measured_points"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.measured_points" title="Permalink to this definition">¶</a></dt>
+<dd><p>get the calculation results of the rainfall with u and w without the estimation of the formulation</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>return_time</strong> (<em>float | np.array | list | pd.Series</em>) – return period in [a]</li>
+<li><strong>interim_results</strong> (<em>pd.DataFrame</em>) – data with duration as index and u &amp; w as data</li>
+<li><strong>max_duration</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – max duration in [min]</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">series with duration as index and the height of the rainfall as data</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">pd.Series</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.measurement_period">
+<code class="descname">measurement_period</code><a class="headerlink" href="#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.measurement_period" title="Permalink to this definition">¶</a></dt>
+<dd><p>measuring time in years
+:rtype: float</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">return</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.print_depth_of_rainfall">
+<code class="descname">print_depth_of_rainfall</code><span class="sig-paren">(</span><em>duration</em>, <em>return_period</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/idf_class.html#IntensityDurationFrequencyAnalyse.print_depth_of_rainfall"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.print_depth_of_rainfall" title="Permalink to this definition">¶</a></dt>
+<dd><p>calculate and print the height of the rainfall in [l/m² = mm]</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>duration</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – in minutes</li>
+<li><strong>return_period</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – in years</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.print_rain_flow_rate">
+<code class="descname">print_rain_flow_rate</code><span class="sig-paren">(</span><em>duration</em>, <em>return_period</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/idf_class.html#IntensityDurationFrequencyAnalyse.print_rain_flow_rate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.print_rain_flow_rate" title="Permalink to this definition">¶</a></dt>
+<dd><p>calculate and print the flow rate of the rainfall in [l/(s*ha)]</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>duration</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – in minutes</li>
+<li><strong>return_period</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – in years</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.r2h">
+<em class="property">static </em><code class="descname">r2h</code><span class="sig-paren">(</span><em>rain_flow_rate</em>, <em>duration</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/idf_class.html#IntensityDurationFrequencyAnalyse.r2h"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.r2h" title="Permalink to this definition">¶</a></dt>
+<dd><p>convert the rain flow rate to the height of rainfall in [mm]
+if 2 array-like parameters are give, a element-wise calculation will be made.
+So the length of the array must be the same.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>rain_flow_rate</strong> (<em>float | np.array | pd.Series</em>) – in [l/(s*ha)]</li>
+<li><strong>duration</strong> (<em>float | np.array | pd.Series</em>) – </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">height of rainfall in [mm]</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float | np.array | pd.Series</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.rain_flow_rate">
+<code class="descname">rain_flow_rate</code><span class="sig-paren">(</span><em>duration</em>, <em>return_period</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/idf_class.html#IntensityDurationFrequencyAnalyse.rain_flow_rate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.rain_flow_rate" title="Permalink to this definition">¶</a></dt>
+<dd><p>convert the height of rainfall to the specific rain flow rate in [l/(s*ha)]
+if 2 array-like parameters are give, a element-wise calculation will be made.
+So the length of the array must be the same.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>duration</strong> (<em>float | np.array | pd.Series</em>) – </li>
+<li><strong>return_period</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">specific rain flow rate in [l/(s*ha)]</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float | np.array | pd.Series</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="example.html" class="btn btn-neutral float-right" title="Intensity Duration Frequency Analyse" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="Welcome to Intensity Duration Frequency Analyse’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Pichler
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

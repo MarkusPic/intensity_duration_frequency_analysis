@@ -5,6 +5,6 @@ __email__ = "markus.pichler@tugraz.at"
 __version__ = "0.1"
 __license__ = "MIT"
 
-from ._cl_script import tool_executor
+from . import IntensityDurationFrequencyAnalyse
 
-tool_executor()
+IntensityDurationFrequencyAnalyse.command_line_tool()

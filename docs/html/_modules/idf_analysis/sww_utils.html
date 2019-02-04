@@ -1,0 +1,369 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>idf_analysis.sww_utils &mdash; Intensity Duration Frequency Analyse 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Intensity Duration Frequency Analyse
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../example.html">Intensity Duration Frequency Analyse</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Intensity Duration Frequency Analyse</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>idf_analysis.sww_utils</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for idf_analysis.sww_utils</h1><div class="highlight"><pre>
+<span></span><span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;David Camhy, Markus Pichler&quot;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Copyright 2018, University of Technology Graz&quot;</span>
+<span class="n">__credits__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;David Camhy&quot;</span><span class="p">,</span> <span class="s2">&quot;Markus Pichler&quot;</span><span class="p">]</span>
+<span class="n">__license__</span> <span class="o">=</span> <span class="s2">&quot;MIT&quot;</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;1.0.0&quot;</span>
+<span class="n">__maintainer__</span> <span class="o">=</span> <span class="s2">&quot;David Camhy, Markus Pichler&quot;</span>
+
+<span class="kn">import</span> <span class="nn">pytz</span>
+<span class="kn">from</span> <span class="nn">tzlocal</span> <span class="k">import</span> <span class="n">get_localzone</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">tzinfo</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">pandas.tseries.frequencies</span> <span class="k">import</span> <span class="n">to_offset</span>
+<span class="kn">from</span> <span class="nn">pandas.tseries.offsets</span> <span class="k">import</span> <span class="n">_delta_to_tick</span> <span class="k">as</span> <span class="n">delta_to_freq</span>
+<span class="kn">from</span> <span class="nn">pandas</span> <span class="k">import</span> <span class="n">DatetimeIndex</span><span class="p">,</span> <span class="n">DateOffset</span><span class="p">,</span> <span class="n">Timedelta</span><span class="p">,</span> <span class="n">DataFrame</span>
+
+
+<div class="viewcode-block" id="TimezoneError"><a class="viewcode-back" href="../../api.html#idf_analysis.sww_utils.TimezoneError">[docs]</a><span class="k">class</span> <span class="nc">TimezoneError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Some Error With a Timezone&quot;&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="check_tz"><a class="viewcode-back" href="../../api.html#idf_analysis.sww_utils.check_tz">[docs]</a><span class="k">def</span> <span class="nf">check_tz</span><span class="p">(</span><span class="n">timezone</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    check the give timezone</span>
+
+<span class="sd">    :param timezone:</span>
+<span class="sd">    :type timezone: tzinfo | str</span>
+<span class="sd">    :return:</span>
+<span class="sd">    :rtype: tzinfo</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">timezone</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">pytz</span><span class="o">.</span><span class="n">timezone</span><span class="p">(</span><span class="n">timezone</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">TimezoneError</span><span class="p">(</span><span class="s1">&#39;&quot;</span><span class="si">{}</span><span class="s1">&quot; is not a timezone or unknown&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">timezone</span><span class="p">))</span>
+    <span class="c1"># else:</span>
+    <span class="c1">#     return timezone</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">timezone</span><span class="p">,</span> <span class="n">tzinfo</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">timezone</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">TimezoneError</span><span class="p">(</span><span class="s1">&#39;unknown timezone format: &quot;</span><span class="si">{}</span><span class="s1">&quot;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">timezone</span><span class="p">)))</span></div>
+
+
+<div class="viewcode-block" id="remove_timezone"><a class="viewcode-back" href="../../api.html#idf_analysis.sww_utils.remove_timezone">[docs]</a><span class="k">def</span> <span class="nf">remove_timezone</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    convert the timezone to wintertime and then remove the timezone from the dataframe index, to not get in conflict</span>
+<span class="sd">    with the plot functions</span>
+
+<span class="sd">    :param df: data</span>
+<span class="sd">    :type df: DataFrame</span>
+
+<span class="sd">    :return: converted data</span>
+<span class="sd">    :rtype: DataFrame</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">no_tz</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">index</span> <span class="o">=</span> <span class="n">no_tz</span><span class="o">.</span><span class="n">index</span>
+    <span class="n">native_timezone</span> <span class="o">=</span> <span class="n">pytz</span><span class="o">.</span><span class="n">timezone</span><span class="p">(</span><span class="s1">&#39;Etc/GMT-1&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">index</span><span class="o">.</span><span class="n">tz</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">TimezoneError</span><span class="p">(</span><span class="s2">&quot;Dataframe must have a timezone information&quot;</span><span class="p">)</span>
+    <span class="n">timezone</span> <span class="o">=</span> <span class="n">check_tz</span><span class="p">(</span><span class="n">native_timezone</span><span class="p">)</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">tz_convert</span><span class="p">(</span><span class="n">check_tz</span><span class="p">(</span><span class="n">timezone</span><span class="p">))</span>
+    <span class="n">no_tz</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">idx</span><span class="o">.</span><span class="n">tz_localize</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">no_tz</span></div>
+
+
+<span class="c1">########################################################################################################################</span>
+<div class="viewcode-block" id="guess_freq"><a class="viewcode-back" href="../../api.html#idf_analysis.sww_utils.guess_freq">[docs]</a><span class="k">def</span> <span class="nf">guess_freq</span><span class="p">(</span><span class="n">date_time_index</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="mi">1</span><span class="p">)):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    return most often frequency in the format [minutes]T eg: &quot;1T&quot; when the frequency is one minute</span>
+
+<span class="sd">    :param DatetimeIndex date_time_index:</span>
+<span class="sd">    :param Timedelta default:</span>
+<span class="sd">    :rtype: DateOffset</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># ---------------------------------</span>
+    <span class="k">def</span> <span class="nf">_get_freq</span><span class="p">(</span><span class="n">freq</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">freq</span> <span class="o">=</span> <span class="n">to_offset</span><span class="p">(</span><span class="n">freq</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">freq</span>
+
+    <span class="c1"># ---------------------------------</span>
+    <span class="n">freq</span> <span class="o">=</span> <span class="n">date_time_index</span><span class="o">.</span><span class="n">freq</span>
+    <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">notnull</span><span class="p">(</span><span class="n">freq</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">_get_freq</span><span class="p">(</span><span class="n">freq</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">date_time_index</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">freq</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">infer_freq</span><span class="p">(</span><span class="n">date_time_index</span><span class="p">)</span>  <span class="c1"># &#39;T&#39;</span>
+
+        <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">notnull</span><span class="p">(</span><span class="n">freq</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">_get_freq</span><span class="p">(</span><span class="n">freq</span><span class="p">)</span>
+
+        <span class="n">delta_series</span> <span class="o">=</span> <span class="n">date_time_index</span><span class="o">.</span><span class="n">to_series</span><span class="p">()</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">periods</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;backfill&#39;</span><span class="p">)</span>
+        <span class="n">counts</span> <span class="o">=</span> <span class="n">delta_series</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+        <span class="n">counts</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">errors</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">counts</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+            <span class="n">delta</span> <span class="o">=</span> <span class="n">default</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">delta</span> <span class="o">=</span> <span class="n">counts</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">delta</span> <span class="o">==</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+                <span class="n">delta</span> <span class="o">=</span> <span class="n">default</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">delta</span> <span class="o">=</span> <span class="n">default</span>
+
+    <span class="n">freq</span> <span class="o">=</span> <span class="n">delta_to_freq</span><span class="p">(</span><span class="n">delta</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_get_freq</span><span class="p">(</span><span class="n">freq</span><span class="p">)</span></div>
+
+
+<span class="c1">########################################################################################################################</span>
+<span class="k">def</span> <span class="nf">year_delta</span><span class="p">(</span><span class="n">years</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mf">365.25</span> <span class="o">*</span> <span class="n">years</span><span class="p">)</span>
+
+
+<span class="c1">########################################################################################################################</span>
+<div class="viewcode-block" id="rain_events"><a class="viewcode-back" href="../../api.html#idf_analysis.sww_utils.rain_events">[docs]</a><span class="k">def</span> <span class="nf">rain_events</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">ignore_rain_below</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">min_gap</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="mi">4</span><span class="p">)):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    get rain events as a table with start and end times</span>
+
+<span class="sd">    :param series: rain series</span>
+<span class="sd">    :type series: pd.Series</span>
+
+<span class="sd">    :param ignore_rain_below: where it is considered as rain</span>
+<span class="sd">    :type ignore_rain_below: float</span>
+
+<span class="sd">    :param min_gap: 4 hours of no rain between events</span>
+<span class="sd">    :type min_gap: pd.Timedelta</span>
+
+<span class="sd">    :return: table of the rain events</span>
+<span class="sd">    :rtype: pd.DataFrame</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># best OKOSTRA adjustment with 0.0</span>
+    <span class="c1"># by ignoring 0.1 mm the results are getting bigger</span>
+
+    <span class="c1"># remove values below a from the database</span>
+    <span class="n">temp</span> <span class="o">=</span> <span class="n">series</span><span class="p">[</span><span class="n">series</span> <span class="o">&gt;</span> <span class="n">ignore_rain_below</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">to_series</span><span class="p">()</span>
+
+    <span class="c1"># 4 hours of no rain between events</span>
+
+    <span class="n">event_end</span> <span class="o">=</span> <span class="n">temp</span><span class="p">[</span><span class="n">temp</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">periods</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="o">-</span><span class="n">min_gap</span><span class="p">]</span>
+    <span class="n">event_end</span> <span class="o">=</span> <span class="n">event_end</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">temp</span><span class="o">.</span><span class="n">tail</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">event_start</span> <span class="o">=</span> <span class="n">temp</span><span class="p">[</span><span class="n">temp</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span> <span class="o">&gt;</span> <span class="n">min_gap</span><span class="p">]</span>
+    <span class="n">event_start</span> <span class="o">=</span> <span class="n">event_start</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">temp</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">event_start</span> <span class="o">=</span> <span class="n">event_start</span><span class="o">.</span><span class="n">sort_values</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">events</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">event_start</span><span class="p">,</span> <span class="n">event_end</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">events</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">,</span> <span class="s1">&#39;end&#39;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">events</span></div>
+
+
+<span class="c1">########################################################################################################################</span>
+<div class="viewcode-block" id="agg_events"><a class="viewcode-back" href="../../api.html#idf_analysis.sww_utils.agg_events">[docs]</a><span class="k">def</span> <span class="nf">agg_events</span><span class="p">(</span><span class="n">events</span><span class="p">,</span> <span class="n">series</span><span class="p">,</span> <span class="n">agg</span><span class="o">=</span><span class="s1">&#39;sum&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param events: table of events</span>
+<span class="sd">    :type events: pd.DataFrame</span>
+
+<span class="sd">    :param series: timeseries data</span>
+<span class="sd">    :type series: pd.Series</span>
+
+<span class="sd">    :param agg: aggregation of timeseries</span>
+<span class="sd">    :type agg: str | function</span>
+
+<span class="sd">    :return: result of function of every event</span>
+<span class="sd">    :rtype: pd.Series</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">_agg_event</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">series</span><span class="p">[</span><span class="n">event</span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">]:</span><span class="n">event</span><span class="p">[</span><span class="s1">&#39;end&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="n">agg</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">events</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">_agg_event</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Pichler
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
