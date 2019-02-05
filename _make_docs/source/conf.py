@@ -49,8 +49,9 @@ extensions = [
     'sphinx.ext.githubpages',
     'sphinx.ext.autosummary',
     'sphinx.ext.extlinks',
-    'sphinx.ext.napoleon',
-    'nbsphinx',
+    'sphinx.ext.napoleon',  # numpy/google docstrings
+    'nbsphinx',  # jupyter notebook
+    'recommonmark'  # markdown
 ]
 
 # Add any paths that contain templates here, relative to this directory.
