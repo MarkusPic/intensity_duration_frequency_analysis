@@ -6,11 +6,11 @@ __version__ = "0.1"
 __license__ = "MIT"
 
 import argparse
-from idf_analysis.definitions import DWA, ATV, DWA_adv, PARTIAL, ANNUAL
+
+from .definitions import DWA, ATV, DWA_adv, PARTIAL, ANNUAL
 
 
-########################################################################################################################
-class Borders():
+class Borders(object):
     def __init__(self, min_=None, max_=None, unit=''):
         self.min_ = min_
         self.max_ = max_
@@ -38,7 +38,6 @@ class Borders():
         return iter([str(self)])
 
 
-########################################################################################################################
 def heavy_rain_parser():
     calc_help = ' (If two of the three variables ' \
                 '(rainfall, duration, return period) are given, ' \
