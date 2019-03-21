@@ -71,6 +71,7 @@ def guess_freq(date_time_index, default=pd.Timedelta(minutes=1)):
     :param Timedelta default:
     :rtype: DateOffset
     """
+
     # ---------------------------------
     def _get_freq(freq):
         if isinstance(freq, str):
@@ -112,7 +113,7 @@ def year_delta(years):
 
 
 ########################################################################################################################
-def rain_events(series, ignore_rain_below=0.001, min_gap=pd.Timedelta(hours=4)):
+def rain_events(series, ignore_rain_below=0, min_gap=pd.Timedelta(hours=4)):
     """
     get rain events as a table with start and end times
 
@@ -147,3 +148,26 @@ def rain_events(series, ignore_rain_below=0.001, min_gap=pd.Timedelta(hours=4)):
     events = pd.concat([event_start, event_end], axis=1, ignore_index=True)
     events.columns = ['start', 'end']
     return events
+
+
+########################################################################################################################
+def agg_events(events, series, agg='sum'):
+    """
+
+    :param events: table of events
+    :type events: pd.DataFrame
+
+    :param series: timeseries data
+    :type series: pd.Series
+
+    :param agg: aggregation of timeseries
+    :type agg: str | function
+
+    :return: result of function of every event
+    :rtype: pd.Series
+    """
+
+    def _agg_event(event):
+        return series[event['start']:event['end']].agg(agg)
+
+    return events.apply(_agg_event, axis=1)
