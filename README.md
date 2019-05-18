@@ -42,7 +42,7 @@ Packages required for this program will be installed with pip during the install
 ## Fresh install
 
 ```
-pip install https://codeload.github.com/MarkusPic/intensity_duration_frequency_analysis/zip/master
+pip install idf-analysis
 ```
 
 To install the package only for the local user account, add ```--user``` to the install command.
@@ -52,7 +52,7 @@ To install the package only for the local user account, add ```--user``` to the 
 To update the package, add ```--upgrade``` to the install command.
 
 ```
-pip install https://codeload.github.com/MarkusPic/intensity_duration_frequency_analysis/zip/master --upgrade
+pip install idf-analysis --upgrade
 ```
 
 # Usage
