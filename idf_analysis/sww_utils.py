@@ -40,18 +40,18 @@ def check_tz(timezone):
         raise TimezoneError('unknown timezone format: "{}"'.format(type(timezone)))
 
 
-def remove_timezone(df):
+def remove_timezone(data):
     """
     convert the timezone to wintertime and then remove the timezone from the dataframe index, to not get in conflict
     with the plot functions
 
-    :param df: data
-    :type df: DataFrame
+    Args:
+        data (pandas.DataFrame | pandas.Series): data with datetimeindex 
 
-    :return: converted data
-    :rtype: DataFrame
+    Returns:
+        pandas.DataFrame | pandas.Series: data with datetimeindex without timezone
     """
-    no_tz = df.copy()
+    no_tz = data.copy()
     index = no_tz.index
     native_timezone = pytz.timezone('Etc/GMT-1')
     if index.tz is None:
@@ -154,19 +154,14 @@ def rain_events(series, ignore_rain_below=0, min_gap=pd.Timedelta(hours=4)):
 def agg_events(events, series, agg='sum'):
     """
 
-    :param events: table of events
-    :type events: pd.DataFrame
+    Args:
+        events (pandas.DataFrame): table of events
+        series (pandas.Series): time-series data
+        agg (str | function): aggregation of time-series
 
-    :param series: timeseries data
-    :type series: pd.Series
-
-    :param agg: aggregation of timeseries
-    :type agg: str | function
-
-    :return: result of function of every event
-    :rtype: pd.Series
+    Returns:
+        pandas.Series: result of function of every event
     """
-
     def _agg_event(event):
         return series[event['start']:event['end']].agg(agg)
 

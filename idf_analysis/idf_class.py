@@ -23,7 +23,7 @@ from .sww_utils import remove_timezone, guess_freq, year_delta
 
 
 ########################################################################################################################
-class IntensityDurationFrequencyAnalyse(object):
+class IntensityDurationFrequencyAnalyse:
     """
     heavy rain as a function of the duration and the return period acc. to DWA-A 531 (2012)
 
@@ -36,12 +36,22 @@ class IntensityDurationFrequencyAnalyse(object):
     def __init__(self, series_kind=PARTIAL, worksheet=DWA, output_path=None, extended_durations=False,
                  output_filename=None, auto_save=False, unix=False, **kwargs):
         """
-        
-        :param str series_kind:
-        :param str worksheet:
-        :param str output_path:
-        :param bool extended_durations:
-        :param str output_filename:
+        heavy rain as a function of the duration and the return period acc. to DWA-A 531 (2012)
+
+        This program reads the measurement data of the rainfall
+        and calculates the distribution of the rainfall as a function of the return period and the duration
+
+        for duration steps up to 12 hours (and more) and return period in a range of '0.5a <= T_n <= 100a'
+
+        Args:
+            series_kind (str): ['partial', 'annual']
+            worksheet (str): ['DWA-A_531', 'ATV-A_121', 'DWA-A_531_advektiv']
+            output_path (str): path to directory where the (interim-)results get saved
+            extended_durations (bool): add [720, 1080, 1440, 2880, 4320, 5760, 7200, 8640] minutes to the calculation
+            output_filename (str): id/label/name of the series
+            auto_save (bool): if the interim-results get saved
+            unix (bool): using ',' (comma) for .csv-files else ';' (semicolon)
+            **kwargs: not in use
         """
         self.series_kind = series_kind
         self.worksheet = worksheet
@@ -77,33 +87,49 @@ class IntensityDurationFrequencyAnalyse(object):
 
         # self.duration_steps = pd.to_timedelta(self.duration_steps, unit='m')
 
-    # ------------------------------------------------------------------------------------------------------------------
+    # __________________________________________________________________________________________________________________
     @property
     def file_stamp(self):
+        """
+        Returns:
+            str: default filename for the (interim-)results
+        """
         return '_'.join(
             [self.data_base, self.worksheet, self.series_kind])  # , "{:0.0f}a".format(self.measurement_period)])
 
-    # ------------------------------------------------------------------------------------------------------------------
+    # __________________________________________________________________________________________________________________
+    @property
+    def output_filename(self):
+        """
+        Returns:
+            str: filename/-path for the (interim-)results
+        """
+        if self._output_filename is None:
+            return path.join(self._output_path, self.file_stamp)
+        else:
+            return path.join(self._output_path, self._output_filename)
+
+    # __________________________________________________________________________________________________________________
     @property
     def measurement_period(self):
         """
-        :return: measuring time in years
-        :rtype: float
+        Returns:
+            float: measuring time in years
         """
         if self.series is None:
             return np.NaN
         datetime_index = self.series.index
         return (datetime_index[-1] - datetime_index[0]) / year_delta(years=1)
 
-    @property
-    def output_filename(self):
-        if self._output_filename is None:
-            return path.join(self._output_path, self.file_stamp)
-        else:
-            return path.join(self._output_path, self._output_filename)
-
-    # ------------------------------------------------------------------------------------------------------------------
+    # __________________________________________________________________________________________________________________
     def set_series(self, series, name=None):
+        """
+        set the series for the analysis
+
+        Args:
+            series (pandas.Series): precipitation time-series
+            name (str): name of the series (used for the result filenames)
+        """
         self.series = series
         if self.data_base is None:
             self.data_base = name
@@ -123,9 +149,17 @@ class IntensityDurationFrequencyAnalyse(object):
                           "It is recommended to use at least ten years. "
                           "(-> Currently {}a used)".format(self.measurement_period))
 
-    # ------------------------------------------------------------------------------------------------------------------
+    # __________________________________________________________________________________________________________________
     @property
     def interim_results(self):
+        """
+        get the interim results
+        if previously saved read the file, else calculate the interim results
+        and if `auto_save` if TRUE save the results to a file
+
+        Returns:
+            pandas.DataFrame: interim results
+        """
         if self._interim_results is None:
             inter_file = self.output_filename + '_interim_results.csv'
             if path.isfile(inter_file):
@@ -141,23 +175,39 @@ class IntensityDurationFrequencyAnalyse(object):
 
         return self._interim_results
 
-    # ------------------------------------------------------------------------------------------------------------------
+    # __________________________________________________________________________________________________________________
     @property
     def parameter(self):
+        """
+        Returns:
+            pandas.DataFrame: calculation parameters
+        """
         if self._parameter is None:
             self._parameter = get_parameter(self.interim_results, self.worksheet)
         return self._parameter
 
     def save_parameters(self):
+        """
+        save parameters as .csv-file to the workspace/output_path
+        """
         par_file = self.output_filename + '_parameter.csv'
         if not path.isfile(par_file):
             self.parameter.to_csv(par_file, index=False, **csv_args(self._unix))
 
-    # ------------------------------------------------------------------------------------------------------------------
+    # __________________________________________________________________________________________________________________
     def get_u_w(self, duration):
+        """
+        calculate the u and w parameters depending on the durations
+
+        Args:
+            duration (numpy.ndarray | float | int): in minutes
+
+        Returns:
+
+        """
         return get_u_w(duration, self.parameter, self.interim_results)
 
-    # ------------------------------------------------------------------------------------------------------------------
+    # __________________________________________________________________________________________________________________
     def save_u_w(self, durations=None):
         if durations is None:
             durations = self.duration_steps
@@ -170,22 +220,22 @@ class IntensityDurationFrequencyAnalyse(object):
         df['w'] = w
         df.to_csv(fn, **csv_args(self._unix))
 
-    # ------------------------------------------------------------------------------------------------------------------
+    # __________________________________________________________________________________________________________________
     def depth_of_rainfall(self, duration, return_period):
         """
-        calculate the height of the rainfall in [l/m² = mm]
-        
-        :param duration: in [min]
-        :type duration: float | np.array | pd.Series
+        calculate the height of the rainfall h in L/m² = mm
 
-        :param return_period:
-        :type return_period: float
-        :return: height of the rainfall in [l/m² = mm]
+        Args:
+            duration (float | np.array | pd.Series): duration: in minutes
+            return_period (float): in years
+
+        Returns:
+            float: height of the rainfall h in L/m² = mm
         """
         u, w = self.get_u_w(duration)
         return depth_of_rainfall(u, w, self.series_kind, return_period)
 
-    # ------------------------------------------------------------------------------------------------------------------
+    # __________________________________________________________________________________________________________________
     def print_depth_of_rainfall(self, duration, return_period):
         """
         calculate and print the height of the rainfall in [l/m² = mm]
@@ -198,7 +248,7 @@ class IntensityDurationFrequencyAnalyse(object):
         print('Resultierende Regenhöhe h_N(T_n={:0.1f}a, D={:0.1f}min) = {:0.2f} mm'
               ''.format(return_period, duration, self.depth_of_rainfall(duration, return_period)))
 
-    # ------------------------------------------------------------------------------------------------------------------
+    # __________________________________________________________________________________________________________________
     @staticmethod
     def h2r(height_of_rainfall, duration):
         """
@@ -217,7 +267,7 @@ class IntensityDurationFrequencyAnalyse(object):
         """
         return height_of_rainfall / duration * (1000 / 6)
 
-    # ------------------------------------------------------------------------------------------------------------------
+    # __________________________________________________________________________________________________________________
     @staticmethod
     def r2h(rain_flow_rate, duration):
         """
@@ -236,6 +286,7 @@ class IntensityDurationFrequencyAnalyse(object):
         """
         return rain_flow_rate * duration / (1000 / 6)
 
+    # __________________________________________________________________________________________________________________
     def rain_flow_rate(self, duration, return_period):
         """
         convert the height of rainfall to the specific rain flow rate in [l/(s*ha)]
@@ -254,6 +305,7 @@ class IntensityDurationFrequencyAnalyse(object):
         return self.h2r(height_of_rainfall=self.depth_of_rainfall(duration=duration, return_period=return_period),
                         duration=duration)
 
+    # __________________________________________________________________________________________________________________
     def print_rain_flow_rate(self, duration, return_period):
         """
         calculate and print the flow rate of the rainfall in [l/(s*ha)]
@@ -267,10 +319,11 @@ class IntensityDurationFrequencyAnalyse(object):
         print('Resultierende Regenspende r_N(T_n={:0.1f}a, D={:0.1f}min) = {:0.2f} L/(s*ha)'
               ''.format(return_period, duration, self.rain_flow_rate(duration, return_period)))
 
+    # __________________________________________________________________________________________________________________
     def r_720_1(self):
         return self.rain_flow_rate(duration=720, return_period=1)
 
-    # ------------------------------------------------------------------------------------------------------------------
+    # __________________________________________________________________________________________________________________
     def get_return_period(self, height_of_rainfall, duration):
         """
         calculate the return period, when the height of rainfall and the duration are given
@@ -287,7 +340,7 @@ class IntensityDurationFrequencyAnalyse(object):
         u, w = self.get_u_w(duration)
         return np.exp((height_of_rainfall - u) / w)
 
-    # ------------------------------------------------------------------------------------------------------------------
+    # __________________________________________________________________________________________________________________
     def get_duration(self, height_of_rainfall, return_period):
         """
         calculate the return period, when the height of rainfall and the duration are given
@@ -306,7 +359,7 @@ class IntensityDurationFrequencyAnalyse(object):
         duration = np.interp(height_of_rainfall, h, durs)
         return duration
 
-    # ------------------------------------------------------------------------------------------------------------------
+    # __________________________________________________________________________________________________________________
     def result_table(self, durations=None, return_periods=None, add_names=False):
         if durations is None:
             durations = self.duration_steps
@@ -324,6 +377,7 @@ class IntensityDurationFrequencyAnalyse(object):
             result_table.columns.names = ['return period (a)', 'frequency (1/a)']
         return result_table
 
+    # __________________________________________________________________________________________________________________
     def write_table(self, durations=None, return_periods=None, add_names=False):
         table = self.result_table(durations=durations, return_periods=return_periods, add_names=add_names)
         fn = self.output_filename + '_results_h_N.csv'
@@ -332,7 +386,7 @@ class IntensityDurationFrequencyAnalyse(object):
 
         table.to_csv(fn, **csv_args(self._unix), float_format='%0.2f')
 
-    # ------------------------------------------------------------------------------------------------------------------
+    # __________________________________________________________________________________________________________________
     def measured_points(self, return_time, interim_results=None, max_duration=None):
         """
         get the calculation results of the rainfall with u and w without the estimation of the formulation
@@ -358,7 +412,7 @@ class IntensityDurationFrequencyAnalyse(object):
         return pd.Series(index=interim_results.index,
                          data=interim_results['u'] + interim_results['w'] * np.log(return_time))
 
-    # ------------------------------------------------------------------------------------------------------------------
+    # __________________________________________________________________________________________________________________
     def result_figure(self, min_duration=5.0, max_duration=720.0, logx=False, return_periods=None, color=False):
         duration_steps = np.arange(min_duration, max_duration + 1, 1)
         plt.style.use('bmh')
@@ -368,6 +422,8 @@ class IntensityDurationFrequencyAnalyse(object):
             return_periods = [1, 2, 5, 10, 50]
 
         table = self.result_table(durations=duration_steps, return_periods=return_periods)
+        if color:
+            table.columns.name = 'T$\mathsf{_N}$ in (a)'
         ax = table.plot(color=(None if color else 'black'), logx=logx, legend=color)
 
         for _, return_time in enumerate(return_periods):
@@ -392,8 +448,9 @@ class IntensityDurationFrequencyAnalyse(object):
         fig.tight_layout()
         return fig
 
-    def result_plot(self, min_duration=5.0, max_duration=720.0, logx=False, fmt='png', show=False):
-        fig = self.result_figure(min_duration=min_duration, max_duration=max_duration, logx=logx)
+    # __________________________________________________________________________________________________________________
+    def result_plot(self, min_duration=5.0, max_duration=720.0, logx=False, fmt='png', show=False, color=False):
+        fig = self.result_figure(min_duration=min_duration, max_duration=max_duration, logx=logx, color=color)
         fn = self.output_filename + '_idf_plot.' + fmt
         fig.savefig(fn, dpi=260)
         plt.close(fig)
@@ -401,6 +458,7 @@ class IntensityDurationFrequencyAnalyse(object):
             show_file(fn)
         return fn
 
+    # __________________________________________________________________________________________________________________
     def result_plot_XXX(self, min_duration=5.0, max_duration=720.0, logx=False, fmt='png', show=False):
         duration_steps = np.arange(min_duration, max_duration + 1, 1)
         colors = ['r', 'g', 'b', 'y', 'm']
@@ -476,6 +534,7 @@ class IntensityDurationFrequencyAnalyse(object):
             show_file(fn)
         return fn
 
+    # __________________________________________________________________________________________________________________
     def return_periods_frame(self, series, durations=None):
         if durations is None:
             durations = self.duration_steps
@@ -488,6 +547,7 @@ class IntensityDurationFrequencyAnalyse(object):
 
         return df
 
+    # __________________________________________________________________________________________________________________
     @classmethod
     def command_line_tool(cls):
 
@@ -496,7 +556,7 @@ class IntensityDurationFrequencyAnalyse(object):
 
         user = heavy_rain_parser()
 
-        # --------------------------------------------------------------------------------------------------------------
+        # --------------------------------------------------
         d = user.duration
         h = user.height_of_rainfall
         t = user.return_period
@@ -510,29 +570,29 @@ class IntensityDurationFrequencyAnalyse(object):
         if user.plot or user.export_table:
             auto_save = True
 
-        # --------------------------------------------------------------------------------------------------------------
+        # --------------------------------------------------
         idf = cls(series_kind=user.series_kind, worksheet=user.worksheet, output_path=out,
                   extended_durations=user.extended_duration, output_filename=name,
                   auto_save=auto_save, unix=user.unix)
 
-        # --------------------------------------------------------------------------------------------------------------
+        # --------------------------------------------------
         if user.r_720_1:
             d = 720
             t = 1
 
-        # --------------------------------------------------------------------------------------------------------------
+        # --------------------------------------------------
         ts = import_series(user.input)
         # ts.to_frame().to_parquet('.'.join(user.input.split('.')[:-1] + ['parquet']),engine='pyarrow')
 
-        # --------------------------------------------------------------------------------------------------------------
+        # --------------------------------------------------
         if _not_none(d) and not user.plot and not user.export_table:
             new_freq = floor(d / 4)
             ts = ts.resample('{:0.0f}T'.format(new_freq)).sum()
 
-        # --------------------------------------------------------------------------------------------------------------
+        # --------------------------------------------------
         idf.set_series(ts)
 
-        # --------------------------------------------------------------------------------------------------------------
+        # --------------------------------------------------
         if _not_none(d, t):
             idf.print_depth_of_rainfall(duration=d, return_period=t)
             idf.print_rain_flow_rate(duration=d, return_period=t)
@@ -549,10 +609,10 @@ class IntensityDurationFrequencyAnalyse(object):
             idf.print_depth_of_rainfall(duration=d, return_period=t)
             idf.print_rain_flow_rate(duration=d, return_period=t)
 
-        # --------------------------------------------------------------------------------------------------------------
+        # --------------------------------------------------
         if user.plot:
             idf.result_plot(show=True)
 
-        # --------------------------------------------------------------------------------------------------------------
+        # --------------------------------------------------
         if user.export_table:
             idf.write_table()

@@ -1,151 +1,38 @@
 
-
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
-<head>
-  <meta charset="utf-8">
-  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <title>idf_analysis.calculation_methods &mdash; Intensity Duration Frequency Analyse 0.1 documentation</title>
-  
 
-  
-  
-  
-  
-
-  
-
-  
-  
-    
-
-  
-
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>idf_analysis.calculation_methods &#8212; Intensity Duration Frequency Analyse 0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Intensity Duration Frequency Analyse 0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
 
-  
-  <script src="../../_static/js/modernizr.min.js"></script>
-
-</head>
-
-<body class="wy-body-for-nav">
-
-   
-  <div class="wy-grid-for-nav">
-
-    
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
-          
-
-          
-            <a href="../../index.html" class="icon icon-home"> Intensity Duration Frequency Analyse
-          
-
-          
-          </a>
-
-          
-            
-            
-          
-
-          
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
-    <input type="hidden" name="check_keywords" value="yes" />
-    <input type="hidden" name="area" value="default" />
-  </form>
-</div>
-
-          
-        </div>
-
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
-              <p class="caption"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../README.html">Intensity duration frequency analysis (based on KOSTRA)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../README.html#install">Install</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../README.html#usage">Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../README.html#commandline-tool">Commandline tool</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../README.html#example">Example</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../api.html">API</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../example.html">Intensity Duration Frequency Analyse</a></li>
-</ul>
-
-            
-          
-        </div>
-      </div>
-    </nav>
-
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../index.html">Intensity Duration Frequency Analyse</a>
-        
-      </nav>
-
-
-      <div class="wy-nav-content">
-        
-        <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
-  <ul class="wy-breadcrumbs">
-    
-      <li><a href="../../index.html">Docs</a> &raquo;</li>
-        
-          <li><a href="../index.html">Module code</a> &raquo;</li>
-        
-      <li>idf_analysis.calculation_methods</li>
-    
-    
-      <li class="wy-breadcrumbs-aside">
-        
-      </li>
-    
-  </ul>
-
-  
-  <hr/>
-</div>
-          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-           <div itemprop="articleBody">
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
             
   <h1>Source code for idf_analysis.calculation_methods</h1><div class="highlight"><pre>
 <span></span><span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Markus Pichler&quot;</span>
@@ -170,12 +57,12 @@
 <div class="viewcode-block" id="delta2min"><a class="viewcode-back" href="../../api.html#idf_analysis.calculation_methods.delta2min">[docs]</a><span class="k">def</span> <span class="nf">delta2min</span><span class="p">(</span><span class="n">time_delta</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    convert timedelta to float in minutes</span>
-<span class="sd">    </span>
-<span class="sd">    :param time_delta:</span>
-<span class="sd">    :type time_delta: pd.Timedelta</span>
-<span class="sd">    </span>
-<span class="sd">    :return: delta in [min]</span>
-<span class="sd">    :rtype: float</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        time_delta (pandas.Timedelta):</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        float: the timedelta in minutes</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># time_delta.total_seconds() / 60</span>
     <span class="k">return</span> <span class="n">time_delta</span> <span class="o">/</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
@@ -184,11 +71,14 @@
 <span class="c1">########################################################################################################################</span>
 <div class="viewcode-block" id="annual_series"><a class="viewcode-back" href="../../api.html#idf_analysis.calculation_methods.annual_series">[docs]</a><span class="k">def</span> <span class="nf">annual_series</span><span class="p">(</span><span class="n">events</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    create an annual series of the maximum overlapping sum per year and calculate the &quot;u&quot; and &quot;w&quot; parameters</span>
 <span class="sd">    acc. to DWA-A 531 chap. 5.1.5</span>
-<span class="sd">    </span>
-<span class="sd">    :param pd.DataFrame events:</span>
-<span class="sd">    :return: parameter u and w from the annual series for a specific duration step as a list</span>
-<span class="sd">    :rtype: tuple[float, float]</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        events (pandas.DataFrame): with columns=[start, end, max_overlapping_sum]</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple[float, float]: parameter u and w from the annual series for a specific duration step as a tuple</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">annually_series</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">events</span><span class="p">[</span><span class="n">MAX_OSUM</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">events</span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">MAX_OSUM</span><span class="p">)</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span>
         <span class="s1">&#39;AS&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
@@ -210,12 +100,15 @@
 <span class="c1">########################################################################################################################</span>
 <div class="viewcode-block" id="partial_series"><a class="viewcode-back" href="../../api.html#idf_analysis.calculation_methods.partial_series">[docs]</a><span class="k">def</span> <span class="nf">partial_series</span><span class="p">(</span><span class="n">events</span><span class="p">,</span> <span class="n">measurement_period</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    create an partial series of the largest overlapping sums and calculate the &quot;u&quot; and &quot;w&quot; parameters</span>
 <span class="sd">    acc. to DWA-A 531 chap. 5.1.4</span>
 
-<span class="sd">    :param pd.DataFrame events:</span>
-<span class="sd">    :param float measurement_period:</span>
-<span class="sd">    :return: parameter u and w from the partial series for a specific duration step as a list</span>
-<span class="sd">    :rtype: tuple[float, float]</span>
+<span class="sd">    Args:</span>
+<span class="sd">        events (pandas.DataFrame): with columns=[start, end, max_overlapping_sum]</span>
+<span class="sd">        measurement_period (float): in years</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple[float, float]: parameter u and w from the partial series for a specific duration step as a tuple</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">partially_series</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">events</span><span class="p">[</span><span class="n">MAX_OSUM</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">MAX_OSUM</span><span class="p">)</span>
     <span class="n">partially_series</span> <span class="o">=</span> <span class="n">partially_series</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -235,10 +128,13 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        plotting function acc. to DWA-A 531 chap. 5.1.3 for the partial series</span>
 
-<span class="sd">        :param k: running index</span>
-<span class="sd">        :param l: sample size</span>
-<span class="sd">        :param m: measurement period</span>
-<span class="sd">        :return: estimated empirical return period</span>
+<span class="sd">        Args:</span>
+<span class="sd">            k (float): running index</span>
+<span class="sd">            l (float): sample size</span>
+<span class="sd">            m (float): measurement period</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: estimated empirical return period</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">l</span> <span class="o">+</span> <span class="mf">0.2</span><span class="p">)</span> <span class="o">*</span> <span class="n">m</span> <span class="o">/</span> <span class="p">((</span><span class="n">k</span> <span class="o">-</span> <span class="mf">0.4</span><span class="p">)</span> <span class="o">*</span> <span class="n">l</span><span class="p">)</span>
 
@@ -255,25 +151,21 @@
 
 
 <span class="c1">########################################################################################################################</span>
-<div class="viewcode-block" id="calculate_u_wXX"><a class="viewcode-back" href="../../api.html#idf_analysis.calculation_methods.calculate_u_wXX">[docs]</a><span class="k">def</span> <span class="nf">calculate_u_wXX</span><span class="p">(</span><span class="n">file_input</span><span class="p">,</span> <span class="n">duration_steps</span><span class="p">,</span> <span class="n">measurement_period</span><span class="p">,</span> <span class="n">series_kind</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_calculate_u_w_OLD</span><span class="p">(</span><span class="n">file_input</span><span class="p">,</span> <span class="n">duration_steps</span><span class="p">,</span> <span class="n">measurement_period</span><span class="p">,</span> <span class="n">series_kind</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    statistical analysis for each duration step acc. to DWA-A 531 chap. 5.1</span>
 <span class="sd">    save the parameters of the distribution function as interim results</span>
 <span class="sd">    acc. to DWA-A 531 chap. 4.4: use the annual series only for measurement periods over 20 years</span>
 
-<span class="sd">    :param pd.Series file_input: original nieda-database</span>
-<span class="sd">    </span>
-<span class="sd">    :param duration_steps: in [min]</span>
-<span class="sd">    :type duration_steps: list[int] | np.ndarray</span>
-<span class="sd">    </span>
-<span class="sd">    :param measurement_period: duration of the series in [a]</span>
-<span class="sd">    :type measurement_period: float</span>
-<span class="sd">    </span>
-<span class="sd">    :param series_kind: annual or partial</span>
-<span class="sd">    :type series_kind: str</span>
-<span class="sd">    </span>
-<span class="sd">    :return: with index = duration and columns = [u, w]</span>
-<span class="sd">    :rtype: pd.DataFrame</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        file_input (pandas.Series): data</span>
+<span class="sd">        duration_steps (list[int] | numpy.ndarray): in minutes</span>
+<span class="sd">        measurement_period (float): duration of the series in years</span>
+<span class="sd">        series_kind (str): annual or partial series</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pandas.DataFrame: with index = duration and columns = [u, w]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># check(&#39;start&#39;)</span>
     <span class="n">ts</span> <span class="o">=</span> <span class="n">file_input</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
@@ -289,15 +181,13 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        calculation of the maximum of the overlapping sum of the series</span>
 <span class="sd">        acc. to DWA-A 531 chap. 4.2</span>
-<span class="sd">        </span>
-<span class="sd">        :param event: event</span>
-<span class="sd">        :type event: pd.Series</span>
 
-<span class="sd">        :param duration: of the calculation step</span>
-<span class="sd">        :type duration: pd.Timedelta</span>
-<span class="sd">        </span>
-<span class="sd">        :return: maximum of the overlapping sum</span>
-<span class="sd">        :rtype float</span>
+<span class="sd">        Args:</span>
+<span class="sd">            event (pandas.Series): event with index=[start, end]</span>
+<span class="sd">            duration (pandas.Timedelta): of the calculation step</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: maximum of the overlapping sum</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">ts</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">event</span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">]:</span><span class="n">event</span><span class="p">[</span><span class="s1">&#39;end&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="n">interval</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">duration</span> <span class="o">/</span> <span class="n">base_frequency</span><span class="p">))</span>
@@ -344,7 +234,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span>
         <span class="c1"># check(&#39; - done&#39;)</span>
-    <span class="k">return</span> <span class="n">interim_results</span></div>
+    <span class="k">return</span> <span class="n">interim_results</span>
 
 
 <span class="c1">########################################################################################################################</span>
@@ -352,19 +242,22 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    correction factor acc. to DWA-A 531 chap. 4.3</span>
 
-<span class="sd">    :param interval: length of the interval: number of observations per duration</span>
-<span class="sd">    :type interval: float</span>
-<span class="sd">    :return: correction factor</span>
-<span class="sd">    :rtype: float</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">improve_factor</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">({</span><span class="mi">1</span><span class="p">:</span> <span class="mf">1.14</span><span class="p">,</span>
-                                <span class="mi">2</span><span class="p">:</span> <span class="mf">1.07</span><span class="p">,</span>
-                                <span class="mi">3</span><span class="p">:</span> <span class="mf">1.04</span><span class="p">,</span>
-                                <span class="mi">4</span><span class="p">:</span> <span class="mf">1.03</span><span class="p">,</span>
-                                <span class="mi">5</span><span class="p">:</span> <span class="mf">1.00</span><span class="p">,</span>
-                                <span class="mi">6</span><span class="p">:</span> <span class="mf">1.00</span><span class="p">})</span>
+<span class="sd">    Args:</span>
+<span class="sd">        interval (float): length of the interval: number of observations per duration</span>
 
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">interval</span><span class="p">,</span> <span class="n">improve_factor</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">improve_factor</span><span class="p">)</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        float: correction factor</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">improve_factor</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">:</span> <span class="mf">1.14</span><span class="p">,</span>
+                      <span class="mi">2</span><span class="p">:</span> <span class="mf">1.07</span><span class="p">,</span>
+                      <span class="mi">3</span><span class="p">:</span> <span class="mf">1.04</span><span class="p">,</span>
+                      <span class="mi">4</span><span class="p">:</span> <span class="mf">1.03</span><span class="p">,</span>
+                      <span class="mi">5</span><span class="p">:</span> <span class="mf">1.00</span><span class="p">,</span>
+                      <span class="mi">6</span><span class="p">:</span> <span class="mf">1.00</span><span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">interval</span><span class="p">,</span>
+                     <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">(</span><span class="n">improve_factor</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span>
+                     <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">(</span><span class="n">improve_factor</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
 
 
 <span class="c1">########################################################################################################################</span>
@@ -374,19 +267,15 @@
 <span class="sd">    save the parameters of the distribution function as interim results</span>
 <span class="sd">    acc. to DWA-A 531 chap. 4.4: use the annual series only for measurement periods over 20 years</span>
 
-<span class="sd">    :param pd.Series file_input: original nieda-database</span>
 
-<span class="sd">    :param duration_steps: in [min]</span>
-<span class="sd">    :type duration_steps: list[int] | np.ndarray</span>
+<span class="sd">    Args:</span>
+<span class="sd">        file_input (pandas.Series): precipitation data</span>
+<span class="sd">        duration_steps (list[int] | numpy.ndarray): in minutes</span>
+<span class="sd">        measurement_period (float): duration of the series in years</span>
+<span class="sd">        series_kind (str): annual or partial</span>
 
-<span class="sd">    :param measurement_period: duration of the series in [a]</span>
-<span class="sd">    :type measurement_period: float</span>
-
-<span class="sd">    :param series_kind: annual or partial</span>
-<span class="sd">    :type series_kind: str</span>
-
-<span class="sd">    :return: with index = duration and columns = [u, w]</span>
-<span class="sd">    :rtype: pd.DataFrame</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        pandas.DataFrame: with index=durations and columns=[u, w]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">ts</span> <span class="o">=</span> <span class="n">file_input</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="n">base_frequency</span> <span class="o">=</span> <span class="n">guess_freq</span><span class="p">(</span><span class="n">file_input</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>  <span class="c1"># DateOffset/Timedelta</span>
@@ -430,7 +319,19 @@
 
 
 <span class="c1">########################################################################################################################</span>
-<span class="k">def</span> <span class="nf">folded_log_formulation</span><span class="p">(</span><span class="n">duration</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">case</span><span class="p">,</span> <span class="n">param_mean</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">duration_mean</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="folded_log_formulation"><a class="viewcode-back" href="../../api.html#idf_analysis.calculation_methods.folded_log_formulation">[docs]</a><span class="k">def</span> <span class="nf">folded_log_formulation</span><span class="p">(</span><span class="n">duration</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">case</span><span class="p">,</span> <span class="n">param_mean</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">duration_mean</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        duration:</span>
+<span class="sd">        param:</span>
+<span class="sd">        case:</span>
+<span class="sd">        param_mean:</span>
+<span class="sd">        duration_mean:</span>
+
+<span class="sd">    Returns:</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">param_mean</span> <span class="ow">and</span> <span class="n">duration_mean</span><span class="p">:</span>
         <span class="n">mean_ln_duration</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">duration_mean</span><span class="p">)</span>
         <span class="n">mean_ln_param</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">param_mean</span><span class="p">)</span>
@@ -454,11 +355,25 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
-    <span class="k">return</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span>
+    <span class="k">return</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span></div>
 
 
 <span class="c1">########################################################################################################################</span>
-<span class="k">def</span> <span class="nf">hyperbolic_formulation</span><span class="p">(</span><span class="n">duration</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">a_start</span><span class="o">=</span><span class="mf">20.0</span><span class="p">,</span> <span class="n">b_start</span><span class="o">=</span><span class="mf">15.0</span><span class="p">,</span> <span class="n">param_mean</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">duration_mean</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="hyperbolic_formulation"><a class="viewcode-back" href="../../api.html#idf_analysis.calculation_methods.hyperbolic_formulation">[docs]</a><span class="k">def</span> <span class="nf">hyperbolic_formulation</span><span class="p">(</span><span class="n">duration</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">a_start</span><span class="o">=</span><span class="mf">20.0</span><span class="p">,</span> <span class="n">b_start</span><span class="o">=</span><span class="mf">15.0</span><span class="p">,</span> <span class="n">param_mean</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">duration_mean</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        duration:</span>
+<span class="sd">        param:</span>
+<span class="sd">        a_start:</span>
+<span class="sd">        b_start:</span>
+<span class="sd">        param_mean:</span>
+<span class="sd">        duration_mean:</span>
+
+<span class="sd">    Returns:</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="c1"># ------------------------------------------------------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">get_param</span><span class="p">(</span><span class="n">dur</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">a_</span><span class="p">,</span> <span class="n">b_</span><span class="p">):</span>
         <span class="n">i</span> <span class="o">=</span> <span class="o">-</span><span class="n">a_</span> <span class="o">/</span> <span class="p">(</span><span class="n">dur</span> <span class="o">+</span> <span class="n">b_</span><span class="p">)</span>
@@ -491,11 +406,25 @@
         <span class="n">b</span> <span class="o">=</span> <span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="n">b_s</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
 
         <span class="n">iteration_steps</span> <span class="o">+=</span> <span class="mi">1</span>
-    <span class="k">return</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span>
+    <span class="k">return</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span></div>
 
 
 <span class="c1">########################################################################################################################</span>
-<span class="k">def</span> <span class="nf">formulation</span><span class="p">(</span><span class="n">approach</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">a_start</span><span class="o">=</span><span class="mf">20.0</span><span class="p">,</span> <span class="n">b_start</span><span class="o">=</span><span class="mf">15.0</span><span class="p">,</span> <span class="n">param_mean</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">duration_mean</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="formulation"><a class="viewcode-back" href="../../api.html#idf_analysis.calculation_methods.formulation">[docs]</a><span class="k">def</span> <span class="nf">formulation</span><span class="p">(</span><span class="n">approach</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">a_start</span><span class="o">=</span><span class="mf">20.0</span><span class="p">,</span> <span class="n">b_start</span><span class="o">=</span><span class="mf">15.0</span><span class="p">,</span> <span class="n">param_mean</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">duration_mean</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        approach:</span>
+<span class="sd">        duration:</span>
+<span class="sd">        param:</span>
+<span class="sd">        a_start:</span>
+<span class="sd">        b_start:</span>
+<span class="sd">        param_mean:</span>
+<span class="sd">        duration_mean:</span>
+
+<span class="sd">    Returns:</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">approach</span> <span class="ow">in</span> <span class="p">[</span><span class="n">LOG1</span><span class="p">,</span> <span class="n">LOG2</span><span class="p">]:</span>
         <span class="k">return</span> <span class="n">folded_log_formulation</span><span class="p">(</span><span class="n">duration</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">case</span><span class="o">=</span><span class="n">approach</span><span class="p">,</span> <span class="n">param_mean</span><span class="o">=</span><span class="n">param_mean</span><span class="p">,</span>
                                       <span class="n">duration_mean</span><span class="o">=</span><span class="n">duration_mean</span><span class="p">)</span>
@@ -506,55 +435,80 @@
 
     <span class="k">elif</span> <span class="n">approach</span> <span class="o">==</span> <span class="n">LIN</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">NaN</span><span class="p">,</span> <span class="n">NaN</span>
+
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
 
 <span class="c1">########################################################################################################################</span>
 <div class="viewcode-block" id="get_duration_steps"><a class="viewcode-back" href="../../api.html#idf_analysis.calculation_methods.get_duration_steps">[docs]</a><span class="k">def</span> <span class="nf">get_duration_steps</span><span class="p">(</span><span class="n">worksheet</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    duration step boundary for the diverse distribution functions</span>
+<span class="sd">    duration step boundary for the various distribution functions in minutes</span>
 
-<span class="sd">    :param str worksheet:</span>
-<span class="sd">    :rtype: list[int, int]</span>
+<span class="sd">    Args:</span>
+<span class="sd">        worksheet (str):</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple[int, int]:</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">dur_steps</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">{</span>
         <span class="c1"># acc. to ATV-A 121 chap. 5.2 (till 2012)</span>
-        <span class="n">ATV</span><span class="p">:</span> <span class="p">[</span><span class="mi">60</span> <span class="o">*</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">48</span><span class="p">],</span>
+        <span class="n">ATV</span><span class="p">:</span> <span class="p">(</span><span class="mi">60</span> <span class="o">*</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">48</span><span class="p">),</span>
         <span class="c1"># acc. to DWA-A 531 chap. 5.2.1</span>
-        <span class="n">DWA_adv</span><span class="p">:</span> <span class="p">[</span><span class="mi">60</span> <span class="o">*</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">24</span><span class="p">],</span>
+        <span class="n">DWA_adv</span><span class="p">:</span> <span class="p">(</span><span class="mi">60</span> <span class="o">*</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">24</span><span class="p">),</span>
         <span class="c1"># acc. to DWA-A 531 chap. 5.2.1</span>
-        <span class="n">DWA</span><span class="p">:</span> <span class="p">[</span><span class="mi">60</span><span class="p">,</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">12</span><span class="p">]</span>
-    <span class="p">}</span>
-    <span class="k">return</span> <span class="n">dur_steps</span><span class="p">[</span><span class="n">worksheet</span><span class="p">]</span></div>
+        <span class="n">DWA</span><span class="p">:</span> <span class="p">(</span><span class="mi">60</span><span class="p">,</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">12</span><span class="p">)</span>
+    <span class="p">}[</span><span class="n">worksheet</span><span class="p">]</span></div>
 
 
 <span class="c1">########################################################################################################################</span>
-<span class="k">def</span> <span class="nf">get_approach_table</span><span class="p">(</span><span class="n">worksheet</span><span class="p">):</span>
-    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;von&#39;</span><span class="p">,</span> <span class="s1">&#39;bis&#39;</span><span class="p">,</span> <span class="s1">&#39;u&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="s1">&#39;a_u&#39;</span><span class="p">,</span> <span class="s1">&#39;b_u&#39;</span><span class="p">,</span> <span class="s1">&#39;a_w&#39;</span><span class="p">,</span> <span class="s1">&#39;b_w&#39;</span><span class="p">])</span>
+<div class="viewcode-block" id="get_approach_table"><a class="viewcode-back" href="../../api.html#idf_analysis.calculation_methods.get_approach_table">[docs]</a><span class="k">def</span> <span class="nf">get_approach_table</span><span class="p">(</span><span class="n">worksheet</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    table of approaches depending on the duration and the parameter</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        worksheet (str): worksheet name for the analysis:</span>
+<span class="sd">            - &#39;DWA-A_531&#39;</span>
+<span class="sd">            - &#39;ATV-A_121&#39;</span>
+<span class="sd">            - &#39;DWA-A_531_advektiv&#39; (yet not implemented)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pandas.DataFrame: table of approaches depending on the duration and the parameter</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">approach_table</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;von&#39;</span><span class="p">,</span> <span class="s1">&#39;bis&#39;</span><span class="p">,</span> <span class="s1">&#39;u&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="s1">&#39;a_u&#39;</span><span class="p">,</span> <span class="s1">&#39;b_u&#39;</span><span class="p">,</span> <span class="s1">&#39;a_w&#39;</span><span class="p">,</span> <span class="s1">&#39;b_w&#39;</span><span class="p">])</span>
 
     <span class="c1"># acc. to ATV-A 121 chap. 5.2.1</span>
     <span class="k">if</span> <span class="n">worksheet</span> <span class="o">==</span> <span class="n">ATV</span><span class="p">:</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">von</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bis</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">u</span><span class="o">=</span><span class="n">LOG2</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="n">LOG1</span><span class="p">),</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">approach_table</span> <span class="o">=</span> <span class="n">approach_table</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">von</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bis</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">u</span><span class="o">=</span><span class="n">LOG2</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="n">LOG1</span><span class="p">),</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="k">elif</span> <span class="n">worksheet</span> <span class="o">==</span> <span class="n">DWA</span><span class="p">:</span>
         <span class="n">duration_bound_1</span><span class="p">,</span> <span class="n">duration_bound_2</span> <span class="o">=</span> <span class="n">get_duration_steps</span><span class="p">(</span><span class="n">worksheet</span><span class="p">)</span>
 
-        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">von</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">bis</span><span class="o">=</span><span class="n">duration_bound_1</span><span class="p">,</span>
-                            <span class="n">u</span><span class="o">=</span><span class="n">HYP</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="n">LOG2</span><span class="p">),</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">von</span><span class="o">=</span><span class="n">duration_bound_1</span><span class="p">,</span> <span class="n">bis</span><span class="o">=</span><span class="n">duration_bound_2</span><span class="p">,</span>
-                            <span class="n">u</span><span class="o">=</span><span class="n">LOG2</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="n">LOG2</span><span class="p">),</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">von</span><span class="o">=</span><span class="n">duration_bound_2</span><span class="p">,</span> <span class="n">bis</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
-                            <span class="n">u</span><span class="o">=</span><span class="n">LIN</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="n">LIN</span><span class="p">),</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">approach_table</span> <span class="o">=</span> <span class="n">approach_table</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">von</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">bis</span><span class="o">=</span><span class="n">duration_bound_1</span><span class="p">,</span>
+                                                    <span class="n">u</span><span class="o">=</span><span class="n">HYP</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="n">LOG2</span><span class="p">),</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">approach_table</span> <span class="o">=</span> <span class="n">approach_table</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">von</span><span class="o">=</span><span class="n">duration_bound_1</span><span class="p">,</span> <span class="n">bis</span><span class="o">=</span><span class="n">duration_bound_2</span><span class="p">,</span>
+                                                    <span class="n">u</span><span class="o">=</span><span class="n">LOG2</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="n">LOG2</span><span class="p">),</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">approach_table</span> <span class="o">=</span> <span class="n">approach_table</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">von</span><span class="o">=</span><span class="n">duration_bound_2</span><span class="p">,</span> <span class="n">bis</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
+                                                    <span class="n">u</span><span class="o">=</span><span class="n">LIN</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="n">LIN</span><span class="p">),</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
-    <span class="k">return</span> <span class="n">df</span>
+    <span class="k">return</span> <span class="n">approach_table</span></div>
 
 
 <span class="c1">########################################################################################################################</span>
-<span class="k">def</span> <span class="nf">get_parameter</span><span class="p">(</span><span class="n">interim_results</span><span class="p">,</span> <span class="n">worksheet</span><span class="o">=</span><span class="n">DWA</span><span class="p">):</span>
+<div class="viewcode-block" id="get_parameter"><a class="viewcode-back" href="../../api.html#idf_analysis.calculation_methods.get_parameter">[docs]</a><span class="k">def</span> <span class="nf">get_parameter</span><span class="p">(</span><span class="n">interim_results</span><span class="p">,</span> <span class="n">worksheet</span><span class="o">=</span><span class="n">DWA</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    get calculation parameters</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        interim_results (pandas.DataFrame):</span>
+<span class="sd">        worksheet (str):</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pandas.DataFrame: parameters</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">parameter</span> <span class="o">=</span> <span class="n">get_approach_table</span><span class="p">(</span><span class="n">worksheet</span><span class="p">)</span>
 
     <span class="c1"># ------------------------------------------------------------------------------------------------------------------</span>
@@ -598,11 +552,21 @@
 
     <span class="n">u</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="n">get_u_w</span><span class="p">(</span><span class="n">durations</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">interim_results</span><span class="p">)</span>
     <span class="n">parameter</span> <span class="o">=</span> <span class="n">_calc_params</span><span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="n">params_mean</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">u</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">u</span><span class="p">),</span> <span class="n">w</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">w</span><span class="p">)),</span> <span class="n">duration_mean</span><span class="o">=</span><span class="n">duration_step</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">parameter</span>
+    <span class="k">return</span> <span class="n">parameter</span></div>
 
 
 <span class="c1">########################################################################################################################</span>
-<span class="k">def</span> <span class="nf">get_u_w</span><span class="p">(</span><span class="n">duration</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">interim_results</span><span class="p">):</span>
+<div class="viewcode-block" id="get_u_w"><a class="viewcode-back" href="../../api.html#idf_analysis.calculation_methods.get_u_w">[docs]</a><span class="k">def</span> <span class="nf">get_u_w</span><span class="p">(</span><span class="n">duration</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">interim_results</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        duration (numpy.ndarray | float | int): in minutes</span>
+<span class="sd">        parameter:</span>
+<span class="sd">        interim_results:</span>
+
+<span class="sd">    Returns:</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">duration</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
         <span class="n">duration</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">duration</span><span class="p">)</span>
 
@@ -611,12 +575,15 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        calc u(D) or w(D)</span>
 
-<span class="sd">        :type a: float | int</span>
-<span class="sd">        :type b: float | int</span>
-<span class="sd">        :type duration: float | np.array</span>
-<span class="sd">        :type approach: str</span>
-<span class="sd">        :type interim_results:</span>
-<span class="sd">        :rtype:</span>
+<span class="sd">        Args:</span>
+<span class="sd">            a (float):</span>
+<span class="sd">            b (float):</span>
+<span class="sd">            duration (float | numpy.ndarray):</span>
+<span class="sd">            approach (str):</span>
+<span class="sd">            interim_results (pandas.Series):</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: parameter</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">approach</span> <span class="o">==</span> <span class="n">LOG1</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">duration</span><span class="p">)</span>
@@ -651,11 +618,23 @@
                 <span class="n">res</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="n">p</span><span class="p">])</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">new</span><span class="p">))</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">res</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="n">new</span>
-    <span class="k">return</span> <span class="p">[</span><span class="n">res</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;u&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">]]</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">res</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;u&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">]]</span></div>
 
 
 <span class="c1">########################################################################################################################</span>
-<span class="k">def</span> <span class="nf">depth_of_rainfall</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">series_kind</span><span class="p">,</span> <span class="n">return_period</span><span class="p">):</span>
+<div class="viewcode-block" id="depth_of_rainfall"><a class="viewcode-back" href="../../api.html#idf_analysis.calculation_methods.depth_of_rainfall">[docs]</a><span class="k">def</span> <span class="nf">depth_of_rainfall</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">series_kind</span><span class="p">,</span> <span class="n">return_period</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    calculate the height of the rainfall h in L/m² = mm</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        u (float): parameter</span>
+<span class="sd">        w (float): parameter</span>
+<span class="sd">        series_kind (str): [&#39;partial&#39;, &#39;annual&#39;]</span>
+<span class="sd">        return_period (float): in years</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        float: height of the rainfall h in L/m² = mm</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">series_kind</span> <span class="o">==</span> <span class="n">ANNUAL</span> <span class="ow">and</span> <span class="n">return_period</span> <span class="o">&lt;=</span> <span class="mi">10</span><span class="p">:</span>
         <span class="n">return_period_asteriks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">return_period</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">return_period</span><span class="p">)</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">u</span> <span class="o">+</span> <span class="n">w</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">return_period_asteriks</span> <span class="o">/</span> <span class="p">(</span><span class="n">return_period_asteriks</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">))))</span>
@@ -664,10 +643,19 @@
         <span class="k">return</span> <span class="n">u</span> <span class="o">+</span> <span class="n">w</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">return_period</span> <span class="o">/</span> <span class="p">(</span><span class="n">return_period</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">))))</span>
 
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">u</span> <span class="o">+</span> <span class="n">w</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">return_period</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">u</span> <span class="o">+</span> <span class="n">w</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">return_period</span><span class="p">)</span></div>
 
 
-<span class="k">def</span> <span class="nf">minutes_readable</span><span class="p">(</span><span class="n">minutes</span><span class="p">):</span>
+<div class="viewcode-block" id="minutes_readable"><a class="viewcode-back" href="../../api.html#idf_analysis.calculation_methods.minutes_readable">[docs]</a><span class="k">def</span> <span class="nf">minutes_readable</span><span class="p">(</span><span class="n">minutes</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    convert the duration in minutes to a more readable form</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        minutes (float | int): duration in minutes</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: duration as a string</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">minutes</span> <span class="o">&lt;=</span> <span class="mi">60</span><span class="p">:</span>
         <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{:0.0f}</span><span class="s1">min&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">minutes</span><span class="p">)</span>
     <span class="k">elif</span> <span class="mi">60</span> <span class="o">&lt;</span> <span class="n">minutes</span> <span class="o">&lt;</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">24</span><span class="p">:</span>
@@ -685,63 +673,61 @@
             <span class="n">fmt</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{:0.0f}</span><span class="s1">d&#39;</span>
         <span class="k">return</span> <span class="n">fmt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">minutes</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">minutes</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">minutes</span><span class="p">)</span></div>
 
 
 <span class="c1">########################################################################################################################</span>
-<span class="k">def</span> <span class="nf">duration_steps_readable</span><span class="p">(</span><span class="n">durations</span><span class="p">):</span>
+<div class="viewcode-block" id="duration_steps_readable"><a class="viewcode-back" href="../../api.html#idf_analysis.calculation_methods.duration_steps_readable">[docs]</a><span class="k">def</span> <span class="nf">duration_steps_readable</span><span class="p">(</span><span class="n">durations</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    convert the durations to a more readable form</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        durations (list[int | float]): in minutes</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list[str]: of the readable duration list</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">duration_strings</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">minutes</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">durations</span><span class="p">):</span>
         <span class="n">duration_strings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">minutes_readable</span><span class="p">(</span><span class="n">minutes</span><span class="p">))</span>
-    <span class="k">return</span> <span class="n">duration_strings</span>
+    <span class="k">return</span> <span class="n">duration_strings</span></div>
 </pre></div>
 
-           </div>
-           
           </div>
-          <footer>
-  
-
-  <hr/>
-
-  <div role="contentinfo">
-    <p>
-        &copy; Copyright 2019, Pichler
-
-    </p>
-  </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
-
-</footer>
-
         </div>
       </div>
-
-    </section>
-
-  </div>
-  
-
-
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../_static/doctools.js"></script>
-    
-
-  
-
-  <script type="text/javascript" src="../../_static/js/theme.js"></script>
-
-  <script type="text/javascript">
-      jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
-      });
-  </script> 
-
-</body>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Intensity Duration Frequency Analyse 0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Pichler.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
+    </div>
+  </body>
 </html>

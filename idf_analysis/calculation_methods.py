@@ -20,12 +20,12 @@ MAX_OSUM = 'max_overlapping_sum'
 def delta2min(time_delta):
     """
     convert timedelta to float in minutes
-    
-    :param time_delta:
-    :type time_delta: pd.Timedelta
-    
-    :return: delta in [min]
-    :rtype: float
+
+    Args:
+        time_delta (pandas.Timedelta):
+
+    Returns:
+        float: the timedelta in minutes
     """
     # time_delta.total_seconds() / 60
     return time_delta / pd.Timedelta(minutes=1)
@@ -34,11 +34,14 @@ def delta2min(time_delta):
 ########################################################################################################################
 def annual_series(events):
     """
+    create an annual series of the maximum overlapping sum per year and calculate the "u" and "w" parameters
     acc. to DWA-A 531 chap. 5.1.5
-    
-    :param pd.DataFrame events:
-    :return: parameter u and w from the annual series for a specific duration step as a list
-    :rtype: tuple[float, float]
+
+    Args:
+        events (pandas.DataFrame): with columns=[start, end, max_overlapping_sum]
+
+    Returns:
+        tuple[float, float]: parameter u and w from the annual series for a specific duration step as a tuple
     """
     annually_series = pd.Series(data=events[MAX_OSUM].values, index=events['start'].values, name=MAX_OSUM).resample(
         'AS').max()
@@ -60,12 +63,15 @@ def annual_series(events):
 ########################################################################################################################
 def partial_series(events, measurement_period):
     """
+    create an partial series of the largest overlapping sums and calculate the "u" and "w" parameters
     acc. to DWA-A 531 chap. 5.1.4
 
-    :param pd.DataFrame events:
-    :param float measurement_period:
-    :return: parameter u and w from the partial series for a specific duration step as a list
-    :rtype: tuple[float, float]
+    Args:
+        events (pandas.DataFrame): with columns=[start, end, max_overlapping_sum]
+        measurement_period (float): in years
+
+    Returns:
+        tuple[float, float]: parameter u and w from the partial series for a specific duration step as a tuple
     """
     partially_series = pd.Series(data=events[MAX_OSUM].values, name=MAX_OSUM)
     partially_series = partially_series.sort_values(ascending=False).reset_index(drop=True)
@@ -85,10 +91,13 @@ def partial_series(events, measurement_period):
         """
         plotting function acc. to DWA-A 531 chap. 5.1.3 for the partial series
 
-        :param k: running index
-        :param l: sample size
-        :param m: measurement period
-        :return: estimated empirical return period
+        Args:
+            k (float): running index
+            l (float): sample size
+            m (float): measurement period
+
+        Returns:
+            float: estimated empirical return period
         """
         return (l + 0.2) * m / ((k - 0.4) * l)
 
@@ -105,25 +114,21 @@ def partial_series(events, measurement_period):
 
 
 ########################################################################################################################
-def calculate_u_wXX(file_input, duration_steps, measurement_period, series_kind):
+def _calculate_u_w_OLD(file_input, duration_steps, measurement_period, series_kind):
     """
     statistical analysis for each duration step acc. to DWA-A 531 chap. 5.1
     save the parameters of the distribution function as interim results
     acc. to DWA-A 531 chap. 4.4: use the annual series only for measurement periods over 20 years
 
-    :param pd.Series file_input: original nieda-database
-    
-    :param duration_steps: in [min]
-    :type duration_steps: list[int] | np.ndarray
-    
-    :param measurement_period: duration of the series in [a]
-    :type measurement_period: float
-    
-    :param series_kind: annual or partial
-    :type series_kind: str
-    
-    :return: with index = duration and columns = [u, w]
-    :rtype: pd.DataFrame
+
+    Args:
+        file_input (pandas.Series): data
+        duration_steps (list[int] | numpy.ndarray): in minutes
+        measurement_period (float): duration of the series in years
+        series_kind (str): annual or partial series
+
+    Returns:
+        pandas.DataFrame: with index = duration and columns = [u, w]
     """
     # check('start')
     ts = file_input.copy()
@@ -139,15 +144,13 @@ def calculate_u_wXX(file_input, duration_steps, measurement_period, series_kind)
         """
         calculation of the maximum of the overlapping sum of the series
         acc. to DWA-A 531 chap. 4.2
-        
-        :param event: event
-        :type event: pd.Series
 
-        :param duration: of the calculation step
-        :type duration: pd.Timedelta
-        
-        :return: maximum of the overlapping sum
-        :rtype float
+        Args:
+            event (pandas.Series): event with index=[start, end]
+            duration (pandas.Timedelta): of the calculation step
+
+        Returns:
+            float: maximum of the overlapping sum
         """
         data = ts.loc[event['start']:event['end']].copy()
         interval = int(round(duration / base_frequency))
@@ -202,19 +205,22 @@ def _improve_factor(interval):
     """
     correction factor acc. to DWA-A 531 chap. 4.3
 
-    :param interval: length of the interval: number of observations per duration
-    :type interval: float
-    :return: correction factor
-    :rtype: float
-    """
-    improve_factor = pd.Series({1: 1.14,
-                                2: 1.07,
-                                3: 1.04,
-                                4: 1.03,
-                                5: 1.00,
-                                6: 1.00})
+    Args:
+        interval (float): length of the interval: number of observations per duration
 
-    return np.interp(interval, improve_factor.index, improve_factor)
+    Returns:
+        float: correction factor
+    """
+    improve_factor = {1: 1.14,
+                      2: 1.07,
+                      3: 1.04,
+                      4: 1.03,
+                      5: 1.00,
+                      6: 1.00}
+
+    return np.interp(interval,
+                     np.ndarray(improve_factor.keys()),
+                     np.ndarray(improve_factor.values()))
 
 
 ########################################################################################################################
@@ -224,19 +230,15 @@ def calculate_u_w(file_input, duration_steps, measurement_period, series_kind):
     save the parameters of the distribution function as interim results
     acc. to DWA-A 531 chap. 4.4: use the annual series only for measurement periods over 20 years
 
-    :param pd.Series file_input: original nieda-database
 
-    :param duration_steps: in [min]
-    :type duration_steps: list[int] | np.ndarray
+    Args:
+        file_input (pandas.Series): precipitation data
+        duration_steps (list[int] | numpy.ndarray): in minutes
+        measurement_period (float): duration of the series in years
+        series_kind (str): annual or partial
 
-    :param measurement_period: duration of the series in [a]
-    :type measurement_period: float
-
-    :param series_kind: annual or partial
-    :type series_kind: str
-
-    :return: with index = duration and columns = [u, w]
-    :rtype: pd.DataFrame
+    Returns:
+        pandas.DataFrame: with index=durations and columns=[u, w]
     """
     ts = file_input.copy()
     base_frequency = guess_freq(file_input.index)  # DateOffset/Timedelta
@@ -281,6 +283,18 @@ def calculate_u_w(file_input, duration_steps, measurement_period, series_kind):
 
 ########################################################################################################################
 def folded_log_formulation(duration, param, case, param_mean=None, duration_mean=None):
+    """
+
+    Args:
+        duration:
+        param:
+        case:
+        param_mean:
+        duration_mean:
+
+    Returns:
+
+    """
     if param_mean and duration_mean:
         mean_ln_duration = np.log(duration_mean)
         mean_ln_param = np.log(param_mean)
@@ -309,6 +323,20 @@ def folded_log_formulation(duration, param, case, param_mean=None, duration_mean
 
 ########################################################################################################################
 def hyperbolic_formulation(duration, param, a_start=20.0, b_start=15.0, param_mean=None, duration_mean=None):
+    """
+
+    Args:
+        duration:
+        param:
+        a_start:
+        b_start:
+        param_mean:
+        duration_mean:
+
+    Returns:
+
+    """
+
     # ------------------------------------------------------------------------------------------------------------------
     def get_param(dur, par, a_, b_):
         i = -a_ / (dur + b_)
@@ -346,6 +374,20 @@ def hyperbolic_formulation(duration, param, a_start=20.0, b_start=15.0, param_me
 
 ########################################################################################################################
 def formulation(approach, duration, param, a_start=20.0, b_start=15.0, param_mean=None, duration_mean=None):
+    """
+
+    Args:
+        approach:
+        duration:
+        param:
+        a_start:
+        b_start:
+        param_mean:
+        duration_mean:
+
+    Returns:
+
+    """
     if approach in [LOG1, LOG2]:
         return folded_log_formulation(duration, param, case=approach, param_mean=param_mean,
                                       duration_mean=duration_mean)
@@ -356,6 +398,7 @@ def formulation(approach, duration, param, a_start=20.0, b_start=15.0, param_mea
 
     elif approach == LIN:
         return NaN, NaN
+
     else:
         raise NotImplementedError
 
@@ -363,48 +406,72 @@ def formulation(approach, duration, param, a_start=20.0, b_start=15.0, param_mea
 ########################################################################################################################
 def get_duration_steps(worksheet):
     """
-    duration step boundary for the diverse distribution functions
+    duration step boundary for the various distribution functions in minutes
 
-    :param str worksheet:
-    :rtype: list[int, int]
+    Args:
+        worksheet (str):
+
+    Returns:
+        tuple[int, int]:
     """
-    dur_steps = {
+    return {
         # acc. to ATV-A 121 chap. 5.2 (till 2012)
-        ATV: [60 * 3, 60 * 48],
+        ATV: (60 * 3, 60 * 48),
         # acc. to DWA-A 531 chap. 5.2.1
-        DWA_adv: [60 * 3, 60 * 24],
+        DWA_adv: (60 * 3, 60 * 24),
         # acc. to DWA-A 531 chap. 5.2.1
-        DWA: [60, 60 * 12]
-    }
-    return dur_steps[worksheet]
+        DWA: (60, 60 * 12)
+    }[worksheet]
 
 
 ########################################################################################################################
 def get_approach_table(worksheet):
-    df = pd.DataFrame(columns=['von', 'bis', 'u', 'w', 'a_u', 'b_u', 'a_w', 'b_w'])
+    """
+    table of approaches depending on the duration and the parameter
+
+    Args:
+        worksheet (str): worksheet name for the analysis:
+            - 'DWA-A_531'
+            - 'ATV-A_121'
+            - 'DWA-A_531_advektiv' (yet not implemented)
+
+    Returns:
+        pandas.DataFrame: table of approaches depending on the duration and the parameter
+    """
+    approach_table = pd.DataFrame(columns=['von', 'bis', 'u', 'w', 'a_u', 'b_u', 'a_w', 'b_w'])
 
     # acc. to ATV-A 121 chap. 5.2.1
     if worksheet == ATV:
-        df = df.append(dict(von=None, bis=None, u=LOG2, w=LOG1), ignore_index=True)
+        approach_table = approach_table.append(dict(von=None, bis=None, u=LOG2, w=LOG1), ignore_index=True)
 
     elif worksheet == DWA:
         duration_bound_1, duration_bound_2 = get_duration_steps(worksheet)
 
-        df = df.append(dict(von=0, bis=duration_bound_1,
-                            u=HYP, w=LOG2), ignore_index=True)
-        df = df.append(dict(von=duration_bound_1, bis=duration_bound_2,
-                            u=LOG2, w=LOG2), ignore_index=True)
-        df = df.append(dict(von=duration_bound_2, bis=np.inf,
-                            u=LIN, w=LIN), ignore_index=True)
+        approach_table = approach_table.append(dict(von=0, bis=duration_bound_1,
+                                                    u=HYP, w=LOG2), ignore_index=True)
+        approach_table = approach_table.append(dict(von=duration_bound_1, bis=duration_bound_2,
+                                                    u=LOG2, w=LOG2), ignore_index=True)
+        approach_table = approach_table.append(dict(von=duration_bound_2, bis=np.inf,
+                                                    u=LIN, w=LIN), ignore_index=True)
 
     else:
         raise NotImplementedError
 
-    return df
+    return approach_table
 
 
 ########################################################################################################################
 def get_parameter(interim_results, worksheet=DWA):
+    """
+    get calculation parameters
+
+    Args:
+        interim_results (pandas.DataFrame):
+        worksheet (str):
+
+    Returns:
+        pandas.DataFrame: parameters
+    """
     parameter = get_approach_table(worksheet)
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -453,6 +520,16 @@ def get_parameter(interim_results, worksheet=DWA):
 
 ########################################################################################################################
 def get_u_w(duration, parameter, interim_results):
+    """
+
+    Args:
+        duration (numpy.ndarray | float | int): in minutes
+        parameter:
+        interim_results:
+
+    Returns:
+
+    """
     if isinstance(duration, list):
         duration = np.array(duration)
 
@@ -461,12 +538,15 @@ def get_u_w(duration, parameter, interim_results):
         """
         calc u(D) or w(D)
 
-        :type a: float | int
-        :type b: float | int
-        :type duration: float | np.array
-        :type approach: str
-        :type interim_results:
-        :rtype:
+        Args:
+            a (float):
+            b (float):
+            duration (float | numpy.ndarray):
+            approach (str):
+            interim_results (pandas.Series):
+
+        Returns:
+            float: parameter
         """
         if approach == LOG1:
             return a + b * np.log(duration)
@@ -506,6 +586,18 @@ def get_u_w(duration, parameter, interim_results):
 
 ########################################################################################################################
 def depth_of_rainfall(u, w, series_kind, return_period):
+    """
+    calculate the height of the rainfall h in L/m² = mm
+
+    Args:
+        u (float): parameter
+        w (float): parameter
+        series_kind (str): ['partial', 'annual']
+        return_period (float): in years
+
+    Returns:
+        float: height of the rainfall h in L/m² = mm
+    """
     if series_kind == ANNUAL and return_period <= 10:
         return_period_asteriks = np.exp(1.0 / return_period) / (np.exp(1.0 / return_period) - 1.0)
         return u + w * (-np.log(np.log(return_period_asteriks / (return_period_asteriks - 1.0))))
@@ -518,6 +610,15 @@ def depth_of_rainfall(u, w, series_kind, return_period):
 
 
 def minutes_readable(minutes):
+    """
+    convert the duration in minutes to a more readable form
+
+    Args:
+        minutes (float | int): duration in minutes
+
+    Returns:
+        str: duration as a string
+    """
     if minutes <= 60:
         return '{:0.0f}min'.format(minutes)
     elif 60 < minutes < 60 * 24:
@@ -540,6 +641,15 @@ def minutes_readable(minutes):
 
 ########################################################################################################################
 def duration_steps_readable(durations):
+    """
+    convert the durations to a more readable form
+
+    Args:
+        durations (list[int | float]): in minutes
+
+    Returns:
+        list[str]: of the readable duration list
+    """
     duration_strings = list()
     for i, minutes in enumerate(durations):
         duration_strings.append(minutes_readable(minutes))

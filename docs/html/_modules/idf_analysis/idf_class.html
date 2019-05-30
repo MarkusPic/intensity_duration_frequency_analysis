@@ -1,151 +1,38 @@
 
-
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
-<head>
-  <meta charset="utf-8">
-  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <title>idf_analysis.idf_class &mdash; Intensity Duration Frequency Analyse 0.1 documentation</title>
-  
 
-  
-  
-  
-  
-
-  
-
-  
-  
-    
-
-  
-
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>idf_analysis.idf_class &#8212; Intensity Duration Frequency Analyse 0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Intensity Duration Frequency Analyse 0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
 
-  
-  <script src="../../_static/js/modernizr.min.js"></script>
-
-</head>
-
-<body class="wy-body-for-nav">
-
-   
-  <div class="wy-grid-for-nav">
-
-    
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
-          
-
-          
-            <a href="../../index.html" class="icon icon-home"> Intensity Duration Frequency Analyse
-          
-
-          
-          </a>
-
-          
-            
-            
-          
-
-          
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
-    <input type="hidden" name="check_keywords" value="yes" />
-    <input type="hidden" name="area" value="default" />
-  </form>
-</div>
-
-          
-        </div>
-
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
-              <p class="caption"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../README.html">Intensity duration frequency analysis (based on KOSTRA)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../README.html#install">Install</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../README.html#usage">Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../README.html#commandline-tool">Commandline tool</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../README.html#example">Example</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../api.html">API</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../example.html">Intensity Duration Frequency Analyse</a></li>
-</ul>
-
-            
-          
-        </div>
-      </div>
-    </nav>
-
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../index.html">Intensity Duration Frequency Analyse</a>
-        
-      </nav>
-
-
-      <div class="wy-nav-content">
-        
-        <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
-  <ul class="wy-breadcrumbs">
-    
-      <li><a href="../../index.html">Docs</a> &raquo;</li>
-        
-          <li><a href="../index.html">Module code</a> &raquo;</li>
-        
-      <li>idf_analysis.idf_class</li>
-    
-    
-      <li class="wy-breadcrumbs-aside">
-        
-      </li>
-    
-  </ul>
-
-  
-  <hr/>
-</div>
-          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-           <div itemprop="articleBody">
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
             
   <h1>Source code for idf_analysis.idf_class</h1><div class="highlight"><pre>
 <span></span><span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Markus Pichler&quot;</span>
@@ -173,7 +60,7 @@
 
 
 <span class="c1">########################################################################################################################</span>
-<div class="viewcode-block" id="IntensityDurationFrequencyAnalyse"><a class="viewcode-back" href="../../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse">[docs]</a><span class="k">class</span> <span class="nc">IntensityDurationFrequencyAnalyse</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="IntensityDurationFrequencyAnalyse"><a class="viewcode-back" href="../../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse">[docs]</a><span class="k">class</span> <span class="nc">IntensityDurationFrequencyAnalyse</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    heavy rain as a function of the duration and the return period acc. to DWA-A 531 (2012)</span>
 
@@ -186,12 +73,22 @@
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">series_kind</span><span class="o">=</span><span class="n">PARTIAL</span><span class="p">,</span> <span class="n">worksheet</span><span class="o">=</span><span class="n">DWA</span><span class="p">,</span> <span class="n">output_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">extended_durations</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                  <span class="n">output_filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">auto_save</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">unix</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        </span>
-<span class="sd">        :param str series_kind:</span>
-<span class="sd">        :param str worksheet:</span>
-<span class="sd">        :param str output_path:</span>
-<span class="sd">        :param bool extended_durations:</span>
-<span class="sd">        :param str output_filename:</span>
+<span class="sd">        heavy rain as a function of the duration and the return period acc. to DWA-A 531 (2012)</span>
+
+<span class="sd">        This program reads the measurement data of the rainfall</span>
+<span class="sd">        and calculates the distribution of the rainfall as a function of the return period and the duration</span>
+
+<span class="sd">        for duration steps up to 12 hours (and more) and return period in a range of &#39;0.5a &lt;= T_n &lt;= 100a&#39;</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            series_kind (str): [&#39;partial&#39;, &#39;annual&#39;]</span>
+<span class="sd">            worksheet (str): [&#39;DWA-A_531&#39;, &#39;ATV-A_121&#39;, &#39;DWA-A_531_advektiv&#39;]</span>
+<span class="sd">            output_path (str): path to directory where the (interim-)results get saved</span>
+<span class="sd">            extended_durations (bool): add [720, 1080, 1440, 2880, 4320, 5760, 7200, 8640] minutes to the calculation</span>
+<span class="sd">            output_filename (str): id/label/name of the series</span>
+<span class="sd">            auto_save (bool): if the interim-results get saved</span>
+<span class="sd">            unix (bool): using &#39;,&#39; (comma) for .csv-files else &#39;;&#39; (semicolon)</span>
+<span class="sd">            **kwargs: not in use</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">series_kind</span> <span class="o">=</span> <span class="n">series_kind</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">worksheet</span> <span class="o">=</span> <span class="n">worksheet</span>
@@ -227,33 +124,49 @@
 
         <span class="c1"># self.duration_steps = pd.to_timedelta(self.duration_steps, unit=&#39;m&#39;)</span>
 
-    <span class="c1"># ------------------------------------------------------------------------------------------------------------------</span>
+    <span class="c1"># __________________________________________________________________________________________________________________</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">file_stamp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            str: default filename for the (interim-)results</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="s1">&#39;_&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
             <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">data_base</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">worksheet</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">series_kind</span><span class="p">])</span>  <span class="c1"># , &quot;{:0.0f}a&quot;.format(self.measurement_period)])</span>
 
-    <span class="c1"># ------------------------------------------------------------------------------------------------------------------</span>
+    <span class="c1"># __________________________________________________________________________________________________________________</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">output_filename</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            str: filename/-path for the (interim-)results</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_filename</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_output_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_stamp</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_output_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_filename</span><span class="p">)</span>
+
+    <span class="c1"># __________________________________________________________________________________________________________________</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">measurement_period</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        :return: measuring time in years</span>
-<span class="sd">        :rtype: float</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            float: measuring time in years</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">series</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span>
         <span class="n">datetime_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">series</span><span class="o">.</span><span class="n">index</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">datetime_index</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">datetime_index</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="n">year_delta</span><span class="p">(</span><span class="n">years</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">output_filename</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_filename</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_output_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_stamp</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_output_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_filename</span><span class="p">)</span>
+    <span class="c1"># __________________________________________________________________________________________________________________</span>
+<div class="viewcode-block" id="IntensityDurationFrequencyAnalyse.set_series"><a class="viewcode-back" href="../../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.set_series">[docs]</a>    <span class="k">def</span> <span class="nf">set_series</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">series</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        set the series for the analysis</span>
 
-    <span class="c1"># ------------------------------------------------------------------------------------------------------------------</span>
-    <span class="k">def</span> <span class="nf">set_series</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">series</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="sd">        Args:</span>
+<span class="sd">            series (pandas.Series): precipitation time-series</span>
+<span class="sd">            name (str): name of the series (used for the result filenames)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">series</span> <span class="o">=</span> <span class="n">series</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_base</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">data_base</span> <span class="o">=</span> <span class="n">name</span>
@@ -271,11 +184,19 @@
         <span class="k">if</span> <span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">measurement_period</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">:</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;The measurement period is too short. The results may be inaccurate! &quot;</span>
                           <span class="s2">&quot;It is recommended to use at least ten years. &quot;</span>
-                          <span class="s2">&quot;(-&gt; Currently </span><span class="si">{}</span><span class="s2">a used)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">measurement_period</span><span class="p">))</span>
+                          <span class="s2">&quot;(-&gt; Currently </span><span class="si">{}</span><span class="s2">a used)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">measurement_period</span><span class="p">))</span></div>
 
-    <span class="c1"># ------------------------------------------------------------------------------------------------------------------</span>
+    <span class="c1"># __________________________________________________________________________________________________________________</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">interim_results</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        get the interim results</span>
+<span class="sd">        if previously saved read the file, else calculate the interim results</span>
+<span class="sd">        and if `auto_save` if TRUE save the results to a file</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pandas.DataFrame: interim results</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interim_results</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">inter_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_filename</span> <span class="o">+</span> <span class="s1">&#39;_interim_results.csv&#39;</span>
             <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">inter_file</span><span class="p">):</span>
@@ -291,23 +212,39 @@
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interim_results</span>
 
-    <span class="c1"># ------------------------------------------------------------------------------------------------------------------</span>
+    <span class="c1"># __________________________________________________________________________________________________________________</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            pandas.DataFrame: calculation parameters</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameter</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_parameter</span> <span class="o">=</span> <span class="n">get_parameter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">interim_results</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">worksheet</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameter</span>
 
-    <span class="k">def</span> <span class="nf">save_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="IntensityDurationFrequencyAnalyse.save_parameters"><a class="viewcode-back" href="../../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.save_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">save_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        save parameters as .csv-file to the workspace/output_path</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">par_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_filename</span> <span class="o">+</span> <span class="s1">&#39;_parameter.csv&#39;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">par_file</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">parameter</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">par_file</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">csv_args</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_unix</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parameter</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">par_file</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">csv_args</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_unix</span><span class="p">))</span></div>
 
-    <span class="c1"># ------------------------------------------------------------------------------------------------------------------</span>
-    <span class="k">def</span> <span class="nf">get_u_w</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">duration</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">get_u_w</span><span class="p">(</span><span class="n">duration</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameter</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">interim_results</span><span class="p">)</span>
+    <span class="c1"># __________________________________________________________________________________________________________________</span>
+<div class="viewcode-block" id="IntensityDurationFrequencyAnalyse.get_u_w"><a class="viewcode-back" href="../../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.get_u_w">[docs]</a>    <span class="k">def</span> <span class="nf">get_u_w</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">duration</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        calculate the u and w parameters depending on the durations</span>
 
-    <span class="c1"># ------------------------------------------------------------------------------------------------------------------</span>
+<span class="sd">        Args:</span>
+<span class="sd">            duration (numpy.ndarray | float | int): in minutes</span>
+
+<span class="sd">        Returns:</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">get_u_w</span><span class="p">(</span><span class="n">duration</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameter</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">interim_results</span><span class="p">)</span></div>
+
+    <span class="c1"># __________________________________________________________________________________________________________________</span>
     <span class="k">def</span> <span class="nf">save_u_w</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">durations</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">durations</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">durations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">duration_steps</span>
@@ -320,22 +257,22 @@
         <span class="n">df</span><span class="p">[</span><span class="s1">&#39;w&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">w</span>
         <span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="o">**</span><span class="n">csv_args</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_unix</span><span class="p">))</span>
 
-    <span class="c1"># ------------------------------------------------------------------------------------------------------------------</span>
+    <span class="c1"># __________________________________________________________________________________________________________________</span>
 <div class="viewcode-block" id="IntensityDurationFrequencyAnalyse.depth_of_rainfall"><a class="viewcode-back" href="../../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.depth_of_rainfall">[docs]</a>    <span class="k">def</span> <span class="nf">depth_of_rainfall</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">return_period</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        calculate the height of the rainfall in [l/m² = mm]</span>
-<span class="sd">        </span>
-<span class="sd">        :param duration: in [min]</span>
-<span class="sd">        :type duration: float | np.array | pd.Series</span>
+<span class="sd">        calculate the height of the rainfall h in L/m² = mm</span>
 
-<span class="sd">        :param return_period:</span>
-<span class="sd">        :type return_period: float</span>
-<span class="sd">        :return: height of the rainfall in [l/m² = mm]</span>
+<span class="sd">        Args:</span>
+<span class="sd">            duration (float | np.array | pd.Series): duration: in minutes</span>
+<span class="sd">            return_period (float): in years</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: height of the rainfall h in L/m² = mm</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">u</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_u_w</span><span class="p">(</span><span class="n">duration</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">depth_of_rainfall</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">series_kind</span><span class="p">,</span> <span class="n">return_period</span><span class="p">)</span></div>
 
-    <span class="c1"># ------------------------------------------------------------------------------------------------------------------</span>
+    <span class="c1"># __________________________________________________________________________________________________________________</span>
 <div class="viewcode-block" id="IntensityDurationFrequencyAnalyse.print_depth_of_rainfall"><a class="viewcode-back" href="../../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.print_depth_of_rainfall">[docs]</a>    <span class="k">def</span> <span class="nf">print_depth_of_rainfall</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">return_period</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        calculate and print the height of the rainfall in [l/m² = mm]</span>
@@ -348,7 +285,7 @@
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Resultierende Regenhöhe h_N(T_n=</span><span class="si">{:0.1f}</span><span class="s1">a, D=</span><span class="si">{:0.1f}</span><span class="s1">min) = </span><span class="si">{:0.2f}</span><span class="s1"> mm&#39;</span>
               <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">return_period</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">depth_of_rainfall</span><span class="p">(</span><span class="n">duration</span><span class="p">,</span> <span class="n">return_period</span><span class="p">)))</span></div>
 
-    <span class="c1"># ------------------------------------------------------------------------------------------------------------------</span>
+    <span class="c1"># __________________________________________________________________________________________________________________</span>
 <div class="viewcode-block" id="IntensityDurationFrequencyAnalyse.h2r"><a class="viewcode-back" href="../../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.h2r">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">h2r</span><span class="p">(</span><span class="n">height_of_rainfall</span><span class="p">,</span> <span class="n">duration</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -367,7 +304,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">height_of_rainfall</span> <span class="o">/</span> <span class="n">duration</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1000</span> <span class="o">/</span> <span class="mi">6</span><span class="p">)</span></div>
 
-    <span class="c1"># ------------------------------------------------------------------------------------------------------------------</span>
+    <span class="c1"># __________________________________________________________________________________________________________________</span>
 <div class="viewcode-block" id="IntensityDurationFrequencyAnalyse.r2h"><a class="viewcode-back" href="../../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.r2h">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">r2h</span><span class="p">(</span><span class="n">rain_flow_rate</span><span class="p">,</span> <span class="n">duration</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -386,6 +323,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">rain_flow_rate</span> <span class="o">*</span> <span class="n">duration</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1000</span> <span class="o">/</span> <span class="mi">6</span><span class="p">)</span></div>
 
+    <span class="c1"># __________________________________________________________________________________________________________________</span>
 <div class="viewcode-block" id="IntensityDurationFrequencyAnalyse.rain_flow_rate"><a class="viewcode-back" href="../../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.rain_flow_rate">[docs]</a>    <span class="k">def</span> <span class="nf">rain_flow_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">return_period</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        convert the height of rainfall to the specific rain flow rate in [l/(s*ha)]</span>
@@ -404,6 +342,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">h2r</span><span class="p">(</span><span class="n">height_of_rainfall</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">depth_of_rainfall</span><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="n">duration</span><span class="p">,</span> <span class="n">return_period</span><span class="o">=</span><span class="n">return_period</span><span class="p">),</span>
                         <span class="n">duration</span><span class="o">=</span><span class="n">duration</span><span class="p">)</span></div>
 
+    <span class="c1"># __________________________________________________________________________________________________________________</span>
 <div class="viewcode-block" id="IntensityDurationFrequencyAnalyse.print_rain_flow_rate"><a class="viewcode-back" href="../../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.print_rain_flow_rate">[docs]</a>    <span class="k">def</span> <span class="nf">print_rain_flow_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">return_period</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        calculate and print the flow rate of the rainfall in [l/(s*ha)]</span>
@@ -417,10 +356,11 @@
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Resultierende Regenspende r_N(T_n=</span><span class="si">{:0.1f}</span><span class="s1">a, D=</span><span class="si">{:0.1f}</span><span class="s1">min) = </span><span class="si">{:0.2f}</span><span class="s1"> L/(s*ha)&#39;</span>
               <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">return_period</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rain_flow_rate</span><span class="p">(</span><span class="n">duration</span><span class="p">,</span> <span class="n">return_period</span><span class="p">)))</span></div>
 
+    <span class="c1"># __________________________________________________________________________________________________________________</span>
     <span class="k">def</span> <span class="nf">r_720_1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rain_flow_rate</span><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="mi">720</span><span class="p">,</span> <span class="n">return_period</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
-    <span class="c1"># ------------------------------------------------------------------------------------------------------------------</span>
+    <span class="c1"># __________________________________________________________________________________________________________________</span>
 <div class="viewcode-block" id="IntensityDurationFrequencyAnalyse.get_return_period"><a class="viewcode-back" href="../../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.get_return_period">[docs]</a>    <span class="k">def</span> <span class="nf">get_return_period</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">height_of_rainfall</span><span class="p">,</span> <span class="n">duration</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        calculate the return period, when the height of rainfall and the duration are given</span>
@@ -437,7 +377,7 @@
         <span class="n">u</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_u_w</span><span class="p">(</span><span class="n">duration</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">((</span><span class="n">height_of_rainfall</span> <span class="o">-</span> <span class="n">u</span><span class="p">)</span> <span class="o">/</span> <span class="n">w</span><span class="p">)</span></div>
 
-    <span class="c1"># ------------------------------------------------------------------------------------------------------------------</span>
+    <span class="c1"># __________________________________________________________________________________________________________________</span>
 <div class="viewcode-block" id="IntensityDurationFrequencyAnalyse.get_duration"><a class="viewcode-back" href="../../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.get_duration">[docs]</a>    <span class="k">def</span> <span class="nf">get_duration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">height_of_rainfall</span><span class="p">,</span> <span class="n">return_period</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        calculate the return period, when the height of rainfall and the duration are given</span>
@@ -456,7 +396,7 @@
         <span class="n">duration</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">height_of_rainfall</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">durs</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">duration</span></div>
 
-    <span class="c1"># ------------------------------------------------------------------------------------------------------------------</span>
+    <span class="c1"># __________________________________________________________________________________________________________________</span>
     <span class="k">def</span> <span class="nf">result_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">durations</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">return_periods</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">add_names</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">durations</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">durations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">duration_steps</span>
@@ -474,6 +414,7 @@
             <span class="n">result_table</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;return period (a)&#39;</span><span class="p">,</span> <span class="s1">&#39;frequency (1/a)&#39;</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">result_table</span>
 
+    <span class="c1"># __________________________________________________________________________________________________________________</span>
     <span class="k">def</span> <span class="nf">write_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">durations</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">return_periods</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">add_names</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">result_table</span><span class="p">(</span><span class="n">durations</span><span class="o">=</span><span class="n">durations</span><span class="p">,</span> <span class="n">return_periods</span><span class="o">=</span><span class="n">return_periods</span><span class="p">,</span> <span class="n">add_names</span><span class="o">=</span><span class="n">add_names</span><span class="p">)</span>
         <span class="n">fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_filename</span> <span class="o">+</span> <span class="s1">&#39;_results_h_N.csv&#39;</span>
@@ -482,7 +423,7 @@
 
         <span class="n">table</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="o">**</span><span class="n">csv_args</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_unix</span><span class="p">),</span> <span class="n">float_format</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%0.2f</span><span class="s1">&#39;</span><span class="p">)</span>
 
-    <span class="c1"># ------------------------------------------------------------------------------------------------------------------</span>
+    <span class="c1"># __________________________________________________________________________________________________________________</span>
 <div class="viewcode-block" id="IntensityDurationFrequencyAnalyse.measured_points"><a class="viewcode-back" href="../../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.measured_points">[docs]</a>    <span class="k">def</span> <span class="nf">measured_points</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">return_time</span><span class="p">,</span> <span class="n">interim_results</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_duration</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        get the calculation results of the rainfall with u and w without the estimation of the formulation</span>
@@ -508,7 +449,7 @@
         <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">interim_results</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
                          <span class="n">data</span><span class="o">=</span><span class="n">interim_results</span><span class="p">[</span><span class="s1">&#39;u&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">interim_results</span><span class="p">[</span><span class="s1">&#39;w&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">return_time</span><span class="p">))</span></div>
 
-    <span class="c1"># ------------------------------------------------------------------------------------------------------------------</span>
+    <span class="c1"># __________________________________________________________________________________________________________________</span>
     <span class="k">def</span> <span class="nf">result_figure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">min_duration</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span> <span class="n">max_duration</span><span class="o">=</span><span class="mf">720.0</span><span class="p">,</span> <span class="n">logx</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">return_periods</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="n">duration_steps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">min_duration</span><span class="p">,</span> <span class="n">max_duration</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;bmh&#39;</span><span class="p">)</span>
@@ -542,6 +483,7 @@
         <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">fig</span>
 
+    <span class="c1"># __________________________________________________________________________________________________________________</span>
     <span class="k">def</span> <span class="nf">result_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">min_duration</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span> <span class="n">max_duration</span><span class="o">=</span><span class="mf">720.0</span><span class="p">,</span> <span class="n">logx</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;png&#39;</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="n">fig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">result_figure</span><span class="p">(</span><span class="n">min_duration</span><span class="o">=</span><span class="n">min_duration</span><span class="p">,</span> <span class="n">max_duration</span><span class="o">=</span><span class="n">max_duration</span><span class="p">,</span> <span class="n">logx</span><span class="o">=</span><span class="n">logx</span><span class="p">)</span>
         <span class="n">fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_filename</span> <span class="o">+</span> <span class="s1">&#39;_idf_plot.&#39;</span> <span class="o">+</span> <span class="n">fmt</span>
@@ -551,6 +493,7 @@
             <span class="n">show_file</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">fn</span>
 
+    <span class="c1"># __________________________________________________________________________________________________________________</span>
     <span class="k">def</span> <span class="nf">result_plot_XXX</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">min_duration</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span> <span class="n">max_duration</span><span class="o">=</span><span class="mf">720.0</span><span class="p">,</span> <span class="n">logx</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;png&#39;</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="n">duration_steps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">min_duration</span><span class="p">,</span> <span class="n">max_duration</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
         <span class="n">colors</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;m&#39;</span><span class="p">]</span>
@@ -626,6 +569,7 @@
             <span class="n">show_file</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">fn</span>
 
+    <span class="c1"># __________________________________________________________________________________________________________________</span>
     <span class="k">def</span> <span class="nf">return_periods_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">series</span><span class="p">,</span> <span class="n">durations</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">durations</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">durations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">duration_steps</span>
@@ -638,6 +582,7 @@
 
         <span class="k">return</span> <span class="n">df</span>
 
+    <span class="c1"># __________________________________________________________________________________________________________________</span>
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">command_line_tool</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
 
@@ -646,7 +591,7 @@
 
         <span class="n">user</span> <span class="o">=</span> <span class="n">heavy_rain_parser</span><span class="p">()</span>
 
-        <span class="c1"># --------------------------------------------------------------------------------------------------------------</span>
+        <span class="c1"># --------------------------------------------------</span>
         <span class="n">d</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">duration</span>
         <span class="n">h</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">height_of_rainfall</span>
         <span class="n">t</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">return_period</span>
@@ -660,29 +605,29 @@
         <span class="k">if</span> <span class="n">user</span><span class="o">.</span><span class="n">plot</span> <span class="ow">or</span> <span class="n">user</span><span class="o">.</span><span class="n">export_table</span><span class="p">:</span>
             <span class="n">auto_save</span> <span class="o">=</span> <span class="kc">True</span>
 
-        <span class="c1"># --------------------------------------------------------------------------------------------------------------</span>
+        <span class="c1"># --------------------------------------------------</span>
         <span class="n">idf</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">series_kind</span><span class="o">=</span><span class="n">user</span><span class="o">.</span><span class="n">series_kind</span><span class="p">,</span> <span class="n">worksheet</span><span class="o">=</span><span class="n">user</span><span class="o">.</span><span class="n">worksheet</span><span class="p">,</span> <span class="n">output_path</span><span class="o">=</span><span class="n">out</span><span class="p">,</span>
                   <span class="n">extended_durations</span><span class="o">=</span><span class="n">user</span><span class="o">.</span><span class="n">extended_duration</span><span class="p">,</span> <span class="n">output_filename</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
                   <span class="n">auto_save</span><span class="o">=</span><span class="n">auto_save</span><span class="p">,</span> <span class="n">unix</span><span class="o">=</span><span class="n">user</span><span class="o">.</span><span class="n">unix</span><span class="p">)</span>
 
-        <span class="c1"># --------------------------------------------------------------------------------------------------------------</span>
+        <span class="c1"># --------------------------------------------------</span>
         <span class="k">if</span> <span class="n">user</span><span class="o">.</span><span class="n">r_720_1</span><span class="p">:</span>
             <span class="n">d</span> <span class="o">=</span> <span class="mi">720</span>
             <span class="n">t</span> <span class="o">=</span> <span class="mi">1</span>
 
-        <span class="c1"># --------------------------------------------------------------------------------------------------------------</span>
+        <span class="c1"># --------------------------------------------------</span>
         <span class="n">ts</span> <span class="o">=</span> <span class="n">import_series</span><span class="p">(</span><span class="n">user</span><span class="o">.</span><span class="n">input</span><span class="p">)</span>
         <span class="c1"># ts.to_frame().to_parquet(&#39;.&#39;.join(user.input.split(&#39;.&#39;)[:-1] + [&#39;parquet&#39;]),engine=&#39;pyarrow&#39;)</span>
 
-        <span class="c1"># --------------------------------------------------------------------------------------------------------------</span>
+        <span class="c1"># --------------------------------------------------</span>
         <span class="k">if</span> <span class="n">_not_none</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">user</span><span class="o">.</span><span class="n">plot</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">user</span><span class="o">.</span><span class="n">export_table</span><span class="p">:</span>
             <span class="n">new_freq</span> <span class="o">=</span> <span class="n">floor</span><span class="p">(</span><span class="n">d</span> <span class="o">/</span> <span class="mi">4</span><span class="p">)</span>
             <span class="n">ts</span> <span class="o">=</span> <span class="n">ts</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{:0.0f}</span><span class="s1">T&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">new_freq</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
 
-        <span class="c1"># --------------------------------------------------------------------------------------------------------------</span>
+        <span class="c1"># --------------------------------------------------</span>
         <span class="n">idf</span><span class="o">.</span><span class="n">set_series</span><span class="p">(</span><span class="n">ts</span><span class="p">)</span>
 
-        <span class="c1"># --------------------------------------------------------------------------------------------------------------</span>
+        <span class="c1"># --------------------------------------------------</span>
         <span class="k">if</span> <span class="n">_not_none</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
             <span class="n">idf</span><span class="o">.</span><span class="n">print_depth_of_rainfall</span><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="n">d</span><span class="p">,</span> <span class="n">return_period</span><span class="o">=</span><span class="n">t</span><span class="p">)</span>
             <span class="n">idf</span><span class="o">.</span><span class="n">print_rain_flow_rate</span><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="n">d</span><span class="p">,</span> <span class="n">return_period</span><span class="o">=</span><span class="n">t</span><span class="p">)</span>
@@ -699,61 +644,50 @@
             <span class="n">idf</span><span class="o">.</span><span class="n">print_depth_of_rainfall</span><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="n">d</span><span class="p">,</span> <span class="n">return_period</span><span class="o">=</span><span class="n">t</span><span class="p">)</span>
             <span class="n">idf</span><span class="o">.</span><span class="n">print_rain_flow_rate</span><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="n">d</span><span class="p">,</span> <span class="n">return_period</span><span class="o">=</span><span class="n">t</span><span class="p">)</span>
 
-        <span class="c1"># --------------------------------------------------------------------------------------------------------------</span>
+        <span class="c1"># --------------------------------------------------</span>
         <span class="k">if</span> <span class="n">user</span><span class="o">.</span><span class="n">plot</span><span class="p">:</span>
             <span class="n">idf</span><span class="o">.</span><span class="n">result_plot</span><span class="p">(</span><span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-        <span class="c1"># --------------------------------------------------------------------------------------------------------------</span>
+        <span class="c1"># --------------------------------------------------</span>
         <span class="k">if</span> <span class="n">user</span><span class="o">.</span><span class="n">export_table</span><span class="p">:</span>
             <span class="n">idf</span><span class="o">.</span><span class="n">write_table</span><span class="p">()</span></div>
 </pre></div>
 
-           </div>
-           
           </div>
-          <footer>
-  
-
-  <hr/>
-
-  <div role="contentinfo">
-    <p>
-        &copy; Copyright 2019, Pichler
-
-    </p>
-  </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
-
-</footer>
-
         </div>
       </div>
-
-    </section>
-
-  </div>
-  
-
-
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../_static/doctools.js"></script>
-    
-
-  
-
-  <script type="text/javascript" src="../../_static/js/theme.js"></script>
-
-  <script type="text/javascript">
-      jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
-      });
-  </script> 
-
-</body>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Intensity Duration Frequency Analyse 0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Pichler.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
+    </div>
+  </body>
 </html>

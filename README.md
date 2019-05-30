@@ -2,14 +2,17 @@
 
 
 # Intensity duration frequency analysis (based on KOSTRA)
+
+
+[![license](https://img.shields.io/github/license/markuspic/intensity_duration_frequency_analysis.svg?style=flat)](https://github.com/MarkusPic/intensity_duration_frequency_analysis/blob/master/LICENSE)
+[![docs ](https://img.shields.io/badge/docs-good-brightgreen.svg?style=flat)](https://markuspic.github.io/intensity_duration_frequency_analysis/html/index.html)
+[![pypi](https://img.shields.io/pypi/v/idf-analysis.svg)](https://pypi.python.org/pypi/idf-analysis)
+
+
 heavy rain as a function of the duration and the return period acc. to [DWA-A 531 (2012)](http://www.dwa.de/dwa/shop/shop.nsf/Produktanzeige?openform&produktid=P-DWAA-8XMUY2)
 This program reads the measurement data of the rainfall
 and calculates the distribution of the rainfall as a function of the return period and the duration
 for duration steps up to 12 hours (and more) and return period in a range of '0.5a &le; T_n &le; 100a'
-
-[![license](https://img.shields.io/github/license/markuspic/intensity_duration_frequency_analysis.svg?style=flat)](https://github.com/MarkusPic/intensity_duration_frequency_analysis/blob/master/LICENSE)
-
-[![docs ](https://img.shields.io/badge/docs-good-brightgreen.svg?style=flat)](https://markuspic.github.io/intensity_duration_frequency_analysis/html/index.html)
 
 This package was originally developed from [Markus Pichler](mailto:markus.pichler@tugraz.at)'s bachelor thesis and was finalised in the course of his employment at the [Institute of Urban Water Management and Landscape Water Engineering](https://www.sww.tugraz.at).
 
