@@ -57,7 +57,7 @@ def annual_series(events):
         ((x ** 2).sum() - sample_size * x_mean ** 2)
     u = mean_sample_rainfall - w * x_mean
 
-    return u, w
+    return {'u': u, 'w': w}
 
 
 ########################################################################################################################
@@ -110,7 +110,7 @@ def partial_series(events, measurement_period):
 
     u = mean_sample_rainfall - w * ln_t_n_mean
 
-    return u, w
+    return {'u': u, 'w': w}
 
 
 ########################################################################################################################
@@ -219,8 +219,8 @@ def _improve_factor(interval):
                       6: 1.00}
 
     return np.interp(interval,
-                     np.ndarray(improve_factor.keys()),
-                     np.ndarray(improve_factor.values()))
+                     list(improve_factor.keys()),
+                     list(improve_factor.values()))
 
 
 ########################################################################################################################
@@ -244,8 +244,7 @@ def calculate_u_w(file_input, duration_steps, measurement_period, series_kind):
     base_frequency = guess_freq(file_input.index)  # DateOffset/Timedelta
 
     # ------------------------------------------------------------------------------------------------------------------
-    interim_results = pd.DataFrame(index=duration_steps, columns=['u', 'w'], dtype=float)
-    interim_results.index.name = 'duration'
+    interim_results = dict()
 
     # -------------------------------
     # acc. to DWA-A 531 chap. 4.2:
@@ -272,12 +271,15 @@ def calculate_u_w(file_input, duration_steps, measurement_period, series_kind):
         events[MAX_OSUM] = agg_events(events, ts.rolling(duration).sum(), 'max') * improve
 
         if series_kind == ANNUAL:
-            interim_results.loc[duration_integer] = annual_series(events)
+            interim_results[duration_integer] = annual_series(events)
         elif series_kind == PARTIAL:
-            interim_results.loc[duration_integer] = partial_series(events, measurement_period)
+            interim_results[duration_integer] = partial_series(events, measurement_period)
         else:
             raise NotImplementedError
 
+    # -------------------------------
+    interim_results = pd.DataFrame.from_dict(interim_results)
+    interim_results.index.name = 'duration'
     return interim_results
 
 
