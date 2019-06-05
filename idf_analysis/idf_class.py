@@ -163,7 +163,7 @@ class IntensityDurationFrequencyAnalyse:
         if self._interim_results is None:
             inter_file = self.output_filename + '_interim_results.csv'
             if path.isfile(inter_file):
-                self._interim_results = pd.read_csv(inter_file, index_col=0, **csv_args(self._unix))
+                self._interim_results = pd.read_csv(inter_file, index_col=0, skipinitialspace=True, **csv_args(self._unix))
             else:
                 # save the parameter of the distribution function in the interim results
                 if self.series is None:
@@ -536,6 +536,15 @@ class IntensityDurationFrequencyAnalyse:
 
     # __________________________________________________________________________________________________________________
     def return_periods_frame(self, series, durations=None):
+        """
+
+        Args:
+            series (pandas.Series):
+            durations (list, optional): list of duations which are of interest, default: pre defined durations
+
+        Returns:
+            pandas.DataFrame: return periods depending of the duration per datetimeindex
+        """
         if durations is None:
             durations = self.duration_steps
 
