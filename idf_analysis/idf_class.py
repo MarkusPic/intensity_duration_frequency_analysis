@@ -1,4 +1,5 @@
 from matplotlib.backends.backend_pdf import PdfPages
+from matplotlib.lines import Line2D
 
 __author__ = "Markus Pichler"
 __credits__ = ["Markus Pichler"]
@@ -89,6 +90,7 @@ class IntensityDurationFrequencyAnalyse:
             duration_steps_extended = np.array([720, 1080, 1440, 2880, 4320, 5760, 7200, 8640])
             self.duration_steps = np.append(self.duration_steps, duration_steps_extended)
 
+        self._my_return_periods_frame = None
         # self.duration_steps = pd.to_timedelta(self.duration_steps, unit='m')
 
     # __________________________________________________________________________________________________________________
@@ -539,12 +541,14 @@ class IntensityDurationFrequencyAnalyse:
         return fn
 
     # __________________________________________________________________________________________________________________
-    def return_periods_frame(self, series, durations=None):
+    def return_periods_frame(self, series, durations=None, printable_names=True):
         """
 
         Args:
             series (pandas.Series):
-            durations (list, optional): list of duations which are of interest, default: pre defined durations
+            durations (list, optional): list of durations in minutes which are of interest,
+                                        default: pre defined durations
+            printable_names (bool): if durations should be as readable in dataframe, else in minutes
 
         Returns:
             pandas.DataFrame: return periods depending of the duration per datetimeindex
@@ -556,9 +560,37 @@ class IntensityDurationFrequencyAnalyse:
 
         for d in durations:
             ts_sum = series.rolling(d, center=True, min_periods=1).sum()
-            df[minutes_readable(d)] = self.get_return_period(height_of_rainfall=ts_sum, duration=d)
+            if printable_names:
+                col = minutes_readable(d)
+            else:
+                col = d
+            df[col] = self.get_return_period(height_of_rainfall=ts_sum, duration=d)
 
         return df
+
+    @property
+    def my_return_periods_frame_filename(self):
+        return path.join(self.output_filename + '_return_periods.parquet')
+
+    def my_return_periods_frame(self, durations=None, printable_names=True):
+        fn = self.my_return_periods_frame_filename
+        if self._my_return_periods_frame is None:
+            if path.isfile(fn):
+                self._my_return_periods_frame = pd.read_parquet(fn)
+                self._my_return_periods_frame.columns = self._my_return_periods_frame.columns.to_series().astype(int)
+
+            else:
+                if durations is None:
+                    durations = [5, 10, 15, 20, 30, 45, 60, 90, 120, 180, 240, 360, 540, 720, 1080, 1440, 2880, 4320]
+
+                self._my_return_periods_frame = self.return_periods_frame(self.series, durations,
+                                                                          printable_names=printable_names)
+
+                self._my_return_periods_frame.columns = self._my_return_periods_frame.columns.to_series().astype(str)
+                self._my_return_periods_frame.to_parquet(fn, compression='brotli')
+                self._my_return_periods_frame.columns = self._my_return_periods_frame.columns.to_series().astype(int)
+
+        return self._my_return_periods_frame
 
     # __________________________________________________________________________________________________________________
     @classmethod
@@ -704,14 +736,15 @@ class IntensityDurationFrequencyAnalyse:
         caption = 'rain event\nbetween {} and {}\nwith a total sum of {:0.1f} {}\nand a duration of {}'.format(
             start.strftime('%Y-%m-%d %H:%M'),
             end.strftime('%Y-%m-%d %H:%M'),
-            event[COL.LP], unit,
+            event[COL.LP],
+            unit,
             end - start)
 
         ts = self.series[start:end].resample('T').sum().fillna(0).copy()
         fig: plt.Figure = plt.figure()
 
         # -------------------------------------
-        idf_table = self.return_periods_frame(ts, durations)
+        idf_table = self.my_return_periods_frame(printable_names=True)[start:end]
 
         if not (idf_table > min_return_period).any().any():
             max_period, duration = idf_table.max().max(), idf_table.max().idxmax()
@@ -730,3 +763,66 @@ class IntensityDurationFrequencyAnalyse:
         rain_ax.set_xlim(ts.index[0], ts.index[-1])
 
         return fig, caption
+
+    def return_period_scatter(self, min_return_period=0.5, out_path=None, durations=None):
+        if out_path is None:
+            out_path = path.join(self.output_filename + '_all_events_max_return_period.pdf')
+
+        if durations is None:
+            durations = [5, 10, 15, 20, 30, 45, 60, 90, 120, 180, 240, 360, 540, 720, 1080, 1440, 2880, 4320]
+
+        dur_short = durations[:durations.index(90)]
+        dur_long = durations[durations.index(90):]
+
+        events = self.get_events()
+        events = events[events[COL.LP] > 25].copy()
+
+        tn_long_list = dict()
+        tn_short_list = dict()
+
+        from my_helpers import check
+        check()
+
+        for _, event in events.iterrows():
+            start = event[COL.START]
+            end = event[COL.END]
+            idf_table = self.my_return_periods_frame(durations, printable_names=False)[start:end]
+            # idf_table[idf_table < min_return_period] = np.NaN
+
+            tn = idf_table.loc[start:end]
+            tn_short = tn[dur_short].max().max()
+            tn_long = tn[dur_long].max().max()
+
+            if tn_long > tn_short:
+                tn_long_list[start] = tn_long
+            else:
+                tn_short_list[start] = tn_short
+
+        print(tn_short_list)
+        print(tn_long_list)
+
+        check()
+        fig, ax = plt.subplots()
+
+        ax.scatter(x=list(tn_short_list.keys()), y=list(tn_short_list.values()), color='red')
+        ax.scatter(x=list(tn_long_list.keys()), y=list(tn_long_list.values()), color='blue')
+        fig: plt.Figure = ax.get_figure()
+
+        ax.set_ylabel('Return Period in a')
+
+        def line_in_legend(color=None, marker=None, lw=None, ls=None, **kwargs):
+            return Line2D([0], [0], color=color, marker=marker, linewidth=lw, linestyle=ls, **kwargs)
+
+        custom_lines = list()
+        custom_lines.append(line_in_legend(color='red', marker='o', lw=0))
+        custom_lines.append(line_in_legend(color='blue', marker='o', lw=0))
+        # -----------------
+        l1 = ax.legend(custom_lines, ['< 60 min', '> 60 min'], loc='best', title='max Duration')
+        ax.add_artist(l1)
+
+        # -----------------
+        # DIN A4
+        fig.set_size_inches(w=7, h=5)
+        fig.tight_layout()
+        fig.savefig(out_path)
+        plt.close(fig)
