@@ -1,17 +1,18 @@
+import pytz
+from datetime import tzinfo
+import pandas as pd
+from pandas.tseries.frequencies import to_offset
+from pandas.tseries.offsets import _delta_to_tick as delta_to_freq
+from pandas import DatetimeIndex, DateOffset, Timedelta
+
+from .definitions import COL
+
 __author__ = "David Camhy, Markus Pichler"
 __copyright__ = "Copyright 2018, University of Technology Graz"
 __credits__ = ["David Camhy", "Markus Pichler"]
 __license__ = "MIT"
 __version__ = "1.0.0"
 __maintainer__ = "David Camhy, Markus Pichler"
-
-import pytz
-from tzlocal import get_localzone
-from datetime import tzinfo
-import pandas as pd
-from pandas.tseries.frequencies import to_offset
-from pandas.tseries.offsets import _delta_to_tick as delta_to_freq
-from pandas import DatetimeIndex, DateOffset, Timedelta, DataFrame
 
 
 class TimezoneError(Exception):
@@ -146,7 +147,7 @@ def rain_events(series, ignore_rain_below=0, min_gap=pd.Timedelta(hours=4)):
     event_start = event_start.sort_values().reset_index(drop=True)
 
     events = pd.concat([event_start, event_end], axis=1, ignore_index=True)
-    events.columns = ['start', 'end']
+    events.columns = [COL.START, COL.END]
     return events
 
 
@@ -162,7 +163,80 @@ def agg_events(events, series, agg='sum'):
     Returns:
         pandas.Series: result of function of every event
     """
+
     def _agg_event(event):
-        return series[event['start']:event['end']].agg(agg)
+        return series[event[COL.START]:event[COL.END]].agg(agg)
 
     return events.apply(_agg_event, axis=1)
+
+
+########################################################################################################################
+def event_duration(events):
+    """
+    calculate the event duration
+
+    Args:
+        events (pandas.DataFrame): table of events with COL.START and COL.END times
+
+    Returns:
+        pandas.Series: duration of each event
+    """
+    return events[COL.END] - events[COL.START]
+
+
+########################################################################################################################
+def rain_bar_plot(rain, ax=None, color=None, reverse=False):
+    """
+    make a standard precipitation/rain plot
+
+    Args:
+        rain (pandas.Series):
+        ax (matplotlib.axes.Axes):
+        ylabel (str):
+        color (str):
+        reverse (bool):
+
+    Returns:
+        matplotlib.axes.Axes: rain plot
+    """
+    if color is None:
+        color = '#1E88E5'
+
+    ax = rain.plot(ax=ax, drawstyle='steps-mid', color=color, solid_capstyle='butt', solid_joinstyle='miter')
+    ax.fill_between(rain.index, rain.values, 0, step='mid', zorder=1000, color=color)
+
+    if reverse:
+        # ax.set_ylim(top=0, bottom=rain.max() * 1.1)
+        ax.set_ylim(bottom=0)
+        ax.invert_yaxis()
+    else:
+        ax.set_ylim(bottom=0)
+    return ax
+
+
+########################################################################################################################
+def resample_rain_series(series):
+    """
+
+    Args:
+        series (pandas.Series):
+
+    Returns:
+        tuple[pandas.Series, int]: the resampled series AND the final frequency in minutes
+    """
+    resample_minutes = {
+        pd.Timedelta(hours=5): 1,
+        pd.Timedelta(hours=12): 2,
+        pd.Timedelta(days=1): 5,
+        pd.Timedelta(days=2): 10,
+        pd.Timedelta(days=3): 15,
+        pd.Timedelta(days=4): 20
+    }
+
+    dur = series.index[-1] - series.index[0]
+    minutes = 1
+    for duration_limit, minutes in resample_minutes.items():
+        if dur < duration_limit:
+            break
+
+    return series.resample('{}T'.format(minutes)).sum(), minutes

@@ -1,3 +1,5 @@
+from matplotlib.backends.backend_pdf import PdfPages
+
 __author__ = "Markus Pichler"
 __credits__ = ["Markus Pichler"]
 __maintainer__ = "Markus Pichler"
@@ -19,7 +21,9 @@ from .arg_parser import heavy_rain_parser
 from .calculation_methods import get_u_w, get_parameter, calculate_u_w, depth_of_rainfall, minutes_readable
 from .definitions import *
 from .in_out import csv_args, import_series
-from .sww_utils import remove_timezone, guess_freq, year_delta
+from .sww_utils import remove_timezone, guess_freq, year_delta, rain_events, agg_events, event_duration, \
+    resample_rain_series, rain_bar_plot
+from idf_analysis.plot_helpers import idf_bar_axes
 
 
 ########################################################################################################################
@@ -163,7 +167,8 @@ class IntensityDurationFrequencyAnalyse:
         if self._interim_results is None:
             inter_file = self.output_filename + '_interim_results.csv'
             if path.isfile(inter_file):
-                self._interim_results = pd.read_csv(inter_file, index_col=0, skipinitialspace=True, **csv_args(self._unix))
+                self._interim_results = pd.read_csv(inter_file, index_col=0, skipinitialspace=True,
+                                                    **csv_args(self._unix))
             else:
                 # save the parameter of the distribution function in the interim results
                 if self.series is None:
@@ -215,7 +220,7 @@ class IntensityDurationFrequencyAnalyse:
         fn = self.output_filename + '_results_u_w.csv'
         u, w = self.get_u_w(durations)
         df = pd.DataFrame(index=durations)
-        df.index.name = 'duration'
+        df.index.name = COL.DUR
         df['u'] = u
         df['w'] = w
         df.to_csv(fn, **csv_args(self._unix))
@@ -240,10 +245,9 @@ class IntensityDurationFrequencyAnalyse:
         """
         calculate and print the height of the rainfall in [l/m² = mm]
 
-        :param duration: in minutes
-        :type duration: float
-        :param return_period: in years
-        :type return_period: float
+        Args:
+            duration (float): in minutes
+            return_period (float): in years
         """
         print('Resultierende Regenhöhe h_N(T_n={:0.1f}a, D={:0.1f}min) = {:0.2f} mm'
               ''.format(return_period, duration, self.depth_of_rainfall(duration, return_period)))
@@ -423,7 +427,7 @@ class IntensityDurationFrequencyAnalyse:
 
         table = self.result_table(durations=duration_steps, return_periods=return_periods)
         if color:
-            table.columns.name = 'T$\mathsf{_N}$ in (a)'
+            table.columns.name = 'T$\\mathsf{_N}$ in (a)'
         ax = table.plot(color=(None if color else 'black'), logx=logx, legend=color)
 
         for _, return_time in enumerate(return_periods):
@@ -438,7 +442,7 @@ class IntensityDurationFrequencyAnalyse:
 
         ax.tick_params(axis='both', which='both', direction='out')
         ax.set_xlabel('Duration D in (min)')
-        ax.set_ylabel('Rainfall h$\mathsf{_N}$ in (mm)')
+        ax.set_ylabel('Rainfall h$\\mathsf{_N}$ in (mm)')
         ax.set_title('IDF curves')
 
         fig = ax.get_figure()
@@ -625,3 +629,92 @@ class IntensityDurationFrequencyAnalyse:
         # --------------------------------------------------
         if user.export_table:
             idf.write_table()
+
+    @property
+    def event_table_filename(self):
+        return path.join(self.output_filename + '_events.csv')
+
+    def get_events(self):
+        if path.isfile(self.event_table_filename):
+            events = pd.read_csv(self.event_table_filename, skipinitialspace=True)
+            events[COL.START] = pd.to_datetime(events[COL.START])
+            events[COL.END] = pd.to_datetime(events[COL.END])
+            events[COL.DUR] = pd.to_timedelta(events[COL.DUR])
+        else:
+            series = self.series.resample('T').sum().fillna(0)
+            events = rain_events(series)
+            events[COL.LP] = agg_events(events, series, 'sum').round(1)
+            events[COL.DUR] = event_duration(events)
+            events = events.sort_values(by=COL.LP, ascending=False)
+            events.to_csv(self.event_table_filename, index=False)
+
+        return events
+
+    def event_report(self, min_event_rain_sum=25, min_return_period=0.5, out_path=None, durations=None):
+
+        if out_path is None:
+            out_path = path.join(self.output_filename + '_idf_events.pdf')
+
+        if durations is None:
+            durations = [5, 10, 15, 20, 30, 45, 60, 90, 120, 180, 240, 360, 540, 720, 1080, 1440, 2880, 4320]
+
+        events = self.get_events()
+
+        main_events = events[events[COL.LP] > min_event_rain_sum].copy()
+
+        unit = 'mm'
+        column_name = 'Precipitation'
+
+        pdf = PdfPages(out_path)
+
+        for _, event in main_events.iterrows():
+            fig, caption = self.event_plot(event, durations=durations, min_return_period=min_return_period,
+                                           unit=unit, column_name=column_name)
+
+            # -------------------------------------
+            fig.get_axes()[0].set_title(caption + '\n\n\n')
+
+            # DIN A4
+            fig.set_size_inches(w=8.27, h=11.69)
+            fig.tight_layout()
+            pdf.savefig(fig)
+            plt.close(fig)
+
+        pdf.close()
+
+    def event_plot(self, event, durations=None, unit='mm', column_name='Precipitation', min_return_period=0.5):
+        start = event[COL.START]
+        end = event[COL.END]
+
+        if durations is None:
+            durations = [5, 10, 15, 20, 30, 45, 60, 90, 120, 180, 240, 360, 540, 720, 1080, 1440, 2880, 4320]
+
+        caption = 'rain event\nbetween {} and {}\nwith a total sum of {:0.1f} {}\nand a duration of {}'.format(
+            start.strftime('%Y-%m-%d %H:%M'),
+            end.strftime('%Y-%m-%d %H:%M'),
+            event[COL.LP], unit,
+            end - start)
+
+        ts = self.series[start:end].resample('T').sum().fillna(0).copy()
+        fig: plt.Figure = plt.figure()
+
+        # -------------------------------------
+        idf_table = self.return_periods_frame(ts, durations)
+
+        if not (idf_table > min_return_period).any().any():
+            max_period, duration = idf_table.max().max(), idf_table.max().idxmax()
+            rain_ax = fig.add_subplot(111)
+            caption += '\nThe maximum return period was {:0.2f}a\nat a duration of {}.'.format(max_period, duration)
+
+        else:
+            idf_bar_ax = fig.add_subplot(211)
+            idf_bar_ax = idf_bar_axes(idf_bar_ax, idf_table, durations)
+            rain_ax = fig.add_subplot(212, sharex=idf_bar_ax)
+
+        # -------------------------------------
+        ts_sum, minutes = resample_rain_series(ts)
+        rain_ax = rain_bar_plot(ts_sum, rain_ax)
+        rain_ax.set_ylabel('{} in [{}/{}min]'.format(column_name, unit, minutes if minutes != 1 else ''))
+        rain_ax.set_xlim(ts.index[0], ts.index[-1])
+
+        return fig, caption

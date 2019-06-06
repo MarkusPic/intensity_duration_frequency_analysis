@@ -10,11 +10,7 @@ import numpy as np
 from numpy import NaN
 from math import e, floor, ceil
 from .sww_utils import guess_freq, rain_events, agg_events
-from .definitions import DWA, ATV, DWA_adv, PARTIAL, ANNUAL, LOG1, LOG2, HYP, LIN
-
-# from my_helpers import check
-
-MAX_OSUM = 'max_overlapping_sum'
+from .definitions import DWA, ATV, DWA_adv, PARTIAL, ANNUAL, LOG1, LOG2, HYP, LIN, COL
 
 
 def delta2min(time_delta):
@@ -43,8 +39,9 @@ def annual_series(events):
     Returns:
         tuple[float, float]: parameter u and w from the annual series for a specific duration step as a tuple
     """
-    annually_series = pd.Series(data=events[MAX_OSUM].values, index=events['start'].values, name=MAX_OSUM).resample(
-        'AS').max()
+    annually_series = pd.Series(data=events[COL.MAX_OVERLAPPING_SUM].values,
+                                index=events[COL.START].values,
+                                name=COL.MAX_OVERLAPPING_SUM).resample('AS').max()
     annually_series = annually_series.sort_values(ascending=False).reset_index(drop=True)
 
     mean_sample_rainfall = annually_series.mean()
@@ -73,7 +70,7 @@ def partial_series(events, measurement_period):
     Returns:
         tuple[float, float]: parameter u and w from the partial series for a specific duration step as a tuple
     """
-    partially_series = pd.Series(data=events[MAX_OSUM].values, name=MAX_OSUM)
+    partially_series = pd.Series(data=events[COL.MAX_OVERLAPPING_SUM].values, name=COL.MAX_OVERLAPPING_SUM)
     partially_series = partially_series.sort_values(ascending=False).reset_index(drop=True)
 
     # use only the (2-3 multiplied with the number of measuring years) of the biggest
@@ -130,7 +127,7 @@ def _calculate_u_w_OLD(file_input, duration_steps, measurement_period, series_ki
     Returns:
         pandas.DataFrame: with index = duration and columns = [u, w]
     """
-    # check('start')
+    # check(COL.START)
     ts = file_input.copy()
     # ts = ts.dropna()
     base_frequency = guess_freq(file_input.index)  # DateOffset/Timedelta
@@ -152,7 +149,7 @@ def _calculate_u_w_OLD(file_input, duration_steps, measurement_period, series_ki
         Returns:
             float: maximum of the overlapping sum
         """
-        data = ts.loc[event['start']:event['end']].copy()
+        data = ts.loc[event[COL.START]:event[COL.END]].copy()
         interval = int(round(duration / base_frequency))
 
         # correction factor acc. to DWA-A 531 chap. 4.3
@@ -187,7 +184,7 @@ def _calculate_u_w_OLD(file_input, duration_steps, measurement_period, series_ki
             events = rain_events(file_input, ignore_rain_below=0.0, min_gap=duration)
 
         # check('osum')
-        events[MAX_OSUM] = events.apply(_calc_overlapping_sum_max, axis=1, duration=duration)
+        events[COL.MAX_OVERLAPPING_SUM] = events.apply(_calc_overlapping_sum_max, axis=1, duration=duration)
 
         # check('series calc')
         if series_kind == ANNUAL:
@@ -268,7 +265,7 @@ def calculate_u_w(file_input, duration_steps, measurement_period, series_kind):
         # correction factor acc. to DWA-A 531 chap. 4.3
         improve = _improve_factor(duration / base_frequency)
 
-        events[MAX_OSUM] = agg_events(events, ts.rolling(duration).sum(), 'max') * improve
+        events[COL.MAX_OVERLAPPING_SUM] = agg_events(events, ts.rolling(duration).sum(), 'max') * improve
 
         if series_kind == ANNUAL:
             interim_results[duration_integer] = annual_series(events)
@@ -278,7 +275,7 @@ def calculate_u_w(file_input, duration_steps, measurement_period, series_kind):
             raise NotImplementedError
 
     # -------------------------------
-    interim_results = pd.DataFrame.from_dict(interim_results)
+    interim_results = pd.DataFrame.from_dict(interim_results, orient='index')
     interim_results.index.name = 'duration'
     return interim_results
 
