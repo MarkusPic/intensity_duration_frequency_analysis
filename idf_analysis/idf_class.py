@@ -651,7 +651,19 @@ class IntensityDurationFrequencyAnalyse:
         return events
 
     def event_report(self, min_event_rain_sum=25, min_return_period=0.5, out_path=None, durations=None):
+        """
+        create pdf file with the biggest rain events
+        for each event is represented by a plot of the rain series
+        and a IDF analysis where the return periods are calculated
 
+        Args:
+            min_event_rain_sum (float): only events with a bigger rain sum will be created
+            min_return_period (float): only events with a bigger return period will be analysed
+                                       (the plot will be created anyway)
+            out_path (str): path and filename of the final report
+            durations (list[int]): analysed durations
+                        (default: [5, 10, 15, 20, 30, 45, 60, 90, 120, 180, 240, 360, 540, 720, 1080, 1440, 2880, 4320])
+        """
         if out_path is None:
             out_path = path.join(self.output_filename + '_idf_events.pdf')
 
