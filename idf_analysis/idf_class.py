@@ -577,7 +577,8 @@ class IntensityDurationFrequencyAnalyse:
         if self._my_return_periods_frame is None:
             if path.isfile(fn):
                 self._my_return_periods_frame = pd.read_parquet(fn)
-                self._my_return_periods_frame.columns = self._my_return_periods_frame.columns.to_series().astype(int)
+                if not printable_names:
+                    self._my_return_periods_frame.columns = self._my_return_periods_frame.columns.to_series().astype(int)
 
             else:
                 if durations is None:
@@ -588,7 +589,8 @@ class IntensityDurationFrequencyAnalyse:
 
                 self._my_return_periods_frame.columns = self._my_return_periods_frame.columns.to_series().astype(str)
                 self._my_return_periods_frame.to_parquet(fn, compression='brotli')
-                self._my_return_periods_frame.columns = self._my_return_periods_frame.columns.to_series().astype(int)
+                if not printable_names:
+                    self._my_return_periods_frame.columns = self._my_return_periods_frame.columns.to_series().astype(int)
 
         return self._my_return_periods_frame
 
@@ -741,6 +743,7 @@ class IntensityDurationFrequencyAnalyse:
             end - start)
 
         ts = self.series[start:end].resample('T').sum().fillna(0).copy()
+
         fig = plt.figure()
 
         # -------------------------------------
