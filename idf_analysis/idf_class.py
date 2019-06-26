@@ -591,7 +591,7 @@ class IntensityDurationFrequencyAnalyse:
                 try:
                     self._my_return_periods_frame.to_parquet(fn, compression='brotli')
                 except PermissionError as e:
-                    warnings.warn(e)
+                    warnings.warn(str(e))
                 if not printable_names:
                     self._my_return_periods_frame.columns = self._my_return_periods_frame.columns.to_series().astype(
                         int)
