@@ -571,30 +571,34 @@ class IntensityDurationFrequencyAnalyse:
     def my_return_periods_frame_filename(self):
         return path.join(self.output_filename + '_return_periods.parquet')
 
-    def my_return_periods_frame(self, durations=None, printable_names=True):
-        fn = self.my_return_periods_frame_filename
-        if self._my_return_periods_frame is None:
-            if path.isfile(fn):
-                self._my_return_periods_frame = pd.read_parquet(fn)
-                if not printable_names:
-                    self._my_return_periods_frame.columns = self._my_return_periods_frame.columns.to_series().astype(
-                        int)
+    def my_return_periods_frame(self, durations=None, printable_names=True, save=False):
+        if save:
+            fn = self.my_return_periods_frame_filename
+            if self._my_return_periods_frame is None:
+                if path.isfile(fn):
+                    self._my_return_periods_frame = pd.read_parquet(fn)
+                    if not printable_names:
+                        self._my_return_periods_frame.columns = self._my_return_periods_frame.columns.to_series().astype(
+                            int)
 
-            else:
-                if durations is None:
-                    durations = [5, 10, 15, 20, 30, 45, 60, 90, 120, 180, 240, 360, 540, 720, 1080, 1440, 2880, 4320]
+                else:
+                    if durations is None:
+                        durations = [5, 10, 15, 20, 30, 45, 60, 90, 120, 180, 240, 360, 540, 720, 1080, 1440, 2880, 4320]
 
-                self._my_return_periods_frame = self.return_periods_frame(self.series, durations,
-                                                                          printable_names=printable_names)
+                    self._my_return_periods_frame = self.return_periods_frame(self.series, durations,
+                                                                              printable_names=printable_names)
 
-                self._my_return_periods_frame.columns = self._my_return_periods_frame.columns.to_series().astype(str)
-                try:
-                    self._my_return_periods_frame.to_parquet(fn, compression='brotli')
-                except PermissionError as e:
-                    warnings.warn(str(e))
-                if not printable_names:
-                    self._my_return_periods_frame.columns = self._my_return_periods_frame.columns.to_series().astype(
-                        int)
+                    self._my_return_periods_frame.columns = self._my_return_periods_frame.columns.to_series().astype(str)
+                    try:
+                        self._my_return_periods_frame.to_parquet(fn, compression='brotli')
+                    except PermissionError as e:
+                        warnings.warn(str(e))
+                    if not printable_names:
+                        self._my_return_periods_frame.columns = self._my_return_periods_frame.columns.to_series().astype(
+                            int)
+        else:
+            self._my_return_periods_frame = self.return_periods_frame(self.series, durations,
+                                                                      printable_names=printable_names)
 
         return self._my_return_periods_frame
 
@@ -751,7 +755,9 @@ class IntensityDurationFrequencyAnalyse:
         fig = plt.figure()
 
         # -------------------------------------
-        idf_table = self.my_return_periods_frame(printable_names=True)[start:end]
+        idf_table = self.my_return_periods_frame(printable_names=True, save=False)[start:end]
+
+        # print(idf_table > min_return_period)
 
         if not (idf_table > min_return_period).any().any():
             max_period, duration = idf_table.max().max(), idf_table.max().idxmax()
@@ -793,7 +799,7 @@ class IntensityDurationFrequencyAnalyse:
         for _, event in events.iterrows():
             start = event[COL.START]
             end = event[COL.END]
-            idf_table = self.my_return_periods_frame(durations, printable_names=False)[start:end]
+            idf_table = self.my_return_periods_frame(durations, printable_names=False, save=True)[start:end]
             # idf_table[idf_table < min_return_period] = np.NaN
 
             tn = idf_table.loc[start:end]

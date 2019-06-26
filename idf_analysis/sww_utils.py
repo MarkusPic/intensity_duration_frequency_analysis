@@ -224,19 +224,19 @@ def resample_rain_series(series):
     Returns:
         tuple[pandas.Series, int]: the resampled series AND the final frequency in minutes
     """
-    resample_minutes = {
-        pd.Timedelta(hours=5): 1,
-        pd.Timedelta(hours=12): 2,
-        pd.Timedelta(days=1): 5,
-        pd.Timedelta(days=2): 10,
-        pd.Timedelta(days=3): 15,
-        pd.Timedelta(days=4): 20
-    }
+    resample_minutes = (
+        (pd.Timedelta(hours=5), 1),
+        (pd.Timedelta(hours=12), 2),
+        (pd.Timedelta(days=1), 5),
+        (pd.Timedelta(days=2), 10),
+        (pd.Timedelta(days=3), 15),
+        (pd.Timedelta(days=4), 20)
+    )
 
     dur = series.index[-1] - series.index[0]
     minutes = 1
-    for duration_limit, minutes in resample_minutes.items():
+    for duration_limit, minutes in resample_minutes:
         if dur < duration_limit:
             break
-
+    # print('resample_rain_series: ', dur, duration_limit, minutes)
     return series.resample('{}T'.format(minutes)).sum(), minutes
