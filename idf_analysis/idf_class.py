@@ -1,6 +1,3 @@
-from matplotlib.backends.backend_pdf import PdfPages
-from matplotlib.lines import Line2D
-
 __author__ = "Markus Pichler"
 __credits__ = ["Markus Pichler"]
 __maintainer__ = "Markus Pichler"
@@ -15,6 +12,8 @@ from os import path
 from webbrowser import open as show_file
 
 import matplotlib.pyplot as plt
+from matplotlib.backends.backend_pdf import PdfPages
+from matplotlib.lines import Line2D
 import numpy as np
 import pandas as pd
 
@@ -22,9 +21,9 @@ from .arg_parser import heavy_rain_parser
 from .calculation_methods import get_u_w, get_parameter, calculate_u_w, depth_of_rainfall, minutes_readable
 from .definitions import *
 from .in_out import csv_args, import_series
-from .sww_utils import remove_timezone, guess_freq, year_delta, rain_events, agg_events, event_duration, \
-    resample_rain_series, rain_bar_plot
-from idf_analysis.plot_helpers import idf_bar_axes
+from .sww_utils import (remove_timezone, guess_freq, year_delta, rain_events, agg_events, event_duration,
+                        resample_rain_series, rain_bar_plot)
+from .plot_helpers import idf_bar_axes
 
 
 ########################################################################################################################
@@ -578,7 +577,8 @@ class IntensityDurationFrequencyAnalyse:
             if path.isfile(fn):
                 self._my_return_periods_frame = pd.read_parquet(fn)
                 if not printable_names:
-                    self._my_return_periods_frame.columns = self._my_return_periods_frame.columns.to_series().astype(int)
+                    self._my_return_periods_frame.columns = self._my_return_periods_frame.columns.to_series().astype(
+                        int)
 
             else:
                 if durations is None:
@@ -588,9 +588,13 @@ class IntensityDurationFrequencyAnalyse:
                                                                           printable_names=printable_names)
 
                 self._my_return_periods_frame.columns = self._my_return_periods_frame.columns.to_series().astype(str)
-                self._my_return_periods_frame.to_parquet(fn, compression='brotli')
+                try:
+                    self._my_return_periods_frame.to_parquet(fn, compression='brotli')
+                except PermissionError as e:
+                    warnings.warn(e)
                 if not printable_names:
-                    self._my_return_periods_frame.columns = self._my_return_periods_frame.columns.to_series().astype(int)
+                    self._my_return_periods_frame.columns = self._my_return_periods_frame.columns.to_series().astype(
+                        int)
 
         return self._my_return_periods_frame
 
@@ -783,8 +787,8 @@ class IntensityDurationFrequencyAnalyse:
         tn_long_list = dict()
         tn_short_list = dict()
 
-        from my_helpers import check
-        check()
+        # from my_helpers import check
+        # check()
 
         for _, event in events.iterrows():
             start = event[COL.START]
@@ -804,7 +808,7 @@ class IntensityDurationFrequencyAnalyse:
         print(tn_short_list)
         print(tn_long_list)
 
-        check()
+        # check()
         fig, ax = plt.subplots()
 
         ax.scatter(x=list(tn_short_list.keys()), y=list(tn_short_list.values()), color='red')
