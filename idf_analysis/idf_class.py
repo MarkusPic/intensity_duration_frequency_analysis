@@ -741,7 +741,7 @@ class IntensityDurationFrequencyAnalyse:
             end - start)
 
         ts = self.series[start:end].resample('T').sum().fillna(0).copy()
-        fig: plt.Figure = plt.figure()
+        fig = plt.figure()
 
         # -------------------------------------
         idf_table = self.my_return_periods_frame(printable_names=True)[start:end]
@@ -806,7 +806,7 @@ class IntensityDurationFrequencyAnalyse:
 
         ax.scatter(x=list(tn_short_list.keys()), y=list(tn_short_list.values()), color='red')
         ax.scatter(x=list(tn_long_list.keys()), y=list(tn_long_list.values()), color='blue')
-        fig: plt.Figure = ax.get_figure()
+        fig = ax.get_figure()
 
         ax.set_ylabel('Return Period in a')
 
