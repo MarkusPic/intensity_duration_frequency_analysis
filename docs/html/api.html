@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <title>API &#8212; Intensity Duration Frequency Analyse 0.1 documentation</title>
-    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
@@ -15,30 +15,21 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Intensity Duration Frequency Analyse" href="example.html" />
-    <link rel="prev" title="Welcome to Intensity Duration Frequency Analyse’s documentation!" href="index.html" /> 
+    <link rel="prev" title="Welcome to Intensity Duration Frequency Analyse’s documentation!" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
   </head><body>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="example.html" title="Intensity Duration Frequency Analyse"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="index.html" title="Welcome to Intensity Duration Frequency Analyse’s documentation!"
-             accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">Intensity Duration Frequency Analyse 0.1 documentation</a> &#187;</li> 
-      </ul>
-    </div>  
+  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <div class="section" id="api">
@@ -52,7 +43,7 @@
 acc. to DWA-A 531 chap. 5.1.5</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>events</strong> (<a class="reference external" href="http://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v0.24.2)"><em>pandas.DataFrame</em></a>) – with columns=[start, end, max_overlapping_sum]</p>
+<dd class="field-odd"><p><strong>events</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v0.24.2)"><em>pandas.DataFrame</em></a>) – with columns=[start, end, max_overlapping_sum]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>parameter u and w from the annual series for a specific duration step as a tuple</p>
@@ -72,7 +63,7 @@ acc. to DWA-A 531 chap. 4.4: use the annual series only for measurement periods 
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>file_input</strong> (<a class="reference external" href="http://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v0.24.2)"><em>pandas.Series</em></a>) – precipitation data</p></li>
+<li><p><strong>file_input</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v0.24.2)"><em>pandas.Series</em></a>) – precipitation data</p></li>
 <li><p><strong>duration_steps</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>] </em><em>| numpy.ndarray</em>) – in minutes</p></li>
 <li><p><strong>measurement_period</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – duration of the series in years</p></li>
 <li><p><strong>series_kind</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – annual or partial</p></li>
@@ -82,7 +73,7 @@ acc. to DWA-A 531 chap. 4.4: use the annual series only for measurement periods 
 <dd class="field-even"><p>with index=durations and columns=[u, w]</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="http://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v0.24.2)">pandas.DataFrame</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v0.24.2)">pandas.DataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -93,7 +84,7 @@ acc. to DWA-A 531 chap. 4.4: use the annual series only for measurement periods 
 <dd><p>convert timedelta to float in minutes</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>time_delta</strong> (<a class="reference external" href="http://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Timedelta.html#pandas.Timedelta" title="(in pandas v0.24.2)"><em>pandas.Timedelta</em></a>) – </p>
+<dd class="field-odd"><p><strong>time_delta</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Timedelta.html#pandas.Timedelta" title="(in pandas v0.24.2)"><em>pandas.Timedelta</em></a>) – </p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>the timedelta in minutes</p>
@@ -194,7 +185,7 @@ acc. to DWA-A 531 chap. 4.4: use the annual series only for measurement periods 
 <dd class="field-even"><p>table of approaches depending on the duration and the parameter</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="http://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v0.24.2)">pandas.DataFrame</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v0.24.2)">pandas.DataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -223,7 +214,7 @@ acc. to DWA-A 531 chap. 4.4: use the annual series only for measurement periods 
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>interim_results</strong> (<a class="reference external" href="http://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v0.24.2)"><em>pandas.DataFrame</em></a>) – </p></li>
+<li><p><strong>interim_results</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v0.24.2)"><em>pandas.DataFrame</em></a>) – </p></li>
 <li><p><strong>worksheet</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – </p></li>
 </ul>
 </dd>
@@ -231,7 +222,7 @@ acc. to DWA-A 531 chap. 4.4: use the annual series only for measurement periods 
 <dd class="field-even"><p>parameters</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="http://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v0.24.2)">pandas.DataFrame</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v0.24.2)">pandas.DataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -294,7 +285,7 @@ acc. to DWA-A 531 chap. 5.1.4</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>events</strong> (<a class="reference external" href="http://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v0.24.2)"><em>pandas.DataFrame</em></a>) – with columns=[start, end, max_overlapping_sum]</p></li>
+<li><p><strong>events</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v0.24.2)"><em>pandas.DataFrame</em></a>) – with columns=[start, end, max_overlapping_sum]</p></li>
 <li><p><strong>measurement_period</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – in years</p></li>
 </ul>
 </dd>
@@ -343,8 +334,8 @@ acc. to DWA-A 531 chap. 5.1.4</p>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>events</strong> (<a class="reference external" href="http://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v0.24.2)"><em>pandas.DataFrame</em></a>) – table of events</p></li>
-<li><p><strong>series</strong> (<a class="reference external" href="http://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v0.24.2)"><em>pandas.Series</em></a>) – time-series data</p></li>
+<li><p><strong>events</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v0.24.2)"><em>pandas.DataFrame</em></a>) – table of events</p></li>
+<li><p><strong>series</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v0.24.2)"><em>pandas.Series</em></a>) – time-series data</p></li>
 <li><p><strong>agg</strong> (<em>str | function</em>) – aggregation of time-series</p></li>
 </ul>
 </dd>
@@ -352,7 +343,7 @@ acc. to DWA-A 531 chap. 5.1.4</p>
 <dd class="field-even"><p>result of function of every event</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="http://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v0.24.2)">pandas.Series</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v0.24.2)">pandas.Series</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -375,6 +366,23 @@ acc. to DWA-A 531 chap. 5.1.4</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="idf_analysis.sww_utils.event_duration">
+<code class="descclassname">idf_analysis.sww_utils.</code><code class="descname">event_duration</code><span class="sig-paren">(</span><em>events</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/sww_utils.html#event_duration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.sww_utils.event_duration" title="Permalink to this definition">¶</a></dt>
+<dd><p>calculate the event duration</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>events</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v0.24.2)"><em>pandas.DataFrame</em></a>) – table of events with COL.START and COL.END times</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>duration of each event</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v0.24.2)">pandas.Series</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
 <dt id="idf_analysis.sww_utils.guess_freq">
 <code class="descclassname">idf_analysis.sww_utils.</code><code class="descname">guess_freq</code><span class="sig-paren">(</span><em>date_time_index</em>, <em>default=Timedelta('0 days 00:01:00')</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/sww_utils.html#guess_freq"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.sww_utils.guess_freq" title="Permalink to this definition">¶</a></dt>
 <dd><p>return most often frequency in the format [minutes]T eg: “1T” when the frequency is one minute</p>
@@ -387,6 +395,29 @@ acc. to DWA-A 531 chap. 5.1.4</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>DateOffset</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="idf_analysis.sww_utils.rain_bar_plot">
+<code class="descclassname">idf_analysis.sww_utils.</code><code class="descname">rain_bar_plot</code><span class="sig-paren">(</span><em>rain</em>, <em>ax=None</em>, <em>color=None</em>, <em>reverse=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/sww_utils.html#rain_bar_plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.sww_utils.rain_bar_plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>make a standard precipitation/rain plot</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rain</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v0.24.2)"><em>pandas.Series</em></a>) – </p></li>
+<li><p><strong>ax</strong> (<em>matplotlib.axes.Axes</em>) – </p></li>
+<li><p><strong>ylabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – </p></li>
+<li><p><strong>color</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – </p></li>
+<li><p><strong>reverse</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>rain plot</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>matplotlib.axes.Axes</p>
 </dd>
 </dl>
 </dd></dl>
@@ -430,6 +461,22 @@ with the plot functions</p>
 </dl>
 </dd></dl>
 
+<dl class="function">
+<dt id="idf_analysis.sww_utils.resample_rain_series">
+<code class="descclassname">idf_analysis.sww_utils.</code><code class="descname">resample_rain_series</code><span class="sig-paren">(</span><em>series</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/sww_utils.html#resample_rain_series"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.sww_utils.resample_rain_series" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>series</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v0.24.2)"><em>pandas.Series</em></a>) – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the resampled series AND the final frequency in minutes</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)">tuple</a>[<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v0.24.2)">pandas.Series</a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)">int</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
 </div>
 <div class="section" id="main-function">
 <h2>Main Function<a class="headerlink" href="#main-function" title="Permalink to this headline">¶</a></h2>
@@ -456,6 +503,26 @@ and calculates the distribution of the rainfall as a function of the return peri
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.event_report">
+<code class="descname">event_report</code><span class="sig-paren">(</span><em>min_event_rain_sum=25</em>, <em>min_return_period=0.5</em>, <em>out_path=None</em>, <em>durations=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/idf_class.html#IntensityDurationFrequencyAnalyse.event_report"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.event_report" title="Permalink to this definition">¶</a></dt>
+<dd><p>create pdf file with the biggest rain events
+for each event is represented by a plot of the rain series
+and a IDF analysis where the return periods are calculated</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>min_event_rain_sum</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – only events with a bigger rain sum will be created</p></li>
+<li><p><strong>min_return_period</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – only events with a bigger return period will be analysed
+(the plot will be created anyway)</p></li>
+<li><p><strong>out_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – path and filename of the final report</p></li>
+<li><p><strong>durations</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>]</em>) – analysed durations
+(default: [5, 10, 15, 20, 30, 45, 60, 90, 120, 180, 240, 360, 540, 720, 1080, 1440, 2880, 4320])</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -552,7 +619,7 @@ and if <cite>auto_save</cite> if TRUE save the results to a file</p>
 <dd class="field-odd"><p>interim results</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="http://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v0.24.2)">pandas.DataFrame</a></p>
+<dd class="field-even"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v0.24.2)">pandas.DataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -672,6 +739,27 @@ So the length of the array must be the same.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.return_periods_frame">
+<code class="descname">return_periods_frame</code><span class="sig-paren">(</span><em>series</em>, <em>durations=None</em>, <em>printable_names=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/idf_class.html#IntensityDurationFrequencyAnalyse.return_periods_frame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.return_periods_frame" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>series</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v0.24.2)"><em>pandas.Series</em></a>) – </p></li>
+<li><p><strong>durations</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>, </em><em>optional</em>) – list of durations in minutes which are of interest,
+default: pre defined durations</p></li>
+<li><p><strong>printable_names</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – if durations should be as readable in dataframe, else in minutes</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>return periods depending of the duration per datetimeindex</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v0.24.2)">pandas.DataFrame</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
 <dt id="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.save_parameters">
 <code class="descname">save_parameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/idf_class.html#IntensityDurationFrequencyAnalyse.save_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.save_parameters" title="Permalink to this definition">¶</a></dt>
 <dd><p>save parameters as .csv-file to the workspace/output_path</p>
@@ -684,7 +772,7 @@ So the length of the array must be the same.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>series</strong> (<a class="reference external" href="http://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v0.24.2)"><em>pandas.Series</em></a>) – precipitation time-series</p></li>
+<li><p><strong>series</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v0.24.2)"><em>pandas.Series</em></a>) – precipitation time-series</p></li>
 <li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – name of the series (used for the result filenames)</p></li>
 </ul>
 </dd>
@@ -698,34 +786,42 @@ So the length of the array must be the same.</p>
 
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="index.html">Table of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">API</a><ul>
-<li><a class="reference internal" href="#module-idf_analysis.calculation_methods">Calculation Methods</a></li>
-<li><a class="reference internal" href="#module-idf_analysis.in_out">Input and Output</a></li>
-<li><a class="reference internal" href="#module-idf_analysis.sww_utils">SWW Utils</a></li>
-<li><a class="reference internal" href="#main-function">Main Function</a></li>
+<h1 class="logo"><a href="index.html">Intensity Duration Frequency Analyse</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-idf_analysis.calculation_methods">Calculation Methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-idf_analysis.in_out">Input and Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-idf_analysis.sww_utils">SWW Utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main-function">Main Function</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="example.html">Intensity Duration Frequency Analyse</a></li>
 </ul>
 
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="index.html"
-                        title="previous chapter">Welcome to Intensity Duration Frequency Analyse’s documentation!</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="example.html"
-                        title="next chapter">Intensity Duration Frequency Analyse</a></p>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="_sources/api.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">Welcome to Intensity Duration Frequency Analyse’s documentation!</a></li>
+      <li>Next: <a href="example.html" title="next chapter">Intensity Duration Frequency Analyse</a></li>
+  </ul></li>
+</ul>
+</div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <div class="searchformwrapper">
@@ -736,31 +832,32 @@ So the length of the array must be the same.</p>
     </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="example.html" title="Intensity Duration Frequency Analyse"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="index.html" title="Welcome to Intensity Duration Frequency Analyse’s documentation!"
-             >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">Intensity Duration Frequency Analyse 0.1 documentation</a> &#187;</li> 
-      </ul>
+    <div class="footer">
+      &copy;2019, Pichler.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.0.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/api.rst.txt"
+          rel="nofollow">Page source</a>
     </div>
-    <div class="footer" role="contentinfo">
-        &#169; Copyright 2019, Pichler.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
-    </div>
+
+    
+
+    
   </body>
 </html>
