@@ -131,6 +131,7 @@ optional arguments:
 
 # Example
 
+An example jupyter notebook script can be found here: https://markuspic.github.io/intensity_duration_frequency_analysis/html/example.html
 
 
 ![Regenhöhenlinien](example/EXAMPLE_plot.png)
