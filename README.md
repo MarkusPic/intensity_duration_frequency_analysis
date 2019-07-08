@@ -23,7 +23,7 @@ The guideline was used in the application [KOSTRA-DWD](https://www.dwd.de/DE/lei
 
 ----
 
-> An intensity-duration-frequency curve (IDF curve) is a mathematical function that relates the rainfall intensity with its duration and frequency of occurrence.[1] These curves are commonly used in hydrology for flood forecasting and civil engineering for urban drainage design. However, the IDF curves are also analysed in hydrometeorology because of the interest in the time concentration or time-structure of the rainfall.
+> An intensity-duration-frequency curve (IDF curve) is a mathematical function that relates the rainfall intensity with its duration and frequency of occurrence. These curves are commonly used in hydrology for flood forecasting and civil engineering for urban drainage design. However, the IDF curves are also analysed in hydrometeorology because of the interest in the time concentration or time-structure of the rainfall.
 
 **[Wikipedia](https://en.wikipedia.org/wiki/Intensity-duration-frequency_curve)**
 
