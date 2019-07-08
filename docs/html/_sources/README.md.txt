@@ -2,14 +2,34 @@
 
 
 # Intensity duration frequency analysis (based on KOSTRA)
-heavy rain as a function of the duration and the return period acc. to [DWA-A 531 (2012)](http://www.dwa.de/dwa/shop/shop.nsf/Produktanzeige?openform&produktid=P-DWAA-8XMUY2)
-This program reads the measurement data of the rainfall
-and calculates the distribution of the rainfall as a function of the return period and the duration
-for duration steps up to 12 hours (and more) and return period in a range of '0.5a &le; T_n &le; 100a'
+
 
 [![license](https://img.shields.io/github/license/markuspic/intensity_duration_frequency_analysis.svg?style=flat)](https://github.com/MarkusPic/intensity_duration_frequency_analysis/blob/master/LICENSE)
-
 [![docs ](https://img.shields.io/badge/docs-good-brightgreen.svg?style=flat)](https://markuspic.github.io/intensity_duration_frequency_analysis/html/index.html)
+[![PyPI](https://img.shields.io/pypi/v/idf-analysis.svg)](https://pypi.python.org/pypi/idf-analysis)
+
+heavy rain as a function of the duration and the return period acc. to [DWA-A 531 (2012)](http://www.dwa.de/dwa/shop/shop.nsf/Produktanzeige?openform&produktid=P-DWAA-8XMUY2)
+This program reads the measurement data of the rainfall
+and calculates the distribution of the design rainfall as a function of the return period and the duration
+for duration steps up to 12 hours (and more) and return period in a range of '0.5a &le; T_n &le; 100a'
+
+The guideline was used in the application [KOSTRA-DWD](https://www.dwd.de/DE/leistungen/kostra_dwd_rasterwerte/kostra_dwd_rasterwerte.html).
+
+----
+
+> Heavy rainfall data are among the most important planning parameters in water management and hydraulic engineering practice. In urban areas, for example, they are required as initial parameters for the design of rainwater drainage systems and in watercourses for the dimensioning of hydraulic structures. The accuracy of the target values of the corresponding calculation methods and models depends crucially on their accuracy. Their overestimation can lead to considerable additional costs in the structural implementation, their underestimation to an unacceptable, excessive residual risk of failure during the operation of water management and hydraulic engineering facilities. Despite the area-wide availability of heavy rainfall data through "Coordinated Heavy Rainfall Regionalisation Analyses" (KOSTRA), there is still a need for local station analyses, e.g. to evaluate the now extended data series, to evaluate recent developments or to classify local peculiarities in comparison to the KOSTRA data. However, this is only possible without restrictions if the methodological approach recommended in the worksheet is followed. In the DWA-A 531 worksheet, the main features of the ATVA 121 worksheet published in 1985 and of the identical DVWK-R 124 booklet of the DVWK Rules for Water Management "Heavy Rain Evaluation after Return Time and Duration" are retained. The aim of the revision is to take account of current developments without, however, calling into question the standardisation of the procedure for statistical heavy rain analyses which was intended at the time.
+
+**[DWA-A 531 (2012)](http://www.dwa.de/dwa/shop/shop.nsf/Produktanzeige?openform&produktid=P-DWAA-8XMUY2) Translated with www.DeepL.com/Translator**
+
+----
+
+> An intensity-duration-frequency curve (IDF curve) is a mathematical function that relates the rainfall intensity with its duration and frequency of occurrence. These curves are commonly used in hydrology for flood forecasting and civil engineering for urban drainage design. However, the IDF curves are also analysed in hydrometeorology because of the interest in the time concentration or time-structure of the rainfall.
+
+**[Wikipedia](https://en.wikipedia.org/wiki/Intensity-duration-frequency_curve)**
+
+----
+
+This package was originally developed from [Markus Pichler](mailto:markus.pichler@tugraz.at)'s bachelor thesis and was finalised in the course of his employment at the [Institute of Urban Water Management and Landscape Water Engineering](https://www.sww.tugraz.at).
 
 
 # Install
@@ -27,7 +47,7 @@ This is an option in the installation window as seen below:
 
 - [x] Add Python 3.7 to PATH
 
-![python_install](example/python_install.png)
+![python_install](readme_img/python_install.png)
 
 ## Linux/Unix
 
@@ -40,7 +60,7 @@ Packages required for this program will be installed with pip during the install
 ## Fresh install
 
 ```
-pip install https://codeload.github.com/MarkusPic/intensity_duration_frequency_analysis/zip/master
+pip install idf-analysis
 ```
 
 To install the package only for the local user account, add ```--user``` to the install command.
@@ -50,7 +70,7 @@ To install the package only for the local user account, add ```--user``` to the 
 To update the package, add ```--upgrade``` to the install command.
 
 ```
-pip install https://codeload.github.com/MarkusPic/intensity_duration_frequency_analysis/zip/master --upgrade
+pip install idf-analysis --upgrade
 ```
 
 # Usage
@@ -62,6 +82,8 @@ Windows:
 
 Unix-Like:
 ```idf_analysis```
+
+The documentation of the python-API can be found here: [API](https://markuspic.github.io/intensity_duration_frequency_analysis/html/api.html)
 
 # Commandline tool 
 
@@ -111,11 +133,13 @@ optional arguments:
 
 # Example
 
+An example jupyter notebook script can be found here: [example](https://markuspic.github.io/intensity_duration_frequency_analysis/html/example.html)
 
 
-![Regenhöhenlinien](example/EXAMPLE_plot.png)
+![Regenhöhenlinien](readme_img/EXAMPLE_plot.png)
 
 ## Result table
+
 
 |    |     0.5   |     1.0   |     2.0   |     3.0   |     5.0   |     10.0  |     15.0  |     50.0  |     100.0|
 |----|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|----------|
@@ -133,3 +157,7 @@ optional arguments:
 |450 | 23.132458 | 29.050305 | 34.968153 | 38.429872 | 42.791122 | 48.708969 | 52.170688 | 62.449785 | 68.367633|
 |600 | 25.348627 | 31.443040 | 37.537454 | 41.102458 | 45.593832 | 51.688245 | 55.253249 | 65.839037 | 71.933450|
 |720 | 26.851460 | 33.060492 | 39.269525 | 42.901576 | 47.477419 | 53.686451 | 57.318502 | 68.103378 | 74.312410|
+
+
+
+[]: https://markuspic.github.io/intensity_duration_frequency_analysis/html/api.html

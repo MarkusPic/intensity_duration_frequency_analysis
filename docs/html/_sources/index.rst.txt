@@ -10,9 +10,10 @@ Welcome to Intensity Duration Frequency Analyse's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-   ../README
+   README
    api
    example
+
 
 Indices and tables
 ==================
