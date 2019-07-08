@@ -83,6 +83,8 @@ Windows:
 Unix-Like:
 ```idf_analysis```
 
+The documentation of the python-API can be found here https://markuspic.github.io/intensity_duration_frequency_analysis/html/api.html.
+
 # Commandline tool 
 
 > ```idf_analysis -h```
