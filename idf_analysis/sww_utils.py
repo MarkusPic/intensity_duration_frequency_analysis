@@ -211,8 +211,6 @@ def rain_bar_plot(rain, ax=None, color=None, reverse=False):
         ax.invert_yaxis()
     else:
         ax.set_ylim(bottom=0)
-
-    set_striped_background(ax)
     return ax
 
 
@@ -242,21 +240,3 @@ def resample_rain_series(series):
             break
     # print('resample_rain_series: ', dur, duration_limit, minutes)
     return series.resample('{}T'.format(minutes)).sum(), minutes
-
-
-########################################################################################################################
-def set_striped_background(ax, bg2='#f6f6f6'):
-    """set another background-color between every second y-tick pair"""
-    bg = ax.get_facecolor()
-    ax.set_facecolor(bg2)
-    ylim = ax.get_ylim()
-    yticks = ax.get_yticks(minor=False)
-    t = iter(yticks)
-    for start in t:
-        try:
-            end = next(t)
-        except:
-            break
-        ax.axhspan(start, end, color=bg)
-
-    ax.set_ylim(ylim)
