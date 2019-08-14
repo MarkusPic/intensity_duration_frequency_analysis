@@ -236,18 +236,12 @@ def resample_rain_series(series):
     )
 
     dur = series.index[-1] - series.index[0]
-
     minutes = 1
     for duration_limit, minutes in resample_minutes:
         if dur < duration_limit:
             break
     # print('resample_rain_series: ', dur, duration_limit, minutes)
-
-    freq = guess_freq(series.index)
-    if pd.Timedelta(minutes=minutes) < freq:
-        return series, int(freq / pd.Timedelta(minutes=1))
-
-    return series.resample(pd.Timedelta(minutes=minutes)).sum(), minutes
+    return series.resample('{}T'.format(minutes)).sum(), minutes
 
 
 ########################################################################################################################
