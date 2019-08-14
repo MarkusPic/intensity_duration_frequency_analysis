@@ -750,7 +750,9 @@ class IntensityDurationFrequencyAnalyse:
             unit,
             end - start)
 
-        ts = self.series[start:end].resample('T').sum().fillna(0).copy()
+        freq = guess_freq(self.series.index)
+
+        ts = self.series[start:end].resample(freq).sum().fillna(0).copy()
 
         fig = plt.figure()
 

@@ -63,7 +63,7 @@ Packages required for this program will be installed with pip during the install
 pip install idf-analysis
 ```
 
-To install the package only for the local user account, add ```--user``` to the install command.
+To install the package only for the local user account (without admin rights), add ```--user``` to the install command.
 
 ## Update package
 
