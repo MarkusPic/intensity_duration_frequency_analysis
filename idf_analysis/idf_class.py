@@ -557,8 +557,15 @@ class IntensityDurationFrequencyAnalyse:
 
         df = pd.DataFrame(index=series.index)
 
+        # TODO: only works for minutely data
+
         for d in durations:
-            ts_sum = series.rolling(d, center=True, min_periods=1).sum()
+            freq_num = pd.Timedelta(minutes=d) / guess_freq(series.index)
+            if not freq_num % 1 == 0:
+                continue
+            else:
+                freq_num = int(freq_num)
+            ts_sum = series.rolling(freq_num, center=True, min_periods=1).sum()
             if printable_names:
                 col = minutes_readable(d)
             else:

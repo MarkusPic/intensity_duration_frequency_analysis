@@ -36,7 +36,8 @@ def idf_bar_axes(ax, idf_table, durations=None, return_periods=None):
     duration_size = len(durations)
     # labels for the y axis
     durations_index = range(duration_size)
-    ax.set_yticks([i + 0.5 for i in durations_index], minor=True)
+    dh = 1
+    ax.set_yticks([i + dh/2 for i in durations_index], minor=True)
     ax.set_yticks(list(durations_index), minor=False)
 
     ax.set_yticklabels(duration_steps_readable(durations), minor=True)
@@ -47,8 +48,7 @@ def idf_bar_axes(ax, idf_table, durations=None, return_periods=None):
     freq = guess_freq(idf_table.index)
     start_period = idf_table.index[0].to_period(freq).ordinal
 
-    idf_table.index = idf_table.index - idf_table.index[0]
-    dh = 1
+    # idf_table.index = idf_table.index - idf_table.index[0]
 
     min_duration = pd.Timedelta(minutes=1)
 
@@ -59,11 +59,18 @@ def idf_bar_axes(ax, idf_table, durations=None, return_periods=None):
             c = color_return_period[i]
             # not really a rain event, but the results are the same
             tab = rain_events(tn, ignore_rain_below=t, min_gap=freq)
-            tab[COL.DUR] = event_duration(tab) / min_duration
+
             if tab.empty:
                 continue
 
-            bar_x = [(r[COL.START] / min_duration + start_period, r[COL.DUR]) for _, r in tab.iterrows()]
+            if 1:
+                durations = (event_duration(tab) / min_duration).tolist()
+                rel_starts = ((tab[COL.START] - idf_table.index[0]) / min_duration + start_period).tolist()
+                bar_x = list(zip(rel_starts, durations))
+            else:
+                tab[COL.DUR] = event_duration(tab) / min_duration
+                bar_x = [(r[COL.START] / min_duration + start_period, r[COL.DUR]) for _, r in tab.iterrows()]
+
             ax.broken_barh(bar_x, (hi, dh), facecolors=c)
 
     ax.set_ylim(0, duration_size)

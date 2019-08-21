@@ -66,30 +66,24 @@ def remove_timezone(data):
 ########################################################################################################################
 def guess_freq(date_time_index, default=pd.Timedelta(minutes=1)):
     """
-    return most often frequency in the format [minutes]T eg: "1T" when the frequency is one minute
+    guess the frequency by evaluating the most often frequency
 
-    :param DatetimeIndex date_time_index:
-    :param Timedelta default:
-    :rtype: DateOffset
+    Args:
+        date_time_index (pandas.DatetimeIndex): index of a time-series
+        default (pandas.Timedelta):
+
+    Returns:
+        DateOffset: frequency of the date-time-index
     """
-
-    # ---------------------------------
-    def _get_freq(freq):
-        if isinstance(freq, str):
-            freq = to_offset(freq)
-
-        return freq
-
-    # ---------------------------------
     freq = date_time_index.freq
     if pd.notnull(freq):
-        return _get_freq(freq)
+        return to_offset(freq)
 
     if not len(date_time_index) <= 3:
         freq = pd.infer_freq(date_time_index)  # 'T'
 
         if pd.notnull(freq):
-            return _get_freq(freq)
+            return to_offset(freq)
 
         delta_series = date_time_index.to_series().diff(periods=1).fillna(method='backfill')
         counts = delta_series.value_counts()
@@ -104,8 +98,7 @@ def guess_freq(date_time_index, default=pd.Timedelta(minutes=1)):
     else:
         delta = default
 
-    freq = delta_to_freq(delta)
-    return _get_freq(freq)
+    return to_offset(delta)
 
 
 ########################################################################################################################
