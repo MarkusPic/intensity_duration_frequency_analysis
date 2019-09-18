@@ -560,28 +560,34 @@ class IntensityDurationFrequencyAnalyse:
         # TODO: only works for minutely data
 
         for d in durations:
-            freq_num = pd.Timedelta(minutes=d) / guess_freq(series.index)
-            if not freq_num % 1 == 0:
-                continue
+
+            if 0:
+                freq_num = pd.Timedelta(minutes=d) / guess_freq(series.index)
+                if not freq_num % 1 == 0:
+                    continue
+                else:
+                    freq_num = int(freq_num)
+                ts_sum = series.rolling(freq_num, center=True, min_periods=1).sum()
             else:
-                freq_num = int(freq_num)
-            ts_sum = series.rolling(freq_num, center=True, min_periods=1).sum()
+                freq_num = pd.Timedelta(minutes=d)
+                ts_sum = series.rolling(freq_num, center=False, min_periods=1).sum()
+
             if printable_names:
                 col = minutes_readable(d)
             else:
                 col = d
             df[col] = self.get_return_period(height_of_rainfall=ts_sum, duration=d)
 
-        return df
+        return df.round(1)
 
     @property
     def my_return_periods_frame_filename(self):
         return path.join(self.output_filename + '_return_periods.parquet')
 
     def my_return_periods_frame(self, durations=None, printable_names=True, save=False):
-        if save:
-            fn = self.my_return_periods_frame_filename
-            if self._my_return_periods_frame is None:
+        if self._my_return_periods_frame is None:
+            if save:
+                fn = self.my_return_periods_frame_filename
                 if path.isfile(fn):
                     self._my_return_periods_frame = pd.read_parquet(fn)
                     if not printable_names:
@@ -603,9 +609,9 @@ class IntensityDurationFrequencyAnalyse:
                     if not printable_names:
                         self._my_return_periods_frame.columns = self._my_return_periods_frame.columns.to_series().astype(
                             int)
-        else:
-            self._my_return_periods_frame = self.return_periods_frame(self.series, durations,
-                                                                      printable_names=printable_names)
+            else:
+                self._my_return_periods_frame = self.return_periods_frame(self.series, durations,
+                                                                          printable_names=printable_names)
 
         return self._my_return_periods_frame
 
@@ -699,6 +705,21 @@ class IntensityDurationFrequencyAnalyse:
 
         return events
 
+    def add_return_periods_to_events(self):
+        events = self.get_events()
+        events_dict = events.to_dict(orient='index')
+
+        for no, event in events_dict.items():
+            print(no, '/', len(events.index))
+            start = event[COL.START]
+            end = event[COL.END]
+            idf_table = self.my_return_periods_frame(printable_names=True, save=True)[start:end]
+            max_period, duration = idf_table.max().max(), idf_table.max().idxmax()
+            events_dict[no]['max_period'] = max_period
+            events_dict[no]['at_duration'] = duration
+
+        new_events = pd.DataFrame.from_dict(events_dict, orient='index')
+
     def event_report(self, min_event_rain_sum=25, min_return_period=0.5, out_path=None, durations=None):
         """
         create pdf file with the biggest rain events
@@ -721,14 +742,14 @@ class IntensityDurationFrequencyAnalyse:
 
         events = self.get_events()
 
-        main_events = events[events[COL.LP] > min_event_rain_sum].copy()
+        main_events = events[events[COL.LP] > min_event_rain_sum].to_dict(orient='index')
 
         unit = 'mm'
         column_name = 'Precipitation'
 
         pdf = PdfPages(out_path)
 
-        for _, event in main_events.iterrows():
+        for _, event in main_events.items():
             fig, caption = self.event_plot(event, durations=durations, min_return_period=min_return_period,
                                            unit=unit, column_name=column_name)
 
@@ -764,14 +785,17 @@ class IntensityDurationFrequencyAnalyse:
         fig = plt.figure()
 
         # -------------------------------------
-        idf_table = self.my_return_periods_frame(printable_names=True, save=False)[start:end]
+        idf_table = self.my_return_periods_frame(printable_names=True, save=True)[start:end]
 
         # print(idf_table > min_return_period)
 
+        max_period, duration = idf_table.max().max(), idf_table.max().idxmax()
+        caption += '\nThe maximum return period was {:0.2f}a\nat a duration of {}.'.format(max_period, duration)
+
         if not (idf_table > min_return_period).any().any():
-            max_period, duration = idf_table.max().max(), idf_table.max().idxmax()
+            # max_period, duration = idf_table.max().max(), idf_table.max().idxmax()
+            # caption += '\nThe maximum return period was {:0.2f}a\nat a duration of {}.'.format(max_period, duration)
             rain_ax = fig.add_subplot(111)
-            caption += '\nThe maximum return period was {:0.2f}a\nat a duration of {}.'.format(max_period, duration)
 
         else:
             idf_bar_ax = fig.add_subplot(211)
@@ -802,7 +826,7 @@ class IntensityDurationFrequencyAnalyse:
         tn_long_list = dict()
         tn_short_list = dict()
 
-        # from my_helpers import check
+        # from mp.helpers import check
         # check()
 
         for _, event in events.iterrows():
