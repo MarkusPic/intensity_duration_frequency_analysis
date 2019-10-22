@@ -596,12 +596,14 @@ class IntensityDurationFrequencyAnalyse:
 
                 else:
                     if durations is None:
-                        durations = [5, 10, 15, 20, 30, 45, 60, 90, 120, 180, 240, 360, 540, 720, 1080, 1440, 2880, 4320]
+                        durations = [5, 10, 15, 20, 30, 45, 60, 90, 120, 180, 240, 360, 540, 720, 1080, 1440, 2880,
+                                     4320]
 
                     self._my_return_periods_frame = self.return_periods_frame(self.series, durations,
                                                                               printable_names=printable_names)
 
-                    self._my_return_periods_frame.columns = self._my_return_periods_frame.columns.to_series().astype(str)
+                    self._my_return_periods_frame.columns = self._my_return_periods_frame.columns.to_series().astype(
+                        str)
                     try:
                         self._my_return_periods_frame.to_parquet(fn, compression='brotli')
                     except PermissionError as e:
@@ -779,13 +781,14 @@ class IntensityDurationFrequencyAnalyse:
             end - start)
 
         freq = guess_freq(self.series.index)
-
-        ts = self.series[start:end].resample(freq).sum().fillna(0).copy()
+        pstart = start - pd.Timedelta(minutes=1)
+        pend = end + pd.Timedelta(minutes=1)
+        ts = self.series[pstart:pend].resample(freq).sum().fillna(0).copy()
 
         fig = plt.figure()
 
         # -------------------------------------
-        idf_table = self.my_return_periods_frame(printable_names=True, save=True)[start:end]
+        idf_table = self.my_return_periods_frame(printable_names=True, save=True)[pstart:pend]
 
         # print(idf_table > min_return_period)
 
