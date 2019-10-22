@@ -781,8 +781,8 @@ class IntensityDurationFrequencyAnalyse:
             end - start)
 
         freq = guess_freq(self.series.index)
-        pstart = start - pd.Timedelta(minutes=1)
-        pend = end + pd.Timedelta(minutes=1)
+        pstart = start - pd.Timedelta(freq)
+        pend = end + pd.Timedelta(freq)
         ts = self.series[pstart:pend].resample(freq).sum().fillna(0).copy()
 
         fig = plt.figure()
