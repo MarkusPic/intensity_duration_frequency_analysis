@@ -584,9 +584,10 @@ class IntensityDurationFrequencyAnalyse:
     def my_return_periods_frame_filename(self):
         return path.join(self.output_filename + '_return_periods.parquet')
 
-    def my_return_periods_frame(self, durations=None, printable_names=True, save=False):
+    def my_return_periods_frame(self, durations=None, printable_names=True):
+        print()
         if self._my_return_periods_frame is None:
-            if save:
+            if self._auto_save:
                 fn = self.my_return_periods_frame_filename
                 if path.isfile(fn):
                     self._my_return_periods_frame = pd.read_parquet(fn)
@@ -788,7 +789,7 @@ class IntensityDurationFrequencyAnalyse:
         fig = plt.figure()
 
         # -------------------------------------
-        idf_table = self.my_return_periods_frame(printable_names=True, save=True)[pstart:pend]
+        idf_table = self.my_return_periods_frame(printable_names=True)[pstart:pend]
 
         # print(idf_table > min_return_period)
 
