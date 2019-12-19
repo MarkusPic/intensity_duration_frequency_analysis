@@ -585,7 +585,6 @@ class IntensityDurationFrequencyAnalyse:
         return path.join(self.output_filename + '_return_periods.parquet')
 
     def my_return_periods_frame(self, durations=None, printable_names=True):
-        print()
         if self._my_return_periods_frame is None:
             if self._auto_save:
                 fn = self.my_return_periods_frame_filename
