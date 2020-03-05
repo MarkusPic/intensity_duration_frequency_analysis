@@ -18,7 +18,8 @@ import numpy as np
 import pandas as pd
 
 from .arg_parser import heavy_rain_parser
-from .calculation_methods import get_u_w, get_parameter, calculate_u_w, depth_of_rainfall, minutes_readable
+from .calculation_methods import get_u_w, get_parameter, calculate_u_w, depth_of_rainfall
+from .little_helpers import minutes_readable
 from .definitions import *
 from .in_out import csv_args, import_series
 from .sww_utils import (remove_timezone, guess_freq, year_delta, rain_events, agg_events, event_duration,

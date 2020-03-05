@@ -22,6 +22,12 @@ LIN = 'linear'
 SERIES_NAME = 'Precipitation'
 
 
+class PARAM:
+    U = 'u'
+    W = 'w'
+    U_AND_W = U, W
+
+
 class COL:
     """
     column names for the event table
@@ -31,3 +37,23 @@ class COL:
     DUR = 'duration'
     LP = 'rain_sum'
     MAX_OVERLAPPING_SUM = 'max_overlapping_sum'
+
+
+# parameters for the function
+A = 'a'
+B = 'b'
+
+
+class PARAM_COL:
+    FROM = 'von'
+    TO = 'bis'
+    U = PARAM.U
+    W = PARAM.W
+
+    @staticmethod
+    def A(p):
+        return '{}_{}'.format(A, p)
+
+    @staticmethod
+    def B(p):
+        return '{}_{}'.format(B, p)

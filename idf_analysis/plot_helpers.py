@@ -1,9 +1,9 @@
 import pandas as pd
-from idf_analysis.definitions import COL
-
-from .calculation_methods import duration_steps_readable
-from .sww_utils import guess_freq, rain_events, event_duration
 from matplotlib.ticker import NullFormatter
+
+from .definitions import COL
+from .little_helpers import duration_steps_readable
+from .sww_utils import guess_freq, rain_events, event_duration
 
 
 def idf_bar_axes(ax, idf_table, durations=None, return_periods=None):

@@ -8,23 +8,12 @@ __license__ = "MIT"
 import pandas as pd
 import numpy as np
 from numpy import NaN
-from math import e, floor, ceil
+from math import e, floor
+
+from tqdm import tqdm
+
 from .sww_utils import guess_freq, rain_events, agg_events
-from .definitions import DWA, ATV, DWA_adv, PARTIAL, ANNUAL, LOG1, LOG2, HYP, LIN, COL
-
-
-def delta2min(time_delta):
-    """
-    convert timedelta to float in minutes
-
-    Args:
-        time_delta (pandas.Timedelta):
-
-    Returns:
-        float: the timedelta in minutes
-    """
-    # time_delta.total_seconds() / 60
-    return time_delta / pd.Timedelta(minutes=1)
+from .definitions import DWA, ATV, DWA_adv, PARTIAL, ANNUAL, LOG1, LOG2, HYP, LIN, COL, PARAM, PARAM_COL
 
 
 ########################################################################################################################
@@ -54,7 +43,7 @@ def annual_series(events):
         ((x ** 2).sum() - sample_size * x_mean ** 2)
     u = mean_sample_rainfall - w * x_mean
 
-    return {'u': u, 'w': w}
+    return {PARAM.U: u, PARAM.W: w}
 
 
 ########################################################################################################################
@@ -107,94 +96,7 @@ def partial_series(events, measurement_period):
 
     u = mean_sample_rainfall - w * ln_t_n_mean
 
-    return {'u': u, 'w': w}
-
-
-########################################################################################################################
-def _calculate_u_w_OLD(file_input, duration_steps, measurement_period, series_kind):
-    """
-    statistical analysis for each duration step acc. to DWA-A 531 chap. 5.1
-    save the parameters of the distribution function as interim results
-    acc. to DWA-A 531 chap. 4.4: use the annual series only for measurement periods over 20 years
-
-
-    Args:
-        file_input (pandas.Series): data
-        duration_steps (list[int] | numpy.ndarray): in minutes
-        measurement_period (float): duration of the series in years
-        series_kind (str): annual or partial series
-
-    Returns:
-        pandas.DataFrame: with index = duration and columns = [u, w]
-    """
-    # check(COL.START)
-    ts = file_input.copy()
-    # ts = ts.dropna()
-    base_frequency = guess_freq(file_input.index)  # DateOffset/Timedelta
-    ts = ts.resample(base_frequency).sum()
-
-    # ts = ts.asfreq(base_frequency)
-    # ts = ts.fillna(0)
-
-    # ------------------------------------------------------------------------------------------------------------------
-    def _calc_overlapping_sum_max(event, duration):
-        """
-        calculation of the maximum of the overlapping sum of the series
-        acc. to DWA-A 531 chap. 4.2
-
-        Args:
-            event (pandas.Series): event with index=[start, end]
-            duration (pandas.Timedelta): of the calculation step
-
-        Returns:
-            float: maximum of the overlapping sum
-        """
-        data = ts.loc[event[COL.START]:event[COL.END]].copy()
-        interval = int(round(duration / base_frequency))
-
-        # correction factor acc. to DWA-A 531 chap. 4.3
-        improve = [1.140, 1.070, 1.040, 1.030]
-
-        if interval == 1:
-            return data.max() * improve[0]
-
-        data = data.rolling(window=interval).sum()
-
-        if interval > 4:
-            return data.max()
-        else:
-            return data.max() * improve[interval - 1]
-
-    # ------------------------------------------------------------------------------------------------------------------
-    interim_results = pd.DataFrame(index=duration_steps, columns=['u', 'w'], dtype=float)
-    interim_results.index.name = 'duration'
-
-    # acc. to DWA-A 531 chap. 4.2:
-    # The values must be independent of each other for the statistical evaluations.
-    # estimated four hours acc. (SCHILLING 1984)
-    # for larger durations - use the duration as minimal gap
-    minimal_gap = pd.Timedelta(hours=4)
-    # check('Events')
-    events = rain_events(file_input, ignore_rain_below=0.0, min_gap=minimal_gap)
-    # check(' - done')
-    for duration_index in duration_steps:
-        print(duration_index)
-        duration = pd.Timedelta(minutes=duration_index)
-        if duration > minimal_gap:
-            events = rain_events(file_input, ignore_rain_below=0.0, min_gap=duration)
-
-        # check('osum')
-        events[COL.MAX_OVERLAPPING_SUM] = events.apply(_calc_overlapping_sum_max, axis=1, duration=duration)
-
-        # check('series calc')
-        if series_kind == ANNUAL:
-            interim_results.loc[duration_index] = annual_series(events)
-        elif series_kind == PARTIAL:
-            interim_results.loc[duration_index] = partial_series(events, measurement_period)
-        else:
-            raise NotImplementedError
-        # check(' - done')
-    return interim_results
+    return {PARAM.U: u, PARAM.W: w}
 
 
 ########################################################################################################################
@@ -253,8 +155,9 @@ def calculate_u_w(file_input, duration_steps, measurement_period, series_kind):
     # may increase design-rain-height of smaller durations
     #
     # -------------------------------
-
-    for duration_integer in duration_steps:
+    pbar = tqdm(duration_steps, desc='Calculating Parameters u and w')
+    for duration_integer in pbar:
+        pbar.set_description(f'Calculating Parameters u and w for duration {duration_integer}')
         duration = pd.Timedelta(minutes=duration_integer)
 
         if duration < pd.Timedelta(base_frequency):
@@ -276,7 +179,7 @@ def calculate_u_w(file_input, duration_steps, measurement_period, series_kind):
 
     # -------------------------------
     interim_results = pd.DataFrame.from_dict(interim_results, orient='index')
-    interim_results.index.name = 'duration'
+    interim_results.index.name = COL.DUR
     return interim_results
 
 
@@ -411,7 +314,7 @@ def get_duration_steps(worksheet):
         worksheet (str):
 
     Returns:
-        tuple[int, int]:
+        tuple[int, int]: duration steps in minutes
     """
     return {
         # acc. to ATV-A 121 chap. 5.2 (till 2012)
@@ -437,26 +340,83 @@ def get_approach_table(worksheet):
     Returns:
         pandas.DataFrame: table of approaches depending on the duration and the parameter
     """
-    approach_table = pd.DataFrame(columns=['von', 'bis', 'u', 'w', 'a_u', 'b_u', 'a_w', 'b_w'])
+    approach_list = list()
 
     # acc. to ATV-A 121 chap. 5.2.1
     if worksheet == ATV:
-        approach_table = approach_table.append(dict(von=None, bis=None, u=LOG2, w=LOG1), ignore_index=True)
+        approach_list.append({PARAM_COL.FROM: None,
+                              PARAM_COL.TO: None,
+                              PARAM_COL.U: LOG2,
+                              PARAM_COL.W: LOG1})
 
     elif worksheet == DWA:
         duration_bound_1, duration_bound_2 = get_duration_steps(worksheet)
 
-        approach_table = approach_table.append(dict(von=0, bis=duration_bound_1,
-                                                    u=HYP, w=LOG2), ignore_index=True)
-        approach_table = approach_table.append(dict(von=duration_bound_1, bis=duration_bound_2,
-                                                    u=LOG2, w=LOG2), ignore_index=True)
-        approach_table = approach_table.append(dict(von=duration_bound_2, bis=np.inf,
-                                                    u=LIN, w=LIN), ignore_index=True)
+        approach_list.append({PARAM_COL.FROM: 0,
+                              PARAM_COL.TO: duration_bound_1,
+                              PARAM_COL.U: HYP,
+                              PARAM_COL.W: LOG2})
+        approach_list.append({PARAM_COL.FROM: duration_bound_1,
+                              PARAM_COL.TO: duration_bound_2,
+                              PARAM_COL.U: LOG2,
+                              PARAM_COL.W: LOG2})
+        approach_list.append({PARAM_COL.FROM: duration_bound_2,
+                              PARAM_COL.TO: np.inf,
+                              PARAM_COL.U: LIN,
+                              PARAM_COL.W: LIN})
 
     else:
         raise NotImplementedError
 
-    return approach_table
+    return approach_list
+
+
+########################################################################################################################
+def _calc_params(parameter, interim_results, params_mean=None, duration_mean=None):
+    """
+    calculate parameters a_u, a_w, b_u and b_w and add it to the dict
+
+    Args:
+        parameter (list[dict]):
+        interim_results (pandas.DataFrame):
+        params_mean (dict[float]):
+        duration_mean (float):
+
+    Returns:
+        list[dict]: parameters
+    """
+    for row in parameter:
+        it_res = interim_results.loc[row[PARAM_COL.FROM]: row[PARAM_COL.TO]]
+        if it_res.empty:
+            continue
+
+        dur = it_res.index.values
+
+        for p in PARAM.U_AND_W:
+            a_label = PARAM_COL.A(p)
+            b_label = PARAM_COL.B(p)
+
+            param = it_res[p].values
+
+            approach = row[p]
+            if params_mean:
+                param_mean = params_mean[p]
+            else:
+                param_mean = None
+
+            a_start = 20.0
+            if a_label in row and not np.isnan(row[a_label]):
+                a_start = row[a_label]
+
+            b_start = 15.0
+            if b_label in row and not np.isnan(row[b_label]):
+                b_start = row[b_label]
+
+            a, b = formulation(approach, dur, param, a_start=a_start, b_start=b_start,
+                               param_mean=param_mean, duration_mean=duration_mean)
+            row[a_label] = a
+            row[b_label] = b
+    return parameter
 
 
 ########################################################################################################################
@@ -469,51 +429,22 @@ def get_parameter(interim_results, worksheet=DWA):
         worksheet (str):
 
     Returns:
-        pandas.DataFrame: parameters
+        list[dict]: parameters
     """
     parameter = get_approach_table(worksheet)
 
-    # ------------------------------------------------------------------------------------------------------------------
-    def _calc_params(parameter_, params_mean=None, duration_mean=None):
-        parameters = parameter_.copy()
-        for index, row in parameters.iterrows():
-            it_res = interim_results.loc[row['von']: row['bis']]
-            if it_res.empty:
-                continue
-            for p in ['u', 'w']:
-                param = it_res[p].values
-                dur = it_res.index.values
-                approach = row[p]
-                if params_mean:
-                    param_mean = params_mean[p]
-                else:
-                    param_mean = None
-
-                a_start = row.loc['a_{}'.format(p)]
-                b_start = row.loc['b_{}'.format(p)]
-                if np.isnan(a_start):
-                    a_start = 20.0
-                if np.isnan(b_start):
-                    b_start = 15.0
-
-                a, b = formulation(approach, dur, param, a_start=a_start, b_start=b_start,
-                                   param_mean=param_mean, duration_mean=duration_mean)
-                parameters.loc[index, 'a_{}'.format(p)] = a
-                parameters.loc[index, 'b_{}'.format(p)] = b
-        return parameters
-
-    # ------------------------------------------------------------------------------------------------------------------
-    parameter = _calc_params(parameter)
+    parameter = _calc_params(parameter, interim_results)
 
     # the balance between the different duration ranges acc. to DWA-A 531 chap. 5.2.4
-    duration_step = parameter['bis'][0]
+    duration_step = parameter[0][PARAM_COL.TO]
     durations = np.array([duration_step - 0.001, duration_step + 0.001])
 
     if any(durations < interim_results.index.values.min()):
         return parameter
 
     u, w = get_u_w(durations, parameter, interim_results)
-    parameter = _calc_params(parameter, params_mean=dict(u=np.mean(u), w=np.mean(w)), duration_mean=duration_step)
+    parameter = _calc_params(parameter, interim_results, params_mean=dict(u=np.mean(u), w=np.mean(w)),
+                             duration_mean=duration_step)
     return parameter
 
 
@@ -523,11 +454,11 @@ def get_u_w(duration, parameter, interim_results):
 
     Args:
         duration (numpy.ndarray | float | int): in minutes
-        parameter:
+        parameter (list[dict]):
         interim_results:
 
     Returns:
-
+        (float, float): u, w
     """
     if isinstance(duration, list):
         duration = np.array(duration)
@@ -560,27 +491,29 @@ def get_u_w(duration, parameter, interim_results):
 
     # ------------------------------------------------------------------------------------------------------------------
     res = {}
-    for index, row in parameter.iterrows():
+    for row in parameter:
 
         if isinstance(duration, (int, float)):
-            if not (duration > row['von']) & (duration <= row['bis']):
+            if not (duration > row[PARAM_COL.FROM]) & (duration <= row[PARAM_COL.TO]):
                 continue
             else:
                 dur = duration
         else:
-            dur = duration[(duration > row['von']) & (duration <= row['bis'])]
+            dur = duration[(duration > row[PARAM_COL.FROM]) & (duration <= row[PARAM_COL.TO])]
             if not dur.size:
                 continue
 
-        for p in ['u', 'w']:
+        for p in PARAM.U_AND_W:
             approach = row[p]
-            a, b = row.loc[['{}_{}'.format(i, p) for i in ['a', 'b']]]
+            a = row[PARAM_COL.A(p)]
+            b = row[PARAM_COL.B(p)]
+
             new = _calc_param(a, b, dur, approach, interim_results[p])
             if p in res:
                 res[p] = np.array(list(res[p]) + list(new))
             else:
                 res[p] = new
-    return [res[i] for i in ['u', 'w']]
+    return [res[i] for i in PARAM.U_AND_W]
 
 
 ########################################################################################################################
@@ -606,50 +539,3 @@ def depth_of_rainfall(u, w, series_kind, return_period):
 
     else:
         return u + w * np.log(return_period)
-
-
-def minutes_readable(minutes):
-    """
-    convert the duration in minutes to a more readable form
-
-    Args:
-        minutes (float | int): duration in minutes
-
-    Returns:
-        str: duration as a string
-    """
-    if minutes <= 60:
-        return '{:0.0f}min'.format(minutes)
-    elif 60 < minutes < 60 * 24:
-        minutes /= 60
-        if minutes % 1:
-            fmt = '{:0.1f}h'
-        else:
-            fmt = '{:0.0f}h'
-        return fmt.format(minutes)
-    elif 60 * 24 <= minutes:
-        minutes /= 60 * 24
-        if minutes % 1:
-            fmt = '{:0.1f}d'
-        else:
-            fmt = '{:0.0f}d'
-        return fmt.format(minutes)
-    else:
-        return str(minutes)
-
-
-########################################################################################################################
-def duration_steps_readable(durations):
-    """
-    convert the durations to a more readable form
-
-    Args:
-        durations (list[int | float]): in minutes
-
-    Returns:
-        list[str]: of the readable duration list
-    """
-    duration_strings = list()
-    for i, minutes in enumerate(durations):
-        duration_strings.append(minutes_readable(minutes))
-    return duration_strings

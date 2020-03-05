@@ -4,6 +4,8 @@ import pandas as pd
 from pandas.tseries.frequencies import to_offset
 from pandas.tseries.offsets import _delta_to_tick as delta_to_freq
 from pandas import DatetimeIndex, DateOffset, Timedelta
+from tqdm import tqdm
+import numpy as np
 
 from .definitions import COL
 
@@ -156,11 +158,14 @@ def agg_events(events, series, agg='sum'):
     Returns:
         pandas.Series: result of function of every event
     """
+    if events.empty:
+        return pd.Series()
 
-    def _agg_event(event):
-        return series[event[COL.START]:event[COL.END]].agg(agg)
+    res = list()
+    for _, event in tqdm(events.to_dict(orient='index').items(), desc=f'Aggregate Events with "{agg}"'):
+        res.append(series[event[COL.START]:event[COL.END]].agg(agg))
 
-    return events.apply(_agg_event, axis=1)
+    return np.array(res)
 
 
 ########################################################################################################################
