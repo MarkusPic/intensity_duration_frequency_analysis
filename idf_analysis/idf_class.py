@@ -187,7 +187,7 @@ class IntensityDurationFrequencyAnalyse:
     def parameter(self):
         """
         Returns:
-            pandas.DataFrame: calculation parameters
+            list[dict]: calculation parameters
         """
         if self._parameter is None:
             self._parameter = get_parameter(self.interim_results, self.worksheet)
@@ -199,7 +199,7 @@ class IntensityDurationFrequencyAnalyse:
         """
         par_file = self.output_filename + '_parameter.csv'
         if not path.isfile(par_file):
-            self.parameter.to_csv(par_file, index=False, **csv_args(self._unix))
+            pd.DataFrame(self.parameter).to_csv(par_file, index=False, **csv_args(self._unix))
 
     # __________________________________________________________________________________________________________________
     def get_u_w(self, duration):
