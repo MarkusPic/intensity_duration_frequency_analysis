@@ -16,6 +16,7 @@ from matplotlib.backends.backend_pdf import PdfPages
 from matplotlib.lines import Line2D
 import numpy as np
 import pandas as pd
+from tqdm import tqdm
 
 from .arg_parser import heavy_rain_parser
 from .calculation_methods import get_u_w, get_parameter, calculate_u_w, depth_of_rainfall
@@ -752,7 +753,7 @@ class IntensityDurationFrequencyAnalyse:
 
         pdf = PdfPages(out_path)
 
-        for _, event in main_events.items():
+        for _, event in tqdm(main_events.items()):
             fig, caption = self.event_plot(event, durations=durations, min_return_period=min_return_period,
                                            unit=unit, column_name=column_name)
 
