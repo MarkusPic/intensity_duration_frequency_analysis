@@ -63,7 +63,7 @@ Packages required for this program will be installed with pip during the install
 pip install idf-analysis
 ```
 
-To install the package only for the local user account, add ```--user``` to the install command.
+To install the package only for the local user account (without admin rights), add ```--user``` to the install command.
 
 ## Update package
 
@@ -157,7 +157,3 @@ An example jupyter notebook script can be found here: [example](https://markuspi
 |450 | 23.132458 | 29.050305 | 34.968153 | 38.429872 | 42.791122 | 48.708969 | 52.170688 | 62.449785 | 68.367633|
 |600 | 25.348627 | 31.443040 | 37.537454 | 41.102458 | 45.593832 | 51.688245 | 55.253249 | 65.839037 | 71.933450|
 |720 | 26.851460 | 33.060492 | 39.269525 | 42.901576 | 47.477419 | 53.686451 | 57.318502 | 68.103378 | 74.312410|
-
-
-
-[]: https://markuspic.github.io/intensity_duration_frequency_analysis/html/api.html

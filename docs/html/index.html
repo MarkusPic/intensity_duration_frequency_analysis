@@ -21,10 +21,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -157,13 +158,13 @@
 /* CSS overrides for sphinx_rtd_theme */
 
 /* 24px margin */
-.nbinput.nblast,
-.nboutput.nblast {
+.nbinput.nblast.container,
+.nboutput.nblast.container {
     margin-bottom: 19px;  /* padding has already 5px */
 }
 
 /* ... except between code cells! */
-.nblast + .nbinput {
+.nblast.container + .nbinput.container {
     margin-top: -19px;
 }
 
@@ -197,9 +198,9 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="api.html#module-idf_analysis.calculation_methods">Calculation Methods</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api.html#module-idf_analysis.in_out">Input and Output</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api.html#module-idf_analysis.sww_utils">SWW Utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#calculation-methods">Calculation Methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#input-and-output">Input and Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#sww-utils">SWW Utils</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api.html#main-function">Main Function</a></li>
 </ul>
 </li>
