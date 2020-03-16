@@ -9,7 +9,6 @@ import warnings
 
 import pandas as pd
 import numpy as np
-from numpy import NaN
 from math import e, floor
 from collections import OrderedDict
 
@@ -17,8 +16,6 @@ from tqdm import tqdm
 
 from .sww_utils import guess_freq, rain_events, agg_events, year_delta
 from .definitions import DWA, ATV, DWA_adv, PARTIAL, ANNUAL, LOG1, LOG2, HYP, LIN, COL, PARAM, PARAM_COL
-
-from mp.helpers.check_time import timeit, Timer
 
 
 ########################################################################################################################
@@ -127,7 +124,6 @@ def _improve_factor(interval):
 
 
 ########################################################################################################################
-@timeit
 def calculate_u_w(file_input, duration_steps, series_kind):
     """
     statistical analysis for each duration step acc. to DWA-A 531 chap. 5.1

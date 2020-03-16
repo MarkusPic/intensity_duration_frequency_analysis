@@ -21,10 +21,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../_static/doctools.js"></script>
-        <script type="text/javascript" src="../../_static/language_data.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -158,6 +159,8 @@
 <span class="n">__license__</span> <span class="o">=</span> <span class="s2">&quot;MIT&quot;</span>
 
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">yaml</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 
 
 <span class="k">def</span> <span class="nf">csv_args</span><span class="p">(</span><span class="n">unix</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
@@ -170,12 +173,14 @@
 <div class="viewcode-block" id="import_series"><a class="viewcode-back" href="../../api.html#idf_analysis.in_out.import_series">[docs]</a><span class="k">def</span> <span class="nf">import_series</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">series_label</span><span class="o">=</span><span class="s1">&#39;precipitation&#39;</span><span class="p">,</span> <span class="n">index_label</span><span class="o">=</span><span class="s1">&#39;datetime&#39;</span><span class="p">,</span> <span class="n">unix</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="sd">    :param filename:</span>
-<span class="sd">    :param series_label:</span>
-<span class="sd">    :param index_label:</span>
-<span class="sd">    :param unix: whether to use a &quot;,&quot; as separator and a &quot;.&quot; as decimal sign or &quot;;&quot; and &quot;,&quot;.</span>
-<span class="sd">    :type unix: bool</span>
-<span class="sd">    :return:</span>
+<span class="sd">    Args:</span>
+<span class="sd">        filename:</span>
+<span class="sd">        series_label:</span>
+<span class="sd">        index_label:</span>
+<span class="sd">        unix: whether to use a &quot;,&quot; as separator and a &quot;.&quot; as decimal sign or &quot;;&quot; and &quot;,&quot;.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pandas.Series: precipitation series</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;csv&#39;</span><span class="p">):</span>
         <span class="n">ts</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">squeeze</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="n">series_label</span><span class="p">],</span> <span class="o">**</span><span class="n">csv_args</span><span class="p">(</span><span class="n">unix</span><span class="p">))</span>
@@ -187,7 +192,31 @@
     <span class="k">elif</span> <span class="n">filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;pkl&#39;</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_pickle</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">series_label</span><span class="p">)</span><span class="o">.</span><span class="n">rename_axis</span><span class="p">(</span><span class="n">index_label</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s1">&#39;index&#39;</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Sorry, but only csv files are implemented. Maybe there will be more options soon.&#39;</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Sorry, but only csv, parquet and pickle files are implemented. &#39;</span>
+                                  <span class="s1">&#39;Maybe there will be more options soon.&#39;</span><span class="p">)</span></div>
+
+<span class="c1"># ------------------------------------------------------------------------------</span>
+<span class="n">_mapping_tag</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">resolver</span><span class="o">.</span><span class="n">BaseResolver</span><span class="o">.</span><span class="n">DEFAULT_MAPPING_TAG</span>
+
+
+<span class="k">def</span> <span class="nf">_dict_representer</span><span class="p">(</span><span class="n">dumper</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">dumper</span><span class="o">.</span><span class="n">represent_dict</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+
+
+<span class="k">def</span> <span class="nf">_dict_constructor</span><span class="p">(</span><span class="n">loader</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="n">loader</span><span class="o">.</span><span class="n">construct_pairs</span><span class="p">(</span><span class="n">node</span><span class="p">))</span>
+
+
+<span class="n">yaml</span><span class="o">.</span><span class="n">add_representer</span><span class="p">(</span><span class="n">OrderedDict</span><span class="p">,</span> <span class="n">_dict_representer</span><span class="p">)</span>
+<span class="n">yaml</span><span class="o">.</span><span class="n">add_constructor</span><span class="p">(</span><span class="n">_mapping_tag</span><span class="p">,</span> <span class="n">_dict_constructor</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">write_yaml</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">fn</span><span class="p">):</span>
+    <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">),</span> <span class="n">default_flow_style</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">read_yaml</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">),</span> <span class="n">Loader</span><span class="o">=</span><span class="n">yaml</span><span class="o">.</span><span class="n">FullLoader</span><span class="p">)</span>
 </pre></div>
 
            </div>

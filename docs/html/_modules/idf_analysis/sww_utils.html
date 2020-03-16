@@ -21,10 +21,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../_static/doctools.js"></script>
-        <script type="text/javascript" src="../../_static/language_data.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -151,13 +152,12 @@
             
   <h1>Source code for idf_analysis.sww_utils</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">pytz</span>
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">tzinfo</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">tzinfo</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">pandas.tseries.frequencies</span> <span class="k">import</span> <span class="n">to_offset</span>
-<span class="kn">from</span> <span class="nn">pandas.tseries.offsets</span> <span class="k">import</span> <span class="n">_delta_to_tick</span> <span class="k">as</span> <span class="n">delta_to_freq</span>
-<span class="kn">from</span> <span class="nn">pandas</span> <span class="k">import</span> <span class="n">DatetimeIndex</span><span class="p">,</span> <span class="n">DateOffset</span><span class="p">,</span> <span class="n">Timedelta</span>
+<span class="kn">from</span> <span class="nn">pandas.tseries.frequencies</span> <span class="kn">import</span> <span class="n">to_offset</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">.definitions</span> <span class="k">import</span> <span class="n">COL</span>
+<span class="kn">from</span> <span class="nn">.definitions</span> <span class="kn">import</span> <span class="n">COL</span>
 
 <span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;David Camhy, Markus Pichler&quot;</span>
 <span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Copyright 2018, University of Technology Graz&quot;</span>
@@ -218,30 +218,24 @@
 <span class="c1">########################################################################################################################</span>
 <div class="viewcode-block" id="guess_freq"><a class="viewcode-back" href="../../api.html#idf_analysis.sww_utils.guess_freq">[docs]</a><span class="k">def</span> <span class="nf">guess_freq</span><span class="p">(</span><span class="n">date_time_index</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="mi">1</span><span class="p">)):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    return most often frequency in the format [minutes]T eg: &quot;1T&quot; when the frequency is one minute</span>
+<span class="sd">    guess the frequency by evaluating the most often frequency</span>
 
-<span class="sd">    :param DatetimeIndex date_time_index:</span>
-<span class="sd">    :param Timedelta default:</span>
-<span class="sd">    :rtype: DateOffset</span>
+<span class="sd">    Args:</span>
+<span class="sd">        date_time_index (pandas.DatetimeIndex): index of a time-series</span>
+<span class="sd">        default (pandas.Timedelta):</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pandas.DateOffset: frequency of the date-time-index</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="c1"># ---------------------------------</span>
-    <span class="k">def</span> <span class="nf">_get_freq</span><span class="p">(</span><span class="n">freq</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="n">freq</span> <span class="o">=</span> <span class="n">to_offset</span><span class="p">(</span><span class="n">freq</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">freq</span>
-
-    <span class="c1"># ---------------------------------</span>
     <span class="n">freq</span> <span class="o">=</span> <span class="n">date_time_index</span><span class="o">.</span><span class="n">freq</span>
     <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">notnull</span><span class="p">(</span><span class="n">freq</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">_get_freq</span><span class="p">(</span><span class="n">freq</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">to_offset</span><span class="p">(</span><span class="n">freq</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">date_time_index</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">3</span><span class="p">:</span>
         <span class="n">freq</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">infer_freq</span><span class="p">(</span><span class="n">date_time_index</span><span class="p">)</span>  <span class="c1"># &#39;T&#39;</span>
 
         <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">notnull</span><span class="p">(</span><span class="n">freq</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">_get_freq</span><span class="p">(</span><span class="n">freq</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">to_offset</span><span class="p">(</span><span class="n">freq</span><span class="p">)</span>
 
         <span class="n">delta_series</span> <span class="o">=</span> <span class="n">date_time_index</span><span class="o">.</span><span class="n">to_series</span><span class="p">()</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">periods</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;backfill&#39;</span><span class="p">)</span>
         <span class="n">counts</span> <span class="o">=</span> <span class="n">delta_series</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
@@ -256,8 +250,7 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">delta</span> <span class="o">=</span> <span class="n">default</span>
 
-    <span class="n">freq</span> <span class="o">=</span> <span class="n">delta_to_freq</span><span class="p">(</span><span class="n">delta</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">_get_freq</span><span class="p">(</span><span class="n">freq</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">to_offset</span><span class="p">(</span><span class="n">delta</span><span class="p">)</span></div>
 
 
 <span class="c1">########################################################################################################################</span>
@@ -270,19 +263,14 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    get rain events as a table with start and end times</span>
 
-<span class="sd">    :param series: rain series</span>
-<span class="sd">    :type series: pd.Series</span>
+<span class="sd">    Args:</span>
+<span class="sd">        series (pandas.Series): rain series</span>
+<span class="sd">        ignore_rain_below (float): where it is considered as rain</span>
+<span class="sd">        min_gap (pandas.Timedelta): 4 hours of no rain between events</span>
 
-<span class="sd">    :param ignore_rain_below: where it is considered as rain</span>
-<span class="sd">    :type ignore_rain_below: float</span>
-
-<span class="sd">    :param min_gap: 4 hours of no rain between events</span>
-<span class="sd">    :type min_gap: pd.Timedelta</span>
-
-<span class="sd">    :return: table of the rain events</span>
-<span class="sd">    :rtype: pd.DataFrame</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        pandas.DataFrame: table of the rain events</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="c1"># best OKOSTRA adjustment with 0.0</span>
     <span class="c1"># by ignoring 0.1 mm the results are getting bigger</span>
 
@@ -303,6 +291,26 @@
     <span class="k">return</span> <span class="n">events</span></div>
 
 
+<div class="viewcode-block" id="event_number_to_series"><a class="viewcode-back" href="../../api.html#idf_analysis.sww_utils.event_number_to_series">[docs]</a><span class="k">def</span> <span class="nf">event_number_to_series</span><span class="p">(</span><span class="n">events</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    make a time-series where the value of the event number is paste to the &lt;index&gt;</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        events (pandas.DataFrame):</span>
+<span class="sd">        index (pandas.DatetimeIndex):</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pandas.Series:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ts</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">)</span>
+
+    <span class="n">events_dict</span> <span class="o">=</span> <span class="n">events</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s1">&#39;index&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">event_no</span><span class="p">,</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">events_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">ts</span><span class="p">[</span><span class="n">event</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">START</span><span class="p">]:</span> <span class="n">event</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">END</span><span class="p">]]</span> <span class="o">=</span> <span class="n">event_no</span>
+
+    <span class="k">return</span> <span class="n">ts</span></div>
+
+
 <span class="c1">########################################################################################################################</span>
 <div class="viewcode-block" id="agg_events"><a class="viewcode-back" href="../../api.html#idf_analysis.sww_utils.agg_events">[docs]</a><span class="k">def</span> <span class="nf">agg_events</span><span class="p">(</span><span class="n">events</span><span class="p">,</span> <span class="n">series</span><span class="p">,</span> <span class="n">agg</span><span class="o">=</span><span class="s1">&#39;sum&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -313,13 +321,16 @@
 <span class="sd">        agg (str | function): aggregation of time-series</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        pandas.Series: result of function of every event</span>
+<span class="sd">        numpy.ndarray: result of function of every event</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">events</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
 
-    <span class="k">def</span> <span class="nf">_agg_event</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">series</span><span class="p">[</span><span class="n">event</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">START</span><span class="p">]:</span><span class="n">event</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">END</span><span class="p">]]</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="n">agg</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">events</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">_agg_event</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
+    <span class="k">if</span> <span class="n">events</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">3500</span><span class="p">:</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">series</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">event_number_to_series</span><span class="p">(</span><span class="n">events</span><span class="p">,</span> <span class="n">series</span><span class="o">.</span><span class="n">index</span><span class="p">))</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="n">agg</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">events</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">event</span><span class="p">:</span> <span class="n">series</span><span class="p">[</span><span class="n">event</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">START</span><span class="p">]:</span><span class="n">event</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">END</span><span class="p">]]</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="n">agg</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
+    <span class="k">return</span> <span class="n">res</span></div>
 
 
 <span class="c1">########################################################################################################################</span>
@@ -363,6 +374,7 @@
         <span class="n">ax</span><span class="o">.</span><span class="n">invert_yaxis</span><span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">bottom</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
     <span class="k">return</span> <span class="n">ax</span></div>
 
 
@@ -386,10 +398,16 @@
     <span class="p">)</span>
 
     <span class="n">dur</span> <span class="o">=</span> <span class="n">series</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">series</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">freq</span> <span class="o">=</span> <span class="n">guess_freq</span><span class="p">(</span><span class="n">series</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+
     <span class="n">minutes</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="k">for</span> <span class="n">duration_limit</span><span class="p">,</span> <span class="n">minutes</span> <span class="ow">in</span> <span class="n">resample_minutes</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">dur</span> <span class="o">&lt;</span> <span class="n">duration_limit</span><span class="p">:</span>
             <span class="k">break</span>
+
+    <span class="k">if</span> <span class="n">freq</span><span class="o">.</span><span class="n">delta</span> <span class="o">&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="n">minutes</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">series</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">freq</span> <span class="o">/</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+
     <span class="c1"># print(&#39;resample_rain_series: &#39;, dur, duration_limit, minutes)</span>
     <span class="k">return</span> <span class="n">series</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">T&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">minutes</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span> <span class="n">minutes</span></div>
 </pre></div>

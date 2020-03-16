@@ -2,12 +2,8 @@ import pytz
 from datetime import tzinfo
 import pandas as pd
 from pandas.tseries.frequencies import to_offset
-from pandas.tseries.offsets import _delta_to_tick as delta_to_freq
-from pandas import DatetimeIndex, DateOffset, Timedelta
-from tqdm import tqdm
 import numpy as np
 
-from mp.helpers import timeit
 from .definitions import COL
 
 __author__ = "David Camhy, Markus Pichler"
@@ -76,7 +72,7 @@ def guess_freq(date_time_index, default=pd.Timedelta(minutes=1)):
         default (pandas.Timedelta):
 
     Returns:
-        DateOffset: frequency of the date-time-index
+        pandas.DateOffset: frequency of the date-time-index
     """
     freq = date_time_index.freq
     if pd.notnull(freq):

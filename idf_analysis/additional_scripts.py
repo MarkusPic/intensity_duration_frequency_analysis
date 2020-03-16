@@ -6,7 +6,6 @@ from matplotlib.lines import Line2D
 from webbrowser import open as show_file
 
 from .definitions import COL, PARAM_COL, PARAM
-# from .idf_class import IntensityDurationFrequencyAnalyse
 from .little_helpers import minutes_readable
 from .sww_utils import agg_events
 
