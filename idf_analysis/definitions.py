@@ -57,3 +57,7 @@ class PARAM_COL:
     @staticmethod
     def B(p):
         return '{}_{}'.format(B, p)
+
+    @staticmethod
+    def VALUES(p):
+        return '{}_values'.format(p)

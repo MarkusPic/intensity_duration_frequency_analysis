@@ -7,6 +7,7 @@ from pandas import DatetimeIndex, DateOffset, Timedelta
 from tqdm import tqdm
 import numpy as np
 
+from mp.helpers import timeit
 from .definitions import COL
 
 __author__ = "David Camhy, Markus Pichler"
@@ -113,19 +114,14 @@ def rain_events(series, ignore_rain_below=0, min_gap=pd.Timedelta(hours=4)):
     """
     get rain events as a table with start and end times
 
-    :param series: rain series
-    :type series: pd.Series
+    Args:
+        series (pandas.Series): rain series
+        ignore_rain_below (float): where it is considered as rain
+        min_gap (pandas.Timedelta): 4 hours of no rain between events
 
-    :param ignore_rain_below: where it is considered as rain
-    :type ignore_rain_below: float
-
-    :param min_gap: 4 hours of no rain between events
-    :type min_gap: pd.Timedelta
-
-    :return: table of the rain events
-    :rtype: pd.DataFrame
+    Returns:
+        pandas.DataFrame: table of the rain events
     """
-
     # best OKOSTRA adjustment with 0.0
     # by ignoring 0.1 mm the results are getting bigger
 
@@ -146,6 +142,26 @@ def rain_events(series, ignore_rain_below=0, min_gap=pd.Timedelta(hours=4)):
     return events
 
 
+def event_number_to_series(events, index):
+    """
+    make a time-series where the value of the event number is paste to the <index>
+
+    Args:
+        events (pandas.DataFrame):
+        index (pandas.DatetimeIndex):
+
+    Returns:
+        pandas.Series:
+    """
+    ts = pd.Series(index=index)
+
+    events_dict = events.to_dict(orient='index')
+    for event_no, event in events_dict.items():
+        ts[event[COL.START]: event[COL.END]] = event_no
+
+    return ts
+
+
 ########################################################################################################################
 def agg_events(events, series, agg='sum'):
     """
@@ -156,16 +172,16 @@ def agg_events(events, series, agg='sum'):
         agg (str | function): aggregation of time-series
 
     Returns:
-        pandas.Series: result of function of every event
+        numpy.ndarray: result of function of every event
     """
     if events.empty:
-        return pd.Series()
+        return np.array([])
 
-    res = list()
-    for _, event in tqdm(events.to_dict(orient='index').items(), desc=f'Aggregate Events with "{agg}"'):
-        res.append(series[event[COL.START]:event[COL.END]].agg(agg))
-
-    return np.array(res)
+    if events.index.size > 3500:
+        res = series.groupby(event_number_to_series(events, series.index)).agg(agg).values
+    else:
+        res = events.apply(lambda event: series[event[COL.START]:event[COL.END]].agg(agg), axis=1).values
+    return res
 
 
 ########################################################################################################################

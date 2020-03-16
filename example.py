@@ -1,22 +1,29 @@
-from idf_analysis.idf_class import IntensityDurationFrequencyAnalyse
+from idf_analysis import IntensityDurationFrequencyAnalyse
 from idf_analysis.definitions import *
 import pandas as pd
+from os import path
 import matplotlib.pyplot as plt
 
 out = 'example'
-name = 'EXAMPLE'
-idf = IntensityDurationFrequencyAnalyse(series_kind=PARTIAL, worksheet=DWA, output_path=out,
-                                        extended_durations=True, output_filename=name,
-                                        auto_save=True, unix=True)
+output_directory = path.join(out, 'EXAMPLE')
+idf = IntensityDurationFrequencyAnalyse(series_kind=PARTIAL, worksheet=DWA, extended_durations=True)
 
-data = pd.read_parquet('example/expample_rain_data.parquet')
+series = pd.read_parquet(path.join(out, 'expample_rain_data.parquet'))['precipitation']
 
-idf.set_series(data['precipitation'])
+idf.set_series(series)
 
-fig = idf.result_figure(color=True)
+idf.auto_save_parameters(path.join(output_directory, 'parameters.yaml'))
 
-fn = idf.output_filename + '_idf_plot.png'
+fig, ax = idf.result_figure(color=True)
 fig.set_size_inches(6.40, 3.20)
 fig.tight_layout()
-fig.savefig(fn, dpi=200)
+fig.savefig(path.join(output_directory, 'idf_plot.png'), dpi=200)
 plt.close(fig)
+
+fig, ax = idf.result_figure(color=False)
+fig.set_size_inches(12, 8)
+fig.tight_layout()
+fig.savefig(path.join(out, 'EXAMPLE_plot.png'), dpi=200)
+plt.close(fig)
+
+idf.result_table(add_names=False).to_csv(path.join(output_directory, 'idf_table.csv'))

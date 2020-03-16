@@ -6,13 +6,14 @@ def delta2min(time_delta):
     convert timedelta to float in minutes
 
     Args:
-        time_delta (pandas.Timedelta):
+        time_delta (pandas.Timedelta, pandas.DateOffset):
 
     Returns:
         float: the timedelta in minutes
     """
-    # time_delta.total_seconds() / 60
-    return time_delta / pd.Timedelta(minutes=1)
+    if isinstance(time_delta, pd.DateOffset):
+        time_delta = time_delta.delta
+    return int(time_delta.total_seconds() / 60)
 
 
 def minutes_readable(minutes):
@@ -55,7 +56,36 @@ def duration_steps_readable(durations):
     Returns:
         list[str]: of the readable duration list
     """
-    duration_strings = list()
-    for i, minutes in enumerate(durations):
-        duration_strings.append(minutes_readable(minutes))
-    return duration_strings
+    return [minutes_readable(i) for i in durations]
+
+
+def height2rate(height_of_rainfall, duration):
+    """
+    calculate the specific rain flow rate in [l/(s*ha)]
+    if 2 array-like parameters are give, a element-wise calculation will be made.
+    So the length of the array must be the same.
+
+    Args:
+        height_of_rainfall (float | np.ndarray | pd.Series): height_of_rainfall: in [mm]
+        duration (float | np.ndarray | pd.Series): in minutes
+
+    Returns:
+        float | np.ndarray | pd.Series: specific rain flow rate in [l/(s*ha)]
+    """
+    return height_of_rainfall / duration * (1000 / 6)
+
+
+def rate2height(rain_flow_rate, duration):
+    """
+    convert the rain flow rate to the height of rainfall in [mm]
+    if 2 array-like parameters are give, a element-wise calculation will be made.
+    So the length of the array must be the same.
+
+    Args:
+        rain_flow_rate (float | np.ndarray | pd.Series): in [l/(s*ha)]
+        duration (float | np.ndarray | pd.Series): in minutes
+
+    Returns:
+        float | np.ndarray | pd.Series: height of rainfall in [mm]
+    """
+    return rain_flow_rate * duration / (1000 / 6)
