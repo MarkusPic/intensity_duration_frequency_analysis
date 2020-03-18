@@ -11,7 +11,6 @@ import pandas as pd
 import numpy as np
 from math import e, floor
 from collections import OrderedDict
-
 from tqdm import tqdm
 
 from .sww_utils import guess_freq, rain_events, agg_events, year_delta
@@ -19,19 +18,21 @@ from .definitions import DWA, ATV, DWA_adv, PARTIAL, ANNUAL, LOG1, LOG2, HYP, LI
 
 
 ########################################################################################################################
-def annual_series(events):
+def annual_series(rolling_sum_values, year_index):
     """
     create an annual series of the maximum overlapping sum per year and calculate the "u" and "w" parameters
     acc. to DWA-A 531 chap. 5.1.5
 
     Args:
-        events (pandas.DataFrame): with columns=[start, end, max_overlapping_sum]
+        rolling_sum_values (numpy.ndarray): array with maximum rolling sum per event per year
+        year_index (numpy.ndarray): array with year of the event
 
     Returns:
         tuple[float, float]: parameter u and w from the annual series for a specific duration step as a tuple
     """
-    annually_series = pd.Series(data=events[COL.MAX_OVERLAPPING_SUM].values,
-                                index=events[COL.START].values).resample('AS').max().index
+    annually_series = pd.Series(rolling_sum_values).groupby(year_index).max().values
+    # annually_series = pd.Series(data=rolling_sum_values,
+    #                             index=events[COL.START].values).resample('AS').max().index
     annually_series = np.sort(annually_series)[::-1]
 
     mean_sample_rainfall = annually_series.mean()
@@ -49,19 +50,34 @@ def annual_series(events):
 
 
 ########################################################################################################################
-def partial_series(events, measurement_period):
+def _plotting_formula(k, l, m):
+    """
+    plotting function acc. to DWA-A 531 chap. 5.1.3 for the partial series
+
+    Args:
+        k (float): running index
+        l (float): sample size
+        m (float): measurement period
+
+    Returns:
+        float: estimated empirical return period
+    """
+    return (l + 0.2) * m / ((k - 0.4) * l)
+
+
+def partial_series(rolling_sum_values, measurement_period):
     """
     create an partial series of the largest overlapping sums and calculate the "u" and "w" parameters
     acc. to DWA-A 531 chap. 5.1.4
 
     Args:
-        events (pandas.DataFrame): with columns=[start, end, max_overlapping_sum]
+        rolling_sum_values (numpy.ndarray): array with maximum rolling sum per event
         measurement_period (float): in years
 
     Returns:
         tuple[float, float]: parameter u and w from the partial series for a specific duration step as a tuple
     """
-    partially_series = events[COL.MAX_OVERLAPPING_SUM].values
+    partially_series = rolling_sum_values
     partially_series = np.sort(partially_series)[::-1]
 
     # use only the (2-3 multiplied with the number of measuring years) of the biggest
@@ -70,22 +86,6 @@ def partial_series(events, measurement_period):
     threshold_sample_size = int(floor(measurement_period * e))
     partially_series = partially_series[:threshold_sample_size]
 
-    # ------------------------------------------------------------------------------------------------------------------
-    def _plotting_formula(k, l, m):
-        """
-        plotting function acc. to DWA-A 531 chap. 5.1.3 for the partial series
-
-        Args:
-            k (float): running index
-            l (float): sample size
-            m (float): measurement period
-
-        Returns:
-            float: estimated empirical return period
-        """
-        return (l + 0.2) * m / ((k - 0.4) * l)
-
-    # ------------------------------------------------------------------------------------------------------------------
     mean_sample_rainfall = partially_series.mean()
     sample_size = threshold_sample_size
     index = np.arange(sample_size) + 1
@@ -139,9 +139,10 @@ def calculate_u_w(file_input, duration_steps, series_kind):
     Returns:
         pandas.DataFrame: with key=durations and values=dict(u, w)
     """
+    ts = file_input.copy()
     # -------------------------------
     # measuring time in years
-    measurement_start, measurement_end = file_input.index[[0, -1]]
+    measurement_start, measurement_end = ts.index[[0, -1]]
     measurement_period = (measurement_end - measurement_start) / year_delta(years=1)
     if round(measurement_period, 1) < 10:
         warnings.warn("The measurement period is too short. The results may be inaccurate! "
@@ -149,8 +150,7 @@ def calculate_u_w(file_input, duration_steps, series_kind):
                       "(-> Currently {}a used)".format(measurement_period))
 
     # -------------------------------
-    ts = file_input.copy()
-    base_frequency = guess_freq(file_input.index)  # DateOffset/Timedelta
+    base_frequency = guess_freq(ts.index)  # DateOffset/Timedelta
 
     # ------------------------------------------------------------------------------------------------------------------
     interim_results = dict()
@@ -174,19 +174,20 @@ def calculate_u_w(file_input, duration_steps, series_kind):
         if duration < pd.Timedelta(base_frequency):
             continue
 
-        events = rain_events(file_input, min_gap=duration)
+        events = rain_events(ts, min_gap=duration)
 
         # correction factor acc. to DWA-A 531 chap. 4.3
         improve = _improve_factor(duration / base_frequency)
 
         roll_sum = ts.rolling(duration).sum()
 
-        events[COL.MAX_OVERLAPPING_SUM] = agg_events(events, roll_sum, 'max') * improve
+        # events[COL.Mrolling_sum_valuesAX_OVERLAPPING_SUM] = agg_events(events, roll_sum, 'max') * improve
+        rolling_sum_values = agg_events(events, roll_sum, 'max') * improve
 
         if series_kind == ANNUAL:
-            interim_results[duration_integer] = annual_series(events)
+            interim_results[duration_integer] = annual_series(rolling_sum_values, events[COL.START].year.values)
         elif series_kind == PARTIAL:
-            interim_results[duration_integer] = partial_series(events, measurement_period)
+            interim_results[duration_integer] = partial_series(rolling_sum_values, measurement_period)
         else:
             raise NotImplementedError
 

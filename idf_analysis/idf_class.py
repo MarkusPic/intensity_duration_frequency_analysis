@@ -60,7 +60,7 @@ class IntensityDurationFrequencyAnalyse:
         self.series_kind = series_kind
         self.worksheet = worksheet
 
-        self.series = None  # type: pd.Series # rain time-series
+        self._series = None  # type: pd.Series # rain time-series
         self._freq = None  # frequency of the rain series
 
         self._parameter = None  # how to calculate the idf curves
@@ -103,6 +103,16 @@ class IntensityDurationFrequencyAnalyse:
             return path.join(output_directory, output_label)
 
     # __________________________________________________________________________________________________________________
+    @property
+    def series(self):
+        if self._series is None:
+            raise UserWarning('No Series defined for IDF-Analysis!')
+        return self._series
+
+    @series.setter
+    def series(self, series):
+        self._series = series
+
     def set_series(self, series):
         """
         set the series for the analysis
