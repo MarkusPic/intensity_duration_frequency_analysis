@@ -17,20 +17,22 @@ def csv_args(unix=False):
         return dict(sep=';', decimal=',')
 
 
-def import_series(filename, series_label='precipitation', index_label='datetime', unix=False):
+def import_series(filename, series_label='precipitation', index_label='datetime', csv_reader_args=None):
     """
 
     Args:
         filename:
         series_label:
         index_label:
-        unix: whether to use a "," as separator and a "." as decimal sign or ";" and ",".
+        csv_reader_args: for example: sep="," or "." and decimal=";" or ","
 
     Returns:
         pandas.Series: precipitation series
     """
     if filename.endswith('csv'):
-        ts = pd.read_csv(filename, index_col=0, header=None, squeeze=True, names=[series_label], **csv_args(unix))
+        if csv_reader_args is None:
+            csv_reader_args = dict()
+        ts = pd.read_csv(filename, index_col=0, header=None, squeeze=True, names=[series_label], **csv_reader_args)
         ts.index = pd.to_datetime(ts.index)
         ts.index.name = index_label
         return ts

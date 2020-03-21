@@ -87,6 +87,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../README.html#commandline-tool">Commandline tool</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../README.html#example">Example</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../base_functions.html">Base Functions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../example.html">Intensity Duration Frequency Analyse</a></li>
 </ul>
 
@@ -164,7 +165,6 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">e</span><span class="p">,</span> <span class="n">floor</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
-
 <span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
 
 <span class="kn">from</span> <span class="nn">.sww_utils</span> <span class="kn">import</span> <span class="n">guess_freq</span><span class="p">,</span> <span class="n">rain_events</span><span class="p">,</span> <span class="n">agg_events</span><span class="p">,</span> <span class="n">year_delta</span>
@@ -172,19 +172,21 @@
 
 
 <span class="c1">########################################################################################################################</span>
-<div class="viewcode-block" id="annual_series"><a class="viewcode-back" href="../../api.html#idf_analysis.calculation_methods.annual_series">[docs]</a><span class="k">def</span> <span class="nf">annual_series</span><span class="p">(</span><span class="n">events</span><span class="p">):</span>
+<div class="viewcode-block" id="annual_series"><a class="viewcode-back" href="../../base_functions.html#idf_analysis.calculation_methods.annual_series">[docs]</a><span class="k">def</span> <span class="nf">annual_series</span><span class="p">(</span><span class="n">rolling_sum_values</span><span class="p">,</span> <span class="n">year_index</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    create an annual series of the maximum overlapping sum per year and calculate the &quot;u&quot; and &quot;w&quot; parameters</span>
 <span class="sd">    acc. to DWA-A 531 chap. 5.1.5</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        events (pandas.DataFrame): with columns=[start, end, max_overlapping_sum]</span>
+<span class="sd">        rolling_sum_values (numpy.ndarray): array with maximum rolling sum per event per year</span>
+<span class="sd">        year_index (numpy.ndarray): array with year of the event</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        tuple[float, float]: parameter u and w from the annual series for a specific duration step as a tuple</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">annually_series</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">events</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">MAX_OVERLAPPING_SUM</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
-                                <span class="n">index</span><span class="o">=</span><span class="n">events</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">START</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="s1">&#39;AS&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">index</span>
+    <span class="n">annually_series</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">rolling_sum_values</span><span class="p">)</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">year_index</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">values</span>
+    <span class="c1"># annually_series = pd.Series(data=rolling_sum_values,</span>
+    <span class="c1">#                             index=events[COL.START].values).resample(&#39;AS&#39;).max().index</span>
     <span class="n">annually_series</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">annually_series</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
     <span class="n">mean_sample_rainfall</span> <span class="o">=</span> <span class="n">annually_series</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
@@ -202,19 +204,34 @@
 
 
 <span class="c1">########################################################################################################################</span>
-<div class="viewcode-block" id="partial_series"><a class="viewcode-back" href="../../api.html#idf_analysis.calculation_methods.partial_series">[docs]</a><span class="k">def</span> <span class="nf">partial_series</span><span class="p">(</span><span class="n">events</span><span class="p">,</span> <span class="n">measurement_period</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_plotting_formula</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">m</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    plotting function acc. to DWA-A 531 chap. 5.1.3 for the partial series</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        k (float): running index</span>
+<span class="sd">        l (float): sample size</span>
+<span class="sd">        m (float): measurement period</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        float: estimated empirical return period</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">l</span> <span class="o">+</span> <span class="mf">0.2</span><span class="p">)</span> <span class="o">*</span> <span class="n">m</span> <span class="o">/</span> <span class="p">((</span><span class="n">k</span> <span class="o">-</span> <span class="mf">0.4</span><span class="p">)</span> <span class="o">*</span> <span class="n">l</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="partial_series"><a class="viewcode-back" href="../../base_functions.html#idf_analysis.calculation_methods.partial_series">[docs]</a><span class="k">def</span> <span class="nf">partial_series</span><span class="p">(</span><span class="n">rolling_sum_values</span><span class="p">,</span> <span class="n">measurement_period</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    create an partial series of the largest overlapping sums and calculate the &quot;u&quot; and &quot;w&quot; parameters</span>
 <span class="sd">    acc. to DWA-A 531 chap. 5.1.4</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        events (pandas.DataFrame): with columns=[start, end, max_overlapping_sum]</span>
+<span class="sd">        rolling_sum_values (numpy.ndarray): array with maximum rolling sum per event</span>
 <span class="sd">        measurement_period (float): in years</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        tuple[float, float]: parameter u and w from the partial series for a specific duration step as a tuple</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">partially_series</span> <span class="o">=</span> <span class="n">events</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">MAX_OVERLAPPING_SUM</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">partially_series</span> <span class="o">=</span> <span class="n">rolling_sum_values</span>
     <span class="n">partially_series</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">partially_series</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
     <span class="c1"># use only the (2-3 multiplied with the number of measuring years) of the biggest</span>
@@ -223,22 +240,6 @@
     <span class="n">threshold_sample_size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">floor</span><span class="p">(</span><span class="n">measurement_period</span> <span class="o">*</span> <span class="n">e</span><span class="p">))</span>
     <span class="n">partially_series</span> <span class="o">=</span> <span class="n">partially_series</span><span class="p">[:</span><span class="n">threshold_sample_size</span><span class="p">]</span>
 
-    <span class="c1"># ------------------------------------------------------------------------------------------------------------------</span>
-    <span class="k">def</span> <span class="nf">_plotting_formula</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">m</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        plotting function acc. to DWA-A 531 chap. 5.1.3 for the partial series</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            k (float): running index</span>
-<span class="sd">            l (float): sample size</span>
-<span class="sd">            m (float): measurement period</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            float: estimated empirical return period</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="p">(</span><span class="n">l</span> <span class="o">+</span> <span class="mf">0.2</span><span class="p">)</span> <span class="o">*</span> <span class="n">m</span> <span class="o">/</span> <span class="p">((</span><span class="n">k</span> <span class="o">-</span> <span class="mf">0.4</span><span class="p">)</span> <span class="o">*</span> <span class="n">l</span><span class="p">)</span>
-
-    <span class="c1"># ------------------------------------------------------------------------------------------------------------------</span>
     <span class="n">mean_sample_rainfall</span> <span class="o">=</span> <span class="n">partially_series</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
     <span class="n">sample_size</span> <span class="o">=</span> <span class="n">threshold_sample_size</span>
     <span class="n">index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">sample_size</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
@@ -277,7 +278,7 @@
 
 
 <span class="c1">########################################################################################################################</span>
-<div class="viewcode-block" id="calculate_u_w"><a class="viewcode-back" href="../../api.html#idf_analysis.calculation_methods.calculate_u_w">[docs]</a><span class="k">def</span> <span class="nf">calculate_u_w</span><span class="p">(</span><span class="n">file_input</span><span class="p">,</span> <span class="n">duration_steps</span><span class="p">,</span> <span class="n">series_kind</span><span class="p">):</span>
+<div class="viewcode-block" id="calculate_u_w"><a class="viewcode-back" href="../../base_functions.html#idf_analysis.calculation_methods.calculate_u_w">[docs]</a><span class="k">def</span> <span class="nf">calculate_u_w</span><span class="p">(</span><span class="n">file_input</span><span class="p">,</span> <span class="n">duration_steps</span><span class="p">,</span> <span class="n">series_kind</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    statistical analysis for each duration step acc. to DWA-A 531 chap. 5.1</span>
 <span class="sd">    save the parameters of the distribution function as interim results</span>
@@ -292,9 +293,10 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        pandas.DataFrame: with key=durations and values=dict(u, w)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ts</span> <span class="o">=</span> <span class="n">file_input</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="c1"># -------------------------------</span>
     <span class="c1"># measuring time in years</span>
-    <span class="n">measurement_start</span><span class="p">,</span> <span class="n">measurement_end</span> <span class="o">=</span> <span class="n">file_input</span><span class="o">.</span><span class="n">index</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+    <span class="n">measurement_start</span><span class="p">,</span> <span class="n">measurement_end</span> <span class="o">=</span> <span class="n">ts</span><span class="o">.</span><span class="n">index</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
     <span class="n">measurement_period</span> <span class="o">=</span> <span class="p">(</span><span class="n">measurement_end</span> <span class="o">-</span> <span class="n">measurement_start</span><span class="p">)</span> <span class="o">/</span> <span class="n">year_delta</span><span class="p">(</span><span class="n">years</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">round</span><span class="p">(</span><span class="n">measurement_period</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">:</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;The measurement period is too short. The results may be inaccurate! &quot;</span>
@@ -302,8 +304,7 @@
                       <span class="s2">&quot;(-&gt; Currently </span><span class="si">{}</span><span class="s2">a used)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">measurement_period</span><span class="p">))</span>
 
     <span class="c1"># -------------------------------</span>
-    <span class="n">ts</span> <span class="o">=</span> <span class="n">file_input</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-    <span class="n">base_frequency</span> <span class="o">=</span> <span class="n">guess_freq</span><span class="p">(</span><span class="n">file_input</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>  <span class="c1"># DateOffset/Timedelta</span>
+    <span class="n">base_frequency</span> <span class="o">=</span> <span class="n">guess_freq</span><span class="p">(</span><span class="n">ts</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>  <span class="c1"># DateOffset/Timedelta</span>
 
     <span class="c1"># ------------------------------------------------------------------------------------------------------------------</span>
     <span class="n">interim_results</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
@@ -327,19 +328,20 @@
         <span class="k">if</span> <span class="n">duration</span> <span class="o">&lt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="n">base_frequency</span><span class="p">):</span>
             <span class="k">continue</span>
 
-        <span class="n">events</span> <span class="o">=</span> <span class="n">rain_events</span><span class="p">(</span><span class="n">file_input</span><span class="p">,</span> <span class="n">min_gap</span><span class="o">=</span><span class="n">duration</span><span class="p">)</span>
+        <span class="n">events</span> <span class="o">=</span> <span class="n">rain_events</span><span class="p">(</span><span class="n">ts</span><span class="p">,</span> <span class="n">min_gap</span><span class="o">=</span><span class="n">duration</span><span class="p">)</span>
 
         <span class="c1"># correction factor acc. to DWA-A 531 chap. 4.3</span>
         <span class="n">improve</span> <span class="o">=</span> <span class="n">_improve_factor</span><span class="p">(</span><span class="n">duration</span> <span class="o">/</span> <span class="n">base_frequency</span><span class="p">)</span>
 
         <span class="n">roll_sum</span> <span class="o">=</span> <span class="n">ts</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="n">duration</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
 
-        <span class="n">events</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">MAX_OVERLAPPING_SUM</span><span class="p">]</span> <span class="o">=</span> <span class="n">agg_events</span><span class="p">(</span><span class="n">events</span><span class="p">,</span> <span class="n">roll_sum</span><span class="p">,</span> <span class="s1">&#39;max&#39;</span><span class="p">)</span> <span class="o">*</span> <span class="n">improve</span>
+        <span class="c1"># events[COL.Mrolling_sum_valuesAX_OVERLAPPING_SUM] = agg_events(events, roll_sum, &#39;max&#39;) * improve</span>
+        <span class="n">rolling_sum_values</span> <span class="o">=</span> <span class="n">agg_events</span><span class="p">(</span><span class="n">events</span><span class="p">,</span> <span class="n">roll_sum</span><span class="p">,</span> <span class="s1">&#39;max&#39;</span><span class="p">)</span> <span class="o">*</span> <span class="n">improve</span>
 
         <span class="k">if</span> <span class="n">series_kind</span> <span class="o">==</span> <span class="n">ANNUAL</span><span class="p">:</span>
-            <span class="n">interim_results</span><span class="p">[</span><span class="n">duration_integer</span><span class="p">]</span> <span class="o">=</span> <span class="n">annual_series</span><span class="p">(</span><span class="n">events</span><span class="p">)</span>
+            <span class="n">interim_results</span><span class="p">[</span><span class="n">duration_integer</span><span class="p">]</span> <span class="o">=</span> <span class="n">annual_series</span><span class="p">(</span><span class="n">rolling_sum_values</span><span class="p">,</span> <span class="n">events</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">START</span><span class="p">]</span><span class="o">.</span><span class="n">year</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">series_kind</span> <span class="o">==</span> <span class="n">PARTIAL</span><span class="p">:</span>
-            <span class="n">interim_results</span><span class="p">[</span><span class="n">duration_integer</span><span class="p">]</span> <span class="o">=</span> <span class="n">partial_series</span><span class="p">(</span><span class="n">events</span><span class="p">,</span> <span class="n">measurement_period</span><span class="p">)</span>
+            <span class="n">interim_results</span><span class="p">[</span><span class="n">duration_integer</span><span class="p">]</span> <span class="o">=</span> <span class="n">partial_series</span><span class="p">(</span><span class="n">rolling_sum_values</span><span class="p">,</span> <span class="n">measurement_period</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
@@ -350,7 +352,7 @@
 
 
 <span class="c1">########################################################################################################################</span>
-<div class="viewcode-block" id="folded_log_formulation"><a class="viewcode-back" href="../../api.html#idf_analysis.calculation_methods.folded_log_formulation">[docs]</a><span class="k">def</span> <span class="nf">folded_log_formulation</span><span class="p">(</span><span class="n">duration</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">case</span><span class="p">,</span> <span class="n">param_mean</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">duration_mean</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="folded_log_formulation"><a class="viewcode-back" href="../../base_functions.html#idf_analysis.calculation_methods.folded_log_formulation">[docs]</a><span class="k">def</span> <span class="nf">folded_log_formulation</span><span class="p">(</span><span class="n">duration</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">case</span><span class="p">,</span> <span class="n">param_mean</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">duration_mean</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    Args:</span>
@@ -390,7 +392,7 @@
 
 
 <span class="c1">########################################################################################################################</span>
-<div class="viewcode-block" id="hyperbolic_formulation"><a class="viewcode-back" href="../../api.html#idf_analysis.calculation_methods.hyperbolic_formulation">[docs]</a><span class="k">def</span> <span class="nf">hyperbolic_formulation</span><span class="p">(</span><span class="n">duration</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">a_start</span><span class="o">=</span><span class="mf">20.0</span><span class="p">,</span> <span class="n">b_start</span><span class="o">=</span><span class="mf">15.0</span><span class="p">,</span> <span class="n">param_mean</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">duration_mean</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="hyperbolic_formulation"><a class="viewcode-back" href="../../base_functions.html#idf_analysis.calculation_methods.hyperbolic_formulation">[docs]</a><span class="k">def</span> <span class="nf">hyperbolic_formulation</span><span class="p">(</span><span class="n">duration</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">a_start</span><span class="o">=</span><span class="mf">20.0</span><span class="p">,</span> <span class="n">b_start</span><span class="o">=</span><span class="mf">15.0</span><span class="p">,</span> <span class="n">param_mean</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">duration_mean</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    Args:</span>
@@ -441,7 +443,7 @@
 
 
 <span class="c1">########################################################################################################################</span>
-<div class="viewcode-block" id="get_duration_steps"><a class="viewcode-back" href="../../api.html#idf_analysis.calculation_methods.get_duration_steps">[docs]</a><span class="k">def</span> <span class="nf">get_duration_steps</span><span class="p">(</span><span class="n">worksheet</span><span class="p">):</span>
+<div class="viewcode-block" id="get_duration_steps"><a class="viewcode-back" href="../../base_functions.html#idf_analysis.calculation_methods.get_duration_steps">[docs]</a><span class="k">def</span> <span class="nf">get_duration_steps</span><span class="p">(</span><span class="n">worksheet</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    duration step boundary for the various distribution functions in minutes</span>
 
@@ -462,7 +464,7 @@
 
 
 <span class="c1">########################################################################################################################</span>
-<div class="viewcode-block" id="get_approaches"><a class="viewcode-back" href="../../api.html#idf_analysis.calculation_methods.get_approaches">[docs]</a><span class="k">def</span> <span class="nf">get_approaches</span><span class="p">(</span><span class="n">worksheet</span><span class="p">):</span>
+<div class="viewcode-block" id="get_approaches"><a class="viewcode-back" href="../../base_functions.html#idf_analysis.calculation_methods.get_approaches">[docs]</a><span class="k">def</span> <span class="nf">get_approaches</span><span class="p">(</span><span class="n">worksheet</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    approaches depending on the duration and the parameter</span>
 
@@ -585,7 +587,7 @@
 
 
 <span class="c1">########################################################################################################################</span>
-<div class="viewcode-block" id="get_parameters"><a class="viewcode-back" href="../../api.html#idf_analysis.calculation_methods.get_parameters">[docs]</a><span class="k">def</span> <span class="nf">get_parameters</span><span class="p">(</span><span class="n">interim_results</span><span class="p">,</span> <span class="n">worksheet</span><span class="o">=</span><span class="n">DWA</span><span class="p">):</span>
+<div class="viewcode-block" id="get_parameters"><a class="viewcode-back" href="../../base_functions.html#idf_analysis.calculation_methods.get_parameters">[docs]</a><span class="k">def</span> <span class="nf">get_parameters</span><span class="p">(</span><span class="n">interim_results</span><span class="p">,</span> <span class="n">worksheet</span><span class="o">=</span><span class="n">DWA</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    get calculation parameters</span>
 
@@ -621,7 +623,7 @@
             <span class="k">return</span> <span class="n">row</span>
 
 
-<div class="viewcode-block" id="get_scalar_param"><a class="viewcode-back" href="../../api.html#idf_analysis.calculation_methods.get_scalar_param">[docs]</a><span class="k">def</span> <span class="nf">get_scalar_param</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">parameter</span><span class="p">):</span>
+<div class="viewcode-block" id="get_scalar_param"><a class="viewcode-back" href="../../base_functions.html#idf_analysis.calculation_methods.get_scalar_param">[docs]</a><span class="k">def</span> <span class="nf">get_scalar_param</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">parameter</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    Args:</span>
@@ -657,7 +659,7 @@
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">duration</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">DUR</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="n">PARAM_COL</span><span class="o">.</span><span class="n">VALUES</span><span class="p">(</span><span class="n">p</span><span class="p">)])</span></div>
 
 
-<div class="viewcode-block" id="get_array_param"><a class="viewcode-back" href="../../api.html#idf_analysis.calculation_methods.get_array_param">[docs]</a><span class="k">def</span> <span class="nf">get_array_param</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">parameter</span><span class="p">):</span>
+<div class="viewcode-block" id="get_array_param"><a class="viewcode-back" href="../../base_functions.html#idf_analysis.calculation_methods.get_array_param">[docs]</a><span class="k">def</span> <span class="nf">get_array_param</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">parameter</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    Args:</span>
@@ -671,7 +673,7 @@
 
 
 <span class="c1">########################################################################################################################</span>
-<div class="viewcode-block" id="get_u_w"><a class="viewcode-back" href="../../api.html#idf_analysis.calculation_methods.get_u_w">[docs]</a><span class="k">def</span> <span class="nf">get_u_w</span><span class="p">(</span><span class="n">duration</span><span class="p">,</span> <span class="n">parameter</span><span class="p">):</span>
+<div class="viewcode-block" id="get_u_w"><a class="viewcode-back" href="../../base_functions.html#idf_analysis.calculation_methods.get_u_w">[docs]</a><span class="k">def</span> <span class="nf">get_u_w</span><span class="p">(</span><span class="n">duration</span><span class="p">,</span> <span class="n">parameter</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    Args:</span>
@@ -690,7 +692,7 @@
 
 
 <span class="c1">########################################################################################################################</span>
-<div class="viewcode-block" id="depth_of_rainfall"><a class="viewcode-back" href="../../api.html#idf_analysis.calculation_methods.depth_of_rainfall">[docs]</a><span class="k">def</span> <span class="nf">depth_of_rainfall</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">return_period</span><span class="p">,</span> <span class="n">series_kind</span><span class="p">):</span>
+<div class="viewcode-block" id="depth_of_rainfall"><a class="viewcode-back" href="../../base_functions.html#idf_analysis.calculation_methods.depth_of_rainfall">[docs]</a><span class="k">def</span> <span class="nf">depth_of_rainfall</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">return_period</span><span class="p">,</span> <span class="n">series_kind</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    calculate the height of the rainfall h in L/m² = mm</span>
 

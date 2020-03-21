@@ -1,3 +1,10 @@
+__author__ = "David Camhy, Markus Pichler"
+__copyright__ = "Copyright 2018, University of Technology Graz"
+__credits__ = ["David Camhy", "Markus Pichler"]
+__license__ = "MIT"
+__version__ = "1.0.0"
+__maintainer__ = "David Camhy, Markus Pichler"
+
 import pytz
 from datetime import tzinfo
 import pandas as pd
@@ -6,16 +13,13 @@ import numpy as np
 
 from .definitions import COL
 
-__author__ = "David Camhy, Markus Pichler"
-__copyright__ = "Copyright 2018, University of Technology Graz"
-__credits__ = ["David Camhy", "Markus Pichler"]
-__license__ = "MIT"
-__version__ = "1.0.0"
-__maintainer__ = "David Camhy, Markus Pichler"
-
 
 class TimezoneError(Exception):
     """Some Error With a Timezone"""
+
+
+class IdfError(Exception):
+    """Some Error Within this Package"""
 
 
 def check_tz(timezone):

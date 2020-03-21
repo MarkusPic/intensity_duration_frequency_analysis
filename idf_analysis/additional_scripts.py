@@ -1,4 +1,3 @@
-from os import path
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -68,10 +67,7 @@ def add_return_periods_to_events(idf):
     return new_events
 
 
-def return_period_scatter(idf, min_return_period=0.5, out_path=None, durations=None):
-    if out_path is None:
-        out_path = path.join(idf.output_filename + '_all_events_max_return_period.pdf')
-
+def return_period_scatter(idf, filename='all_events_max_return_period.pdf', min_return_period=0.5, durations=None):
     if durations is None:
         durations = [5, 10, 15, 20, 30, 45, 60, 90, 120, 180, 240, 360, 540, 720, 1080, 1440, 2880, 4320]
 
@@ -128,11 +124,11 @@ def return_period_scatter(idf, min_return_period=0.5, out_path=None, durations=N
     # DIN A4
     fig.set_size_inches(w=7, h=5)
     fig.tight_layout()
-    fig.savefig(out_path)
+    fig.savefig(filename)
     plt.close(fig)
 
 
-def result_plot_v2(idf, min_duration=5.0, max_duration=720.0, logx=False, fmt='png', show=False):
+def result_plot_v2(idf, filename, min_duration=5.0, max_duration=720.0, logx=False, show=False):
     duration_steps = np.arange(min_duration, max_duration + 1, 1)
     colors = ['r', 'g', 'b', 'y', 'm']
 
@@ -197,13 +193,11 @@ def result_plot_v2(idf, min_duration=5.0, max_duration=720.0, logx=False, fmt='p
 
     fig = ax.get_figure()
 
-    fn = idf.output_filename + '_plot.' + fmt
-
     cm_to_inch = 2.54
     fig.set_size_inches(h=21 / cm_to_inch, w=29.7 / cm_to_inch)  # (11.69, 8.27)
     fig.tight_layout()
-    fig.savefig(fn, dpi=260)
+    fig.savefig(filename, dpi=260)
     plt.close(fig)
     if show:
-        show_file(fn)
-    return fn
+        show_file(filename)
+    return filename

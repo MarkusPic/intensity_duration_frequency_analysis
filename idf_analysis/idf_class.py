@@ -5,7 +5,6 @@ __email__ = "markus.pichler@tugraz.at"
 __version__ = "0.1"
 __license__ = "MIT"
 
-import os
 import warnings
 from math import floor
 from os import path
@@ -24,7 +23,7 @@ from .little_helpers import minutes_readable, height2rate, delta2min
 from .definitions import *
 from .in_out import import_series, write_yaml, read_yaml
 from .sww_utils import (remove_timezone, guess_freq, rain_events, agg_events, event_duration,
-                        resample_rain_series, rain_bar_plot, )
+                        resample_rain_series, rain_bar_plot, IdfError, )
 from .plot_helpers import idf_bar_axes
 from .additional_scripts import measured_points
 
@@ -40,8 +39,7 @@ class IntensityDurationFrequencyAnalyse:
     for duration steps up to 12 hours (and more) and return period in a range of '0.5a <= T_n <= 100a'
     """
 
-    def __init__(self, series_kind=PARTIAL, worksheet=DWA, extended_durations=False,
-                 output_directory=None, output_label=None):
+    def __init__(self, series_kind=PARTIAL, worksheet=DWA, extended_durations=False):
         """
         heavy rain as a function of the duration and the return period acc. to DWA-A 531 (2012)
 
@@ -54,8 +52,6 @@ class IntensityDurationFrequencyAnalyse:
             series_kind (str): ['partial', 'annual']
             worksheet (str): ['DWA-A_531', 'ATV-A_121', 'DWA-A_531_advektiv']
             extended_durations (bool): add [720, 1080, 1440, 2880, 4320, 5760, 7200, 8640] minutes to the calculation
-            output_directory (str): path to directory where the (interim-)results get saved
-            output_label (str): label of the series
         """
         self.series_kind = series_kind
         self.worksheet = worksheet
@@ -67,46 +63,18 @@ class IntensityDurationFrequencyAnalyse:
         self._return_periods_frame = None  # type: pd.DataFrame # with return periods of all given durations
         self._rain_events = None
 
-        self._output_directory = output_directory
-        self._output_label = output_label
-
         # sampling points of the duration steps in minutes
-        self.duration_steps = [5, 10, 15, 20, 30, 45, 60]
-        self.duration_steps += [i * 60 for i in [1.5, 3, 4.5, 6, 7.5, 10, 12]]  # duration steps in hours
+        self._duration_steps = [5, 10, 15, 20, 30, 45, 60]
+        self._duration_steps += [i * 60 for i in [1.5, 3, 4.5, 6, 7.5, 10, 12]]  # duration steps in hours
         if extended_durations:
-            self.duration_steps += [i * 60 * 24 for i in
-                                    [0.75, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0]]  # duration steps in hours
-
-    # __________________________________________________________________________________________________________________
-    @property
-    def output_filename(self):
-        """
-        Returns:
-            str: filename/-path for the (interim-)results
-        """
-        output_directory = self._output_directory
-        output_label = self._output_label
-
-        if output_directory is None:
-            output_directory = ''
-        else:
-            output_directory = path.join(output_directory,
-                                         '' if output_label is None else (output_label + '_') + 'data')
-
-            if not path.isdir(output_directory):
-                os.mkdir(output_directory)
-
-        if output_label is None:
-            file_stamp = '_'.join([self.worksheet, self.series_kind])
-            return path.join(output_directory, file_stamp)
-        else:
-            return path.join(output_directory, output_label)
+            self._duration_steps += [i * 60 * 24 for i in
+                                     [0.75, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0]]  # duration steps in hours
 
     # __________________________________________________________________________________________________________________
     @property
     def series(self):
         if self._series is None:
-            raise UserWarning('No Series defined for IDF-Analysis!')
+            raise IdfError('No Series defined for IDF-Analysis!')
         return self._series
 
     @series.setter
@@ -121,10 +89,10 @@ class IntensityDurationFrequencyAnalyse:
             series (pandas.Series): precipitation time-series
         """
         if not isinstance(series, pd.Series):
-            raise TypeError('The series has to be a pandas Series.')
+            raise IdfError('The series has to be a pandas Series.')
 
         if not isinstance(series.index, pd.DatetimeIndex):
-            raise TypeError('The series has to have a DatetimeIndex.')
+            raise IdfError('The series has to have a DatetimeIndex.')
 
         if series.index.tz is not None:
             series = remove_timezone(series)
@@ -134,6 +102,29 @@ class IntensityDurationFrequencyAnalyse:
         freq_minutes = delta2min(self._freq)
         self.duration_steps = list(filter(lambda d: d >= freq_minutes, self.duration_steps))
         self.series = series
+
+    # __________________________________________________________________________________________________________________
+    @property
+    def duration_steps(self):
+        """
+        get duration steps (in minutes) for the parameter calculation and basic evaluations
+        Returns:
+            list | numpy.ndarray: duration steps in minutes
+        """
+        if self._duration_steps is None:
+            raise IdfError('No Series defined for IDF-Analysis!')
+        return self._duration_steps
+
+    @duration_steps.setter
+    def duration_steps(self, durations):
+        """
+        set duration steps (in minutes) for the parameter calculation and basic evaluations
+        Args:
+            durations (list | numpy.ndarray): duration steps in minutes
+        """
+        if not isinstance(durations, (list, np.ndarray)):
+            raise IdfError('Duration steps have to be {} got "{}"'.format((list, np.ndarray), type(durations)))
+        self._duration_steps = durations
 
     # __________________________________________________________________________________________________________________
     @property
@@ -379,11 +370,11 @@ class IntensityDurationFrequencyAnalyse:
         """save the return-periods dataframe as a parquet-file to save computation time."""
         df = self.return_periods_frame.copy()
         df.columns = df.columns.to_series().astype(str)
-        df.to_parquet(filename,  **kwargs)
+        df.to_parquet(filename, **kwargs)
 
     def read_return_periods_frame(self, filename, **kwargs):
         """read the return-periods dataframe as a parquet-file to save computation time."""
-        df = pd.read_parquet(filename,  **kwargs)
+        df = pd.read_parquet(filename, **kwargs)
         df.columns = df.columns.to_series().astype(int)
         self._return_periods_frame = df
 
@@ -505,13 +496,14 @@ class IntensityDurationFrequencyAnalyse:
             self.write_rain_events(filename, sep=sep, decimal=decimal)
 
     ####################################################################################################################
-    def event_report(self, min_event_rain_sum=25, min_return_period=0.5, out_path=None, durations=None):
+    def event_report(self, filename, min_event_rain_sum=25, min_return_period=0.5, durations=None):
         """
         create pdf file with the biggest rain events
         for each event is represented by a plot of the rain series
         and a IDF analysis where the return periods are calculated
 
         Args:
+            filename (str): path (directory + filename) for the created pdf-report
             min_event_rain_sum (float): only events with a bigger rain sum will be created
             min_return_period (float): only events with a bigger return period will be analysed
                                        (the plot will be created anyway)
@@ -519,9 +511,6 @@ class IntensityDurationFrequencyAnalyse:
             durations (list[int]): analysed durations
                         (default: [5, 10, 15, 20, 30, 45, 60, 90, 120, 180, 240, 360, 540, 720, 1080, 1440, 2880, 4320])
         """
-        if out_path is None:
-            out_path = path.join(self.output_filename + '_idf_events.pdf')
-
         if durations is None:
             durations = [5, 10, 15, 20, 30, 45, 60, 90, 120, 180, 240, 360, 540, 720, 1080, 1440, 2880, 4320]
 
@@ -534,7 +523,7 @@ class IntensityDurationFrequencyAnalyse:
         unit = 'mm'
         column_name = 'Precipitation'
 
-        pdf = PdfPages(out_path)
+        pdf = PdfPages(filename)
 
         for _, event in tqdm(main_events.items()):
             fig, caption = self.event_plot(event, durations=durations, min_return_period=min_return_period,

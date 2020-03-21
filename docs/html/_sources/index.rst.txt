@@ -12,6 +12,7 @@ Welcome to Intensity Duration Frequency Analyse's documentation!
 
    README
    api
+   base_functions
    example
 
 

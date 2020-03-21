@@ -87,6 +87,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../README.html#commandline-tool">Commandline tool</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../README.html#example">Example</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../base_functions.html">Base Functions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../example.html">Intensity Duration Frequency Analyse</a></li>
 </ul>
 
@@ -170,20 +171,22 @@
         <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">sep</span><span class="o">=</span><span class="s1">&#39;;&#39;</span><span class="p">,</span> <span class="n">decimal</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="import_series"><a class="viewcode-back" href="../../api.html#idf_analysis.in_out.import_series">[docs]</a><span class="k">def</span> <span class="nf">import_series</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">series_label</span><span class="o">=</span><span class="s1">&#39;precipitation&#39;</span><span class="p">,</span> <span class="n">index_label</span><span class="o">=</span><span class="s1">&#39;datetime&#39;</span><span class="p">,</span> <span class="n">unix</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="import_series"><a class="viewcode-back" href="../../base_functions.html#idf_analysis.in_out.import_series">[docs]</a><span class="k">def</span> <span class="nf">import_series</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">series_label</span><span class="o">=</span><span class="s1">&#39;precipitation&#39;</span><span class="p">,</span> <span class="n">index_label</span><span class="o">=</span><span class="s1">&#39;datetime&#39;</span><span class="p">,</span> <span class="n">csv_reader_args</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        filename:</span>
 <span class="sd">        series_label:</span>
 <span class="sd">        index_label:</span>
-<span class="sd">        unix: whether to use a &quot;,&quot; as separator and a &quot;.&quot; as decimal sign or &quot;;&quot; and &quot;,&quot;.</span>
+<span class="sd">        csv_reader_args: for example: sep=&quot;,&quot; or &quot;.&quot; and decimal=&quot;;&quot; or &quot;,&quot;</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        pandas.Series: precipitation series</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;csv&#39;</span><span class="p">):</span>
-        <span class="n">ts</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">squeeze</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="n">series_label</span><span class="p">],</span> <span class="o">**</span><span class="n">csv_args</span><span class="p">(</span><span class="n">unix</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">csv_reader_args</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">csv_reader_args</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">ts</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">squeeze</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="n">series_label</span><span class="p">],</span> <span class="o">**</span><span class="n">csv_reader_args</span><span class="p">)</span>
         <span class="n">ts</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">ts</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
         <span class="n">ts</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">index_label</span>
         <span class="k">return</span> <span class="n">ts</span>
