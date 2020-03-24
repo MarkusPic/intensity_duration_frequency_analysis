@@ -167,7 +167,7 @@ def calculate_u_w(file_input, duration_steps, series_kind):
     # -------------------------------
     pbar = tqdm(duration_steps, desc='Calculating Parameters u and w')
     for duration_integer in pbar:
-        pbar.set_description(f'Calculating Parameters u and w for duration {duration_integer:0.0f}')
+        pbar.set_description('Calculating Parameters u and w for duration {:0.0f}'.format(duration_integer))
 
         duration = pd.Timedelta(minutes=duration_integer)
 
