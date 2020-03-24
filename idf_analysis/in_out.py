@@ -61,7 +61,7 @@ yaml.add_constructor(_mapping_tag, _dict_constructor)
 
 
 def write_yaml(data, fn):
-    yaml.dump(data, open(fn, 'w'), default_flow_style=False)
+    yaml.dump(data, open(fn, 'w'), default_flow_style=None, width=200)
 
 
 def read_yaml(filename):

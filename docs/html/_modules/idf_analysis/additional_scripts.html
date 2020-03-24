@@ -161,6 +161,13 @@
 <span class="kn">from</span> <span class="nn">.definitions</span> <span class="kn">import</span> <span class="n">COL</span><span class="p">,</span> <span class="n">PARAM_COL</span><span class="p">,</span> <span class="n">PARAM</span>
 <span class="kn">from</span> <span class="nn">.little_helpers</span> <span class="kn">import</span> <span class="n">minutes_readable</span>
 <span class="kn">from</span> <span class="nn">.sww_utils</span> <span class="kn">import</span> <span class="n">agg_events</span>
+<span class="kn">from</span> <span class="nn">.calculation_methods</span> <span class="kn">import</span> <span class="n">get_parameters</span>
+
+
+<div class="viewcode-block" id="set_parameters_from_interim_results"><a class="viewcode-back" href="../../base_functions.html#idf_analysis.additional_scripts.set_parameters_from_interim_results">[docs]</a><span class="k">def</span> <span class="nf">set_parameters_from_interim_results</span><span class="p">(</span><span class="n">idf</span><span class="p">,</span> <span class="n">interim_results_fn</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;for compatibility reasons. To use the old file and convert it to the new parameters file&quot;&quot;&quot;</span>
+    <span class="n">interim_results</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">interim_results_fn</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">idf</span><span class="o">.</span><span class="n">_parameter</span> <span class="o">=</span> <span class="n">get_parameters</span><span class="p">(</span><span class="n">interim_results</span><span class="p">,</span> <span class="n">idf</span><span class="o">.</span><span class="n">worksheet</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="get_interim_results_from_parameters"><a class="viewcode-back" href="../../base_functions.html#idf_analysis.additional_scripts.get_interim_results_from_parameters">[docs]</a><span class="k">def</span> <span class="nf">get_interim_results_from_parameters</span><span class="p">(</span><span class="n">parameters</span><span class="p">):</span>

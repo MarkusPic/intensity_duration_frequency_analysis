@@ -7,6 +7,13 @@ from webbrowser import open as show_file
 from .definitions import COL, PARAM_COL, PARAM
 from .little_helpers import minutes_readable
 from .sww_utils import agg_events
+from .calculation_methods import get_parameters
+
+
+def set_parameters_from_interim_results(idf, interim_results_fn):
+    """for compatibility reasons. To use the old file and convert it to the new parameters file"""
+    interim_results = pd.read_csv(interim_results_fn, index_col=0, header=0)
+    idf._parameter = get_parameters(interim_results, idf.worksheet)
 
 
 def get_interim_results_from_parameters(parameters):
