@@ -4,3 +4,5 @@ matplotlib
 tzlocal
 pytz
 tqdm
+scipy
+PyYAML
