@@ -399,13 +399,13 @@ class IntensityDurationFrequencyAnalyse:
         h = user.height_of_rainfall
         t = user.return_period
         out = user.output
-        name = path.basename('.'.join(user.input.split('.')[:-1]))
+        label = path.basename('.'.join(user.input.split('.')[:-1]))
         if out is None:
             out = ''
-        fn = path.join(out, '{label}_data', '{label}_{file_name}')
+        fn = path.join(out, '{label}_data', '{label}_{file_name}').format(label=label)
+
         # --------------------------------------------------
-        idf = cls(series_kind=user.series_kind, worksheet=user.worksheet, extended_durations=user.extended_duration,
-                  output_directory=out, output_label=name)
+        idf = cls(series_kind=user.series_kind, worksheet=user.worksheet, extended_durations=user.extended_duration)
 
         # --------------------------------------------------
         if user.r_720_1:
@@ -426,7 +426,7 @@ class IntensityDurationFrequencyAnalyse:
 
         # --------------------------------------------------
         if user.plot or user.export_table:
-            idf.auto_save_parameters(fn.format(label=name, file_name='parameter.yaml'))
+            idf.auto_save_parameters(fn.format('parameter.yaml'))
 
         # --------------------------------------------------
         if _not_none(d, t):
@@ -447,7 +447,7 @@ class IntensityDurationFrequencyAnalyse:
         # --------------------------------------------------
         if user.plot:
             fig, ax = idf.result_figure()
-            plot_fn = fn.format(label=name, file_name='_idf_plot.png')
+            plot_fn = fn.format('idf_plot.png')
             fig.savefig(plot_fn, dpi=260)
             plt.close(fig)
             show_file(plot_fn)
@@ -455,8 +455,8 @@ class IntensityDurationFrequencyAnalyse:
         # --------------------------------------------------
         if user.export_table:
             table = idf.result_table(add_names=True)
-            print(table.round(1).to_string())
-            table.to_csv(fn.format(label=name, file_name='results_h_N.csv'), sep=';', decimal='.', float_format='%0.2f')
+            print(table.round(2).to_string())
+            table.to_csv(fn.format('results_h_N.csv'), sep=';', decimal='.', float_format='%0.2f')
 
     ####################################################################################################################
     @property
