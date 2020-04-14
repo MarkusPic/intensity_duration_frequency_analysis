@@ -7,7 +7,7 @@ __license__ = "MIT"
 
 import warnings
 from math import floor
-from os import path
+from os import path, mkdir
 from webbrowser import open as show_file
 from scipy.optimize import newton
 
@@ -394,11 +394,16 @@ class IntensityDurationFrequencyAnalyse:
         d = user.duration
         h = user.height_of_rainfall
         t = user.return_period
-        out = user.output
-        label = path.basename('.'.join(user.input.split('.')[:-1]))
+        out = user.output  # dir to save files
         if out is None:
-            out = ''
-        fn = path.join(out, '{label}_data'.format(label=label), '{}')
+            # default: use wkdir and make as subdir with the name as follows
+            label = path.basename('.'.join(user.input.split('.')[:-1]))
+            out = '{label}_idf_data'.format(label=label)
+
+        if not path.isdir(out):
+            mkdir(out)
+
+        fn = path.join(out, '{}')
 
         # --------------------------------------------------
         idf = cls(series_kind=user.series_kind, worksheet=user.worksheet, extended_durations=user.extended_duration)
@@ -409,7 +414,7 @@ class IntensityDurationFrequencyAnalyse:
             t = 1
 
         # --------------------------------------------------
-        ts = import_series(user.input, csv_reader_args=dict(sep=';', decimal='.'))
+        ts = import_series(user.input, csv_reader_args=dict(sep=';', decimal=','))
 
         # --------------------------------------------------
         # for faster computation
@@ -421,11 +426,11 @@ class IntensityDurationFrequencyAnalyse:
         idf.set_series(ts)
 
         # --------------------------------------------------
-        if user.plot or user.export_table or any((h,d,t)):
+        if user.plot or user.export_table or any((h, d, t)):
             idf.auto_save_parameters(fn.format('parameters.yaml'))
 
         # --------------------------------------------------
-        if any((h,d,t)):
+        if any((h, d, t)):
             if all((d, t)):
                 pass
 
