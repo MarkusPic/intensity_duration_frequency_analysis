@@ -388,10 +388,6 @@ class IntensityDurationFrequencyAnalyse:
     ####################################################################################################################
     @classmethod
     def command_line_tool(cls):
-
-        def _not_none(*args):
-            return all(a is not None for a in args)
-
         user = heavy_rain_parser()
 
         # --------------------------------------------------
@@ -402,7 +398,7 @@ class IntensityDurationFrequencyAnalyse:
         label = path.basename('.'.join(user.input.split('.')[:-1]))
         if out is None:
             out = ''
-        fn = path.join(out, '{label}_data', '{label}_{file_name}').format(label=label)
+        fn = path.join(out, '{label}_data'.format(label=label), '{}')
 
         # --------------------------------------------------
         idf = cls(series_kind=user.series_kind, worksheet=user.worksheet, extended_durations=user.extended_duration)
@@ -417,33 +413,34 @@ class IntensityDurationFrequencyAnalyse:
 
         # --------------------------------------------------
         # for faster computation
-        if _not_none(d) and not user.plot and not user.export_table:
+        if d is not None and not user.plot and not user.export_table:
             new_freq = floor(d / 4)
-            ts = ts.resample('{:0.0f}T'.format(new_freq)).sum().replace(0, np.Nan).dropna()
+            ts = ts.resample('{:0.0f}T'.format(new_freq)).sum().replace(0, np.NaN).dropna()
 
         # --------------------------------------------------
         idf.set_series(ts)
 
         # --------------------------------------------------
-        if user.plot or user.export_table:
-            idf.auto_save_parameters(fn.format('parameter.yaml'))
+        if user.plot or user.export_table or any((h,d,t)):
+            idf.auto_save_parameters(fn.format('parameters.yaml'))
 
         # --------------------------------------------------
-        if _not_none(d, t):
-            pass
+        if any((h,d,t)):
+            if all((d, t)):
+                pass
 
-        elif _not_none(d, h):
-            t = idf.get_return_period(h, d)
-            print('The return period is {:0.1f} years.'.format(t))
+            elif all((d, h)):
+                t = idf.get_return_period(h, d)
+                print('The return period is {:0.1f} years.'.format(t))
 
-        elif _not_none(h, t):
-            d = idf.get_duration(h, t)
-            print('The duration is {:0.1f} minutes.'.format(d))
+            elif all((h, t)):
+                d = idf.get_duration(h, t)
+                print('The duration is {:0.1f} minutes.'.format(d))
 
-        print('Resultierende Regenhöhe h_N(T_n={t:0.1f}a, D={d:0.1f}min) = {h:0.2f} mm'
-              ''.format(t=t, d=d, h=idf.depth_of_rainfall(d, t)))
-        print('Resultierende Regenspende r_N(T_n={t:0.1f}a, D={d:0.1f}min) = {r:0.2f} L/(s*ha)'
-              ''.format(t=t, d=d, r=idf.rain_flow_rate(d, t)))
+            print('Resultierende Regenhöhe h_N(T_n={t:0.1f}a, D={d:0.1f}min) = {h:0.2f} mm'
+                  ''.format(t=t, d=d, h=idf.depth_of_rainfall(d, t)))
+            print('Resultierende Regenspende r_N(T_n={t:0.1f}a, D={d:0.1f}min) = {r:0.2f} L/(s*ha)'
+                  ''.format(t=t, d=d, r=idf.rain_flow_rate(d, t)))
         # --------------------------------------------------
         if user.plot:
             fig, ax = idf.result_figure()

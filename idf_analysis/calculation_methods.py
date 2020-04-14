@@ -355,19 +355,17 @@ def get_approaches(worksheet):
 
 
 def split_interim_results(parameter, interim_results):
-    del_items = list()
+    new_parameters = list()
     for i, row in enumerate(parameter):
         it_res = interim_results.loc[row[PARAM_COL.FROM]: row[PARAM_COL.TO]]
         if it_res.empty or it_res.index.size == 1:
-            del_items.append(i)
             continue
         row[COL.DUR] = list(map(int, it_res.index.values))
         for p in PARAM.U_AND_W:  # u or w
             row[PARAM_COL.VALUES(p)] = list(map(float, it_res[p].values))
+        new_parameters.append(row)
 
-    for i in del_items:
-        parameter.pop(i)
-    return parameter
+    return new_parameters
 
 
 ########################################################################################################################
@@ -453,7 +451,7 @@ def get_parameters(interim_results, worksheet=DWA):
     duration_step = parameter[0][PARAM_COL.TO]
     durations = np.array([duration_step - 0.001, duration_step + 0.001])
 
-    if any(durations < interim_results.index.values.min()):
+    if any(durations < interim_results.index.values.min()) or any(durations > interim_results.index.values.max()):
         return parameter
 
     u, w = get_u_w(durations, parameter)
