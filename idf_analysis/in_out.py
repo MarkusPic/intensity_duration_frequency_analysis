@@ -31,10 +31,19 @@ def import_series(filename, series_label='precipitation', index_label='datetime'
     """
     if filename.endswith('csv'):
         if csv_reader_args is None:
-            csv_reader_args = dict()
-        ts = pd.read_csv(filename, index_col=0, header=None, squeeze=True, names=[series_label], **csv_reader_args)
-        ts.index = pd.to_datetime(ts.index)
-        ts.index.name = index_label
+            csv_reader_args = dict(sep=',', decimal='.')
+        try:
+            ts = pd.read_csv(filename, index_col=0, header=0, squeeze=True, **csv_reader_args)
+            ts.index = pd.to_datetime(ts.index)
+            ts.index.name = index_label
+            ts.name = series_label
+        except:
+            raise UserWarning('ERROR | '
+                              'Something is wrong with your csv format. The file should only include two columns. '
+                              'First column is the date and time index (prefered format is "YYYY-MM-DD HH:MM:SS") '
+                              'and second column the precipitation values in mm. '
+                              'As a separator use "{sep}" and as decimal sign use "{decimal}".'.format(**csv_reader_args))
+
         return ts
     elif filename.endswith('parquet'):
         return pd.read_parquet(filename, columns=[series_label])[series_label].rename_axis(index_label, axis='index')

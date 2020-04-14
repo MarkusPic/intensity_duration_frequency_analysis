@@ -409,7 +409,7 @@ class IntensityDurationFrequencyAnalyse:
             t = 1
 
         # --------------------------------------------------
-        ts = import_series(user.input)
+        ts = import_series(user.input, csv_reader_args=dict(sep=';', decimal='.'))
 
         # --------------------------------------------------
         # for faster computation
