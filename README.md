@@ -151,7 +151,7 @@ optional arguments:
 
 ### Example IDF table
 
-[IDF-Table](example/ehyd_112086_idf_data/idf_table.csv)
+[IDF-Table](example/ehyd_112086_idf_data/idf_table_UNIX.csv)
 
 
 |------------------:|------:|-------:|-------:|-------:|-------:|-------:|-------:|-------:|-------:|-------:|-------:|
