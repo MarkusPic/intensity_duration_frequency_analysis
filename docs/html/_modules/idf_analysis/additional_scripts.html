@@ -81,14 +81,14 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../README.html">Intensity duration frequency analysis (based on KOSTRA)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../README.html">Description</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../README.html#install">Install</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../README.html#usage">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../README.html#commandline-tool">Commandline tool</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../README.html#example">Example</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api.html">API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../base_functions.html">Base Functions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../example.html">Intensity Duration Frequency Analyse</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../example/example_commandline.html">Example Commandline Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../example/example_python_api.html">Example Python API</a></li>
 </ul>
 
             
@@ -155,13 +155,13 @@
 <span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">matplotlib.lines</span> <span class="kn">import</span> <span class="n">Line2D</span>
-<span class="kn">from</span> <span class="nn">webbrowser</span> <span class="kn">import</span> <span class="nb">open</span> <span class="k">as</span> <span class="n">show_file</span>
+<span class="kn">from</span> <span class="nn">matplotlib.lines</span> <span class="k">import</span> <span class="n">Line2D</span>
+<span class="kn">from</span> <span class="nn">webbrowser</span> <span class="k">import</span> <span class="nb">open</span> <span class="k">as</span> <span class="n">show_file</span>
 
-<span class="kn">from</span> <span class="nn">.definitions</span> <span class="kn">import</span> <span class="n">COL</span><span class="p">,</span> <span class="n">PARAM_COL</span><span class="p">,</span> <span class="n">PARAM</span>
-<span class="kn">from</span> <span class="nn">.little_helpers</span> <span class="kn">import</span> <span class="n">minutes_readable</span>
-<span class="kn">from</span> <span class="nn">.sww_utils</span> <span class="kn">import</span> <span class="n">agg_events</span>
-<span class="kn">from</span> <span class="nn">.calculation_methods</span> <span class="kn">import</span> <span class="n">get_parameters</span>
+<span class="kn">from</span> <span class="nn">.definitions</span> <span class="k">import</span> <span class="n">COL</span><span class="p">,</span> <span class="n">PARAM_COL</span><span class="p">,</span> <span class="n">PARAM</span>
+<span class="kn">from</span> <span class="nn">.little_helpers</span> <span class="k">import</span> <span class="n">minutes_readable</span>
+<span class="kn">from</span> <span class="nn">.sww_utils</span> <span class="k">import</span> <span class="n">agg_events</span>
+<span class="kn">from</span> <span class="nn">.calculation_methods</span> <span class="k">import</span> <span class="n">get_parameters</span>
 
 
 <div class="viewcode-block" id="set_parameters_from_interim_results"><a class="viewcode-back" href="../../base_functions.html#idf_analysis.additional_scripts.set_parameters_from_interim_results">[docs]</a><span class="k">def</span> <span class="nf">set_parameters_from_interim_results</span><span class="p">(</span><span class="n">idf</span><span class="p">,</span> <span class="n">interim_results_fn</span><span class="p">):</span>
@@ -332,7 +332,7 @@
     <span class="c1"># exit()</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="n">major_ticks</span><span class="p">)</span>
     <span class="c1"># print(ax.get_xticks())</span>
-    <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">ticker</span>
+    <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="k">import</span> <span class="n">ticker</span>
 
     <span class="k">def</span> <span class="nf">time_ticks</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">_</span><span class="p">):</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_timedelta</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;ns&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span> <span class="o">/</span> <span class="mi">60</span>
@@ -374,7 +374,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2019, Pichler
+        &copy; Copyright 2020, Pichler
 
     </p>
   </div>

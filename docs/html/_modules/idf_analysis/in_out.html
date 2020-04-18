@@ -81,14 +81,14 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../README.html">Intensity duration frequency analysis (based on KOSTRA)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../README.html">Description</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../README.html#install">Install</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../README.html#usage">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../README.html#commandline-tool">Commandline tool</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../README.html#example">Example</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api.html">API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../base_functions.html">Base Functions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../example.html">Intensity Duration Frequency Analyse</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../example/example_commandline.html">Example Commandline Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../example/example_python_api.html">Example Python API</a></li>
 </ul>
 
             
@@ -161,14 +161,12 @@
 
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">yaml</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
 
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">numba</span>
 
-<span class="k">def</span> <span class="nf">csv_args</span><span class="p">(</span><span class="n">unix</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">unix</span><span class="p">:</span>
-        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">sep</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">decimal</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">sep</span><span class="o">=</span><span class="s1">&#39;;&#39;</span><span class="p">,</span> <span class="n">decimal</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="n">numba</span><span class="o">.</span><span class="n">NumbaDeprecationWarning</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="import_series"><a class="viewcode-back" href="../../base_functions.html#idf_analysis.in_out.import_series">[docs]</a><span class="k">def</span> <span class="nf">import_series</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">series_label</span><span class="o">=</span><span class="s1">&#39;precipitation&#39;</span><span class="p">,</span> <span class="n">index_label</span><span class="o">=</span><span class="s1">&#39;datetime&#39;</span><span class="p">,</span> <span class="n">csv_reader_args</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -185,10 +183,19 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;csv&#39;</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">csv_reader_args</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">csv_reader_args</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
-        <span class="n">ts</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">squeeze</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="n">series_label</span><span class="p">],</span> <span class="o">**</span><span class="n">csv_reader_args</span><span class="p">)</span>
-        <span class="n">ts</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">ts</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
-        <span class="n">ts</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">index_label</span>
+            <span class="n">csv_reader_args</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">sep</span><span class="o">=</span><span class="s1">&#39;;&#39;</span><span class="p">,</span> <span class="n">decimal</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">ts</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">squeeze</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">csv_reader_args</span><span class="p">)</span>
+            <span class="n">ts</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">ts</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+            <span class="n">ts</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">index_label</span>
+            <span class="n">ts</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">series_label</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">UserWarning</span><span class="p">(</span><span class="s1">&#39;ERROR | &#39;</span>
+                              <span class="s1">&#39;Something is wrong with your csv format. The file should only include two columns. &#39;</span>
+                              <span class="s1">&#39;First column is the date and time index (prefered format is &quot;YYYY-MM-DD HH:MM:SS&quot;) &#39;</span>
+                              <span class="s1">&#39;and second column the precipitation values in mm. &#39;</span>
+                              <span class="s1">&#39;As a separator use &quot;</span><span class="si">{sep}</span><span class="s1">&quot; and as decimal sign use &quot;</span><span class="si">{decimal}</span><span class="s1">&quot;.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">csv_reader_args</span><span class="p">))</span>
+
         <span class="k">return</span> <span class="n">ts</span>
     <span class="k">elif</span> <span class="n">filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;parquet&#39;</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="n">series_label</span><span class="p">])[</span><span class="n">series_label</span><span class="p">]</span><span class="o">.</span><span class="n">rename_axis</span><span class="p">(</span><span class="n">index_label</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s1">&#39;index&#39;</span><span class="p">)</span>
@@ -232,7 +239,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2019, Pichler
+        &copy; Copyright 2020, Pichler
 
     </p>
   </div>

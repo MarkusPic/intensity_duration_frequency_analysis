@@ -1,0 +1,1680 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Example Python API &mdash; Intensity Duration Frequency Analyse 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Example Commandline Usage" href="example_commandline.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Intensity Duration Frequency Analyse
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../README.html">Description</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../README.html#install">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../README.html#usage">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../README.html#commandline-tool">Commandline tool</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../base_functions.html">Base Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_commandline.html">Example Commandline Usage</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Example Python API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#Parameter">Parameter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Berechnungen">Berechnungen</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Intensity Duration Frequency Analyse</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Example Python API</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/example/example_python_api.ipynb.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container,
+div.nbinput.container div.prompt,
+div.nbinput.container div.input_area,
+div.nbinput.container div[class*=highlight],
+div.nbinput.container div[class*=highlight] pre,
+div.nboutput.container,
+div.nboutput.container div.prompt,
+div.nboutput.container div.output_area,
+div.nboutput.container div[class*=highlight],
+div.nboutput.container div[class*=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    min-width: 5ex;
+    padding-top: 0.3rem;
+    padding-right: 0.3rem;
+    text-align: right;
+    flex: 0;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    background: #f5f5f5;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 0.3rem;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt a.copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">idf_analysis.idf_class</span> <span class="k">import</span> <span class="n">IntensityDurationFrequencyAnalyse</span>
+<span class="kn">from</span> <span class="nn">idf_analysis.definitions</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">os</span> <span class="k">import</span> <span class="n">path</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
+</pre></div>
+</div>
+</div>
+<div class="section" id="Example-Python-API">
+<h1>Example Python API<a class="headerlink" href="#Example-Python-API" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="Parameter">
+<h2>Parameter<a class="headerlink" href="#Parameter" title="Permalink to this headline">¶</a></h2>
+<p><strong>series_kind</strong>:</p>
+<p><code class="docutils literal notranslate"><span class="pre">PARTIAL</span></code> = Partielle Serie (partial duration series, PDS) (peak over threshold, POT)</p>
+<p><code class="docutils literal notranslate"><span class="pre">ANNUAL</span></code> = Jährliche Serie (annual maximum series, AMS)</p>
+<p><strong>worksheet</strong>:</p>
+<p><code class="docutils literal notranslate"><span class="pre">DWA</span></code>: - DWA-A 531 - KOSTRA - empfohlen - Stützstellen: 60min und 12h</p>
+<p><code class="docutils literal notranslate"><span class="pre">DWA-adv</span></code>: - DWA-A 531 - Unterscheidung in überwiegend konvektiv und advektiv verursachte Starkregen - Stützstellen: 3h und 24h</p>
+<p><code class="docutils literal notranslate"><span class="pre">ATV</span></code>: - ATV-A 121 - Stützstellen: 3h und 48h</p>
+<p><strong>extended_durations</strong> = Inkludiert die Dauerstufen <code class="docutils literal notranslate"><span class="pre">[0.75d,</span> <span class="pre">1d,</span> <span class="pre">2d,</span> <span class="pre">3d,</span> <span class="pre">4d,</span> <span class="pre">5d,</span> <span class="pre">6d]</span></code> in der Analyse (in d=Tage)</p>
+<p>Standardmäßig berechnete Dauerstufen <code class="docutils literal notranslate"><span class="pre">[5m,</span> <span class="pre">10m,</span> <span class="pre">15m,</span> <span class="pre">20m,</span> <span class="pre">30m,</span> <span class="pre">45m,</span> <span class="pre">60m,</span> <span class="pre">1.5h,</span> <span class="pre">3h,</span> <span class="pre">4.5h,</span> <span class="pre">6h,</span> <span class="pre">7.5h,</span> <span class="pre">10h,</span> <span class="pre">12h]</span></code></p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">idf</span> <span class="o">=</span> <span class="n">IntensityDurationFrequencyAnalyse</span><span class="p">(</span><span class="n">series_kind</span><span class="o">=</span><span class="n">PARTIAL</span><span class="p">,</span> <span class="n">worksheet</span><span class="o">=</span><span class="n">DWA</span><span class="p">,</span> <span class="n">extended_durations</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>I used the rain-time-series from ehyd.gv.at with the ID 112086 (Graz-Andritz)</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="s1">&#39;ehyd_112086.parquet&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">output_directory</span> <span class="o">=</span> <span class="s1">&#39;ehyd_112086_idf_data&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">data</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>precipitation</th>
+    </tr>
+    <tr>
+      <th>datetime</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2007-09-17 13:56:00</th>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>2007-09-17 13:57:00</th>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>2007-09-17 13:58:00</th>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>2007-09-17 13:59:00</th>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>2007-09-17 14:00:00</th>
+      <td>0.0</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">data</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>precipitation</th>
+    </tr>
+    <tr>
+      <th>datetime</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2016-12-31 23:56:00</th>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>2016-12-31 23:57:00</th>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>2016-12-31 23:58:00</th>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>2016-12-31 23:59:00</th>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>2017-01-01 00:00:00</th>
+      <td>NaN</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">idf</span><span class="o">.</span><span class="n">set_series</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;precipitation&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<p>Bei jeder neuen Berechnung werden Zwischenergebnisse erstellt, welche nur abhängig von der gewählten Serie <code class="docutils literal notranslate"><span class="pre">series_kind</span></code> und der angegebenen/benötigten Dauerstufen sind. Dieser Vorgang dauert einige Sekunden. Auserdem enthalten diese Zwischenergebnisse die Parameter, die zur Berechnung der Regenhöhe und Regenspende benötigt werden. Hier sind bereist die Berechnungsverfahren und Stückpunkte laut dem gewählten <code class="docutils literal notranslate"><span class="pre">worksheet</span></code> berücksichtigt.</p>
+<p>Um Zeit zu sparen, gibt es die Möglichkeit, die Parameter zwischenzuspeichern und bei erneutem Aufrufen des Skripts werden diese Parameter nicht mehr berechnet, sondern aus der Datei gelesen.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">idf</span><span class="o">.</span><span class="n">auto_save_parameters</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_directory</span><span class="p">,</span> <span class="s1">&#39;idf_parameters.yaml&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<p>Abgerufen können diese Zwischenergebnisse mit:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">idf</span><span class="o">.</span><span class="n">parameters</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[OrderedDict([(&#39;von&#39;, 0),
+              (&#39;bis&#39;, 60),
+              (&#39;u&#39;, &#39;hyperbolic&#39;),
+              (&#39;w&#39;, &#39;double_logarithmic&#39;),
+              (&#39;duration&#39;, [5, 10, 15, 20, 30, 45, 60]),
+              (&#39;u_values&#39;,
+               [9.486101172153768,
+                14.880682259388992,
+                18.923925904125714,
+                22.163866280920942,
+                25.733788535734465,
+                28.763492111656806,
+                30.773236426304624]),
+              (&#39;w_values&#39;,
+               [2.101614151013058,
+                3.0943743762302796,
+                5.022504730295425,
+                6.913318133236633,
+                8.63300706273769,
+                9.060714723939233,
+                10.53265256494607]),
+              (&#39;a_u&#39;, 39.07178657400802),
+              (&#39;b_u&#39;, 15.79493639216588),
+              (&#39;a_w&#39;, -0.23200418301992842),
+              (&#39;b_w&#39;, 0.6527139149932136)]),
+ OrderedDict([(&#39;von&#39;, 60),
+              (&#39;bis&#39;, 720),
+              (&#39;u&#39;, &#39;double_logarithmic&#39;),
+              (&#39;w&#39;, &#39;double_logarithmic&#39;),
+              (&#39;duration&#39;, [60, 90, 180, 270, 360, 450, 600, 720]),
+              (&#39;u_values&#39;,
+               [30.773236426304624,
+                33.51214410385941,
+                38.10523589972139,
+                41.26666841352598,
+                43.4140420277688,
+                45.24083162000485,
+                47.62380942664198,
+                48.83726172286971]),
+              (&#39;w_values&#39;,
+               [10.53265256494607,
+                11.997606987725561,
+                13.260437085233818,
+                13.68867988465992,
+                14.439105566764008,
+                14.761796879223478,
+                15.14365559953517,
+                15.733542600467251]),
+              (&#39;a_u&#39;, 2.663791285911183),
+              (&#39;b_u&#39;, 0.18756353432662592),
+              (&#39;a_w&#39;, 1.931581875666284),
+              (&#39;b_w&#39;, 0.12428109117831178)]),
+ OrderedDict([(&#39;von&#39;, 720),
+              (&#39;bis&#39;, inf),
+              (&#39;u&#39;, &#39;linear&#39;),
+              (&#39;w&#39;, &#39;linear&#39;),
+              (&#39;duration&#39;, [720, 1080, 1440, 2880, 4320, 5760, 7200, 8640]),
+              (&#39;u_values&#39;,
+               [48.83726172286971,
+                54.41074587200064,
+                58.0214283060335,
+                66.70202512224915,
+                71.93257367687501,
+                78.94721383010396,
+                83.52833405364608,
+                85.3819453812888]),
+              (&#39;w_values&#39;,
+               [15.733542600467251,
+                15.23804218748647,
+                13.990433608500725,
+                15.453540269081063,
+                19.89064528655737,
+                24.0937424025363,
+                25.753436665555473,
+                28.23046413653405])])]
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="Berechnungen">
+<h2>Berechnungen<a class="headerlink" href="#Berechnungen" title="Permalink to this headline">¶</a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">idf</span><span class="o">.</span><span class="n">depth_of_rainfall</span><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">return_period</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+19.031596336052708
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Resultierende Regenhöhe h_N(T_n=</span><span class="si">{t:0.1f}</span><span class="s1">a, D=</span><span class="si">{d:0.1f}</span><span class="s1">min) = </span><span class="si">{h:0.2f}</span><span class="s1"> mm&#39;</span>
+      <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">idf</span><span class="o">.</span><span class="n">depth_of_rainfall</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Resultierende Regenhöhe h_N(T_n=1.0a, D=15.0min) = 19.03 mm
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">idf</span><span class="o">.</span><span class="n">rain_flow_rate</span><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">return_period</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+211.46218151169674
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Resultierende Regenspende r_N(T_n=</span><span class="si">{t:0.1f}</span><span class="s1">a, D=</span><span class="si">{d:0.1f}</span><span class="s1">min) = </span><span class="si">{r:0.2f}</span><span class="s1"> L/(s*ha)&#39;</span>
+      <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="n">idf</span><span class="o">.</span><span class="n">rain_flow_rate</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Resultierende Regenspende r_N(T_n=1.0a, D=15.0min) = 211.46 L/(s*ha)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">idf</span><span class="o">.</span><span class="n">r_720_1</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+11.410836729727
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">idf</span><span class="o">.</span><span class="n">get_return_period</span><span class="p">(</span><span class="n">height_of_rainfall</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+0.1430180144131331
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">idf</span><span class="o">.</span><span class="n">get_duration</span><span class="p">(</span><span class="n">height_of_rainfall</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">return_period</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+5.433080747189968
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">idf</span><span class="o">.</span><span class="n">result_table</span><span class="p">()</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>1</th>
+      <th>2</th>
+      <th>3</th>
+      <th>5</th>
+      <th>10</th>
+      <th>20</th>
+      <th>25</th>
+      <th>30</th>
+      <th>50</th>
+      <th>75</th>
+      <th>100</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>5.0</th>
+      <td>9.39</td>
+      <td>10.97</td>
+      <td>11.89</td>
+      <td>13.04</td>
+      <td>14.61</td>
+      <td>16.19</td>
+      <td>16.69</td>
+      <td>17.11</td>
+      <td>18.26</td>
+      <td>19.18</td>
+      <td>19.83</td>
+    </tr>
+    <tr>
+      <th>10.0</th>
+      <td>15.15</td>
+      <td>17.62</td>
+      <td>19.06</td>
+      <td>20.88</td>
+      <td>23.35</td>
+      <td>25.82</td>
+      <td>26.62</td>
+      <td>27.27</td>
+      <td>29.09</td>
+      <td>30.54</td>
+      <td>31.56</td>
+    </tr>
+    <tr>
+      <th>15.0</th>
+      <td>19.03</td>
+      <td>22.25</td>
+      <td>24.13</td>
+      <td>26.51</td>
+      <td>29.72</td>
+      <td>32.94</td>
+      <td>33.98</td>
+      <td>34.83</td>
+      <td>37.20</td>
+      <td>39.08</td>
+      <td>40.42</td>
+    </tr>
+    <tr>
+      <th>20.0</th>
+      <td>21.83</td>
+      <td>25.71</td>
+      <td>27.99</td>
+      <td>30.85</td>
+      <td>34.73</td>
+      <td>38.62</td>
+      <td>39.87</td>
+      <td>40.89</td>
+      <td>43.75</td>
+      <td>46.02</td>
+      <td>47.63</td>
+    </tr>
+    <tr>
+      <th>30.0</th>
+      <td>25.60</td>
+      <td>30.66</td>
+      <td>33.62</td>
+      <td>37.35</td>
+      <td>42.41</td>
+      <td>47.47</td>
+      <td>49.10</td>
+      <td>50.43</td>
+      <td>54.16</td>
+      <td>57.12</td>
+      <td>59.22</td>
+    </tr>
+    <tr>
+      <th>45.0</th>
+      <td>28.92</td>
+      <td>35.51</td>
+      <td>39.37</td>
+      <td>44.23</td>
+      <td>50.83</td>
+      <td>57.42</td>
+      <td>59.54</td>
+      <td>61.28</td>
+      <td>66.14</td>
+      <td>69.99</td>
+      <td>72.73</td>
+    </tr>
+    <tr>
+      <th>60.0</th>
+      <td>30.93</td>
+      <td>38.89</td>
+      <td>43.54</td>
+      <td>49.40</td>
+      <td>57.36</td>
+      <td>65.31</td>
+      <td>67.88</td>
+      <td>69.97</td>
+      <td>75.83</td>
+      <td>80.49</td>
+      <td>83.79</td>
+    </tr>
+    <tr>
+      <th>90.0</th>
+      <td>33.37</td>
+      <td>41.74</td>
+      <td>46.64</td>
+      <td>52.80</td>
+      <td>61.17</td>
+      <td>69.54</td>
+      <td>72.23</td>
+      <td>74.43</td>
+      <td>80.60</td>
+      <td>85.49</td>
+      <td>88.96</td>
+    </tr>
+    <tr>
+      <th>180.0</th>
+      <td>38.01</td>
+      <td>47.13</td>
+      <td>52.46</td>
+      <td>59.18</td>
+      <td>68.30</td>
+      <td>77.42</td>
+      <td>80.36</td>
+      <td>82.76</td>
+      <td>89.48</td>
+      <td>94.81</td>
+      <td>98.60</td>
+    </tr>
+    <tr>
+      <th>270.0</th>
+      <td>41.01</td>
+      <td>50.60</td>
+      <td>56.21</td>
+      <td>63.28</td>
+      <td>72.87</td>
+      <td>82.46</td>
+      <td>85.55</td>
+      <td>88.07</td>
+      <td>95.14</td>
+      <td>100.75</td>
+      <td>104.73</td>
+    </tr>
+    <tr>
+      <th>360.0</th>
+      <td>43.29</td>
+      <td>53.23</td>
+      <td>59.04</td>
+      <td>66.37</td>
+      <td>76.31</td>
+      <td>86.25</td>
+      <td>89.45</td>
+      <td>92.06</td>
+      <td>99.39</td>
+      <td>105.20</td>
+      <td>109.33</td>
+    </tr>
+    <tr>
+      <th>450.0</th>
+      <td>45.14</td>
+      <td>55.36</td>
+      <td>61.33</td>
+      <td>68.87</td>
+      <td>79.08</td>
+      <td>89.30</td>
+      <td>92.59</td>
+      <td>95.28</td>
+      <td>102.81</td>
+      <td>108.79</td>
+      <td>113.03</td>
+    </tr>
+    <tr>
+      <th>600.0</th>
+      <td>47.64</td>
+      <td>58.23</td>
+      <td>64.43</td>
+      <td>72.23</td>
+      <td>82.82</td>
+      <td>93.41</td>
+      <td>96.82</td>
+      <td>99.61</td>
+      <td>107.42</td>
+      <td>113.61</td>
+      <td>118.01</td>
+    </tr>
+    <tr>
+      <th>720.0</th>
+      <td>49.29</td>
+      <td>60.13</td>
+      <td>66.47</td>
+      <td>74.45</td>
+      <td>85.29</td>
+      <td>96.12</td>
+      <td>99.61</td>
+      <td>102.46</td>
+      <td>110.44</td>
+      <td>116.78</td>
+      <td>121.28</td>
+    </tr>
+    <tr>
+      <th>1080.0</th>
+      <td>54.41</td>
+      <td>64.97</td>
+      <td>71.15</td>
+      <td>78.94</td>
+      <td>89.50</td>
+      <td>100.06</td>
+      <td>103.46</td>
+      <td>106.24</td>
+      <td>114.02</td>
+      <td>120.20</td>
+      <td>124.58</td>
+    </tr>
+    <tr>
+      <th>1440.0</th>
+      <td>58.02</td>
+      <td>67.72</td>
+      <td>73.39</td>
+      <td>80.54</td>
+      <td>90.24</td>
+      <td>99.93</td>
+      <td>103.05</td>
+      <td>105.61</td>
+      <td>112.75</td>
+      <td>118.42</td>
+      <td>122.45</td>
+    </tr>
+    <tr>
+      <th>2880.0</th>
+      <td>66.70</td>
+      <td>77.41</td>
+      <td>83.68</td>
+      <td>91.57</td>
+      <td>102.29</td>
+      <td>113.00</td>
+      <td>116.45</td>
+      <td>119.26</td>
+      <td>127.16</td>
+      <td>133.42</td>
+      <td>137.87</td>
+    </tr>
+    <tr>
+      <th>4320.0</th>
+      <td>71.93</td>
+      <td>85.72</td>
+      <td>93.78</td>
+      <td>103.95</td>
+      <td>117.73</td>
+      <td>131.52</td>
+      <td>135.96</td>
+      <td>139.58</td>
+      <td>149.75</td>
+      <td>157.81</td>
+      <td>163.53</td>
+    </tr>
+    <tr>
+      <th>5760.0</th>
+      <td>78.95</td>
+      <td>95.65</td>
+      <td>105.42</td>
+      <td>117.72</td>
+      <td>134.43</td>
+      <td>151.13</td>
+      <td>156.50</td>
+      <td>160.89</td>
+      <td>173.20</td>
+      <td>182.97</td>
+      <td>189.90</td>
+    </tr>
+    <tr>
+      <th>7200.0</th>
+      <td>83.53</td>
+      <td>101.38</td>
+      <td>111.82</td>
+      <td>124.98</td>
+      <td>142.83</td>
+      <td>160.68</td>
+      <td>166.43</td>
+      <td>171.12</td>
+      <td>184.28</td>
+      <td>194.72</td>
+      <td>202.13</td>
+    </tr>
+    <tr>
+      <th>8640.0</th>
+      <td>85.38</td>
+      <td>104.95</td>
+      <td>116.40</td>
+      <td>130.82</td>
+      <td>150.38</td>
+      <td>169.95</td>
+      <td>176.25</td>
+      <td>181.40</td>
+      <td>195.82</td>
+      <td>207.27</td>
+      <td>215.39</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">idf</span><span class="o">.</span><span class="n">result_table</span><span class="p">(</span><span class="n">add_names</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead tr th {
+        text-align: left;
+    }
+
+    .dataframe thead tr:last-of-type th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr>
+      <th>return period (a)</th>
+      <th>1</th>
+      <th>2</th>
+      <th>3</th>
+      <th>5</th>
+      <th>10</th>
+      <th>20</th>
+      <th>25</th>
+      <th>30</th>
+      <th>50</th>
+      <th>75</th>
+      <th>100</th>
+    </tr>
+    <tr>
+      <th>frequency (1/a)</th>
+      <th>1.000</th>
+      <th>0.500</th>
+      <th>0.333</th>
+      <th>0.200</th>
+      <th>0.100</th>
+      <th>0.050</th>
+      <th>0.040</th>
+      <th>0.033</th>
+      <th>0.020</th>
+      <th>0.013</th>
+      <th>0.010</th>
+    </tr>
+    <tr>
+      <th>duration (min)</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>5.0</th>
+      <td>9.39</td>
+      <td>10.97</td>
+      <td>11.89</td>
+      <td>13.04</td>
+      <td>14.61</td>
+      <td>16.19</td>
+      <td>16.69</td>
+      <td>17.11</td>
+      <td>18.26</td>
+      <td>19.18</td>
+      <td>19.83</td>
+    </tr>
+    <tr>
+      <th>10.0</th>
+      <td>15.15</td>
+      <td>17.62</td>
+      <td>19.06</td>
+      <td>20.88</td>
+      <td>23.35</td>
+      <td>25.82</td>
+      <td>26.62</td>
+      <td>27.27</td>
+      <td>29.09</td>
+      <td>30.54</td>
+      <td>31.56</td>
+    </tr>
+    <tr>
+      <th>15.0</th>
+      <td>19.03</td>
+      <td>22.25</td>
+      <td>24.13</td>
+      <td>26.51</td>
+      <td>29.72</td>
+      <td>32.94</td>
+      <td>33.98</td>
+      <td>34.83</td>
+      <td>37.20</td>
+      <td>39.08</td>
+      <td>40.42</td>
+    </tr>
+    <tr>
+      <th>20.0</th>
+      <td>21.83</td>
+      <td>25.71</td>
+      <td>27.99</td>
+      <td>30.85</td>
+      <td>34.73</td>
+      <td>38.62</td>
+      <td>39.87</td>
+      <td>40.89</td>
+      <td>43.75</td>
+      <td>46.02</td>
+      <td>47.63</td>
+    </tr>
+    <tr>
+      <th>30.0</th>
+      <td>25.60</td>
+      <td>30.66</td>
+      <td>33.62</td>
+      <td>37.35</td>
+      <td>42.41</td>
+      <td>47.47</td>
+      <td>49.10</td>
+      <td>50.43</td>
+      <td>54.16</td>
+      <td>57.12</td>
+      <td>59.22</td>
+    </tr>
+    <tr>
+      <th>45.0</th>
+      <td>28.92</td>
+      <td>35.51</td>
+      <td>39.37</td>
+      <td>44.23</td>
+      <td>50.83</td>
+      <td>57.42</td>
+      <td>59.54</td>
+      <td>61.28</td>
+      <td>66.14</td>
+      <td>69.99</td>
+      <td>72.73</td>
+    </tr>
+    <tr>
+      <th>60.0</th>
+      <td>30.93</td>
+      <td>38.89</td>
+      <td>43.54</td>
+      <td>49.40</td>
+      <td>57.36</td>
+      <td>65.31</td>
+      <td>67.88</td>
+      <td>69.97</td>
+      <td>75.83</td>
+      <td>80.49</td>
+      <td>83.79</td>
+    </tr>
+    <tr>
+      <th>90.0</th>
+      <td>33.37</td>
+      <td>41.74</td>
+      <td>46.64</td>
+      <td>52.80</td>
+      <td>61.17</td>
+      <td>69.54</td>
+      <td>72.23</td>
+      <td>74.43</td>
+      <td>80.60</td>
+      <td>85.49</td>
+      <td>88.96</td>
+    </tr>
+    <tr>
+      <th>180.0</th>
+      <td>38.01</td>
+      <td>47.13</td>
+      <td>52.46</td>
+      <td>59.18</td>
+      <td>68.30</td>
+      <td>77.42</td>
+      <td>80.36</td>
+      <td>82.76</td>
+      <td>89.48</td>
+      <td>94.81</td>
+      <td>98.60</td>
+    </tr>
+    <tr>
+      <th>270.0</th>
+      <td>41.01</td>
+      <td>50.60</td>
+      <td>56.21</td>
+      <td>63.28</td>
+      <td>72.87</td>
+      <td>82.46</td>
+      <td>85.55</td>
+      <td>88.07</td>
+      <td>95.14</td>
+      <td>100.75</td>
+      <td>104.73</td>
+    </tr>
+    <tr>
+      <th>360.0</th>
+      <td>43.29</td>
+      <td>53.23</td>
+      <td>59.04</td>
+      <td>66.37</td>
+      <td>76.31</td>
+      <td>86.25</td>
+      <td>89.45</td>
+      <td>92.06</td>
+      <td>99.39</td>
+      <td>105.20</td>
+      <td>109.33</td>
+    </tr>
+    <tr>
+      <th>450.0</th>
+      <td>45.14</td>
+      <td>55.36</td>
+      <td>61.33</td>
+      <td>68.87</td>
+      <td>79.08</td>
+      <td>89.30</td>
+      <td>92.59</td>
+      <td>95.28</td>
+      <td>102.81</td>
+      <td>108.79</td>
+      <td>113.03</td>
+    </tr>
+    <tr>
+      <th>600.0</th>
+      <td>47.64</td>
+      <td>58.23</td>
+      <td>64.43</td>
+      <td>72.23</td>
+      <td>82.82</td>
+      <td>93.41</td>
+      <td>96.82</td>
+      <td>99.61</td>
+      <td>107.42</td>
+      <td>113.61</td>
+      <td>118.01</td>
+    </tr>
+    <tr>
+      <th>720.0</th>
+      <td>49.29</td>
+      <td>60.13</td>
+      <td>66.47</td>
+      <td>74.45</td>
+      <td>85.29</td>
+      <td>96.12</td>
+      <td>99.61</td>
+      <td>102.46</td>
+      <td>110.44</td>
+      <td>116.78</td>
+      <td>121.28</td>
+    </tr>
+    <tr>
+      <th>1080.0</th>
+      <td>54.41</td>
+      <td>64.97</td>
+      <td>71.15</td>
+      <td>78.94</td>
+      <td>89.50</td>
+      <td>100.06</td>
+      <td>103.46</td>
+      <td>106.24</td>
+      <td>114.02</td>
+      <td>120.20</td>
+      <td>124.58</td>
+    </tr>
+    <tr>
+      <th>1440.0</th>
+      <td>58.02</td>
+      <td>67.72</td>
+      <td>73.39</td>
+      <td>80.54</td>
+      <td>90.24</td>
+      <td>99.93</td>
+      <td>103.05</td>
+      <td>105.61</td>
+      <td>112.75</td>
+      <td>118.42</td>
+      <td>122.45</td>
+    </tr>
+    <tr>
+      <th>2880.0</th>
+      <td>66.70</td>
+      <td>77.41</td>
+      <td>83.68</td>
+      <td>91.57</td>
+      <td>102.29</td>
+      <td>113.00</td>
+      <td>116.45</td>
+      <td>119.26</td>
+      <td>127.16</td>
+      <td>133.42</td>
+      <td>137.87</td>
+    </tr>
+    <tr>
+      <th>4320.0</th>
+      <td>71.93</td>
+      <td>85.72</td>
+      <td>93.78</td>
+      <td>103.95</td>
+      <td>117.73</td>
+      <td>131.52</td>
+      <td>135.96</td>
+      <td>139.58</td>
+      <td>149.75</td>
+      <td>157.81</td>
+      <td>163.53</td>
+    </tr>
+    <tr>
+      <th>5760.0</th>
+      <td>78.95</td>
+      <td>95.65</td>
+      <td>105.42</td>
+      <td>117.72</td>
+      <td>134.43</td>
+      <td>151.13</td>
+      <td>156.50</td>
+      <td>160.89</td>
+      <td>173.20</td>
+      <td>182.97</td>
+      <td>189.90</td>
+    </tr>
+    <tr>
+      <th>7200.0</th>
+      <td>83.53</td>
+      <td>101.38</td>
+      <td>111.82</td>
+      <td>124.98</td>
+      <td>142.83</td>
+      <td>160.68</td>
+      <td>166.43</td>
+      <td>171.12</td>
+      <td>184.28</td>
+      <td>194.72</td>
+      <td>202.13</td>
+    </tr>
+    <tr>
+      <th>8640.0</th>
+      <td>85.38</td>
+      <td>104.95</td>
+      <td>116.40</td>
+      <td>130.82</td>
+      <td>150.38</td>
+      <td>169.95</td>
+      <td>176.25</td>
+      <td>181.40</td>
+      <td>195.82</td>
+      <td>207.27</td>
+      <td>215.39</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">idf</span><span class="o">.</span><span class="n">result_table</span><span class="p">(</span><span class="n">add_names</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_directory</span><span class="p">,</span> <span class="s1">&#39;idf_table_UNIX.csv&#39;</span><span class="p">),</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">decimal</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">float_format</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%0.2f</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="nb">print</span><span class="p">(</span><span class="n">idf</span><span class="o">.</span><span class="n">result_table</span><span class="p">(</span><span class="n">add_names</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">to_string</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+return period (a)    1       2       3       5       10      20      25      30      50      75      100
+frequency (1/a)    1.000   0.500   0.333   0.200   0.100   0.050   0.040   0.033   0.020   0.013   0.010
+duration (min)
+5.0                 9.39   10.97   11.89   13.04   14.61   16.19   16.69   17.11   18.26   19.18   19.83
+10.0               15.15   17.62   19.06   20.88   23.35   25.82   26.62   27.27   29.09   30.54   31.56
+15.0               19.03   22.25   24.13   26.51   29.72   32.94   33.98   34.83   37.20   39.08   40.42
+20.0               21.83   25.71   27.99   30.85   34.73   38.62   39.87   40.89   43.75   46.02   47.63
+30.0               25.60   30.66   33.62   37.35   42.41   47.47   49.10   50.43   54.16   57.12   59.22
+45.0               28.92   35.51   39.37   44.23   50.83   57.42   59.54   61.28   66.14   69.99   72.73
+60.0               30.93   38.89   43.54   49.40   57.36   65.31   67.88   69.97   75.83   80.49   83.79
+90.0               33.37   41.74   46.64   52.80   61.17   69.54   72.23   74.43   80.60   85.49   88.96
+180.0              38.01   47.13   52.46   59.18   68.30   77.42   80.36   82.76   89.48   94.81   98.60
+270.0              41.01   50.60   56.21   63.28   72.87   82.46   85.55   88.07   95.14  100.75  104.73
+360.0              43.29   53.23   59.04   66.37   76.31   86.25   89.45   92.06   99.39  105.20  109.33
+450.0              45.14   55.36   61.33   68.87   79.08   89.30   92.59   95.28  102.81  108.79  113.03
+600.0              47.64   58.23   64.43   72.23   82.82   93.41   96.82   99.61  107.42  113.61  118.01
+720.0              49.29   60.13   66.47   74.45   85.29   96.12   99.61  102.46  110.44  116.78  121.28
+1080.0             54.41   64.97   71.15   78.94   89.50  100.06  103.46  106.24  114.02  120.20  124.58
+1440.0             58.02   67.72   73.39   80.54   90.24   99.93  103.05  105.61  112.75  118.42  122.45
+2880.0             66.70   77.41   83.68   91.57  102.29  113.00  116.45  119.26  127.16  133.42  137.87
+4320.0             71.93   85.72   93.78  103.95  117.73  131.52  135.96  139.58  149.75  157.81  163.53
+5760.0             78.95   95.65  105.42  117.72  134.43  151.13  156.50  160.89  173.20  182.97  189.90
+7200.0             83.53  101.38  111.82  124.98  142.83  160.68  166.43  171.12  184.28  194.72  202.13
+8640.0             85.38  104.95  116.40  130.82  150.38  169.95  176.25  181.40  195.82  207.27  215.39
+</pre></div></div>
+</div>
+<p>To save the table as a csv:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">idf</span><span class="o">.</span><span class="n">result_figure</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/example_example_python_api_28_0.png" src="../_images/example_example_python_api_28_0.png" />
+</div>
+</div>
+<p>To save the plot as a png use:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">idf</span><span class="o">.</span><span class="n">result_figure</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/example_example_python_api_30_0.png" src="../_images/example_example_python_api_30_0.png" />
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="example_commandline.html" class="btn btn-neutral float-left" title="Example Commandline Usage" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Pichler
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

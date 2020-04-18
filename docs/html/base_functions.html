@@ -36,7 +36,7 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Intensity Duration Frequency Analyse" href="example.html" />
+    <link rel="next" title="Example Commandline Usage" href="example/example_commandline.html" />
     <link rel="prev" title="API" href="api.html" /> 
 </head>
 
@@ -83,11 +83,10 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="README.html">Intensity duration frequency analysis (based on KOSTRA)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="README.html">Description</a></li>
 <li class="toctree-l1"><a class="reference internal" href="README.html#install">Install</a></li>
 <li class="toctree-l1"><a class="reference internal" href="README.html#usage">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="README.html#commandline-tool">Commandline tool</a></li>
-<li class="toctree-l1"><a class="reference internal" href="README.html#example">Example</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Base Functions</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#calculation-methods">Calculation Methods</a></li>
@@ -98,7 +97,8 @@
 <li class="toctree-l2"><a class="reference internal" href="#additional-functions">Additional functions</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="example.html">Intensity Duration Frequency Analyse</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example/example_commandline.html">Example Commandline Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example/example_python_api.html">Example Python API</a></li>
 </ul>
 
             
@@ -192,16 +192,16 @@
 <div class="section" id="calculation-methods">
 <h2>Calculation Methods<a class="headerlink" href="#calculation-methods" title="Permalink to this headline">¶</a></h2>
 <p>Functions to analyse the precipitations series based on the core method.</p>
-<span class="target" id="module-idf_analysis.calculation_methods"></span><dl class="function">
+<span class="target" id="module-idf_analysis.calculation_methods"></span><dl class="py function">
 <dt id="idf_analysis.calculation_methods.annual_series">
-<code class="sig-prename descclassname">idf_analysis.calculation_methods.</code><code class="sig-name descname">annual_series</code><span class="sig-paren">(</span><em class="sig-param">rolling_sum_values</em>, <em class="sig-param">year_index</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/calculation_methods.html#annual_series"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.calculation_methods.annual_series" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">idf_analysis.calculation_methods.</code><code class="sig-name descname">annual_series</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rolling_sum_values</span></em>, <em class="sig-param"><span class="n">year_index</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/calculation_methods.html#annual_series"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.calculation_methods.annual_series" title="Permalink to this definition">¶</a></dt>
 <dd><p>create an annual series of the maximum overlapping sum per year and calculate the “u” and “w” parameters
 acc. to DWA-A 531 chap. 5.1.5</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>rolling_sum_values</strong> (<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.17)"><em>numpy.ndarray</em></a>) – array with maximum rolling sum per event per year</p></li>
-<li><p><strong>year_index</strong> (<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.17)"><em>numpy.ndarray</em></a>) – array with year of the event</p></li>
+<li><p><strong>rolling_sum_values</strong> (<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.17)"><em>numpy.ndarray</em></a>) – array with maximum rolling sum per event per year.</p></li>
+<li><p><strong>year_index</strong> (<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.17)"><em>numpy.ndarray</em></a>) – array with year of the event.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -213,9 +213,9 @@ acc. to DWA-A 531 chap. 5.1.5</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="idf_analysis.calculation_methods.calculate_u_w">
-<code class="sig-prename descclassname">idf_analysis.calculation_methods.</code><code class="sig-name descname">calculate_u_w</code><span class="sig-paren">(</span><em class="sig-param">file_input</em>, <em class="sig-param">duration_steps</em>, <em class="sig-param">series_kind</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/calculation_methods.html#calculate_u_w"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.calculation_methods.calculate_u_w" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">idf_analysis.calculation_methods.</code><code class="sig-name descname">calculate_u_w</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file_input</span></em>, <em class="sig-param"><span class="n">duration_steps</span></em>, <em class="sig-param"><span class="n">series_kind</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/calculation_methods.html#calculate_u_w"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.calculation_methods.calculate_u_w" title="Permalink to this definition">¶</a></dt>
 <dd><p>statistical analysis for each duration step acc. to DWA-A 531 chap. 5.1
 save the parameters of the distribution function as interim results
 acc. to DWA-A 531 chap. 4.4: use the annual series only for measurement periods over 20 years</p>
@@ -236,9 +236,9 @@ acc. to DWA-A 531 chap. 4.4: use the annual series only for measurement periods 
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="idf_analysis.calculation_methods.depth_of_rainfall">
-<code class="sig-prename descclassname">idf_analysis.calculation_methods.</code><code class="sig-name descname">depth_of_rainfall</code><span class="sig-paren">(</span><em class="sig-param">u</em>, <em class="sig-param">w</em>, <em class="sig-param">return_period</em>, <em class="sig-param">series_kind</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/calculation_methods.html#depth_of_rainfall"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.calculation_methods.depth_of_rainfall" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">idf_analysis.calculation_methods.</code><code class="sig-name descname">depth_of_rainfall</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">u</span></em>, <em class="sig-param"><span class="n">w</span></em>, <em class="sig-param"><span class="n">return_period</span></em>, <em class="sig-param"><span class="n">series_kind</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/calculation_methods.html#depth_of_rainfall"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.calculation_methods.depth_of_rainfall" title="Permalink to this definition">¶</a></dt>
 <dd><p>calculate the height of the rainfall h in L/m² = mm</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -258,9 +258,9 @@ acc. to DWA-A 531 chap. 4.4: use the annual series only for measurement periods 
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="idf_analysis.calculation_methods.folded_log_formulation">
-<code class="sig-prename descclassname">idf_analysis.calculation_methods.</code><code class="sig-name descname">folded_log_formulation</code><span class="sig-paren">(</span><em class="sig-param">duration</em>, <em class="sig-param">param</em>, <em class="sig-param">case</em>, <em class="sig-param">param_mean=None</em>, <em class="sig-param">duration_mean=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/calculation_methods.html#folded_log_formulation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.calculation_methods.folded_log_formulation" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">idf_analysis.calculation_methods.</code><code class="sig-name descname">folded_log_formulation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">duration</span></em>, <em class="sig-param"><span class="n">param</span></em>, <em class="sig-param"><span class="n">case</span></em>, <em class="sig-param"><span class="n">param_mean</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">duration_mean</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/calculation_methods.html#folded_log_formulation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.calculation_methods.folded_log_formulation" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -275,9 +275,9 @@ acc. to DWA-A 531 chap. 4.4: use the annual series only for measurement periods 
 <p>Returns:</p>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="idf_analysis.calculation_methods.get_approaches">
-<code class="sig-prename descclassname">idf_analysis.calculation_methods.</code><code class="sig-name descname">get_approaches</code><span class="sig-paren">(</span><em class="sig-param">worksheet</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/calculation_methods.html#get_approaches"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.calculation_methods.get_approaches" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">idf_analysis.calculation_methods.</code><code class="sig-name descname">get_approaches</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">worksheet</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/calculation_methods.html#get_approaches"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.calculation_methods.get_approaches" title="Permalink to this definition">¶</a></dt>
 <dd><p>approaches depending on the duration and the parameter</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -295,9 +295,9 @@ acc. to DWA-A 531 chap. 4.4: use the annual series only for measurement periods 
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="idf_analysis.calculation_methods.get_array_param">
-<code class="sig-prename descclassname">idf_analysis.calculation_methods.</code><code class="sig-name descname">get_array_param</code><span class="sig-paren">(</span><em class="sig-param">p</em>, <em class="sig-param">duration</em>, <em class="sig-param">parameter</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/calculation_methods.html#get_array_param"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.calculation_methods.get_array_param" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">idf_analysis.calculation_methods.</code><code class="sig-name descname">get_array_param</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">p</span></em>, <em class="sig-param"><span class="n">duration</span></em>, <em class="sig-param"><span class="n">parameter</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/calculation_methods.html#get_array_param"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.calculation_methods.get_array_param" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -314,9 +314,9 @@ acc. to DWA-A 531 chap. 4.4: use the annual series only for measurement periods 
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="idf_analysis.calculation_methods.get_duration_steps">
-<code class="sig-prename descclassname">idf_analysis.calculation_methods.</code><code class="sig-name descname">get_duration_steps</code><span class="sig-paren">(</span><em class="sig-param">worksheet</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/calculation_methods.html#get_duration_steps"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.calculation_methods.get_duration_steps" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">idf_analysis.calculation_methods.</code><code class="sig-name descname">get_duration_steps</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">worksheet</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/calculation_methods.html#get_duration_steps"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.calculation_methods.get_duration_steps" title="Permalink to this definition">¶</a></dt>
 <dd><p>duration step boundary for the various distribution functions in minutes</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -331,9 +331,9 @@ acc. to DWA-A 531 chap. 4.4: use the annual series only for measurement periods 
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="idf_analysis.calculation_methods.get_parameters">
-<code class="sig-prename descclassname">idf_analysis.calculation_methods.</code><code class="sig-name descname">get_parameters</code><span class="sig-paren">(</span><em class="sig-param">interim_results</em>, <em class="sig-param">worksheet='DWA-A_531'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/calculation_methods.html#get_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.calculation_methods.get_parameters" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">idf_analysis.calculation_methods.</code><code class="sig-name descname">get_parameters</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">interim_results</span></em>, <em class="sig-param"><span class="n">worksheet</span><span class="o">=</span><span class="default_value">'DWA-A_531'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/calculation_methods.html#get_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.calculation_methods.get_parameters" title="Permalink to this definition">¶</a></dt>
 <dd><p>get calculation parameters</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -351,9 +351,9 @@ acc. to DWA-A 531 chap. 4.4: use the annual series only for measurement periods 
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="idf_analysis.calculation_methods.get_scalar_param">
-<code class="sig-prename descclassname">idf_analysis.calculation_methods.</code><code class="sig-name descname">get_scalar_param</code><span class="sig-paren">(</span><em class="sig-param">p</em>, <em class="sig-param">duration</em>, <em class="sig-param">parameter</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/calculation_methods.html#get_scalar_param"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.calculation_methods.get_scalar_param" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">idf_analysis.calculation_methods.</code><code class="sig-name descname">get_scalar_param</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">p</span></em>, <em class="sig-param"><span class="n">duration</span></em>, <em class="sig-param"><span class="n">parameter</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/calculation_methods.html#get_scalar_param"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.calculation_methods.get_scalar_param" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -370,9 +370,9 @@ acc. to DWA-A 531 chap. 4.4: use the annual series only for measurement periods 
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="idf_analysis.calculation_methods.get_u_w">
-<code class="sig-prename descclassname">idf_analysis.calculation_methods.</code><code class="sig-name descname">get_u_w</code><span class="sig-paren">(</span><em class="sig-param">duration</em>, <em class="sig-param">parameter</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/calculation_methods.html#get_u_w"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.calculation_methods.get_u_w" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">idf_analysis.calculation_methods.</code><code class="sig-name descname">get_u_w</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">duration</span></em>, <em class="sig-param"><span class="n">parameter</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/calculation_methods.html#get_u_w"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.calculation_methods.get_u_w" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -389,9 +389,9 @@ acc. to DWA-A 531 chap. 4.4: use the annual series only for measurement periods 
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="idf_analysis.calculation_methods.hyperbolic_formulation">
-<code class="sig-prename descclassname">idf_analysis.calculation_methods.</code><code class="sig-name descname">hyperbolic_formulation</code><span class="sig-paren">(</span><em class="sig-param">duration</em>, <em class="sig-param">param</em>, <em class="sig-param">a_start=20.0</em>, <em class="sig-param">b_start=15.0</em>, <em class="sig-param">param_mean=None</em>, <em class="sig-param">duration_mean=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/calculation_methods.html#hyperbolic_formulation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.calculation_methods.hyperbolic_formulation" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">idf_analysis.calculation_methods.</code><code class="sig-name descname">hyperbolic_formulation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">duration</span></em>, <em class="sig-param"><span class="n">param</span></em>, <em class="sig-param"><span class="n">a_start</span><span class="o">=</span><span class="default_value">20.0</span></em>, <em class="sig-param"><span class="n">b_start</span><span class="o">=</span><span class="default_value">15.0</span></em>, <em class="sig-param"><span class="n">param_mean</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">duration_mean</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/calculation_methods.html#hyperbolic_formulation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.calculation_methods.hyperbolic_formulation" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -407,9 +407,9 @@ acc. to DWA-A 531 chap. 4.4: use the annual series only for measurement periods 
 <p>Returns:</p>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="idf_analysis.calculation_methods.partial_series">
-<code class="sig-prename descclassname">idf_analysis.calculation_methods.</code><code class="sig-name descname">partial_series</code><span class="sig-paren">(</span><em class="sig-param">rolling_sum_values</em>, <em class="sig-param">measurement_period</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/calculation_methods.html#partial_series"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.calculation_methods.partial_series" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">idf_analysis.calculation_methods.</code><code class="sig-name descname">partial_series</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rolling_sum_values</span></em>, <em class="sig-param"><span class="n">measurement_period</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/calculation_methods.html#partial_series"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.calculation_methods.partial_series" title="Permalink to this definition">¶</a></dt>
 <dd><p>create an partial series of the largest overlapping sums and calculate the “u” and “w” parameters
 acc. to DWA-A 531 chap. 5.1.4</p>
 <dl class="field-list simple">
@@ -432,9 +432,9 @@ acc. to DWA-A 531 chap. 5.1.4</p>
 <div class="section" id="input-and-output">
 <h2>Input and Output<a class="headerlink" href="#input-and-output" title="Permalink to this headline">¶</a></h2>
 <p>Function for reading and writing files.</p>
-<span class="target" id="module-idf_analysis.in_out"></span><dl class="function">
+<span class="target" id="module-idf_analysis.in_out"></span><dl class="py function">
 <dt id="idf_analysis.in_out.import_series">
-<code class="sig-prename descclassname">idf_analysis.in_out.</code><code class="sig-name descname">import_series</code><span class="sig-paren">(</span><em class="sig-param">filename</em>, <em class="sig-param">series_label='precipitation'</em>, <em class="sig-param">index_label='datetime'</em>, <em class="sig-param">csv_reader_args=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/in_out.html#import_series"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.in_out.import_series" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">idf_analysis.in_out.</code><code class="sig-name descname">import_series</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">series_label</span><span class="o">=</span><span class="default_value">'precipitation'</span></em>, <em class="sig-param"><span class="n">index_label</span><span class="o">=</span><span class="default_value">'datetime'</span></em>, <em class="sig-param"><span class="n">csv_reader_args</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/in_out.html#import_series"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.in_out.import_series" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -459,21 +459,21 @@ acc. to DWA-A 531 chap. 5.1.4</p>
 <p>Functions to help analyse data in a general way.
 Most of this function have been developed on the
 institute of urban water management at the university of technology Graz.</p>
-<span class="target" id="module-idf_analysis.sww_utils"></span><dl class="exception">
+<span class="target" id="module-idf_analysis.sww_utils"></span><dl class="py exception">
 <dt id="idf_analysis.sww_utils.IdfError">
 <em class="property">exception </em><code class="sig-prename descclassname">idf_analysis.sww_utils.</code><code class="sig-name descname">IdfError</code><a class="reference internal" href="_modules/idf_analysis/sww_utils.html#IdfError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.sww_utils.IdfError" title="Permalink to this definition">¶</a></dt>
 <dd><p>Some Error Within this Package</p>
 </dd></dl>
 
-<dl class="exception">
+<dl class="py exception">
 <dt id="idf_analysis.sww_utils.TimezoneError">
 <em class="property">exception </em><code class="sig-prename descclassname">idf_analysis.sww_utils.</code><code class="sig-name descname">TimezoneError</code><a class="reference internal" href="_modules/idf_analysis/sww_utils.html#TimezoneError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.sww_utils.TimezoneError" title="Permalink to this definition">¶</a></dt>
 <dd><p>Some Error With a Timezone</p>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="idf_analysis.sww_utils.agg_events">
-<code class="sig-prename descclassname">idf_analysis.sww_utils.</code><code class="sig-name descname">agg_events</code><span class="sig-paren">(</span><em class="sig-param">events</em>, <em class="sig-param">series</em>, <em class="sig-param">agg='sum'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/sww_utils.html#agg_events"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.sww_utils.agg_events" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">idf_analysis.sww_utils.</code><code class="sig-name descname">agg_events</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">events</span></em>, <em class="sig-param"><span class="n">series</span></em>, <em class="sig-param"><span class="n">agg</span><span class="o">=</span><span class="default_value">'sum'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/sww_utils.html#agg_events"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.sww_utils.agg_events" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -491,9 +491,9 @@ institute of urban water management at the university of technology Graz.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="idf_analysis.sww_utils.check_tz">
-<code class="sig-prename descclassname">idf_analysis.sww_utils.</code><code class="sig-name descname">check_tz</code><span class="sig-paren">(</span><em class="sig-param">timezone</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/sww_utils.html#check_tz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.sww_utils.check_tz" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">idf_analysis.sww_utils.</code><code class="sig-name descname">check_tz</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">timezone</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/sww_utils.html#check_tz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.sww_utils.check_tz" title="Permalink to this definition">¶</a></dt>
 <dd><p>check the give timezone</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -508,9 +508,9 @@ institute of urban water management at the university of technology Graz.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="idf_analysis.sww_utils.event_duration">
-<code class="sig-prename descclassname">idf_analysis.sww_utils.</code><code class="sig-name descname">event_duration</code><span class="sig-paren">(</span><em class="sig-param">events</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/sww_utils.html#event_duration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.sww_utils.event_duration" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">idf_analysis.sww_utils.</code><code class="sig-name descname">event_duration</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">events</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/sww_utils.html#event_duration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.sww_utils.event_duration" title="Permalink to this definition">¶</a></dt>
 <dd><p>calculate the event duration</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -525,9 +525,9 @@ institute of urban water management at the university of technology Graz.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="idf_analysis.sww_utils.event_number_to_series">
-<code class="sig-prename descclassname">idf_analysis.sww_utils.</code><code class="sig-name descname">event_number_to_series</code><span class="sig-paren">(</span><em class="sig-param">events</em>, <em class="sig-param">index</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/sww_utils.html#event_number_to_series"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.sww_utils.event_number_to_series" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">idf_analysis.sww_utils.</code><code class="sig-name descname">event_number_to_series</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">events</span></em>, <em class="sig-param"><span class="n">index</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/sww_utils.html#event_number_to_series"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.sww_utils.event_number_to_series" title="Permalink to this definition">¶</a></dt>
 <dd><p>make a time-series where the value of the event number is paste to the &lt;index&gt;</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -545,9 +545,9 @@ institute of urban water management at the university of technology Graz.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="idf_analysis.sww_utils.guess_freq">
-<code class="sig-prename descclassname">idf_analysis.sww_utils.</code><code class="sig-name descname">guess_freq</code><span class="sig-paren">(</span><em class="sig-param">date_time_index</em>, <em class="sig-param">default=Timedelta('0 days 00:01:00')</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/sww_utils.html#guess_freq"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.sww_utils.guess_freq" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">idf_analysis.sww_utils.</code><code class="sig-name descname">guess_freq</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">date_time_index</span></em>, <em class="sig-param"><span class="n">default</span><span class="o">=</span><span class="default_value">Timedelta('0 days 00:01:00')</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/sww_utils.html#guess_freq"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.sww_utils.guess_freq" title="Permalink to this definition">¶</a></dt>
 <dd><p>guess the frequency by evaluating the most often frequency</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -565,9 +565,9 @@ institute of urban water management at the university of technology Graz.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="idf_analysis.sww_utils.rain_bar_plot">
-<code class="sig-prename descclassname">idf_analysis.sww_utils.</code><code class="sig-name descname">rain_bar_plot</code><span class="sig-paren">(</span><em class="sig-param">rain</em>, <em class="sig-param">ax=None</em>, <em class="sig-param">color=None</em>, <em class="sig-param">reverse=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/sww_utils.html#rain_bar_plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.sww_utils.rain_bar_plot" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">idf_analysis.sww_utils.</code><code class="sig-name descname">rain_bar_plot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rain</span></em>, <em class="sig-param"><span class="n">ax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">color</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">reverse</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/sww_utils.html#rain_bar_plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.sww_utils.rain_bar_plot" title="Permalink to this definition">¶</a></dt>
 <dd><p>make a standard precipitation/rain plot</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -588,9 +588,9 @@ institute of urban water management at the university of technology Graz.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="idf_analysis.sww_utils.rain_events">
-<code class="sig-prename descclassname">idf_analysis.sww_utils.</code><code class="sig-name descname">rain_events</code><span class="sig-paren">(</span><em class="sig-param">series</em>, <em class="sig-param">ignore_rain_below=0</em>, <em class="sig-param">min_gap=Timedelta('0 days 04:00:00')</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/sww_utils.html#rain_events"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.sww_utils.rain_events" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">idf_analysis.sww_utils.</code><code class="sig-name descname">rain_events</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">series</span></em>, <em class="sig-param"><span class="n">ignore_rain_below</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">min_gap</span><span class="o">=</span><span class="default_value">Timedelta('0 days 04:00:00')</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/sww_utils.html#rain_events"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.sww_utils.rain_events" title="Permalink to this definition">¶</a></dt>
 <dd><p>get rain events as a table with start and end times</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -609,9 +609,9 @@ institute of urban water management at the university of technology Graz.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="idf_analysis.sww_utils.remove_timezone">
-<code class="sig-prename descclassname">idf_analysis.sww_utils.</code><code class="sig-name descname">remove_timezone</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/sww_utils.html#remove_timezone"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.sww_utils.remove_timezone" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">idf_analysis.sww_utils.</code><code class="sig-name descname">remove_timezone</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/sww_utils.html#remove_timezone"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.sww_utils.remove_timezone" title="Permalink to this definition">¶</a></dt>
 <dd><p>convert the timezone to wintertime and then remove the timezone from the dataframe index, to not get in conflict
 with the plot functions</p>
 <dl class="field-list simple">
@@ -627,9 +627,9 @@ with the plot functions</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="idf_analysis.sww_utils.resample_rain_series">
-<code class="sig-prename descclassname">idf_analysis.sww_utils.</code><code class="sig-name descname">resample_rain_series</code><span class="sig-paren">(</span><em class="sig-param">series</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/sww_utils.html#resample_rain_series"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.sww_utils.resample_rain_series" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">idf_analysis.sww_utils.</code><code class="sig-name descname">resample_rain_series</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">series</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/sww_utils.html#resample_rain_series"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.sww_utils.resample_rain_series" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>series</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v1.0.3)"><em>pandas.Series</em></a>) – </p>
@@ -647,9 +647,9 @@ with the plot functions</p>
 <div class="section" id="converter-helper-functions">
 <h2>Converter helper functions<a class="headerlink" href="#converter-helper-functions" title="Permalink to this headline">¶</a></h2>
 <p>Functions to help convert things and units.</p>
-<span class="target" id="module-idf_analysis.little_helpers"></span><dl class="function">
+<span class="target" id="module-idf_analysis.little_helpers"></span><dl class="py function">
 <dt id="idf_analysis.little_helpers.delta2min">
-<code class="sig-prename descclassname">idf_analysis.little_helpers.</code><code class="sig-name descname">delta2min</code><span class="sig-paren">(</span><em class="sig-param">time_delta</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/little_helpers.html#delta2min"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.little_helpers.delta2min" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">idf_analysis.little_helpers.</code><code class="sig-name descname">delta2min</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">time_delta</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/little_helpers.html#delta2min"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.little_helpers.delta2min" title="Permalink to this definition">¶</a></dt>
 <dd><p>convert timedelta to float in minutes</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -664,9 +664,9 @@ with the plot functions</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="idf_analysis.little_helpers.duration_steps_readable">
-<code class="sig-prename descclassname">idf_analysis.little_helpers.</code><code class="sig-name descname">duration_steps_readable</code><span class="sig-paren">(</span><em class="sig-param">durations</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/little_helpers.html#duration_steps_readable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.little_helpers.duration_steps_readable" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">idf_analysis.little_helpers.</code><code class="sig-name descname">duration_steps_readable</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">durations</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/little_helpers.html#duration_steps_readable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.little_helpers.duration_steps_readable" title="Permalink to this definition">¶</a></dt>
 <dd><p>convert the durations to a more readable form</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -681,9 +681,9 @@ with the plot functions</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="idf_analysis.little_helpers.height2rate">
-<code class="sig-prename descclassname">idf_analysis.little_helpers.</code><code class="sig-name descname">height2rate</code><span class="sig-paren">(</span><em class="sig-param">height_of_rainfall</em>, <em class="sig-param">duration</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/little_helpers.html#height2rate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.little_helpers.height2rate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">idf_analysis.little_helpers.</code><code class="sig-name descname">height2rate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">height_of_rainfall</span></em>, <em class="sig-param"><span class="n">duration</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/little_helpers.html#height2rate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.little_helpers.height2rate" title="Permalink to this definition">¶</a></dt>
 <dd><p>calculate the specific rain flow rate in [l/(s*ha)]
 if 2 array-like parameters are give, a element-wise calculation will be made.
 So the length of the array must be the same.</p>
@@ -703,9 +703,9 @@ So the length of the array must be the same.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="idf_analysis.little_helpers.minutes_readable">
-<code class="sig-prename descclassname">idf_analysis.little_helpers.</code><code class="sig-name descname">minutes_readable</code><span class="sig-paren">(</span><em class="sig-param">minutes</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/little_helpers.html#minutes_readable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.little_helpers.minutes_readable" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">idf_analysis.little_helpers.</code><code class="sig-name descname">minutes_readable</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">minutes</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/little_helpers.html#minutes_readable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.little_helpers.minutes_readable" title="Permalink to this definition">¶</a></dt>
 <dd><p>convert the duration in minutes to a more readable form</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -720,9 +720,9 @@ So the length of the array must be the same.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="idf_analysis.little_helpers.rate2height">
-<code class="sig-prename descclassname">idf_analysis.little_helpers.</code><code class="sig-name descname">rate2height</code><span class="sig-paren">(</span><em class="sig-param">rain_flow_rate</em>, <em class="sig-param">duration</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/little_helpers.html#rate2height"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.little_helpers.rate2height" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">idf_analysis.little_helpers.</code><code class="sig-name descname">rate2height</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rain_flow_rate</span></em>, <em class="sig-param"><span class="n">duration</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/little_helpers.html#rate2height"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.little_helpers.rate2height" title="Permalink to this definition">¶</a></dt>
 <dd><p>convert the rain flow rate to the height of rainfall in [mm]
 if 2 array-like parameters are give, a element-wise calculation will be made.
 So the length of the array must be the same.</p>
@@ -746,9 +746,9 @@ So the length of the array must be the same.</p>
 <div class="section" id="plotting-helper-functions">
 <h2>Plotting helper functions<a class="headerlink" href="#plotting-helper-functions" title="Permalink to this headline">¶</a></h2>
 <p>Functions to add or manipulate plotting figures.</p>
-<span class="target" id="module-idf_analysis.plot_helpers"></span><dl class="function">
+<span class="target" id="module-idf_analysis.plot_helpers"></span><dl class="py function">
 <dt id="idf_analysis.plot_helpers.idf_bar_axes">
-<code class="sig-prename descclassname">idf_analysis.plot_helpers.</code><code class="sig-name descname">idf_bar_axes</code><span class="sig-paren">(</span><em class="sig-param">ax</em>, <em class="sig-param">idf_table</em>, <em class="sig-param">durations=None</em>, <em class="sig-param">return_periods=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/plot_helpers.html#idf_bar_axes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.plot_helpers.idf_bar_axes" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">idf_analysis.plot_helpers.</code><code class="sig-name descname">idf_bar_axes</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ax</span></em>, <em class="sig-param"><span class="n">idf_table</span></em>, <em class="sig-param"><span class="n">durations</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">return_periods</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/plot_helpers.html#idf_bar_axes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.plot_helpers.idf_bar_axes" title="Permalink to this definition">¶</a></dt>
 <dd><p>create</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -773,15 +773,15 @@ So the length of the array must be the same.</p>
 <h2>Additional functions<a class="headerlink" href="#additional-functions" title="Permalink to this headline">¶</a></h2>
 <p>Some Functions which were developed over time,
 but to specific to be added to the main class.</p>
-<span class="target" id="module-idf_analysis.additional_scripts"></span><dl class="function">
+<span class="target" id="module-idf_analysis.additional_scripts"></span><dl class="py function">
 <dt id="idf_analysis.additional_scripts.get_interim_results_from_parameters">
-<code class="sig-prename descclassname">idf_analysis.additional_scripts.</code><code class="sig-name descname">get_interim_results_from_parameters</code><span class="sig-paren">(</span><em class="sig-param">parameters</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/additional_scripts.html#get_interim_results_from_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.additional_scripts.get_interim_results_from_parameters" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">idf_analysis.additional_scripts.</code><code class="sig-name descname">get_interim_results_from_parameters</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">parameters</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/additional_scripts.html#get_interim_results_from_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.additional_scripts.get_interim_results_from_parameters" title="Permalink to this definition">¶</a></dt>
 <dd><p>extract interim results from parameters</p>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="idf_analysis.additional_scripts.measured_points">
-<code class="sig-prename descclassname">idf_analysis.additional_scripts.</code><code class="sig-name descname">measured_points</code><span class="sig-paren">(</span><em class="sig-param">idf</em>, <em class="sig-param">return_periods</em>, <em class="sig-param">interim_results=None</em>, <em class="sig-param">max_duration=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/additional_scripts.html#measured_points"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.additional_scripts.measured_points" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">idf_analysis.additional_scripts.</code><code class="sig-name descname">measured_points</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">idf</span></em>, <em class="sig-param"><span class="n">return_periods</span></em>, <em class="sig-param"><span class="n">interim_results</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">max_duration</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/additional_scripts.html#measured_points"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.additional_scripts.measured_points" title="Permalink to this definition">¶</a></dt>
 <dd><p>get the calculation results of the rainfall with u and w without the estimation of the formulation</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -801,9 +801,9 @@ but to specific to be added to the main class.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="idf_analysis.additional_scripts.set_parameters_from_interim_results">
-<code class="sig-prename descclassname">idf_analysis.additional_scripts.</code><code class="sig-name descname">set_parameters_from_interim_results</code><span class="sig-paren">(</span><em class="sig-param">idf</em>, <em class="sig-param">interim_results_fn</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/additional_scripts.html#set_parameters_from_interim_results"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.additional_scripts.set_parameters_from_interim_results" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">idf_analysis.additional_scripts.</code><code class="sig-name descname">set_parameters_from_interim_results</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">idf</span></em>, <em class="sig-param"><span class="n">interim_results_fn</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/additional_scripts.html#set_parameters_from_interim_results"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.additional_scripts.set_parameters_from_interim_results" title="Permalink to this definition">¶</a></dt>
 <dd><p>for compatibility reasons. To use the old file and convert it to the new parameters file</p>
 </dd></dl>
 
@@ -818,7 +818,7 @@ but to specific to be added to the main class.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="example.html" class="btn btn-neutral float-right" title="Intensity Duration Frequency Analyse" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="example/example_commandline.html" class="btn btn-neutral float-right" title="Example Commandline Usage" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="api.html" class="btn btn-neutral float-left" title="API" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
@@ -830,7 +830,7 @@ but to specific to be added to the main class.</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2019, Pichler
+        &copy; Copyright 2020, Pichler
 
     </p>
   </div>

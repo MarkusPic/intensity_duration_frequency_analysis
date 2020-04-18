@@ -81,14 +81,14 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../README.html">Intensity duration frequency analysis (based on KOSTRA)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../README.html">Description</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../README.html#install">Install</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../README.html#usage">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../README.html#commandline-tool">Commandline tool</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../README.html#example">Example</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api.html">API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../base_functions.html">Base Functions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../example.html">Intensity Duration Frequency Analyse</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../example/example_commandline.html">Example Commandline Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../example/example_python_api.html">Example Python API</a></li>
 </ul>
 
             
@@ -160,11 +160,11 @@
 <span class="n">__license__</span> <span class="o">=</span> <span class="s2">&quot;MIT&quot;</span>
 
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">matplotlib.ticker</span> <span class="kn">import</span> <span class="n">NullFormatter</span>
+<span class="kn">from</span> <span class="nn">matplotlib.ticker</span> <span class="k">import</span> <span class="n">NullFormatter</span>
 
-<span class="kn">from</span> <span class="nn">.definitions</span> <span class="kn">import</span> <span class="n">COL</span>
-<span class="kn">from</span> <span class="nn">.little_helpers</span> <span class="kn">import</span> <span class="n">duration_steps_readable</span>
-<span class="kn">from</span> <span class="nn">.sww_utils</span> <span class="kn">import</span> <span class="n">guess_freq</span><span class="p">,</span> <span class="n">rain_events</span><span class="p">,</span> <span class="n">event_duration</span>
+<span class="kn">from</span> <span class="nn">.definitions</span> <span class="k">import</span> <span class="n">COL</span>
+<span class="kn">from</span> <span class="nn">.little_helpers</span> <span class="k">import</span> <span class="n">duration_steps_readable</span>
+<span class="kn">from</span> <span class="nn">.sww_utils</span> <span class="k">import</span> <span class="n">guess_freq</span><span class="p">,</span> <span class="n">rain_events</span><span class="p">,</span> <span class="n">event_duration</span>
 
 
 <div class="viewcode-block" id="idf_bar_axes"><a class="viewcode-back" href="../../base_functions.html#idf_analysis.plot_helpers.idf_bar_axes">[docs]</a><span class="k">def</span> <span class="nf">idf_bar_axes</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">idf_table</span><span class="p">,</span> <span class="n">durations</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">return_periods</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -188,7 +188,7 @@
     <span class="n">color_return_period</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;lightcyan&#39;</span><span class="p">,</span> <span class="s1">&#39;cyan&#39;</span><span class="p">,</span> <span class="s1">&#39;lightblue&#39;</span><span class="p">,</span> <span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="s1">&#39;yellow&#39;</span><span class="p">,</span> <span class="s1">&#39;orange&#39;</span><span class="p">,</span> <span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="s1">&#39;magenta&#39;</span><span class="p">]</span>
 
     <span class="c1"># legend</span>
-    <span class="kn">from</span> <span class="nn">matplotlib.lines</span> <span class="kn">import</span> <span class="n">Line2D</span>
+    <span class="kn">from</span> <span class="nn">matplotlib.lines</span> <span class="k">import</span> <span class="n">Line2D</span>
     <span class="n">custom_lines</span> <span class="o">=</span> <span class="p">[</span><span class="n">Line2D</span><span class="p">([</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">c</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">color_return_period</span><span class="p">]</span>
     <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">a&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">return_periods</span><span class="p">]</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">custom_lines</span><span class="p">,</span> <span class="n">names</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">1.02</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="o">.</span><span class="mi">102</span><span class="p">),</span> <span class="n">loc</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">color_return_period</span><span class="p">),</span>
@@ -252,7 +252,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2019, Pichler
+        &copy; Copyright 2020, Pichler
 
     </p>
   </div>
