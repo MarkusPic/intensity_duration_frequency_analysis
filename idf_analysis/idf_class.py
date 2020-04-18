@@ -19,7 +19,7 @@ from tqdm import tqdm
 
 from .arg_parser import heavy_rain_parser
 from .calculation_methods import get_u_w, get_parameters, calculate_u_w, depth_of_rainfall
-from .little_helpers import minutes_readable, height2rate, delta2min
+from .little_helpers import minutes_readable, height2rate, delta2min, rate2height
 from .definitions import *
 from .in_out import import_series, write_yaml, read_yaml
 from .sww_utils import (remove_timezone, guess_freq, rain_events, agg_events, event_duration,
@@ -68,7 +68,7 @@ class IntensityDurationFrequencyAnalyse:
         self._duration_steps += [i * 60 for i in [1.5, 3, 4.5, 6, 7.5, 10, 12]]  # duration steps in hours
         if extended_durations:
             self._duration_steps += [i * 60 * 24 for i in
-                                     [0.75, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0]]  # duration steps in hours
+                                     [0.75, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0]]  # duration steps in days
 
     # __________________________________________________________________________________________________________________
     @property
@@ -274,7 +274,7 @@ class IntensityDurationFrequencyAnalyse:
             durations = self.duration_steps
 
         if return_periods is None:
-            return_periods = [0.5, 1, 2, 3, 5, 10, 15, 50, 100]
+            return_periods = [1, 2, 3, 5, 10, 20, 25, 30, 50, 75, 100]
 
         result_table = dict()
         for t in return_periods:
@@ -294,8 +294,7 @@ class IntensityDurationFrequencyAnalyse:
         plt.style.use('bmh')
 
         if return_periods is None:
-            # return_periods = [0.5, 1, 10, 50, 100]
-            return_periods = [1, 2, 5, 10, 50]
+            return_periods = [1, 2, 5, 10, 50, 100]
 
         table = self.result_table(durations=duration_steps, return_periods=return_periods)
         if color:
@@ -391,45 +390,54 @@ class IntensityDurationFrequencyAnalyse:
         user = heavy_rain_parser()
 
         # --------------------------------------------------
-        d = user.duration
-        h = user.height_of_rainfall
-        t = user.return_period
-        out = user.output  # dir to save files
-        if out is None:
-            # default: use wkdir and make as subdir with the name as follows
-            label = path.basename('.'.join(user.input.split('.')[:-1]))
-            out = '{label}_idf_data'.format(label=label)
+        # use the same directory as the input file and make as subdir with the name of the input_file + "_idf_data"
+        out = '{label}_idf_data'.format(label='.'.join(user.input.split('.')[:-1]))
 
         if not path.isdir(out):
             mkdir(out)
+            action = 'Creating'
+        else:
+            action = 'Using'
 
-        fn = path.join(out, '{}')
+        print('{} the subfolder "{}" for the interim- and final-results.'.format(action, out))
+
+        fn_pattern = path.join(out, 'idf_{}')
 
         # --------------------------------------------------
-        idf = cls(series_kind=user.series_kind, worksheet=user.worksheet, extended_durations=user.extended_duration)
+        idf = cls(series_kind=user.series_kind, worksheet=user.worksheet, extended_durations=True)
 
         # --------------------------------------------------
+        parameters_fn = fn_pattern.format('parameters.yaml')
+
+        if path.isfile(parameters_fn):
+            print('Found existing interim-results in "{}" and using them for calculations.'.format(parameters_fn))
+        else:
+            print('Start reading the time-series {} for the analysis.'.format(user.input))
+            ts = import_series(user.input).replace(0, np.NaN).dropna()
+            # --------------------------------------------------
+            idf.set_series(ts)
+            print('Finished reading.')
+
+        # --------------------------------------------------
+        idf.auto_save_parameters(parameters_fn)
+
+        # --------------------------------------------------
+        h = user.height_of_rainfall
+        r = user.flow_rate_of_rainfall
+        d = user.duration
+        t = user.return_period
+
+        if r is not None:
+            if h is None and d is not None:
+                h = rate2height(rain_flow_rate=r, duration=d)
+
+            elif d is None and h is not None:
+                d = h/r * 1000/6
+
         if user.r_720_1:
             d = 720
             t = 1
 
-        # --------------------------------------------------
-        ts = import_series(user.input, csv_reader_args=dict(sep=';', decimal=','))
-
-        # --------------------------------------------------
-        # for faster computation
-        if d is not None and not user.plot and not user.export_table:
-            new_freq = floor(d / 4)
-            ts = ts.resample('{:0.0f}T'.format(new_freq)).sum().replace(0, np.NaN).dropna()
-
-        # --------------------------------------------------
-        idf.set_series(ts)
-
-        # --------------------------------------------------
-        if user.plot or user.export_table or any((h, d, t)):
-            idf.auto_save_parameters(fn.format('parameters.yaml'))
-
-        # --------------------------------------------------
         if any((h, d, t)):
             if all((d, t)):
                 pass
@@ -446,19 +454,23 @@ class IntensityDurationFrequencyAnalyse:
                   ''.format(t=t, d=d, h=idf.depth_of_rainfall(d, t)))
             print('Resultierende Regenspende r_N(T_n={t:0.1f}a, D={d:0.1f}min) = {r:0.2f} L/(s*ha)'
                   ''.format(t=t, d=d, r=idf.rain_flow_rate(d, t)))
+
         # --------------------------------------------------
         if user.plot:
             fig, ax = idf.result_figure()
-            plot_fn = fn.format('idf_plot.png')
+            plot_fn = fn_pattern.format('_curves_plot.png')
             fig.savefig(plot_fn, dpi=260)
             plt.close(fig)
             show_file(plot_fn)
+            print('Created the IDF-curves-plot and saved the file as "{}".'.format(plot_fn))
 
         # --------------------------------------------------
         if user.export_table:
             table = idf.result_table(add_names=True)
             print(table.round(2).to_string())
-            table.to_csv(fn.format('results_h_N.csv'), sep=';', decimal='.', float_format='%0.2f')
+            table_fn = fn_pattern.format('table.csv')
+            table.to_csv(table_fn, sep=';', decimal=',', float_format='%0.2f')
+            print('Created the IDF-curves-plot and saved the file as "{}".'.format(table_fn))
 
     ####################################################################################################################
     @property

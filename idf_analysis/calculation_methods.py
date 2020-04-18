@@ -24,8 +24,8 @@ def annual_series(rolling_sum_values, year_index):
     acc. to DWA-A 531 chap. 5.1.5
 
     Args:
-        rolling_sum_values (numpy.ndarray): array with maximum rolling sum per event per year
-        year_index (numpy.ndarray): array with year of the event
+        rolling_sum_values (numpy.ndarray): array with maximum rolling sum per event per year.
+        year_index (numpy.ndarray): array with year of the event.
 
     Returns:
         tuple[float, float]: parameter u and w from the annual series for a specific duration step as a tuple

@@ -40,60 +40,52 @@ class Borders(object):
 
 def heavy_rain_parser():
     calc_help = ' (If two of the three variables ' \
-                '(rainfall, duration, return period) are given, ' \
+                '(rainfall (height or flow-rate), duration, return period) are given, ' \
                 'the third variable is calculated.)'
     parser = argparse.ArgumentParser()
+    parser.description = 'heavy rain as a function of the duration and the return period acc. to DWA-A 531 (2012)\n' \
+                         'All files will be saved in the same directory of the input file ' \
+                         'but in a subfolder called like the inputfile + "_idf_data". ' \
+                         'Inside this folder a file called "idf_parameter.yaml"-file will be saved and ' \
+                         'contains interim-calculation-results and will be automatically reloaded on the next call.'
+
     parser.add_argument('-i', '--input',
-                        help='input file with the rain time series',
+                        help='input file with the rain time-series (csv or parquet)',
                         required=True)
-    parser.add_argument('-out', '--output',
-                        help='output path, where to write the results / default: same as input',
-                        required=False)
+    # --------------------------------------------
+    parser.add_argument('-ws', '--worksheet',
+                        help='From which worksheet the recommendations for calculating the parameters should be taken.',
+                        default=DWA,
+                        required=False, type=str, choices=[ATV, DWA, DWA_adv])
+    parser.add_argument('-kind', '--series_kind',
+                        help='The kind of series used for the calculation. '
+                             '(Calculation with partial series is more precise and recommended.)',
+                        default=PARTIAL,
+                        required=False, type=str, choices=[PARTIAL, ANNUAL])
+    # --------------------------------------------
     parser.add_argument('-t', '--return_period',
                         help='return period in years' + calc_help,
                         required=False, type=float, choices=Borders(0.5, 100, 'a'))
     parser.add_argument('-d', '--duration',
                         help='duration in minutes' + calc_help,
-                        required=False, type=int, choices=Borders(5, 12 * 60, 'min'))
-
-    # parser.add_argument('-r', '--rain_flow_rate',
-    #                     help='rainfall in Liter/(s * ha)' + calc_help,
-    #                     required=False, type=float, choices=Borders(0, unit='L/(s*ha)'))
-
+                        required=False, type=float, choices=Borders(5, 6 * 24 * 60, 'min'))
+    parser.add_argument('-r', '--flow_rate_of_rainfall',
+                        help='rainfall in Liter/(s * ha)' + calc_help,
+                        required=False, type=float, choices=Borders(0, unit='L/(s*ha)'))
     parser.add_argument('-h_N', '--height_of_rainfall',
                         help='rainfall in mm or Liter/m^2' + calc_help,
                         required=False, type=float, choices=Borders(0, unit='mm'))
-
-    parser.add_argument('-ws', '--worksheet',
-                        help='Worksheet used to calculate.',
-                        default=DWA,
-                        required=False, type=str, choices=[ATV, DWA, DWA_adv])
-    parser.add_argument('-kind', '--series_kind',
-                        help='The kind of series used for the calculation. '
-                             'Calculation with partial series is more precise',
-                        # '({}=annual series; {}=partial series)'.format(ANNUAL, PARTIAL),
-                        default=PARTIAL,
-                        required=False, type=str, choices=[PARTIAL, ANNUAL])
-
+    # --------------------------------------------
     parser.add_argument('--r_720_1',
                         help='design rainfall with a duration of 720 minutes (=12 h) and a return period of 1 year',
                         required=False, action='store_true')
-
+    # --------------------------------------------
     parser.add_argument('--plot',
                         help='get a plot of the idf relationship',
                         required=False, action='store_true')
-
-    parser.add_argument('--extended_duration',
-                        help='add [720, 1080, 1440, 2880, 4320, 5760, 7200, 8640] (in minutes) '
-                             'to the duration steps which will be calculated',
-                        required=False, action='store_true')
-
+    # --------------------------------------------
     parser.add_argument('--export_table',
                         help='get a table of the most frequent used values',
                         required=False, action='store_true')
-
-    parser.add_argument('--unix',
-                        help='export the csv files with a "," as separator and a "." as decimal sign.',
-                        required=False, action='store_true')
-
+    # --------------------------------------------
     return parser.parse_args()

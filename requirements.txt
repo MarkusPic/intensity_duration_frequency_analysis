@@ -1,8 +1,9 @@
-numpy
-pandas
-matplotlib
+numpy>=1.14
+pandas>=1
+matplotlib>=3
 tzlocal
 pytz
 tqdm
 scipy
-PyYAML
+PyYAML>=5
+fastparquet

@@ -9,12 +9,10 @@ import pandas as pd
 import yaml
 from collections import OrderedDict
 
+import warnings
+import numba
 
-def csv_args(unix=False):
-    if unix:
-        return dict(sep=',', decimal='.')
-    else:
-        return dict(sep=';', decimal=',')
+warnings.filterwarnings("ignore", category=numba.NumbaDeprecationWarning)
 
 
 def import_series(filename, series_label='precipitation', index_label='datetime', csv_reader_args=None):
@@ -31,7 +29,7 @@ def import_series(filename, series_label='precipitation', index_label='datetime'
     """
     if filename.endswith('csv'):
         if csv_reader_args is None:
-            csv_reader_args = dict(sep=',', decimal='.')
+            csv_reader_args = dict(sep=';', decimal=',')
         try:
             ts = pd.read_csv(filename, index_col=0, header=0, squeeze=True, **csv_reader_args)
             ts.index = pd.to_datetime(ts.index)

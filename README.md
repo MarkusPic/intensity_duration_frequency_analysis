@@ -29,31 +29,35 @@ The guideline was used in the application [KOSTRA-DWD](https://www.dwd.de/DE/lei
 
 ----
 
-This package was originally developed from [Markus Pichler](mailto:markus.pichler@tugraz.at)'s bachelor thesis and was finalised in the course of his employment at the [Institute of Urban Water Management and Landscape Water Engineering](https://www.sww.tugraz.at).
+This package developed [Markus Pichler](mailto:markus.pichler@tugraz.at) during his bachelor thesis and finalised it in the course of his employment at the [Institute of Urban Water Management and Landscape Water Engineering](https://www.sww.tugraz.at).
 
 
 # Install
 
-The script is written in Python3.
+The script is written in Python3. (use a version > 3.5)
 
 ## Windows
 
-I recommend to use [Anaconda](https://www.anaconda.com/download/) to install python on Windows and the Anaconda-Prompt for the commandline tool.
+You have to install python (i.e. the original python from the [website](https://www.python.org/downloads/)).
 
-Alternatively, you can install the original python from the [website](https://www.python.org/downloads/).
-To use the syntax explained in the usage section below, 
-you have to add the path to your python binary to the environment variables. 
-This is an option in the installation window as seen below:
+The following commands show the usage for Linux/Unix systems. 
 
-- [x] Add Python 3.7 to PATH
+To use these features on Windows you have to add ```python -m``` before each command 
+and you have to add the path to your python binary to the environment variables [^path1].
 
-![python_install](example/python_install.png)
+[^path1]: https://geek-university.com/python/add-python-to-the-windows-path/
+
+There is also an option during the installation to add python to the PATH automatically. [^path2]
+
+[^path2]: https://datatofish.com/add-python-to-windows-path/
+
+![python_install](https://datatofish.com/wp-content/uploads/2018/10/0001_add_Python_to_Path.png)
 
 ## Linux/Unix
 
-Python is pre-installed on most operating systems.
+Python is pre-installed on most operating systems (as you probably knew).
 
-## python Packages
+## Required python packages
 
 Packages required for this program will be installed with pip during the installation process and can be seen in the 'requirements.txt' file.
 
@@ -63,24 +67,15 @@ Packages required for this program will be installed with pip during the install
 pip install idf-analysis
 ```
 
-To install the package only for the local user account, add ```--user``` to the install command.
+Add the following tags to the command for special options:
 
-## Update package
-
-To update the package, add ```--upgrade``` to the install command.
-
-```
-pip install idf-analysis --upgrade
-```
+- ```--user```: To install the package only for the local user account (no admin rights needed)
+- ```--upgrade```: To update the package
 
 # Usage
 
-To start the script use following commands in the terminal/Anaconda Prompt
+To start the script use following commands in the terminal/Prompt
 
-Windows:
-```python -m idf_analysis```
-
-Unix-Like:
 ```idf_analysis```
 
 The documentation of the python-API can be found here https://markuspic.github.io/intensity_duration_frequency_analysis/html/api.html.
@@ -90,69 +85,97 @@ The documentation of the python-API can be found here https://markuspic.github.i
 > ```idf_analysis -h```
 
 ```
-usage: idf_analysis [-h] -i INPUT [-out OUTPUT] [-t {>= 0.5 a and <= 100 a}]
-                    [-d {>= 5 min and <= 720 min}] [-h_N {>= 0 mm}]
-                    [-ws {ATV-A_121,DWA-A_531,DWA-A_531_advektiv}]
-                    [-kind {partial,annual}] [--r_720_1] [--plot]
-                    [--extended_duration] [--export_table] [--unix]
+usage: __main__.py [-h] -i INPUT
+                   [-ws {ATV-A_121,DWA-A_531,DWA-A_531_advektiv}]
+                   [-kind {partial,annual}] [-t {>= 0.5 a and <= 100 a}]
+                   [-d {>= 5 min and <= 8640 min}] [-r {>= 0 L/s*ha}]
+                   [-h_N {>= 0 mm}] [--r_720_1] [--plot] [--export_table]
+
+heavy rain as a function of the duration and the return period acc. to DWA-A
+531 (2012) All files will be saved in the same directory of the input file but
+in a subfolder called like the inputfile + "_idf_data". Inside this folder a
+file called "idf_parameter.yaml"-file will be saved and contains interim-
+calculation-results and will be automatically reloaded on the next call.
 
 optional arguments:
   -h, --help            show this help message and exit
   -i INPUT, --input INPUT
-                        input file with the rain time series
-  -out OUTPUT, --output OUTPUT
-                        output path, where to write the results / default:
-                        same as input
-  -t {>= 0.5 a and <= 100 a}, --return_period {>= 0.5 a and <= 100 a}
-                        return period in years (If two of the three variables
-                        (rainfall, duration, return period) are given, the
-                        third variable is calculated.)
-  -d {>= 5 min and <= 720 min}, --duration {>= 5 min and <= 720 min}
-                        duration in minutes (If two of the three variables
-                        (rainfall, duration, return period) are given, the
-                        third variable is calculated.)
-  -h_N {>= 0 mm}, --height_of_rainfall {>= 0 mm}
-                        rainfall in mm or Liter/m^2 (If two of the three
-                        variables (rainfall, duration, return period) are
-                        given, the third variable is calculated.)
+                        input file with the rain time-series (csv or parquet)
   -ws {ATV-A_121,DWA-A_531,DWA-A_531_advektiv}, --worksheet {ATV-A_121,DWA-A_531,DWA-A_531_advektiv}
-                        Worksheet used to calculate.
+                        From which worksheet the recommendations for
+                        calculating the parameters should be taken.
   -kind {partial,annual}, --series_kind {partial,annual}
                         The kind of series used for the calculation.
-                        Calculation with partial series is more precise
+                        (Calculation with partial series is more precise and
+                        recommended.)
+  -t {>= 0.5 a and <= 100 a}, --return_period {>= 0.5 a and <= 100 a}
+                        return period in years (If two of the three variables
+                        (rainfall (height or flow-rate), duration, return
+                        period) are given, the third variable is calculated.)
+  -d {>= 5 min and <= 8640 min}, --duration {>= 5 min and <= 8640 min}
+                        duration in minutes (If two of the three variables
+                        (rainfall (height or flow-rate), duration, return
+                        period) are given, the third variable is calculated.)
+  -r {>= 0 L/(s*ha)}, --flow_rate_of_rainfall {>= 0 L/(s*ha)}
+                        rainfall in Liter/(s * ha) (If two of the three
+                        variables (rainfall (height or flow-rate), duration,
+                        return period) are given, the third variable is
+                        calculated.)
+  -h_N {>= 0 mm}, --height_of_rainfall {>= 0 mm}
+                        rainfall in mm or Liter/m^2 (If two of the three
+                        variables (rainfall (height or flow-rate), duration,
+                        return period) are given, the third variable is
+                        calculated.)
   --r_720_1             design rainfall with a duration of 720 minutes (=12 h)
                         and a return period of 1 year
   --plot                get a plot of the idf relationship
-  --extended_duration   add [720, 1080, 1440, 2880, 4320, 5760, 7200, 8640]
-                        (in minutes) to the duration steps which will be
-                        calculated
   --export_table        get a table of the most frequent used values
-  --unix                export the csv files with a "," as separator and a "."
-                        as decimal sign.
 ```
 
 # Example
 
-An example jupyter notebook script can be found here: https://markuspic.github.io/intensity_duration_frequency_analysis/html/example.html
+[Example Jupyter notebook for the commandline](example/example_commandline.ipynb)
+
+[Example Jupyter notebook for the python api](example/example_python_api.ipynb)
+
+[Example python skript](example/example_python_api.py)
 
 
-![Regenhöhenlinien](example/EXAMPLE_plot.png)
+### Example Files
 
-## Result table
+[Data-gaps in the series](example/ehyd_112086_gaps.csv)
 
-|    |     0.5   |     1.0   |     2.0   |     3.0   |     5.0   |     10.0  |     15.0  |     50.0  |     100.0|
-|----|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|----------|
-|5   |  2.896502 |  4.531663 |  6.166823 |  7.123331 |  8.328387 |  9.963548 | 10.920055 | 13.760272 | 15.395433|
-|10  |  5.309142 |  7.519352 |  9.729563 | 11.022454 | 12.651303 | 14.861514 | 16.154404 | 19.993464 | 22.203675|
-|15  |  7.001011 |  9.637280 | 12.273549 | 13.815667 | 15.758507 | 18.394775 | 19.936894 | 24.516002 | 27.152271|
-|20  |  8.229495 | 11.216989 | 14.204483 | 15.952055 | 18.153735 | 21.141229 | 22.888801 | 28.077975 | 31.065469|
-|30  |  9.852722 | 13.416110 | 16.979497 | 19.063945 | 21.690039 | 25.253426 | 27.337874 | 33.527355 | 37.090743|
-|45  | 11.182970 | 15.433265 | 19.683560 | 22.169823 | 25.302143 | 29.552438 | 32.038701 | 39.421316 | 43.671611|
-|60  | 11.871244 | 16.687797 | 21.504351 | 24.321854 | 27.871488 | 32.688041 | 35.505544 | 43.871732 | 48.688285|
-|90  | 13.636861 | 18.657189 | 23.677518 | 26.614222 | 30.314031 | 35.334359 | 38.271063 | 46.991201 | 52.011529|
-|180 | 17.188203 | 22.577053 | 27.965902 | 31.118177 | 35.089574 | 40.478424 | 43.630698 | 52.990945 | 58.379794|
-|270 | 19.624622 | 25.241459 | 30.858296 | 34.143934 | 38.283350 | 43.900187 | 47.185826 | 56.942078 | 62.558915|
-|360 | 21.536055 | 27.320477 | 33.104900 | 36.488570 | 40.751490 | 46.535912 | 49.919582 | 59.966925 | 65.751347|
-|450 | 23.132458 | 29.050305 | 34.968153 | 38.429872 | 42.791122 | 48.708969 | 52.170688 | 62.449785 | 68.367633|
-|600 | 25.348627 | 31.443040 | 37.537454 | 41.102458 | 45.593832 | 51.688245 | 55.253249 | 65.839037 | 71.933450|
-|720 | 26.851460 | 33.060492 | 39.269525 | 42.901576 | 47.477419 | 53.686451 | 57.318502 | 68.103378 | 74.312410|
+### Example Plot
+
+![Regenhöhenlinien](example/idf__curves_plot.png)
+
+### Example IDF table
+
+[IDF-Curves-Table](example/idf_table.csv)
+
+
+| return period (a) |   1   |    2   |    3   |    5   |    10  |    20  |    25  |    30  |    50  |    75  |    100 |
+| frequency (1/a)   | 1.000 |  0.500 |  0.333 |  0.200 |  0.100 |  0.050 |  0.040 |  0.033 |  0.020 |  0.013 |  0.010 |
+| duration (min)    |       |        |        |        |        |        |        |        |        |        |        |
+|-------------------|-------|--------|--------|--------|--------|--------|--------|--------|--------|--------|--------|
+| 5.0               |  9.39 |  10.97 |  11.89 |  13.04 |  14.61 |  16.19 |  16.69 |  17.11 |  18.26 |  19.18 |  19.83 |
+| 10.0              | 15.15 |  17.62 |  19.06 |  20.88 |  23.35 |  25.82 |  26.62 |  27.27 |  29.09 |  30.54 |  31.56 |
+| 15.0              | 19.03 |  22.25 |  24.13 |  26.51 |  29.72 |  32.94 |  33.98 |  34.83 |  37.20 |  39.08 |  40.42 |
+| 20.0              | 21.83 |  25.71 |  27.99 |  30.85 |  34.73 |  38.62 |  39.87 |  40.89 |  43.75 |  46.02 |  47.63 |
+| 30.0              | 25.60 |  30.66 |  33.62 |  37.35 |  42.41 |  47.47 |  49.10 |  50.43 |  54.16 |  57.12 |  59.22 |
+| 45.0              | 28.92 |  35.51 |  39.37 |  44.23 |  50.83 |  57.42 |  59.54 |  61.28 |  66.14 |  69.99 |  72.73 |
+| 60.0              | 30.93 |  38.89 |  43.54 |  49.40 |  57.36 |  65.31 |  67.88 |  69.97 |  75.83 |  80.49 |  83.79 |
+| 90.0              | 33.37 |  41.74 |  46.64 |  52.80 |  61.17 |  69.54 |  72.23 |  74.43 |  80.60 |  85.49 |  88.96 |
+| 180.0             | 38.01 |  47.13 |  52.46 |  59.18 |  68.30 |  77.42 |  80.36 |  82.76 |  89.48 |  94.81 |  98.60 |
+| 270.0             | 41.01 |  50.60 |  56.21 |  63.28 |  72.87 |  82.46 |  85.55 |  88.07 |  95.14 | 100.75 | 104.73 |
+| 360.0             | 43.29 |  53.23 |  59.04 |  66.37 |  76.31 |  86.25 |  89.45 |  92.06 |  99.39 | 105.20 | 109.33 |
+| 450.0             | 45.14 |  55.36 |  61.33 |  68.87 |  79.08 |  89.30 |  92.59 |  95.28 | 102.81 | 108.79 | 113.03 |
+| 600.0             | 47.64 |  58.23 |  64.43 |  72.23 |  82.82 |  93.41 |  96.82 |  99.61 | 107.42 | 113.61 | 118.01 |
+| 720.0             | 49.29 |  60.13 |  66.47 |  74.45 |  85.29 |  96.12 |  99.61 | 102.46 | 110.44 | 116.78 | 121.28 |
+| 1080.0            | 54.41 |  64.97 |  71.15 |  78.94 |  89.50 | 100.06 | 103.46 | 106.24 | 114.02 | 120.20 | 124.58 |
+| 1440.0            | 58.02 |  67.72 |  73.39 |  80.54 |  90.24 |  99.93 | 103.05 | 105.61 | 112.75 | 118.42 | 122.45 |
+| 2880.0            | 66.70 |  77.41 |  83.68 |  91.57 | 102.29 | 113.00 | 116.45 | 119.26 | 127.16 | 133.42 | 137.87 |
+| 4320.0            | 71.93 |  85.72 |  93.78 | 103.95 | 117.73 | 131.52 | 135.96 | 139.58 | 149.75 | 157.81 | 163.53 |
+| 5760.0            | 78.95 |  95.65 | 105.42 | 117.72 | 134.43 | 151.13 | 156.50 | 160.89 | 173.20 | 182.97 | 189.90 |
+| 7200.0            | 83.53 | 101.38 | 111.82 | 124.98 | 142.83 | 160.68 | 166.43 | 171.12 | 184.28 | 194.72 | 202.13 |
+| 8640.0            | 85.38 | 104.95 | 116.40 | 130.82 | 150.38 | 169.95 | 176.25 | 181.40 | 195.82 | 207.27 | 215.39 |
