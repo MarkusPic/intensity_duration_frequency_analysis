@@ -1,5 +1,5 @@
 numpy>=1.14
-pandas>=1
+pandas
 matplotlib>=3
 tzlocal
 pytz
