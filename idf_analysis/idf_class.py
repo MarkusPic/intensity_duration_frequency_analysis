@@ -577,7 +577,7 @@ class IntensityDurationFrequencyAnalyse:
 
         # -------------------------------------
         idf_table = self.return_periods_frame[pstart:pend]
-        idf_table = idf_table.rename(minutes_readable, axis=0)
+        idf_table = idf_table.rename(columns=minutes_readable)
 
         # print(idf_table > min_return_period)
 
