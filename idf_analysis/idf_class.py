@@ -486,7 +486,6 @@ class IntensityDurationFrequencyAnalyse:
         else:
             self.write_return_periods_frame(filename)
 
-
     ####################################################################################################################
     @property
     def rain_events(self):
@@ -500,6 +499,7 @@ class IntensityDurationFrequencyAnalyse:
             events = rain_events(self.series)
             events[COL.DUR] = event_duration(events)
             events[COL.LP] = agg_events(events, self.series, 'sum').round(1)
+
             # events = events.sort_values(by=COL.LP, ascending=False)
             self._rain_events = events
 
@@ -544,7 +544,7 @@ class IntensityDurationFrequencyAnalyse:
             durations = [5, 10, 15, 20, 30, 45, 60, 90, 120, 180, 240, 360, 540, 720, 1080, 1440, 2880, 4320]
 
         events = self.rain_events
-        events[COL.LP] = agg_events(events, self.series, 'sum')
+        self.add_max_return_periods_to_events(events)
 
         main_events = events[events[COL.LP] > min_event_rain_sum].sort_values(by=COL.LP, ascending=False).to_dict(orient='index')
 
@@ -572,35 +572,36 @@ class IntensityDurationFrequencyAnalyse:
         start = event[COL.START]
         end = event[COL.END]
 
+        plot_range = slice(start - pd.Timedelta(self._freq), end + pd.Timedelta(self._freq))
+
+        idf_table = self.return_periods_frame[plot_range]
+
+        if COL.MAX_PERIOD not in event:
+            event[COL.MAX_PERIOD] = idf_table.max().max()
+            event[COL.MAX_PERIOD_DURATION] = idf_table.max().idxmax()
+
         if durations is None:
             durations = [5, 10, 15, 20, 30, 45, 60, 90, 120, 180, 240, 360, 540, 720, 1080, 1440, 2880, 4320]
 
-        caption = 'rain event\nbetween {} and {}\nwith a total sum of {:0.1f} {}\nand a duration of {}'.format(
-            start.strftime('%Y-%m-%d %H:%M'),
-            end.strftime('%Y-%m-%d %H:%M'),
-            event[COL.LP],
-            unit,
-            end - start)
+        caption = 'rain event\n' \
+                  'between {} and {}\n' \
+                  'with a total sum of {:0.1f} {}\n' \
+                  'and a duration of {}\n' \
+                  'The maximum return period was {:0.2f}a\n' \
+                  'at a duration of {}.'.format(start.strftime('%Y-%m-%d %H:%M'),
+                                                end.strftime('%Y-%m-%d %H:%M'),
+                                                event[COL.LP],
+                                                unit,
+                                                end - start,
+                                                event[COL.MAX_PERIOD],
+                                                event[COL.MAX_PERIOD_DURATION])
 
-        freq = guess_freq(self.series.index)
-        pstart = start - pd.Timedelta(freq)
-        pend = end + pd.Timedelta(freq)
-        ts = self.series[pstart:pend].resample(freq).sum().fillna(0).copy()
-
-        fig = plt.figure()
+        ts = self.series[plot_range].resample(self._freq).sum().fillna(0).copy()
 
         # -------------------------------------
-        idf_table = self.return_periods_frame[pstart:pend]
-        idf_table = idf_table.rename(columns=minutes_readable)
+        fig = plt.figure()
 
-        # print(idf_table > min_return_period)
-
-        max_period, duration = idf_table.max().max(), idf_table.max().idxmax()
-        caption += '\nThe maximum return period was {:0.2f}a\nat a duration of {}.'.format(max_period, duration)
-
-        if not (idf_table > min_return_period).any().any():
-            # max_period, duration = idf_table.max().max(), idf_table.max().idxmax()
-            # caption += '\nThe maximum return period was {:0.2f}a\nat a duration of {}.'.format(max_period, duration)
+        if event[COL.MAX_PERIOD] < min_return_period:
             rain_ax = fig.add_subplot(111)
 
         else:
@@ -616,5 +617,57 @@ class IntensityDurationFrequencyAnalyse:
 
         return fig, caption
 
-    def return_period_event_figure(self):
-        pass
+    def add_max_return_periods_to_events(self, events):
+        if COL.MAX_PERIOD not in events:
+            max_periods = self.return_periods_frame.max(axis=1)
+            max_periods_duration = self.return_periods_frame.idxmax(axis=1)
+            datetime_max = agg_events(events, max_periods, 'idxmax')
+            events[COL.MAX_PERIOD] = max_periods[datetime_max].values
+            events[COL.MAX_PERIOD_DURATION] = max_periods_duration[datetime_max].values
+
+    ####################################################################################################################
+    def event_return_period_report(self, filename, min_return_period=1):
+        events = self.rain_events
+        self.add_max_return_periods_to_events(events)
+
+        main_events = events[events[COL.MAX_PERIOD] > min_return_period].sort_values(by=COL.MAX_PERIOD, ascending=False)
+
+        pdf = PdfPages(filename)
+
+        for _, event in tqdm(main_events.to_dict(orient='index').items()):
+            fig, ax = self.return_period_event_figure(event)
+
+            # -------------------------------------
+            # DIN A4
+            fig.set_size_inches(h=11.69/2, w=8.27)
+            fig.tight_layout()
+            pdf.savefig(fig)
+            plt.close(fig)
+
+        pdf.close()
+
+    def return_period_event_figure(self, event):
+        period_line = self.return_periods_frame[event[COL.START]:event[COL.END]].max()
+
+        period_line[period_line < 0.75] = np.NaN
+        period_line = period_line.dropna()
+
+        ax = period_line.plot()  # type: plt.Axes
+
+        ax.set_title('rain event\n'
+                     'between {} and {}\n'
+                     'with a total sum of {:0.1f} mm\n'
+                     'and a duration of {}\n'
+                     'The maximum return period was {:0.2f}a\n'
+                     'at a duration of {}.'.format(event[COL.START].strftime('%Y-%m-%d %H:%M'),
+                                                   event[COL.END].strftime('%Y-%m-%d %H:%M'),
+                                                   event[COL.LP],
+                                                   event[COL.END] - event[COL.START],
+                                                   period_line.max(),
+                                                   period_line.idxmax()))
+
+        ax.set_xticks(period_line.index)
+        ax.set_xticklabels([minutes_readable(m) for m in period_line.index])
+        ax.set_xlabel('duration steps')
+        ax.set_ylabel('return period in years')
+        return ax.get_figure(), ax

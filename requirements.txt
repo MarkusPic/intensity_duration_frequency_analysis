@@ -7,3 +7,4 @@ tqdm
 scipy
 PyYAML>=5
 fastparquet
+pyarrow
