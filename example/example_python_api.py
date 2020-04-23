@@ -16,14 +16,14 @@ series = pd.read_parquet('ehyd_112086.parquet')['precipitation']
 idf.set_series(series)
 
 # auto-save the calculated parameter so save time for a later use
-idf.auto_save_parameters(path.join(output_directory, 'parameters.yaml'))
+idf.auto_save_parameters(path.join(output_directory, 'idf_parameters.yaml'))
 
 # --------
 # plotting the IDF curves
 fig, ax = idf.result_figure(color=True)
-fig.set_size_inches(6.40, 3.20)
+fig.set_size_inches(12, 8)
 fig.tight_layout()
-fig.savefig(path.join(output_directory, 'idf_plot.png'), dpi=200)
+fig.savefig(path.join(output_directory, 'idf_curves_plot_color.png'), dpi=200)
 plt.close(fig)
 
 # -------
@@ -31,8 +31,9 @@ plt.close(fig)
 fig, ax = idf.result_figure(color=False)
 fig.set_size_inches(12, 8)
 fig.tight_layout()
-fig.savefig(path.join(out, 'EXAMPLE_plot.png'), dpi=200)
+fig.savefig(path.join(output_directory, 'idf_curves_plot.png'), dpi=200)
 plt.close(fig)
 
 # save the values of the idf curve as csv file
-idf.result_table(add_names=False).to_csv(path.join(output_directory, 'idf_table.csv'))
+idf.result_table(add_names=False).to_csv(path.join(output_directory, 'idf_table_UNIX.csv'),
+                                         sep=',', decimal='.', float_format='%0.2f')

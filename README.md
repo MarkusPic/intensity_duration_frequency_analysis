@@ -147,7 +147,7 @@ optional arguments:
 
 ### Example Plot
 
-![IDF-Curves-Plot](example/ehyd_112086_idf_data/idf__curves_plot.png)
+![IDF-Curves-Plot](example/ehyd_112086_idf_data/idf_curves_plot.png)
 
 ### Example IDF table
 

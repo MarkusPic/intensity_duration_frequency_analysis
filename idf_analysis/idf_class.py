@@ -18,12 +18,12 @@ import pandas as pd
 from tqdm import tqdm
 
 from .arg_parser import heavy_rain_parser
-from .calculation_methods import get_u_w, get_parameters, calculate_u_w, depth_of_rainfall
+from .idf_parameters import IdfParameters
 from .little_helpers import minutes_readable, height2rate, delta2min, rate2height
 from .definitions import *
-from .in_out import import_series, write_yaml, read_yaml
-from .sww_utils import (remove_timezone, guess_freq, rain_events, agg_events, event_duration,
-                        resample_rain_series, rain_bar_plot, IdfError, )
+from .in_out import import_series
+from .sww_utils import (remove_timezone, guess_freq, rain_events, agg_events, event_duration, resample_rain_series,
+                        rain_bar_plot, IdfError)
 from .plot_helpers import idf_bar_axes
 from .additional_scripts import measured_points
 
@@ -59,16 +59,16 @@ class IntensityDurationFrequencyAnalyse:
         self._series = None  # type: pd.Series # rain time-series
         self._freq = None  # frequency of the rain series
 
-        self._parameter = None  # how to calculate the idf curves
+        self._parameter = None  # type: IdfParameters #  how to calculate the idf curves
         self._return_periods_frame = None  # type: pd.DataFrame # with return periods of all given durations
         self._rain_events = None
 
         # sampling points of the duration steps in minutes
-        self._duration_steps = [5, 10, 15, 20, 30, 45, 60]
-        self._duration_steps += [i * 60 for i in [1.5, 3, 4.5, 6, 7.5, 10, 12]]  # duration steps in hours
+        self._duration_steps = [5, 10, 15, 20, 30, 45, 60, 90]
+        # self._duration_steps += [i * 60 for i in [3, 4.5, 6, 7.5, 10, 12, 18]]  # duration steps in hours
+        self._duration_steps += [i * 60 for i in [2, 3, 4, 6, 9, 12, 18]]  # duration steps in hours
         if extended_durations:
-            self._duration_steps += [i * 60 * 24 for i in
-                                     [0.75, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0]]  # duration steps in days
+            self._duration_steps += [i * 60 * 24 for i in [1, 2, 3, 4, 5, 6]]  # duration steps in days
 
     # __________________________________________________________________________________________________________________
     @property
@@ -140,11 +140,10 @@ class IntensityDurationFrequencyAnalyse:
         and read them later with :func:`IntensityDurationFrequencyAnalyse.read_parameters`
 
         Returns:
-            list[dict]: calculation parameters
+            IdfParameters: calculation parameters
         """
         if self._parameter is None:
-            interim_results = calculate_u_w(self.series, self.duration_steps, self.series_kind)
-            self._parameter = get_parameters(interim_results, self.worksheet)
+            self._parameter = IdfParameters.from_series(self.series, self.duration_steps, self.series_kind, self.worksheet)
         return self._parameter
 
     def write_parameters(self, filename):
@@ -154,7 +153,7 @@ class IntensityDurationFrequencyAnalyse:
         Args:
             filename (str): filename for the parameters yaml-file
         """
-        write_yaml(self.parameters, filename)
+        self.parameters.to_yaml(filename)
 
     def read_parameters(self, filename):
         """
@@ -164,7 +163,7 @@ class IntensityDurationFrequencyAnalyse:
         Args:
             filename (str): filename of the parameters yaml-file
         """
-        self._parameter = read_yaml(filename)
+        self._parameter = IdfParameters.from_yaml(filename)
 
     def auto_save_parameters(self, filename):
         """auto-save the parameters as a yaml-file to save computation time."""
@@ -184,7 +183,7 @@ class IntensityDurationFrequencyAnalyse:
         Returns:
             (numpy.ndarray, numpy.ndarray) | (float, float): u and w
         """
-        return get_u_w(duration, self.parameters)
+        return self.parameters.get_u_w(duration)
 
     # __________________________________________________________________________________________________________________
     def depth_of_rainfall(self, duration, return_period):
@@ -198,8 +197,20 @@ class IntensityDurationFrequencyAnalyse:
         Returns:
             int | float | list | numpy.ndarray | pandas.Series: height of the rainfall h in L/m² = mm
         """
+        if self.series_kind == ANNUAL:
+            if return_period < 5:
+                print('WARNING: Using an annual series and a return period < 5 a will result in faulty values!')
+
+            if return_period <= 10:
+                return_period = np.exp(1.0 / return_period) / (np.exp(1.0 / return_period) - 1.0)
+
+            log_tn = -np.log(np.log(return_period / (return_period - 1.0)))
+
+        else:
+            log_tn = np.log(return_period)
+
         u, w = self.get_u_w(duration)
-        return depth_of_rainfall(u, w, return_period, series_kind=self.series_kind)
+        return u + w * log_tn
 
     # __________________________________________________________________________________________________________________
     def rain_flow_rate(self, duration, return_period):
@@ -215,8 +226,8 @@ class IntensityDurationFrequencyAnalyse:
         Returns:
                 int | float | list | numpy.ndarray | pandas.Series: specific rain flow rate in [l/(s*ha)]
         """
-        return height2rate(height_of_rainfall=self.depth_of_rainfall(duration=duration, return_period=return_period),
-                           duration=duration)
+        height_of_rainfall = self.depth_of_rainfall(duration=duration, return_period=return_period)
+        return height2rate(height_of_rainfall=height_of_rainfall, duration=duration)
 
     # __________________________________________________________________________________________________________________
     def r_720_1(self):
@@ -324,67 +335,6 @@ class IntensityDurationFrequencyAnalyse:
         return fig, ax
 
     ####################################################################################################################
-    def get_return_periods_frame(self, series, durations=None):
-        """
-
-        Args:
-            series (pandas.Series):
-            durations (list): list of durations in minutes which are of interest (default: pre defined durations)
-
-        Returns:
-            pandas.DataFrame: return periods depending of the duration per datetimeindex
-        """
-        if durations is None:
-            durations = self.duration_steps
-
-        df = pd.DataFrame(index=series.index)
-
-        freq = delta2min(guess_freq(series.index))
-        for d in durations:
-            if d % freq != 0:
-                warnings.warn('Using durations (= {} minutes), '
-                              'which are not a multiple of the base frequency (= {} minutes) of the series, '
-                              'will lead to misinterpretations.'.format(d, freq))
-            ts_sum = series.rolling(pd.Timedelta(minutes=d)).sum()
-            df[d] = self.get_return_period(height_of_rainfall=ts_sum, duration=d)
-
-        # printable_names (bool): if durations should be as readable in dataframe, else in minutes
-        # df = df.rename(minutes_readable, axis=0)
-
-        return df.round(1)
-
-    @property
-    def return_periods_frame(self):
-        """
-        get the return periods over the whole time-series for the default duration steps.
-
-        Returns:
-            pandas.DataFrame: data-frame of return periods where the columns are the duration steps
-        """
-        if self._return_periods_frame is None:
-            self._return_periods_frame = self.get_return_periods_frame(self.series)
-        return self._return_periods_frame
-
-    def write_return_periods_frame(self, filename, **kwargs):
-        """save the return-periods dataframe as a parquet-file to save computation time."""
-        df = self.return_periods_frame.copy()
-        df.columns = df.columns.to_series().astype(str)
-        df.to_parquet(filename, **kwargs)
-
-    def read_return_periods_frame(self, filename, **kwargs):
-        """read the return-periods dataframe as a parquet-file to save computation time."""
-        df = pd.read_parquet(filename, **kwargs)
-        df.columns = df.columns.to_series().astype(int)
-        self._return_periods_frame = df
-
-    def auto_save_return_periods_frame(self, filename):
-        """auto-save the return-periods dataframe as a parquet-file to save computation time."""
-        if path.isfile(filename):
-            self.read_return_periods_frame(filename)
-        else:
-            self.write_return_periods_frame(filename)
-
-    ####################################################################################################################
     @classmethod
     def command_line_tool(cls):
         user = heavy_rain_parser()
@@ -458,7 +408,7 @@ class IntensityDurationFrequencyAnalyse:
         # --------------------------------------------------
         if user.plot:
             fig, ax = idf.result_figure()
-            plot_fn = fn_pattern.format('_curves_plot.png')
+            plot_fn = fn_pattern.format('curves_plot.png')
             fig.savefig(plot_fn, dpi=260)
             plt.close(fig)
             show_file(plot_fn)
@@ -471,6 +421,71 @@ class IntensityDurationFrequencyAnalyse:
             table_fn = fn_pattern.format('table.csv')
             table.to_csv(table_fn, sep=';', decimal=',', float_format='%0.2f')
             print('Created the IDF-curves-plot and saved the file as "{}".'.format(table_fn))
+
+    ####################################################################################################################
+    def get_return_periods_frame(self, series, durations=None):
+        """
+
+        Args:
+            series (pandas.Series):
+            durations (list): list of durations in minutes which are of interest (default: pre defined durations)
+
+        Returns:
+            pandas.DataFrame: return periods depending of the duration per datetimeindex
+        """
+        if durations is None:
+            durations = self.duration_steps
+
+        freq = guess_freq(series.index)
+        ts = series.asfreq(freq).fillna(0)
+
+        df = pd.DataFrame(index=ts.index)
+
+        freq_num = delta2min(freq)
+        for d in tqdm(durations, desc='calculating return periods data-frame'):
+            if d % freq_num != 0:
+                warnings.warn('Using durations (= {} minutes), '
+                              'which are not a multiple of the base frequency (= {} minutes) of the series, '
+                              'will lead to misinterpretations.'.format(d, freq_num))
+            ts_sum = ts.rolling(pd.Timedelta(minutes=d)).sum()
+            df[d] = self.get_return_period(height_of_rainfall=ts_sum, duration=d)
+
+        # printable_names (bool): if durations should be as readable in dataframe, else in minutes
+        # df = df.rename(minutes_readable, axis=0)
+
+        return df.round(1)
+
+    @property
+    def return_periods_frame(self):
+        """
+        get the return periods over the whole time-series for the default duration steps.
+
+        Returns:
+            pandas.DataFrame: data-frame of return periods where the columns are the duration steps
+        """
+        if self._return_periods_frame is None:
+            self._return_periods_frame = self.get_return_periods_frame(self.series)
+        return self._return_periods_frame
+
+    def write_return_periods_frame(self, filename, **kwargs):
+        """save the return-periods dataframe as a parquet-file to save computation time."""
+        df = self.return_periods_frame.copy()
+        df.columns = df.columns.to_series().astype(str)
+        df.to_parquet(filename, **kwargs)
+
+    def read_return_periods_frame(self, filename, **kwargs):
+        """read the return-periods dataframe as a parquet-file to save computation time."""
+        df = pd.read_parquet(filename, **kwargs)
+        df.columns = df.columns.to_series().astype(int)
+        self._return_periods_frame = df
+
+    def auto_save_return_periods_frame(self, filename):
+        """auto-save the return-periods dataframe as a parquet-file to save computation time."""
+        if path.isfile(filename):
+            self.read_return_periods_frame(filename)
+        else:
+            self.write_return_periods_frame(filename)
+
 
     ####################################################################################################################
     @property
@@ -531,8 +546,7 @@ class IntensityDurationFrequencyAnalyse:
         events = self.rain_events
         events[COL.LP] = agg_events(events, self.series, 'sum')
 
-        main_events = events[events[COL.LP] > min_event_rain_sum].to_dict(orient='index')
-        main_events = main_events.sort_values(by=COL.LP, ascending=False)
+        main_events = events[events[COL.LP] > min_event_rain_sum].sort_values(by=COL.LP, ascending=False).to_dict(orient='index')
 
         unit = 'mm'
         column_name = 'Precipitation'
@@ -601,3 +615,6 @@ class IntensityDurationFrequencyAnalyse:
         rain_ax.set_xlim(ts.index[0], ts.index[-1])
 
         return fig, caption
+
+    def return_period_event_figure(self):
+        pass

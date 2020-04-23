@@ -4,33 +4,9 @@ import pandas as pd
 from matplotlib.lines import Line2D
 from webbrowser import open as show_file
 
-from .definitions import COL, PARAM_COL, PARAM
+from .definitions import *
 from .little_helpers import minutes_readable
 from .sww_utils import agg_events
-from .calculation_methods import get_parameters
-
-
-def set_parameters_from_interim_results(idf, interim_results_fn):
-    """for compatibility reasons. To use the old file and convert it to the new parameters file"""
-    interim_results = pd.read_csv(interim_results_fn, index_col=0, header=0)
-    idf._parameter = get_parameters(interim_results, idf.worksheet)
-
-
-def get_interim_results_from_parameters(parameters):
-    """
-    extract interim results from parameters
-    """
-    interim_results = dict()
-    for p in parameters:
-        for col in [COL.DUR, PARAM_COL.VALUES(PARAM.U), PARAM_COL.VALUES(PARAM.W)]:
-            if col in interim_results:
-                interim_results[col] += p[col]
-            else:
-                interim_results[col] = p[col]
-
-    interim_results = pd.DataFrame.from_dict(interim_results, orient='columns').set_index(COL.DUR).drop_duplicates()
-    return interim_results.rename({PARAM_COL.VALUES(PARAM.U): PARAM.U,
-                                   PARAM_COL.VALUES(PARAM.W): PARAM.W}, axis=1)
 
 
 def measured_points(idf, return_periods, interim_results=None, max_duration=None):
@@ -47,7 +23,7 @@ def measured_points(idf, return_periods, interim_results=None, max_duration=None
         pd.Series: series with duration as index and the height of the rainfall as data
     """
     if interim_results is None:
-        interim_results = get_interim_results_from_parameters(idf.parameters)
+        interim_results = idf.parameters.get_interim_results()
 
     if max_duration is not None:
         interim_results = interim_results.loc[:max_duration].copy()

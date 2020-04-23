@@ -8,6 +8,7 @@ __license__ = "MIT"
 DWA = 'DWA-A_531'  # (2012)
 ATV = 'ATV-A_121'  # (1985)
 DWA_adv = DWA + '_advektiv'
+OWUNDA = 'OWUNDA'  # ÖKOSTRA ohne Dauerstufenausgleich nach Hammer (1993) "Eine optimierte Starkniederschalgsauswertung"
 
 # base series for calculation
 PARTIAL = 'partial'
