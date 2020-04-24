@@ -158,33 +158,9 @@
 <span class="kn">from</span> <span class="nn">matplotlib.lines</span> <span class="k">import</span> <span class="n">Line2D</span>
 <span class="kn">from</span> <span class="nn">webbrowser</span> <span class="k">import</span> <span class="nb">open</span> <span class="k">as</span> <span class="n">show_file</span>
 
-<span class="kn">from</span> <span class="nn">.definitions</span> <span class="k">import</span> <span class="n">COL</span><span class="p">,</span> <span class="n">PARAM_COL</span><span class="p">,</span> <span class="n">PARAM</span>
+<span class="kn">from</span> <span class="nn">.definitions</span> <span class="k">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">.little_helpers</span> <span class="k">import</span> <span class="n">minutes_readable</span>
 <span class="kn">from</span> <span class="nn">.sww_utils</span> <span class="k">import</span> <span class="n">agg_events</span>
-<span class="kn">from</span> <span class="nn">.calculation_methods</span> <span class="k">import</span> <span class="n">get_parameters</span>
-
-
-<div class="viewcode-block" id="set_parameters_from_interim_results"><a class="viewcode-back" href="../../base_functions.html#idf_analysis.additional_scripts.set_parameters_from_interim_results">[docs]</a><span class="k">def</span> <span class="nf">set_parameters_from_interim_results</span><span class="p">(</span><span class="n">idf</span><span class="p">,</span> <span class="n">interim_results_fn</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;for compatibility reasons. To use the old file and convert it to the new parameters file&quot;&quot;&quot;</span>
-    <span class="n">interim_results</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">interim_results_fn</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-    <span class="n">idf</span><span class="o">.</span><span class="n">_parameter</span> <span class="o">=</span> <span class="n">get_parameters</span><span class="p">(</span><span class="n">interim_results</span><span class="p">,</span> <span class="n">idf</span><span class="o">.</span><span class="n">worksheet</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="get_interim_results_from_parameters"><a class="viewcode-back" href="../../base_functions.html#idf_analysis.additional_scripts.get_interim_results_from_parameters">[docs]</a><span class="k">def</span> <span class="nf">get_interim_results_from_parameters</span><span class="p">(</span><span class="n">parameters</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    extract interim results from parameters</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">interim_results</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
-    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">DUR</span><span class="p">,</span> <span class="n">PARAM_COL</span><span class="o">.</span><span class="n">VALUES</span><span class="p">(</span><span class="n">PARAM</span><span class="o">.</span><span class="n">U</span><span class="p">),</span> <span class="n">PARAM_COL</span><span class="o">.</span><span class="n">VALUES</span><span class="p">(</span><span class="n">PARAM</span><span class="o">.</span><span class="n">W</span><span class="p">)]:</span>
-            <span class="k">if</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">interim_results</span><span class="p">:</span>
-                <span class="n">interim_results</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">+=</span> <span class="n">p</span><span class="p">[</span><span class="n">col</span><span class="p">]</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">interim_results</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="n">col</span><span class="p">]</span>
-
-    <span class="n">interim_results</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">interim_results</span><span class="p">,</span> <span class="n">orient</span><span class="o">=</span><span class="s1">&#39;columns&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">COL</span><span class="o">.</span><span class="n">DUR</span><span class="p">)</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span>
-    <span class="k">return</span> <span class="n">interim_results</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="n">PARAM_COL</span><span class="o">.</span><span class="n">VALUES</span><span class="p">(</span><span class="n">PARAM</span><span class="o">.</span><span class="n">U</span><span class="p">):</span> <span class="n">PARAM</span><span class="o">.</span><span class="n">U</span><span class="p">,</span>
-                                   <span class="n">PARAM_COL</span><span class="o">.</span><span class="n">VALUES</span><span class="p">(</span><span class="n">PARAM</span><span class="o">.</span><span class="n">W</span><span class="p">):</span> <span class="n">PARAM</span><span class="o">.</span><span class="n">W</span><span class="p">},</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="measured_points"><a class="viewcode-back" href="../../base_functions.html#idf_analysis.additional_scripts.measured_points">[docs]</a><span class="k">def</span> <span class="nf">measured_points</span><span class="p">(</span><span class="n">idf</span><span class="p">,</span> <span class="n">return_periods</span><span class="p">,</span> <span class="n">interim_results</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_duration</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -201,7 +177,7 @@
 <span class="sd">        pd.Series: series with duration as index and the height of the rainfall as data</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">interim_results</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">interim_results</span> <span class="o">=</span> <span class="n">get_interim_results_from_parameters</span><span class="p">(</span><span class="n">idf</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span>
+        <span class="n">interim_results</span> <span class="o">=</span> <span class="n">idf</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">get_interim_results</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="n">max_duration</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">interim_results</span> <span class="o">=</span> <span class="n">interim_results</span><span class="o">.</span><span class="n">loc</span><span class="p">[:</span><span class="n">max_duration</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>

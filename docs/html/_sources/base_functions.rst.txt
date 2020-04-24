@@ -7,7 +7,16 @@ Calculation Methods
 
 Functions to analyse the precipitations series based on the core method.
 
-.. automodule:: idf_analysis.calculation_methods
+
+.. automodule:: idf_analysis.event_series_analysis
+    :members:
+    :no-undoc-members:
+
+.. automodule:: idf_analysis.parameter_formulations
+    :members:
+    :no-undoc-members:
+
+.. autoclass:: idf_analysis.idf_parameters.IdfParameters
     :members:
     :no-undoc-members:
 
