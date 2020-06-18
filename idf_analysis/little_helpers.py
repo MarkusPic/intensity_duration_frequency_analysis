@@ -34,20 +34,20 @@ def minutes_readable(minutes):
         str: duration as a string
     """
     if minutes <= 60:
-        return '{:0.0f}min'.format(minutes)
+        return '{:0.0f} min'.format(minutes)
     elif 60 < minutes < 60 * 24:
         minutes /= 60
         if minutes % 1:
-            fmt = '{:0.1f}h'
+            fmt = '{:0.1f} h'
         else:
-            fmt = '{:0.0f}h'
+            fmt = '{:0.0f} h'
         return fmt.format(minutes)
     elif 60 * 24 <= minutes:
         minutes /= 60 * 24
         if minutes % 1:
-            fmt = '{:0.1f}d'
+            fmt = '{:0.1f} d'
         else:
-            fmt = '{:0.0f}d'
+            fmt = '{:0.0f} d'
         return fmt.format(minutes)
     else:
         return str(minutes)

@@ -102,6 +102,8 @@ class IntensityDurationFrequencyAnalyse:
         freq_minutes = delta2min(self._freq)
         self.duration_steps = list(filter(lambda d: d >= freq_minutes, self.duration_steps))
         self.series = series
+        self._return_periods_frame = None
+        self._rain_events = None
 
     # __________________________________________________________________________________________________________________
     @property
@@ -594,7 +596,7 @@ class IntensityDurationFrequencyAnalyse:
                                                 unit,
                                                 end - start,
                                                 event[COL.MAX_PERIOD],
-                                                event[COL.MAX_PERIOD_DURATION])
+                                                minutes_readable(event[COL.MAX_PERIOD_DURATION]))
 
         ts = self.series[plot_range].resample(self._freq).sum().fillna(0).copy()
 
@@ -612,7 +614,7 @@ class IntensityDurationFrequencyAnalyse:
         # -------------------------------------
         ts_sum, minutes = resample_rain_series(ts)
         rain_ax = rain_bar_plot(ts_sum, rain_ax)
-        rain_ax.set_ylabel('{} in [{}/{}min]'.format(column_name, unit, minutes if minutes != 1 else ''))
+        rain_ax.set_ylabel('{} in {}/{}min'.format(column_name, unit, minutes if minutes != 1 else ''))
         rain_ax.set_xlim(ts.index[0], ts.index[-1])
 
         return fig, caption

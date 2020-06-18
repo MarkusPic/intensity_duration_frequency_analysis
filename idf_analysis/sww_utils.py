@@ -5,11 +5,12 @@ __license__ = "MIT"
 __version__ = "1.0.0"
 __maintainer__ = "David Camhy, Markus Pichler"
 
-import pytz
 from datetime import tzinfo
-import pandas as pd
-from pandas.tseries.frequencies import to_offset
+
 import numpy as np
+import pandas as pd
+import pytz
+from pandas.tseries.frequencies import to_offset
 
 from .definitions import COL
 
@@ -199,25 +200,21 @@ def event_duration(events):
 
 
 ########################################################################################################################
-def rain_bar_plot(rain, ax=None, color=None, reverse=False):
+def rain_bar_plot(rain, ax=None, color='#1E88E5', reverse=False):
     """
     make a standard precipitation/rain plot
 
     Args:
         rain (pandas.Series):
         ax (matplotlib.axes.Axes):
-        ylabel (str):
         color (str):
         reverse (bool):
 
     Returns:
         matplotlib.axes.Axes: rain plot
     """
-    if color is None:
-        color = '#1E88E5'
-
-    ax = rain.plot(ax=ax, drawstyle='steps-mid', color=color, solid_capstyle='butt', solid_joinstyle='miter')
-    ax.fill_between(rain.index, rain.values, 0, step='mid', zorder=1000, color=color)
+    ax = rain.plot(ax=ax, drawstyle='steps-mid', color=color, solid_capstyle='butt', solid_joinstyle='miter', lw=0)
+    ax.fill_between(rain.index, rain.values, 0, step='mid', zorder=1000, color=color, capstyle='butt', joinstyle='miter')
 
     if reverse:
         # ax.set_ylim(top=0, bottom=rain.max() * 1.1)
