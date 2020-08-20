@@ -444,7 +444,13 @@ class IntensityDurationFrequencyAnalyse:
         df = pd.DataFrame(index=ts.index)
 
         freq_num = delta2min(freq)
-        for d in tqdm(durations, desc='calculating return periods data-frame'):
+
+        if ts.size > 30000:
+            dur_loop = tqdm(durations, desc='calculating return periods data-frame')
+        else:
+            dur_loop = durations
+
+        for d in dur_loop:
             if d % freq_num != 0:
                 warnings.warn('Using durations (= {} minutes), '
                               'which are not a multiple of the base frequency (= {} minutes) of the series, '
