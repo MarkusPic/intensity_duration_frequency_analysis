@@ -445,7 +445,7 @@ class IntensityDurationFrequencyAnalyse:
 
         freq_num = delta2min(freq)
 
-        if ts.size > 30000:
+        if ts.size > 30000:   # if > 3 weeks, use a progressbar
             dur_loop = tqdm(durations, desc='calculating return periods data-frame')
         else:
             dur_loop = durations
