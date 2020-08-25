@@ -97,11 +97,10 @@ class IntensityDurationFrequencyAnalyse:
         if series.index.tz is not None:
             series = remove_timezone(series)
 
-        series = series.replace(0, np.NaN).dropna()
         self._freq = guess_freq(series.index)
         freq_minutes = delta2min(self._freq)
         self.duration_steps = list(filter(lambda d: d >= freq_minutes, self.duration_steps))
-        self.series = series
+        self.series = series.replace(0, np.NaN).dropna()
         self._return_periods_frame = None
         self._rain_events = None
 
@@ -425,7 +424,7 @@ class IntensityDurationFrequencyAnalyse:
             print('Created the IDF-curves-plot and saved the file as "{}".'.format(table_fn))
 
     ####################################################################################################################
-    def get_return_periods_frame(self, series, durations=None):
+    def get_return_periods_frame(self, series=None, durations=None):
         """
 
         Args:
@@ -438,9 +437,14 @@ class IntensityDurationFrequencyAnalyse:
         if durations is None:
             durations = self.duration_steps
 
-        freq = guess_freq(series.index)
-        ts = series.asfreq(freq).fillna(0)
+        if series is None:
+            ts = self.series.copy()
+            freq = self._freq
+        else:
+            freq = guess_freq(series.index)
+            ts = series.copy()
 
+        ts = ts.asfreq(freq).fillna(0)
         df = pd.DataFrame(index=ts.index)
 
         freq_num = delta2min(freq)
@@ -472,7 +476,7 @@ class IntensityDurationFrequencyAnalyse:
             pandas.DataFrame: data-frame of return periods where the columns are the duration steps
         """
         if self._return_periods_frame is None:
-            self._return_periods_frame = self.get_return_periods_frame(self.series)
+            self._return_periods_frame = self.get_return_periods_frame()
         return self._return_periods_frame
 
     def write_return_periods_frame(self, filename, **kwargs):
