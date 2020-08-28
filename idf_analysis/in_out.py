@@ -9,11 +9,6 @@ import pandas as pd
 import yaml
 from collections import OrderedDict
 
-import warnings
-import numba
-
-warnings.filterwarnings("ignore", category=numba.NumbaDeprecationWarning)
-
 
 def import_series(filename, series_label='precipitation', index_label='datetime', csv_reader_args=None):
     """
