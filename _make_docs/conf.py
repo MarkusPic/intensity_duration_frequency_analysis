@@ -28,7 +28,7 @@ author = 'Pichler'
 # The short X.Y version
 version = ''
 # The full version, including alpha/beta/rc tags
-release = '0.1'
+release = '0.1.11-14'
 
 
 # -- General configuration ---------------------------------------------------
@@ -95,7 +95,8 @@ pygments_style = None
 # a list of builtin themes.
 #
 # html_theme = 'nature'
-html_theme = 'alabaster'
+html_theme = 'classic'
+html_theme = 'nature'
 # html_theme = 'alabaster'
 
 # Theme options are theme-specific and customize the look and feel of a theme
