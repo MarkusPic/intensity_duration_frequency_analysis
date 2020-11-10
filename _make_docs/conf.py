@@ -204,7 +204,8 @@ epub_exclude_files = ['search.html']
 intersphinx_mapping = {'https://docs.python.org/3/': None,
                        # 'pd': ('http://pandas.pydata.org/pandas-docs/stable/', None),
                        'https://pandas.pydata.org/pandas-docs/stable/': None,
-                       'numpy': ('https://docs.scipy.org/doc/numpy/', None),
+                       'numpy': ('https://numpy.org/doc/stable/', None),
+
                        # 'scipy': ('http://docs.scipy.org/doc/scipy/reference/', None),
                        # 'matplotlib': ('http://matplotlib.sourceforge.net/', None),
                        # 'sympy': ('https://docs.sympy.org/latest/', None),

@@ -3,10 +3,13 @@
   {
    "cell_type": "markdown",
    "source": [
-    "# Example Commandline Usage"
+    "# Example Commandline Use"
    ],
    "metadata": {
-    "collapsed": false
+    "collapsed": false,
+    "pycharm": {
+     "name": "#%% md\n"
+    }
    }
   },
   {

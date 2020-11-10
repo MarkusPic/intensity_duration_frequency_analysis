@@ -1,0 +1,370 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>idf_analysis.idf_parameters &#8212; Intensity Duration Frequency Analyse 0.1.11-14 documentation</title>
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Intensity Duration Frequency Analyse 0.1.11-14 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">idf_analysis.idf_parameters</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for idf_analysis.idf_parameters</h1><div class="highlight"><pre>
+<span></span><span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Markus Pichler&quot;</span>
+<span class="n">__credits__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Markus Pichler&quot;</span><span class="p">]</span>
+<span class="n">__maintainer__</span> <span class="o">=</span> <span class="s2">&quot;Markus Pichler&quot;</span>
+<span class="n">__email__</span> <span class="o">=</span> <span class="s2">&quot;markus.pichler@tugraz.at&quot;</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;0.1&quot;</span>
+<span class="n">__license__</span> <span class="o">=</span> <span class="s2">&quot;MIT&quot;</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+
+<span class="kn">from</span> <span class="nn">.definitions</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">.event_series_analysis</span> <span class="kn">import</span> <span class="n">calculate_u_w</span>
+<span class="kn">from</span> <span class="nn">.in_out</span> <span class="kn">import</span> <span class="n">write_yaml</span><span class="p">,</span> <span class="n">read_yaml</span>
+<span class="kn">from</span> <span class="nn">.parameter_formulations</span> <span class="kn">import</span> <span class="n">folded_log_formulation</span><span class="p">,</span> <span class="n">hyperbolic_formulation</span>
+
+
+<div class="viewcode-block" id="IdfParameters"><a class="viewcode-back" href="../../base_functions.html#idf_analysis.idf_parameters.IdfParameters">[docs]</a><span class="k">class</span> <span class="nc">IdfParameters</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">worksheet</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">interim_results</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># parameters u and w from the event series analysis</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">to_yaml</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="n">write_yaml</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_yaml</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">()</span>
+        <span class="n">p</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">read_yaml</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">p</span>
+
+<div class="viewcode-block" id="IdfParameters.from_interim_results"><a class="viewcode-back" href="../../base_functions.html#idf_analysis.idf_parameters.IdfParameters.from_interim_results">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_interim_results</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">interim_results</span><span class="p">,</span> <span class="n">worksheet</span><span class="o">=</span><span class="n">DWA</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        get calculation parameters</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">()</span>
+        <span class="n">p</span><span class="o">.</span><span class="n">worksheet</span> <span class="o">=</span> <span class="n">worksheet</span>
+        <span class="n">p</span><span class="o">.</span><span class="n">interim_results</span> <span class="o">=</span> <span class="n">interim_results</span>
+        <span class="n">p</span><span class="o">.</span><span class="n">_calc</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">p</span></div>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_series</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">series</span><span class="p">,</span> <span class="n">duration_steps</span><span class="p">,</span> <span class="n">series_kind</span><span class="p">,</span> <span class="n">worksheet</span><span class="p">):</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">()</span>
+        <span class="n">p</span><span class="o">.</span><span class="n">worksheet</span> <span class="o">=</span> <span class="n">worksheet</span>
+        <span class="n">p</span><span class="o">.</span><span class="n">interim_results</span> <span class="o">=</span> <span class="n">calculate_u_w</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">duration_steps</span><span class="p">,</span> <span class="n">series_kind</span><span class="p">)</span>
+        <span class="n">p</span><span class="o">.</span><span class="n">_calc</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">p</span>
+
+    <span class="k">def</span> <span class="nf">_calc</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_approaches</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">split_interim_results</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_calc_params</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_balance_parameter_change</span><span class="p">()</span>
+
+<div class="viewcode-block" id="IdfParameters.get_duration_steps"><a class="viewcode-back" href="../../base_functions.html#idf_analysis.idf_parameters.IdfParameters.get_duration_steps">[docs]</a>    <span class="k">def</span> <span class="nf">get_duration_steps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        duration step boundary for the various distribution functions in minutes</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            tuple[int, int]: duration steps in minutes</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="c1"># acc. to ATV-A 121 chap. 5.2 (till 2012)</span>
+            <span class="n">ATV</span><span class="p">:</span> <span class="p">(</span><span class="mi">60</span> <span class="o">*</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">48</span><span class="p">),</span>
+            <span class="c1"># acc. to DWA-A 531 chap. 5.2.1</span>
+            <span class="n">DWA_adv</span><span class="p">:</span> <span class="p">(</span><span class="mi">60</span> <span class="o">*</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">24</span><span class="p">),</span>
+            <span class="c1"># acc. to DWA-A 531 chap. 5.2.1</span>
+            <span class="n">DWA</span><span class="p">:</span> <span class="p">(</span><span class="mi">60</span><span class="p">,</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">12</span><span class="p">)</span>
+        <span class="p">}[</span><span class="bp">self</span><span class="o">.</span><span class="n">worksheet</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="IdfParameters.get_approaches"><a class="viewcode-back" href="../../base_functions.html#idf_analysis.idf_parameters.IdfParameters.get_approaches">[docs]</a>    <span class="k">def</span> <span class="nf">get_approaches</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        approaches depending on the duration and the parameter</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            worksheet (str): worksheet name for the analysis:</span>
+<span class="sd">                - &#39;DWA-A_531&#39;</span>
+<span class="sd">                - &#39;ATV-A_121&#39;</span>
+<span class="sd">                - &#39;DWA-A_531_advektiv&#39; (yet not implemented)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list[dict]: table of approaches depending on the duration and the parameter</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># acc. to ATV-A 121 chap. 5.2.1</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">worksheet</span> <span class="o">==</span> <span class="n">ATV</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">OrderedDict</span><span class="p">({</span><span class="n">PARAM_COL</span><span class="o">.</span><span class="n">FROM</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                                           <span class="n">PARAM_COL</span><span class="o">.</span><span class="n">TO</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                                           <span class="n">PARAM_COL</span><span class="o">.</span><span class="n">U</span><span class="p">:</span> <span class="n">LOG2</span><span class="p">,</span>
+                                           <span class="n">PARAM_COL</span><span class="o">.</span><span class="n">W</span><span class="p">:</span> <span class="n">LOG1</span><span class="p">}))</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">worksheet</span> <span class="o">==</span> <span class="n">DWA</span><span class="p">:</span>
+            <span class="n">duration_bound_1</span><span class="p">,</span> <span class="n">duration_bound_2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_duration_steps</span><span class="p">()</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">OrderedDict</span><span class="p">({</span><span class="n">PARAM_COL</span><span class="o">.</span><span class="n">FROM</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                                           <span class="n">PARAM_COL</span><span class="o">.</span><span class="n">TO</span><span class="p">:</span> <span class="n">duration_bound_1</span><span class="p">,</span>
+                                           <span class="n">PARAM_COL</span><span class="o">.</span><span class="n">U</span><span class="p">:</span> <span class="n">HYP</span><span class="p">,</span>
+                                           <span class="n">PARAM_COL</span><span class="o">.</span><span class="n">W</span><span class="p">:</span> <span class="n">LOG2</span><span class="p">}))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">OrderedDict</span><span class="p">({</span><span class="n">PARAM_COL</span><span class="o">.</span><span class="n">FROM</span><span class="p">:</span> <span class="n">duration_bound_1</span><span class="p">,</span>
+                                           <span class="n">PARAM_COL</span><span class="o">.</span><span class="n">TO</span><span class="p">:</span> <span class="n">duration_bound_2</span><span class="p">,</span>
+                                           <span class="n">PARAM_COL</span><span class="o">.</span><span class="n">U</span><span class="p">:</span> <span class="n">LOG2</span><span class="p">,</span>
+                                           <span class="n">PARAM_COL</span><span class="o">.</span><span class="n">W</span><span class="p">:</span> <span class="n">LOG2</span><span class="p">}))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">OrderedDict</span><span class="p">({</span><span class="n">PARAM_COL</span><span class="o">.</span><span class="n">FROM</span><span class="p">:</span> <span class="n">duration_bound_2</span><span class="p">,</span>
+                                           <span class="n">PARAM_COL</span><span class="o">.</span><span class="n">TO</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
+                                           <span class="n">PARAM_COL</span><span class="o">.</span><span class="n">U</span><span class="p">:</span> <span class="n">LIN</span><span class="p">,</span>
+                                           <span class="n">PARAM_COL</span><span class="o">.</span><span class="n">W</span><span class="p">:</span> <span class="n">LIN</span><span class="p">}))</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+    <span class="k">def</span> <span class="nf">split_interim_results</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">):</span>
+            <span class="n">it_res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interim_results</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="n">PARAM_COL</span><span class="o">.</span><span class="n">FROM</span><span class="p">]:</span> <span class="n">row</span><span class="p">[</span><span class="n">PARAM_COL</span><span class="o">.</span><span class="n">TO</span><span class="p">]]</span>
+            <span class="k">if</span> <span class="n">it_res</span><span class="o">.</span><span class="n">empty</span> <span class="ow">or</span> <span class="n">it_res</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">COL</span><span class="o">.</span><span class="n">DUR</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">it_res</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">PARAM</span><span class="o">.</span><span class="n">U_AND_W</span><span class="p">:</span>  <span class="c1"># u or w</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">PARAM_COL</span><span class="o">.</span><span class="n">VALUES</span><span class="p">(</span><span class="n">p</span><span class="p">)]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">it_res</span><span class="p">[</span><span class="n">p</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">get_interim_results</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">interim_results</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            extract interim results from parameters</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="n">interim_results</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">DUR</span><span class="p">,</span> <span class="n">PARAM_COL</span><span class="o">.</span><span class="n">VALUES</span><span class="p">(</span><span class="n">PARAM</span><span class="o">.</span><span class="n">U</span><span class="p">),</span> <span class="n">PARAM_COL</span><span class="o">.</span><span class="n">VALUES</span><span class="p">(</span><span class="n">PARAM</span><span class="o">.</span><span class="n">W</span><span class="p">)]:</span>
+                    <span class="k">if</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">interim_results</span><span class="p">:</span>
+                        <span class="n">interim_results</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">+=</span> <span class="n">p</span><span class="p">[</span><span class="n">col</span><span class="p">]</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">interim_results</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="n">col</span><span class="p">]</span>
+
+            <span class="n">interim_results</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">interim_results</span><span class="p">,</span> <span class="n">orient</span><span class="o">=</span><span class="s1">&#39;columns&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span>
+                <span class="n">COL</span><span class="o">.</span><span class="n">DUR</span><span class="p">)</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">interim_results</span> <span class="o">=</span> <span class="n">interim_results</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="n">PARAM_COL</span><span class="o">.</span><span class="n">VALUES</span><span class="p">(</span><span class="n">PARAM</span><span class="o">.</span><span class="n">U</span><span class="p">):</span> <span class="n">PARAM</span><span class="o">.</span><span class="n">U</span><span class="p">,</span>
+                                                           <span class="n">PARAM_COL</span><span class="o">.</span><span class="n">VALUES</span><span class="p">(</span><span class="n">PARAM</span><span class="o">.</span><span class="n">W</span><span class="p">):</span> <span class="n">PARAM</span><span class="o">.</span><span class="n">W</span><span class="p">},</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">interim_results</span>
+
+    <span class="k">def</span> <span class="nf">_calc_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params_mean</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">duration_mean</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        calculate parameters a_u, a_w, b_u and b_w and add it to the dict</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            parameter (list[dict]):</span>
+<span class="sd">            params_mean (dict[float]):</span>
+<span class="sd">            duration_mean (float):</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list[dict]: parameters</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">COL</span><span class="o">.</span><span class="n">DUR</span> <span class="ow">in</span> <span class="n">row</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="n">dur</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">DUR</span><span class="p">])</span>
+
+            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">PARAM</span><span class="o">.</span><span class="n">U_AND_W</span><span class="p">:</span>  <span class="c1"># u or w</span>
+                <span class="n">a_label</span> <span class="o">=</span> <span class="n">PARAM_COL</span><span class="o">.</span><span class="n">A</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>  <span class="c1"># a_u or a_w</span>
+                <span class="n">b_label</span> <span class="o">=</span> <span class="n">PARAM_COL</span><span class="o">.</span><span class="n">B</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>  <span class="c1"># b_u or b_w</span>
+
+                <span class="n">param</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">PARAM_COL</span><span class="o">.</span><span class="n">VALUES</span><span class="p">(</span><span class="n">p</span><span class="p">)])</span>  <span class="c1"># values for u or w of the annual/partial series</span>
+
+                <span class="n">approach</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">p</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">params_mean</span><span class="p">:</span>
+                    <span class="n">param_mean</span> <span class="o">=</span> <span class="n">params_mean</span><span class="p">[</span><span class="n">p</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">param_mean</span> <span class="o">=</span> <span class="kc">None</span>
+
+                <span class="c1"># ----------------------------</span>
+                <span class="k">if</span> <span class="n">approach</span> <span class="ow">in</span> <span class="p">[</span><span class="n">LOG1</span><span class="p">,</span> <span class="n">LOG2</span><span class="p">]:</span>
+                    <span class="n">row</span><span class="p">[</span><span class="n">a_label</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="n">b_label</span><span class="p">]</span> <span class="o">=</span> <span class="n">folded_log_formulation</span><span class="p">(</span><span class="n">dur</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">case</span><span class="o">=</span><span class="n">approach</span><span class="p">,</span>
+                                                                        <span class="n">param_mean</span><span class="o">=</span><span class="n">param_mean</span><span class="p">,</span>
+                                                                        <span class="n">duration_mean</span><span class="o">=</span><span class="n">duration_mean</span><span class="p">)</span>
+
+                <span class="c1"># ----------------------------</span>
+                <span class="k">elif</span> <span class="n">approach</span> <span class="o">==</span> <span class="n">HYP</span><span class="p">:</span>
+                    <span class="n">a_start</span> <span class="o">=</span> <span class="mf">20.0</span>
+                    <span class="k">if</span> <span class="n">a_label</span> <span class="ow">in</span> <span class="n">row</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">a_label</span><span class="p">]):</span>
+                        <span class="n">a_start</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">a_label</span><span class="p">]</span>
+
+                    <span class="n">b_start</span> <span class="o">=</span> <span class="mf">15.0</span>
+                    <span class="k">if</span> <span class="n">b_label</span> <span class="ow">in</span> <span class="n">row</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">b_label</span><span class="p">]):</span>
+                        <span class="n">b_start</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">b_label</span><span class="p">]</span>
+
+                    <span class="n">row</span><span class="p">[</span><span class="n">a_label</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="n">b_label</span><span class="p">]</span> <span class="o">=</span> <span class="n">hyperbolic_formulation</span><span class="p">(</span><span class="n">dur</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">a_start</span><span class="o">=</span><span class="n">a_start</span><span class="p">,</span> <span class="n">b_start</span><span class="o">=</span><span class="n">b_start</span><span class="p">,</span>
+                                                                        <span class="n">param_mean</span><span class="o">=</span><span class="n">param_mean</span><span class="p">,</span>
+                                                                        <span class="n">duration_mean</span><span class="o">=</span><span class="n">duration_mean</span><span class="p">)</span>
+
+                <span class="c1"># ----------------------------</span>
+                <span class="k">elif</span> <span class="n">approach</span> <span class="o">==</span> <span class="n">LIN</span><span class="p">:</span>
+                    <span class="k">pass</span>
+
+                <span class="c1"># ----------------------------</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+                <span class="c1"># ----------------------------</span>
+
+    <span class="k">def</span> <span class="nf">_balance_parameter_change</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># the balance between the different duration ranges acc. to DWA-A 531 chap. 5.2.4</span>
+        <span class="n">duration_step</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">PARAM_COL</span><span class="o">.</span><span class="n">TO</span><span class="p">]</span>
+        <span class="n">durations</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">duration_step</span> <span class="o">-</span> <span class="mf">0.001</span><span class="p">,</span> <span class="n">duration_step</span> <span class="o">+</span> <span class="mf">0.001</span><span class="p">])</span>
+
+        <span class="c1"># if the interim results end here</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">durations</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">interim_results</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">min</span><span class="p">())</span> <span class="ow">or</span> \
+                <span class="nb">any</span><span class="p">(</span><span class="n">durations</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">interim_results</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">max</span><span class="p">()):</span>
+            <span class="k">return</span>
+
+        <span class="n">u</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_u_w</span><span class="p">(</span><span class="n">durations</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_calc_params</span><span class="p">(</span><span class="n">params_mean</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">u</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">u</span><span class="p">),</span> <span class="n">w</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">w</span><span class="p">)),</span> <span class="n">duration_mean</span><span class="o">=</span><span class="n">duration_step</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_row</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">duration</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="n">PARAM_COL</span><span class="o">.</span><span class="n">FROM</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">duration</span> <span class="o">&lt;=</span> <span class="n">row</span><span class="p">[</span><span class="n">PARAM_COL</span><span class="o">.</span><span class="n">TO</span><span class="p">]:</span>
+                <span class="k">return</span> <span class="n">row</span>
+
+<div class="viewcode-block" id="IdfParameters.get_scalar_param"><a class="viewcode-back" href="../../base_functions.html#idf_analysis.idf_parameters.IdfParameters.get_scalar_param">[docs]</a>    <span class="k">def</span> <span class="nf">get_scalar_param</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">duration</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            p (str): name of the parameter &#39;u&#39; or &#39;w&#39;</span>
+<span class="sd">            duration (float | int): in minutes</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (float, float): u, w</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_row</span><span class="p">(</span><span class="n">duration</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">row</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span>
+
+        <span class="n">approach</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">p</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">approach</span> <span class="o">==</span> <span class="n">LOG1</span><span class="p">:</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">PARAM_COL</span><span class="o">.</span><span class="n">A</span><span class="p">(</span><span class="n">p</span><span class="p">)]</span>
+            <span class="n">b</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">PARAM_COL</span><span class="o">.</span><span class="n">B</span><span class="p">(</span><span class="n">p</span><span class="p">)]</span>
+            <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">duration</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">approach</span> <span class="o">==</span> <span class="n">LOG2</span><span class="p">:</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">PARAM_COL</span><span class="o">.</span><span class="n">A</span><span class="p">(</span><span class="n">p</span><span class="p">)]</span>
+            <span class="n">b</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">PARAM_COL</span><span class="o">.</span><span class="n">B</span><span class="p">(</span><span class="n">p</span><span class="p">)]</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">duration</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">approach</span> <span class="o">==</span> <span class="n">HYP</span><span class="p">:</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">PARAM_COL</span><span class="o">.</span><span class="n">A</span><span class="p">(</span><span class="n">p</span><span class="p">)]</span>
+            <span class="n">b</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">PARAM_COL</span><span class="o">.</span><span class="n">B</span><span class="p">(</span><span class="n">p</span><span class="p">)]</span>
+            <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="n">duration</span> <span class="o">/</span> <span class="p">(</span><span class="n">duration</span> <span class="o">+</span> <span class="n">b</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">approach</span> <span class="o">==</span> <span class="n">LIN</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">duration</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">DUR</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="n">PARAM_COL</span><span class="o">.</span><span class="n">VALUES</span><span class="p">(</span><span class="n">p</span><span class="p">)])</span></div>
+
+<div class="viewcode-block" id="IdfParameters.get_array_param"><a class="viewcode-back" href="../../base_functions.html#idf_analysis.idf_parameters.IdfParameters.get_array_param">[docs]</a>    <span class="k">def</span> <span class="nf">get_array_param</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">duration</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            p (str): name of the parameter &#39;u&#39; or &#39;w&#39;</span>
+<span class="sd">            duration (numpy.ndarray): in minutes</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (numpy.ndarray, numpy.ndarray): u, w</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_scalar_param</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">d</span><span class="p">))(</span><span class="n">duration</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="IdfParameters.get_u_w"><a class="viewcode-back" href="../../base_functions.html#idf_analysis.idf_parameters.IdfParameters.get_u_w">[docs]</a>    <span class="k">def</span> <span class="nf">get_u_w</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">duration</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            duration (numpy.ndarray| list | float | int): in minutes</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (float, float): u, w</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">duration</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
+            <span class="n">func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_array_param</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_scalar_param</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">func</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">duration</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">PARAM</span><span class="o">.</span><span class="n">U_AND_W</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="IdfParameters.from_interim_results_file"><a class="viewcode-back" href="../../base_functions.html#idf_analysis.idf_parameters.IdfParameters.from_interim_results_file">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_interim_results_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">interim_results_fn</span><span class="p">,</span> <span class="n">worksheet</span><span class="o">=</span><span class="n">DWA</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;DEPRECIATED: for compatibility reasons. To use the old file and convert it to the new parameters file&quot;&quot;&quot;</span>
+        <span class="n">interim_results</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">interim_results_fn</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_interim_results</span><span class="p">(</span><span class="n">interim_results</span><span class="p">,</span> <span class="n">worksheet</span><span class="o">=</span><span class="n">worksheet</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">p</span></div></div>
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Intensity Duration Frequency Analyse 0.1.11-14 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">idf_analysis.idf_parameters</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Pichler.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.2.1.
+    </div>
+  </body>
+</html>

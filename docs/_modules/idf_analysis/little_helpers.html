@@ -1,0 +1,180 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>idf_analysis.little_helpers &#8212; Intensity Duration Frequency Analyse 0.1.11-14 documentation</title>
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Intensity Duration Frequency Analyse 0.1.11-14 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">idf_analysis.little_helpers</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for idf_analysis.little_helpers</h1><div class="highlight"><pre>
+<span></span><span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Markus Pichler&quot;</span>
+<span class="n">__credits__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Markus Pichler&quot;</span><span class="p">]</span>
+<span class="n">__maintainer__</span> <span class="o">=</span> <span class="s2">&quot;Markus Pichler&quot;</span>
+<span class="n">__email__</span> <span class="o">=</span> <span class="s2">&quot;markus.pichler@tugraz.at&quot;</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;0.1&quot;</span>
+<span class="n">__license__</span> <span class="o">=</span> <span class="s2">&quot;MIT&quot;</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+
+<div class="viewcode-block" id="delta2min"><a class="viewcode-back" href="../../base_functions.html#idf_analysis.little_helpers.delta2min">[docs]</a><span class="k">def</span> <span class="nf">delta2min</span><span class="p">(</span><span class="n">time_delta</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    convert timedelta to float in minutes</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        time_delta (pandas.Timedelta, pandas.DateOffset):</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        float: the timedelta in minutes</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">time_delta</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DateOffset</span><span class="p">):</span>
+        <span class="n">time_delta</span> <span class="o">=</span> <span class="n">time_delta</span><span class="o">.</span><span class="n">delta</span>
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">time_delta</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span> <span class="o">/</span> <span class="mi">60</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="minutes_readable"><a class="viewcode-back" href="../../base_functions.html#idf_analysis.little_helpers.minutes_readable">[docs]</a><span class="k">def</span> <span class="nf">minutes_readable</span><span class="p">(</span><span class="n">minutes</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    convert the duration in minutes to a more readable form</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        minutes (float | int): duration in minutes</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: duration as a string</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">minutes</span> <span class="o">&lt;=</span> <span class="mi">60</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{:0.0f}</span><span class="s1"> min&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">minutes</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="mi">60</span> <span class="o">&lt;</span> <span class="n">minutes</span> <span class="o">&lt;</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">24</span><span class="p">:</span>
+        <span class="n">minutes</span> <span class="o">/=</span> <span class="mi">60</span>
+        <span class="k">if</span> <span class="n">minutes</span> <span class="o">%</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">fmt</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{:0.1f}</span><span class="s1"> h&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">fmt</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{:0.0f}</span><span class="s1"> h&#39;</span>
+        <span class="k">return</span> <span class="n">fmt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">minutes</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">24</span> <span class="o">&lt;=</span> <span class="n">minutes</span><span class="p">:</span>
+        <span class="n">minutes</span> <span class="o">/=</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">24</span>
+        <span class="k">if</span> <span class="n">minutes</span> <span class="o">%</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">fmt</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{:0.1f}</span><span class="s1"> d&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">fmt</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{:0.0f}</span><span class="s1"> d&#39;</span>
+        <span class="k">return</span> <span class="n">fmt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">minutes</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">minutes</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="duration_steps_readable"><a class="viewcode-back" href="../../base_functions.html#idf_analysis.little_helpers.duration_steps_readable">[docs]</a><span class="k">def</span> <span class="nf">duration_steps_readable</span><span class="p">(</span><span class="n">durations</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    convert the durations to a more readable form</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        durations (list[int | float]): in minutes</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list[str]: of the readable duration list</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">minutes_readable</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">durations</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="height2rate"><a class="viewcode-back" href="../../base_functions.html#idf_analysis.little_helpers.height2rate">[docs]</a><span class="k">def</span> <span class="nf">height2rate</span><span class="p">(</span><span class="n">height_of_rainfall</span><span class="p">,</span> <span class="n">duration</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    calculate the specific rain flow rate in [l/(s*ha)]</span>
+<span class="sd">    if 2 array-like parameters are give, a element-wise calculation will be made.</span>
+<span class="sd">    So the length of the array must be the same.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        height_of_rainfall (float | np.ndarray | pd.Series): height_of_rainfall: in [mm]</span>
+<span class="sd">        duration (float | np.ndarray | pd.Series): in minutes</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        float | np.ndarray | pd.Series: specific rain flow rate in [l/(s*ha)]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">height_of_rainfall</span> <span class="o">/</span> <span class="n">duration</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1000</span> <span class="o">/</span> <span class="mi">6</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="rate2height"><a class="viewcode-back" href="../../base_functions.html#idf_analysis.little_helpers.rate2height">[docs]</a><span class="k">def</span> <span class="nf">rate2height</span><span class="p">(</span><span class="n">rain_flow_rate</span><span class="p">,</span> <span class="n">duration</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    convert the rain flow rate to the height of rainfall in [mm]</span>
+<span class="sd">    if 2 array-like parameters are give, a element-wise calculation will be made.</span>
+<span class="sd">    So the length of the array must be the same.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        rain_flow_rate (float | np.ndarray | pd.Series): in [l/(s*ha)]</span>
+<span class="sd">        duration (float | np.ndarray | pd.Series): in minutes</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        float | np.ndarray | pd.Series: height of rainfall in [mm]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">rain_flow_rate</span> <span class="o">*</span> <span class="n">duration</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1000</span> <span class="o">/</span> <span class="mi">6</span><span class="p">)</span></div>
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Intensity Duration Frequency Analyse 0.1.11-14 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">idf_analysis.little_helpers</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Pichler.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.2.1.
+    </div>
+  </body>
+</html>

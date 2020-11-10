@@ -1,0 +1,170 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>idf_analysis.plot_helpers &#8212; Intensity Duration Frequency Analyse 0.1.11-14 documentation</title>
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Intensity Duration Frequency Analyse 0.1.11-14 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">idf_analysis.plot_helpers</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for idf_analysis.plot_helpers</h1><div class="highlight"><pre>
+<span></span><span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Markus Pichler&quot;</span>
+<span class="n">__credits__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Markus Pichler&quot;</span><span class="p">]</span>
+<span class="n">__maintainer__</span> <span class="o">=</span> <span class="s2">&quot;Markus Pichler&quot;</span>
+<span class="n">__email__</span> <span class="o">=</span> <span class="s2">&quot;markus.pichler@tugraz.at&quot;</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;0.1&quot;</span>
+<span class="n">__license__</span> <span class="o">=</span> <span class="s2">&quot;MIT&quot;</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">matplotlib.ticker</span> <span class="kn">import</span> <span class="n">NullFormatter</span>
+
+<span class="kn">from</span> <span class="nn">.definitions</span> <span class="kn">import</span> <span class="n">COL</span>
+<span class="kn">from</span> <span class="nn">.little_helpers</span> <span class="kn">import</span> <span class="n">duration_steps_readable</span>
+<span class="kn">from</span> <span class="nn">.sww_utils</span> <span class="kn">import</span> <span class="n">guess_freq</span><span class="p">,</span> <span class="n">rain_events</span><span class="p">,</span> <span class="n">event_duration</span>
+
+
+<div class="viewcode-block" id="idf_bar_axes"><a class="viewcode-back" href="../../base_functions.html#idf_analysis.plot_helpers.idf_bar_axes">[docs]</a><span class="k">def</span> <span class="nf">idf_bar_axes</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">idf_table</span><span class="p">,</span> <span class="n">durations</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">return_periods</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    create</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        ax (matplotlib.pyplot.Axes):</span>
+<span class="sd">        idf_table (pandas.DataFrame):</span>
+<span class="sd">        durations (list):</span>
+<span class="sd">        return_periods (list):</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        matplotlib.pyplot.Axes:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">durations</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">durations</span> <span class="o">=</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">240</span><span class="p">,</span> <span class="mi">360</span><span class="p">,</span> <span class="mi">540</span><span class="p">,</span> <span class="mi">720</span><span class="p">,</span> <span class="mi">1080</span><span class="p">,</span> <span class="mi">1440</span><span class="p">,</span> <span class="mi">2880</span><span class="p">,</span> <span class="mi">4320</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">return_periods</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">return_periods</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">100</span><span class="p">]</span>
+
+    <span class="n">color_return_period</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;lightcyan&#39;</span><span class="p">,</span> <span class="s1">&#39;cyan&#39;</span><span class="p">,</span> <span class="s1">&#39;lightblue&#39;</span><span class="p">,</span> <span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="s1">&#39;yellow&#39;</span><span class="p">,</span> <span class="s1">&#39;orange&#39;</span><span class="p">,</span> <span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="s1">&#39;magenta&#39;</span><span class="p">]</span>
+
+    <span class="c1"># legend</span>
+    <span class="kn">from</span> <span class="nn">matplotlib.lines</span> <span class="kn">import</span> <span class="n">Line2D</span>
+    <span class="n">custom_lines</span> <span class="o">=</span> <span class="p">[</span><span class="n">Line2D</span><span class="p">([</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">c</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">color_return_period</span><span class="p">]</span>
+    <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">a&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">return_periods</span><span class="p">]</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">custom_lines</span><span class="p">,</span> <span class="n">names</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">1.02</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="o">.</span><span class="mi">102</span><span class="p">),</span> <span class="n">loc</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">color_return_period</span><span class="p">),</span>
+              <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;expand&quot;</span><span class="p">,</span> <span class="n">borderaxespad</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;return periods&#39;</span><span class="p">)</span>
+
+    <span class="n">duration_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">durations</span><span class="p">)</span>
+    <span class="c1"># labels for the y axis</span>
+    <span class="n">durations_index</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">duration_size</span><span class="p">)</span>
+    <span class="n">dh</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([</span><span class="n">i</span> <span class="o">+</span> <span class="n">dh</span><span class="o">/</span><span class="mi">2</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">durations_index</span><span class="p">],</span> <span class="n">minor</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">durations_index</span><span class="p">),</span> <span class="n">minor</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">(</span><span class="n">duration_steps_readable</span><span class="p">(</span><span class="n">durations</span><span class="p">),</span> <span class="n">minor</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">([</span><span class="s1">&#39;&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">duration_size</span><span class="p">,</span> <span class="n">minor</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;duration of the design rainfall&#39;</span><span class="p">)</span>
+
+    <span class="c1"># for the relative start time</span>
+    <span class="n">freq</span> <span class="o">=</span> <span class="n">guess_freq</span><span class="p">(</span><span class="n">idf_table</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+    <span class="n">start_period</span> <span class="o">=</span> <span class="n">idf_table</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">to_period</span><span class="p">(</span><span class="n">freq</span><span class="p">)</span><span class="o">.</span><span class="n">ordinal</span>
+
+    <span class="c1"># idf_table.index = idf_table.index - idf_table.index[0]</span>
+
+    <span class="n">min_duration</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">hi</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">idf_table</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
+        <span class="n">tn</span> <span class="o">=</span> <span class="n">idf_table</span><span class="p">[</span><span class="n">d</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">return_periods</span><span class="p">):</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="n">color_return_period</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="c1"># not really a rain event, but the results are the same</span>
+            <span class="n">tab</span> <span class="o">=</span> <span class="n">rain_events</span><span class="p">(</span><span class="n">tn</span><span class="p">,</span> <span class="n">ignore_rain_below</span><span class="o">=</span><span class="n">t</span><span class="p">,</span> <span class="n">min_gap</span><span class="o">=</span><span class="n">freq</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">tab</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">durations</span> <span class="o">=</span> <span class="p">(</span><span class="n">event_duration</span><span class="p">(</span><span class="n">tab</span><span class="p">)</span> <span class="o">/</span> <span class="n">min_duration</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+                <span class="n">rel_starts</span> <span class="o">=</span> <span class="p">((</span><span class="n">tab</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">START</span><span class="p">]</span> <span class="o">-</span> <span class="n">idf_table</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="n">min_duration</span> <span class="o">+</span> <span class="n">start_period</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+                <span class="n">bar_x</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">rel_starts</span><span class="p">,</span> <span class="n">durations</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">tab</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">DUR</span><span class="p">]</span> <span class="o">=</span> <span class="n">event_duration</span><span class="p">(</span><span class="n">tab</span><span class="p">)</span> <span class="o">/</span> <span class="n">min_duration</span>
+                <span class="n">bar_x</span> <span class="o">=</span> <span class="p">[(</span><span class="n">r</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">START</span><span class="p">]</span> <span class="o">/</span> <span class="n">min_duration</span> <span class="o">+</span> <span class="n">start_period</span><span class="p">,</span> <span class="n">r</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">DUR</span><span class="p">])</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">tab</span><span class="o">.</span><span class="n">iterrows</span><span class="p">()]</span>
+
+            <span class="n">ax</span><span class="o">.</span><span class="n">broken_barh</span><span class="p">(</span><span class="n">bar_x</span><span class="p">,</span> <span class="p">(</span><span class="n">hi</span><span class="p">,</span> <span class="n">dh</span><span class="p">),</span> <span class="n">facecolors</span><span class="o">=</span><span class="n">c</span><span class="p">)</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">duration_size</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">([])</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="n">NullFormatter</span><span class="p">())</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">duration_size</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ax</span></div>
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Intensity Duration Frequency Analyse 0.1.11-14 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">idf_analysis.plot_helpers</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Pichler.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.2.1.
+    </div>
+  </body>
+</html>

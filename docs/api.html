@@ -1,0 +1,434 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>API &#8212; Intensity Duration Frequency Analyse 0.1.11-14 documentation</title>
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Base Functions" href="base_functions.html" />
+    <link rel="prev" title="Description" href="README.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="base_functions.html" title="Base Functions"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="README.html" title="Description"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Intensity Duration Frequency Analyse 0.1.11-14 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">API</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="api">
+<h1>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="main-function">
+<h2>Main Function<a class="headerlink" href="#main-function" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse">
+<em class="property">class </em><code class="sig-prename descclassname">idf_analysis.idf_class.</code><code class="sig-name descname">IntensityDurationFrequencyAnalyse</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">series_kind</span><span class="o">=</span><span class="default_value">'partial'</span></em>, <em class="sig-param"><span class="n">worksheet</span><span class="o">=</span><span class="default_value">'DWA-A_531'</span></em>, <em class="sig-param"><span class="n">extended_durations</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/idf_class.html#IntensityDurationFrequencyAnalyse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse" title="Permalink to this definition">¶</a></dt>
+<dd><p>heavy rain as a function of the duration and the return period acc. to DWA-A 531 (2012)</p>
+<p>This program reads the measurement data of the rainfall
+and calculates the distribution of the rainfall as a function of the return period and the duration</p>
+<p>for duration steps up to 12 hours (and more) and return period in a range of ‘0.5a &lt;= T_n &lt;= 100a’</p>
+<dl class="py method">
+<dt id="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.auto_save_parameters">
+<code class="sig-name descname">auto_save_parameters</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/idf_class.html#IntensityDurationFrequencyAnalyse.auto_save_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.auto_save_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>auto-save the parameters as a yaml-file to save computation time.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.auto_save_rain_events">
+<code class="sig-name descname">auto_save_rain_events</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">sep</span><span class="o">=</span><span class="default_value">';'</span></em>, <em class="sig-param"><span class="n">decimal</span><span class="o">=</span><span class="default_value">'.'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/idf_class.html#IntensityDurationFrequencyAnalyse.auto_save_rain_events"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.auto_save_rain_events" title="Permalink to this definition">¶</a></dt>
+<dd><p>auto-save the rain-events dataframe as a csv-file to save computation time.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.auto_save_return_periods_frame">
+<code class="sig-name descname">auto_save_return_periods_frame</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/idf_class.html#IntensityDurationFrequencyAnalyse.auto_save_return_periods_frame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.auto_save_return_periods_frame" title="Permalink to this definition">¶</a></dt>
+<dd><p>auto-save the return-periods dataframe as a parquet-file to save computation time.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.depth_of_rainfall">
+<code class="sig-name descname">depth_of_rainfall</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">duration</span></em>, <em class="sig-param"><span class="n">return_period</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/idf_class.html#IntensityDurationFrequencyAnalyse.depth_of_rainfall"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.depth_of_rainfall" title="Permalink to this definition">¶</a></dt>
+<dd><p>calculate the height of the rainfall h in L/m² = mm</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>duration</strong> (<em>int | float | list | numpy.ndarray | pandas.Series</em>) – duration: in minutes</p></li>
+<li><p><strong>return_period</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – in years</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>height of the rainfall h in L/m² = mm</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int | float | list | numpy.ndarray | pandas.Series</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.duration_steps">
+<em class="property">property </em><code class="sig-name descname">duration_steps</code><a class="headerlink" href="#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.duration_steps" title="Permalink to this definition">¶</a></dt>
+<dd><p>get duration steps (in minutes) for the parameter calculation and basic evaluations
+:returns: duration steps in minutes
+:rtype: list | numpy.ndarray</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.event_report">
+<code class="sig-name descname">event_report</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">min_event_rain_sum</span><span class="o">=</span><span class="default_value">25</span></em>, <em class="sig-param"><span class="n">min_return_period</span><span class="o">=</span><span class="default_value">0.5</span></em>, <em class="sig-param"><span class="n">durations</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/idf_class.html#IntensityDurationFrequencyAnalyse.event_report"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.event_report" title="Permalink to this definition">¶</a></dt>
+<dd><p>create pdf file with the biggest rain events
+for each event is represented by a plot of the rain series
+and a IDF analysis where the return periods are calculated</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – path (directory + filename) for the created pdf-report</p></li>
+<li><p><strong>min_event_rain_sum</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – only events with a bigger rain sum will be created</p></li>
+<li><p><strong>min_return_period</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – only events with a bigger return period will be analysed
+(the plot will be created anyway)</p></li>
+<li><p><strong>out_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – path and filename of the final report</p></li>
+<li><p><strong>durations</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>]</em>) – analysed durations
+(default: [5, 10, 15, 20, 30, 45, 60, 90, 120, 180, 240, 360, 540, 720, 1080, 1440, 2880, 4320])</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.get_duration">
+<code class="sig-name descname">get_duration</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">height_of_rainfall</span></em>, <em class="sig-param"><span class="n">return_period</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/idf_class.html#IntensityDurationFrequencyAnalyse.get_duration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.get_duration" title="Permalink to this definition">¶</a></dt>
+<dd><p>calculate the duration, when the height of rainfall and the return period are given</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>height_of_rainfall</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – in [mm]</p></li>
+<li><p><strong>return_period</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – in years</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>duration in minutes</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.get_return_period">
+<code class="sig-name descname">get_return_period</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">height_of_rainfall</span></em>, <em class="sig-param"><span class="n">duration</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/idf_class.html#IntensityDurationFrequencyAnalyse.get_return_period"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.get_return_period" title="Permalink to this definition">¶</a></dt>
+<dd><p>calculate the return period, when the height of rainfall and the duration are given</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>height_of_rainfall</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – in [mm]</p></li>
+<li><p><strong>duration</strong> (<em>int | float | list | numpy.ndarray | pandas.Series</em>) – in minutes</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>return period in years</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int | float | list | numpy.ndarray | pandas.Series</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.get_return_periods_frame">
+<code class="sig-name descname">get_return_periods_frame</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">series</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">durations</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/idf_class.html#IntensityDurationFrequencyAnalyse.get_return_periods_frame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.get_return_periods_frame" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>series</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v1.1.4)"><em>pandas.Series</em></a>) – </p></li>
+<li><p><strong>durations</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – list of durations in minutes which are of interest (default: pre defined durations)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>return periods depending of the duration per datetimeindex</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.1.4)">pandas.DataFrame</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.get_u_w">
+<code class="sig-name descname">get_u_w</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">duration</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/idf_class.html#IntensityDurationFrequencyAnalyse.get_u_w"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.get_u_w" title="Permalink to this definition">¶</a></dt>
+<dd><p>calculate the u and w parameters depending on the durations</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>duration</strong> (<em>int | float | list | numpy.ndarray | pandas.Series</em>) – in minutes</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>u and w</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.19)">numpy.ndarray</a>, <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.19)">numpy.ndarray</a>) | (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.parameters">
+<em class="property">property </em><code class="sig-name descname">parameters</code><a class="headerlink" href="#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>get the calculation parameters</p>
+<p>calculation method depending on the used worksheet and on the duration
+also the parameters for each method</p>
+<p>to save some time and save the parameters with
+<a class="reference internal" href="#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.write_parameters" title="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.write_parameters"><code class="xref py py-func docutils literal notranslate"><span class="pre">IntensityDurationFrequencyAnalyse.write_parameters()</span></code></a>
+and read them later with <a class="reference internal" href="#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.read_parameters" title="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.read_parameters"><code class="xref py py-func docutils literal notranslate"><span class="pre">IntensityDurationFrequencyAnalyse.read_parameters()</span></code></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>calculation parameters</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="base_functions.html#idf_analysis.idf_parameters.IdfParameters" title="idf_analysis.idf_parameters.IdfParameters">IdfParameters</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.r_720_1">
+<code class="sig-name descname">r_720_1</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/idf_class.html#IntensityDurationFrequencyAnalyse.r_720_1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.r_720_1" title="Permalink to this definition">¶</a></dt>
+<dd><p>rain flow rate in [l/(s*ha)] for a duration of 12h and a return period of 1 year</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>rain flow rate in [l/(s*ha)]</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.rain_events">
+<em class="property">property </em><code class="sig-name descname">rain_events</code><a class="headerlink" href="#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.rain_events" title="Permalink to this definition">¶</a></dt>
+<dd><p>get the all the rain events of the time-series</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>data-frame of events with start-, end-time and duration</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.1.4)">pandas.DataFrame</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.rain_flow_rate">
+<code class="sig-name descname">rain_flow_rate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">duration</span></em>, <em class="sig-param"><span class="n">return_period</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/idf_class.html#IntensityDurationFrequencyAnalyse.rain_flow_rate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.rain_flow_rate" title="Permalink to this definition">¶</a></dt>
+<dd><p>convert the height of rainfall to the specific rain flow rate in [l/(s*ha)]
+if 2 array-like parameters are give, a element-wise calculation will be made.
+So the length of the array must be the same.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>duration</strong> (<em>int | float | list | numpy.ndarray | pandas.Series</em>) – in minutes</p></li>
+<li><p><strong>return_period</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – in years</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>specific rain flow rate in [l/(s*ha)]</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int | float | list | numpy.ndarray | pandas.Series</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.read_parameters">
+<code class="sig-name descname">read_parameters</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/idf_class.html#IntensityDurationFrequencyAnalyse.read_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.read_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>read parameters from a .yaml-file to save computation time.
+extract interim results from parameters</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – filename of the parameters yaml-file</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.read_rain_events">
+<code class="sig-name descname">read_rain_events</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">sep</span><span class="o">=</span><span class="default_value">';'</span></em>, <em class="sig-param"><span class="n">decimal</span><span class="o">=</span><span class="default_value">'.'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/idf_class.html#IntensityDurationFrequencyAnalyse.read_rain_events"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.read_rain_events" title="Permalink to this definition">¶</a></dt>
+<dd><p>read the rain-events dataframe as a csv-file to save computation time.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.read_return_periods_frame">
+<code class="sig-name descname">read_return_periods_frame</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/idf_class.html#IntensityDurationFrequencyAnalyse.read_return_periods_frame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.read_return_periods_frame" title="Permalink to this definition">¶</a></dt>
+<dd><p>read the return-periods dataframe as a parquet-file to save computation time.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.result_table">
+<code class="sig-name descname">result_table</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">durations</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">return_periods</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">add_names</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/idf_class.html#IntensityDurationFrequencyAnalyse.result_table"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.result_table" title="Permalink to this definition">¶</a></dt>
+<dd><p>get a standard idf table of rainfall depth with return periods as columns and durations as rows</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>durations</strong> (<em>list | numpy.ndarray</em>) – list of durations in minutes for the table</p></li>
+<li><p><strong>return_periods</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – list of return periods in years for the table</p></li>
+<li><p><strong>add_names</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – weather to use expressive names as index-&amp;column-label</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>idf table</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.1.4)">pandas.DataFrame</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.return_periods_frame">
+<em class="property">property </em><code class="sig-name descname">return_periods_frame</code><a class="headerlink" href="#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.return_periods_frame" title="Permalink to this definition">¶</a></dt>
+<dd><p>get the return periods over the whole time-series for the default duration steps.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>data-frame of return periods where the columns are the duration steps</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.1.4)">pandas.DataFrame</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.set_series">
+<code class="sig-name descname">set_series</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">series</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/idf_class.html#IntensityDurationFrequencyAnalyse.set_series"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.set_series" title="Permalink to this definition">¶</a></dt>
+<dd><p>set the series for the analysis</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>series</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v1.1.4)"><em>pandas.Series</em></a>) – precipitation time-series</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.write_parameters">
+<code class="sig-name descname">write_parameters</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/idf_class.html#IntensityDurationFrequencyAnalyse.write_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.write_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>save parameters as yaml-file to save computation time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – filename for the parameters yaml-file</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.write_rain_events">
+<code class="sig-name descname">write_rain_events</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">sep</span><span class="o">=</span><span class="default_value">';'</span></em>, <em class="sig-param"><span class="n">decimal</span><span class="o">=</span><span class="default_value">'.'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/idf_class.html#IntensityDurationFrequencyAnalyse.write_rain_events"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.write_rain_events" title="Permalink to this definition">¶</a></dt>
+<dd><p>save the rain-events dataframe as a csv-file for external use or to save computation time.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.write_return_periods_frame">
+<code class="sig-name descname">write_return_periods_frame</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/idf_analysis/idf_class.html#IntensityDurationFrequencyAnalyse.write_return_periods_frame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.write_return_periods_frame" title="Permalink to this definition">¶</a></dt>
+<dd><p>save the return-periods dataframe as a parquet-file to save computation time.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">API</a><ul>
+<li><a class="reference internal" href="#main-function">Main Function</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="README.html"
+                        title="previous chapter">Description</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="base_functions.html"
+                        title="next chapter">Base Functions</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/api.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="base_functions.html" title="Base Functions"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="README.html" title="Description"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Intensity Duration Frequency Analyse 0.1.11-14 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">API</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Pichler.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.2.1.
+    </div>
+  </body>
+</html>

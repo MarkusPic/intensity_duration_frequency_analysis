@@ -1,0 +1,767 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>idf_analysis.idf_class &#8212; Intensity Duration Frequency Analyse 0.1.11-14 documentation</title>
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Intensity Duration Frequency Analyse 0.1.11-14 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">idf_analysis.idf_class</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for idf_analysis.idf_class</h1><div class="highlight"><pre>
+<span></span><span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Markus Pichler&quot;</span>
+<span class="n">__credits__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Markus Pichler&quot;</span><span class="p">]</span>
+<span class="n">__maintainer__</span> <span class="o">=</span> <span class="s2">&quot;Markus Pichler&quot;</span>
+<span class="n">__email__</span> <span class="o">=</span> <span class="s2">&quot;markus.pichler@tugraz.at&quot;</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;0.1&quot;</span>
+<span class="n">__license__</span> <span class="o">=</span> <span class="s2">&quot;MIT&quot;</span>
+
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">floor</span>
+<span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">path</span><span class="p">,</span> <span class="n">mkdir</span>
+<span class="kn">from</span> <span class="nn">webbrowser</span> <span class="kn">import</span> <span class="nb">open</span> <span class="k">as</span> <span class="n">show_file</span>
+<span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="kn">import</span> <span class="n">newton</span>
+
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">matplotlib.backends.backend_pdf</span> <span class="kn">import</span> <span class="n">PdfPages</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+
+<span class="kn">from</span> <span class="nn">.arg_parser</span> <span class="kn">import</span> <span class="n">heavy_rain_parser</span>
+<span class="kn">from</span> <span class="nn">.idf_parameters</span> <span class="kn">import</span> <span class="n">IdfParameters</span>
+<span class="kn">from</span> <span class="nn">.little_helpers</span> <span class="kn">import</span> <span class="n">minutes_readable</span><span class="p">,</span> <span class="n">height2rate</span><span class="p">,</span> <span class="n">delta2min</span><span class="p">,</span> <span class="n">rate2height</span>
+<span class="kn">from</span> <span class="nn">.definitions</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">.in_out</span> <span class="kn">import</span> <span class="n">import_series</span>
+<span class="kn">from</span> <span class="nn">.sww_utils</span> <span class="kn">import</span> <span class="p">(</span><span class="n">remove_timezone</span><span class="p">,</span> <span class="n">guess_freq</span><span class="p">,</span> <span class="n">rain_events</span><span class="p">,</span> <span class="n">agg_events</span><span class="p">,</span> <span class="n">event_duration</span><span class="p">,</span> <span class="n">resample_rain_series</span><span class="p">,</span>
+                        <span class="n">rain_bar_plot</span><span class="p">,</span> <span class="n">IdfError</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">.plot_helpers</span> <span class="kn">import</span> <span class="n">idf_bar_axes</span>
+<span class="kn">from</span> <span class="nn">.additional_scripts</span> <span class="kn">import</span> <span class="n">measured_points</span>
+
+
+<span class="c1">########################################################################################################################</span>
+<div class="viewcode-block" id="IntensityDurationFrequencyAnalyse"><a class="viewcode-back" href="../../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse">[docs]</a><span class="k">class</span> <span class="nc">IntensityDurationFrequencyAnalyse</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    heavy rain as a function of the duration and the return period acc. to DWA-A 531 (2012)</span>
+
+<span class="sd">    This program reads the measurement data of the rainfall</span>
+<span class="sd">    and calculates the distribution of the rainfall as a function of the return period and the duration</span>
+<span class="sd">    </span>
+<span class="sd">    for duration steps up to 12 hours (and more) and return period in a range of &#39;0.5a &lt;= T_n &lt;= 100a&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">series_kind</span><span class="o">=</span><span class="n">PARTIAL</span><span class="p">,</span> <span class="n">worksheet</span><span class="o">=</span><span class="n">DWA</span><span class="p">,</span> <span class="n">extended_durations</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        heavy rain as a function of the duration and the return period acc. to DWA-A 531 (2012)</span>
+
+<span class="sd">        This program reads the measurement data of the rainfall</span>
+<span class="sd">        and calculates the distribution of the rainfall as a function of the return period and the duration</span>
+
+<span class="sd">        for duration steps up to 12 hours (and more) and return period in a range of &#39;0.5a &lt;= T_n &lt;= 100a&#39;</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            series_kind (str): [&#39;partial&#39;, &#39;annual&#39;]</span>
+<span class="sd">            worksheet (str): [&#39;DWA-A_531&#39;, &#39;ATV-A_121&#39;, &#39;DWA-A_531_advektiv&#39;]</span>
+<span class="sd">            extended_durations (bool): add [720, 1080, 1440, 2880, 4320, 5760, 7200, 8640] minutes to the calculation</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">series_kind</span> <span class="o">=</span> <span class="n">series_kind</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">worksheet</span> <span class="o">=</span> <span class="n">worksheet</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_series</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: pd.Series # rain time-series</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_freq</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># frequency of the rain series</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parameter</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: IdfParameters #  how to calculate the idf curves</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_return_periods_frame</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: pd.DataFrame # with return periods of all given durations</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rain_events</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># sampling points of the duration steps in minutes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_duration_steps</span> <span class="o">=</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">90</span><span class="p">]</span>
+        <span class="c1"># self._duration_steps += [i * 60 for i in [3, 4.5, 6, 7.5, 10, 12, 18]]  # duration steps in hours</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_duration_steps</span> <span class="o">+=</span> <span class="p">[</span><span class="n">i</span> <span class="o">*</span> <span class="mi">60</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">18</span><span class="p">]]</span>  <span class="c1"># duration steps in hours</span>
+        <span class="k">if</span> <span class="n">extended_durations</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_duration_steps</span> <span class="o">+=</span> <span class="p">[</span><span class="n">i</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">24</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]]</span>  <span class="c1"># duration steps in days</span>
+
+    <span class="c1"># __________________________________________________________________________________________________________________</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">series</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_series</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">IdfError</span><span class="p">(</span><span class="s1">&#39;No Series defined for IDF-Analysis!&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_series</span>
+
+    <span class="nd">@series</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">series</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">series</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_series</span> <span class="o">=</span> <span class="n">series</span>
+
+<div class="viewcode-block" id="IntensityDurationFrequencyAnalyse.set_series"><a class="viewcode-back" href="../../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.set_series">[docs]</a>    <span class="k">def</span> <span class="nf">set_series</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">series</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        set the series for the analysis</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            series (pandas.Series): precipitation time-series</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">IdfError</span><span class="p">(</span><span class="s1">&#39;The series has to be a pandas Series.&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">series</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DatetimeIndex</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">IdfError</span><span class="p">(</span><span class="s1">&#39;The series has to have a DatetimeIndex.&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">series</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">tz</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">series</span> <span class="o">=</span> <span class="n">remove_timezone</span><span class="p">(</span><span class="n">series</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_freq</span> <span class="o">=</span> <span class="n">guess_freq</span><span class="p">(</span><span class="n">series</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+        <span class="n">freq_minutes</span> <span class="o">=</span> <span class="n">delta2min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_freq</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">duration_steps</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">d</span> <span class="o">&gt;=</span> <span class="n">freq_minutes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">duration_steps</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">series</span> <span class="o">=</span> <span class="n">series</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_return_periods_frame</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rain_events</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+    <span class="c1"># __________________________________________________________________________________________________________________</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">duration_steps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        get duration steps (in minutes) for the parameter calculation and basic evaluations</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            list | numpy.ndarray: duration steps in minutes</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_duration_steps</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">IdfError</span><span class="p">(</span><span class="s1">&#39;No Series defined for IDF-Analysis!&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_duration_steps</span>
+
+    <span class="nd">@duration_steps</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">duration_steps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">durations</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        set duration steps (in minutes) for the parameter calculation and basic evaluations</span>
+<span class="sd">        Args:</span>
+<span class="sd">            durations (list | numpy.ndarray): duration steps in minutes</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">durations</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="n">IdfError</span><span class="p">(</span><span class="s1">&#39;Duration steps have to be </span><span class="si">{}</span><span class="s1"> got &quot;</span><span class="si">{}</span><span class="s1">&quot;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">((</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">),</span> <span class="nb">type</span><span class="p">(</span><span class="n">durations</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_duration_steps</span> <span class="o">=</span> <span class="n">durations</span>
+
+    <span class="c1"># __________________________________________________________________________________________________________________</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        get the calculation parameters</span>
+
+<span class="sd">        calculation method depending on the used worksheet and on the duration</span>
+<span class="sd">        also the parameters for each method</span>
+
+<span class="sd">        to save some time and save the parameters with</span>
+<span class="sd">        :func:`IntensityDurationFrequencyAnalyse.write_parameters`</span>
+<span class="sd">        and read them later with :func:`IntensityDurationFrequencyAnalyse.read_parameters`</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            IdfParameters: calculation parameters</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameter</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_parameter</span> <span class="o">=</span> <span class="n">IdfParameters</span><span class="o">.</span><span class="n">from_series</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">series</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">duration_steps</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">series_kind</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">worksheet</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameter</span>
+
+<div class="viewcode-block" id="IntensityDurationFrequencyAnalyse.write_parameters"><a class="viewcode-back" href="../../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.write_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">write_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        save parameters as yaml-file to save computation time.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            filename (str): filename for the parameters yaml-file</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">to_yaml</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="IntensityDurationFrequencyAnalyse.read_parameters"><a class="viewcode-back" href="../../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.read_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">read_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        read parameters from a .yaml-file to save computation time.</span>
+<span class="sd">        extract interim results from parameters</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            filename (str): filename of the parameters yaml-file</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parameter</span> <span class="o">=</span> <span class="n">IdfParameters</span><span class="o">.</span><span class="n">from_yaml</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="IntensityDurationFrequencyAnalyse.auto_save_parameters"><a class="viewcode-back" href="../../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.auto_save_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">auto_save_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;auto-save the parameters as a yaml-file to save computation time.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">read_parameters</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">write_parameters</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span></div>
+
+    <span class="c1"># __________________________________________________________________________________________________________________</span>
+<div class="viewcode-block" id="IntensityDurationFrequencyAnalyse.get_u_w"><a class="viewcode-back" href="../../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.get_u_w">[docs]</a>    <span class="k">def</span> <span class="nf">get_u_w</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">duration</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        calculate the u and w parameters depending on the durations</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            duration (int | float | list | numpy.ndarray | pandas.Series): in minutes</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (numpy.ndarray, numpy.ndarray) | (float, float): u and w</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">get_u_w</span><span class="p">(</span><span class="n">duration</span><span class="p">)</span></div>
+
+    <span class="c1"># __________________________________________________________________________________________________________________</span>
+<div class="viewcode-block" id="IntensityDurationFrequencyAnalyse.depth_of_rainfall"><a class="viewcode-back" href="../../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.depth_of_rainfall">[docs]</a>    <span class="k">def</span> <span class="nf">depth_of_rainfall</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">return_period</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        calculate the height of the rainfall h in L/m² = mm</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            duration (int | float | list | numpy.ndarray | pandas.Series): duration: in minutes</span>
+<span class="sd">            return_period (float): in years</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int | float | list | numpy.ndarray | pandas.Series: height of the rainfall h in L/m² = mm</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">series_kind</span> <span class="o">==</span> <span class="n">ANNUAL</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">return_period</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;WARNING: Using an annual series and a return period &lt; 5 a will result in faulty values!&#39;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">return_period</span> <span class="o">&lt;=</span> <span class="mi">10</span><span class="p">:</span>
+                <span class="n">return_period</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">return_period</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">return_period</span><span class="p">)</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span>
+
+            <span class="n">log_tn</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">return_period</span> <span class="o">/</span> <span class="p">(</span><span class="n">return_period</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)))</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">log_tn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">return_period</span><span class="p">)</span>
+
+        <span class="n">u</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_u_w</span><span class="p">(</span><span class="n">duration</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">u</span> <span class="o">+</span> <span class="n">w</span> <span class="o">*</span> <span class="n">log_tn</span></div>
+
+    <span class="c1"># __________________________________________________________________________________________________________________</span>
+<div class="viewcode-block" id="IntensityDurationFrequencyAnalyse.rain_flow_rate"><a class="viewcode-back" href="../../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.rain_flow_rate">[docs]</a>    <span class="k">def</span> <span class="nf">rain_flow_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">return_period</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        convert the height of rainfall to the specific rain flow rate in [l/(s*ha)]</span>
+<span class="sd">        if 2 array-like parameters are give, a element-wise calculation will be made.</span>
+<span class="sd">        So the length of the array must be the same.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            duration (int | float | list | numpy.ndarray | pandas.Series): in minutes</span>
+<span class="sd">            return_period (float): in years</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">                int | float | list | numpy.ndarray | pandas.Series: specific rain flow rate in [l/(s*ha)]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">height_of_rainfall</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">depth_of_rainfall</span><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="n">duration</span><span class="p">,</span> <span class="n">return_period</span><span class="o">=</span><span class="n">return_period</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">height2rate</span><span class="p">(</span><span class="n">height_of_rainfall</span><span class="o">=</span><span class="n">height_of_rainfall</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="n">duration</span><span class="p">)</span></div>
+
+    <span class="c1"># __________________________________________________________________________________________________________________</span>
+<div class="viewcode-block" id="IntensityDurationFrequencyAnalyse.r_720_1"><a class="viewcode-back" href="../../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.r_720_1">[docs]</a>    <span class="k">def</span> <span class="nf">r_720_1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        rain flow rate in [l/(s*ha)] for a duration of 12h and a return period of 1 year</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: rain flow rate in [l/(s*ha)]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rain_flow_rate</span><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="mi">720</span><span class="p">,</span> <span class="n">return_period</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
+
+    <span class="c1"># __________________________________________________________________________________________________________________</span>
+<div class="viewcode-block" id="IntensityDurationFrequencyAnalyse.get_return_period"><a class="viewcode-back" href="../../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.get_return_period">[docs]</a>    <span class="k">def</span> <span class="nf">get_return_period</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">height_of_rainfall</span><span class="p">,</span> <span class="n">duration</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        calculate the return period, when the height of rainfall and the duration are given</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            height_of_rainfall (float): in [mm]</span>
+<span class="sd">            duration (int | float | list | numpy.ndarray | pandas.Series): in minutes</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int | float | list | numpy.ndarray | pandas.Series: return period in years</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">u</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_u_w</span><span class="p">(</span><span class="n">duration</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">((</span><span class="n">height_of_rainfall</span> <span class="o">-</span> <span class="n">u</span><span class="p">)</span> <span class="o">/</span> <span class="n">w</span><span class="p">)</span></div>
+
+    <span class="c1"># __________________________________________________________________________________________________________________</span>
+<div class="viewcode-block" id="IntensityDurationFrequencyAnalyse.get_duration"><a class="viewcode-back" href="../../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.get_duration">[docs]</a>    <span class="k">def</span> <span class="nf">get_duration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">height_of_rainfall</span><span class="p">,</span> <span class="n">return_period</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        calculate the duration, when the height of rainfall and the return period are given</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            height_of_rainfall (float): in [mm]</span>
+<span class="sd">            return_period (float): in years</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: duration in minutes</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">newton</span><span class="p">(</span><span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">depth_of_rainfall</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">return_period</span><span class="p">)</span> <span class="o">-</span> <span class="n">height_of_rainfall</span><span class="p">,</span> <span class="n">x0</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
+
+    <span class="c1"># __________________________________________________________________________________________________________________</span>
+<div class="viewcode-block" id="IntensityDurationFrequencyAnalyse.result_table"><a class="viewcode-back" href="../../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.result_table">[docs]</a>    <span class="k">def</span> <span class="nf">result_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">durations</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">return_periods</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">add_names</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        get a standard idf table of rainfall depth with return periods as columns and durations as rows</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            durations (list | numpy.ndarray): list of durations in minutes for the table</span>
+<span class="sd">            return_periods (list): list of return periods in years for the table</span>
+<span class="sd">            add_names (bool): weather to use expressive names as index-&amp;column-label</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pandas.DataFrame: idf table</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">durations</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">durations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">duration_steps</span>
+
+        <span class="k">if</span> <span class="n">return_periods</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">return_periods</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">75</span><span class="p">,</span> <span class="mi">100</span><span class="p">]</span>
+
+        <span class="n">result_table</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">return_periods</span><span class="p">:</span>
+            <span class="n">result_table</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">depth_of_rainfall</span><span class="p">(</span><span class="n">durations</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+
+        <span class="n">result_table</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">result_table</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">durations</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">add_names</span><span class="p">:</span>
+            <span class="n">result_table</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;duration (min)&#39;</span>
+            <span class="n">result_table</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">MultiIndex</span><span class="o">.</span><span class="n">from_tuples</span><span class="p">([(</span><span class="n">rp</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">rp</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span> <span class="k">for</span> <span class="n">rp</span> <span class="ow">in</span> <span class="n">result_table</span><span class="o">.</span><span class="n">columns</span><span class="p">])</span>
+            <span class="n">result_table</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;return period (a)&#39;</span><span class="p">,</span> <span class="s1">&#39;frequency (1/a)&#39;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">result_table</span></div>
+
+    <span class="c1">####################################################################################################################</span>
+    <span class="k">def</span> <span class="nf">result_figure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">min_duration</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span> <span class="n">max_duration</span><span class="o">=</span><span class="mf">720.0</span><span class="p">,</span> <span class="n">logx</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">return_periods</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="n">duration_steps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">min_duration</span><span class="p">,</span> <span class="n">max_duration</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;bmh&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">return_periods</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">return_periods</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">100</span><span class="p">]</span>
+
+        <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">result_table</span><span class="p">(</span><span class="n">durations</span><span class="o">=</span><span class="n">duration_steps</span><span class="p">,</span> <span class="n">return_periods</span><span class="o">=</span><span class="n">return_periods</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">color</span><span class="p">:</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;T$</span><span class="se">\\</span><span class="s1">mathsf</span><span class="si">{_N}</span><span class="s1">$ in (a)&#39;</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span> <span class="k">if</span> <span class="n">color</span> <span class="k">else</span> <span class="s1">&#39;black&#39;</span><span class="p">),</span> <span class="n">logx</span><span class="o">=</span><span class="n">logx</span><span class="p">,</span> <span class="n">legend</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">return_time</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">return_periods</span><span class="p">):</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="n">measured_points</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">return_time</span><span class="p">,</span> <span class="n">max_duration</span><span class="o">=</span><span class="n">max_duration</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="s1">&#39;k&#39;</span> <span class="o">+</span> <span class="s1">&#39;x&#39;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">color</span><span class="p">:</span>
+                <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">tail</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="mi">10</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> a&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">return_time</span><span class="p">),</span> <span class="n">verticalalignment</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">horizontalalignment</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span>
+                        <span class="c1"># bbox=dict(facecolor=&#39;white&#39;, alpha=1.0, lw=1)</span>
+                        <span class="p">)</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="s1">&#39;out&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Duration D in (min)&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Rainfall h$</span><span class="se">\\</span><span class="s1">mathsf</span><span class="si">{_N}</span><span class="s1">$ in (mm)&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;IDF curves&#39;</span><span class="p">)</span>
+
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_figure</span><span class="p">()</span>
+
+        <span class="n">cm_to_inch</span> <span class="o">=</span> <span class="mf">2.54</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">(</span><span class="n">h</span><span class="o">=</span><span class="mi">21</span> <span class="o">/</span> <span class="n">cm_to_inch</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="mf">29.7</span> <span class="o">/</span> <span class="n">cm_to_inch</span><span class="p">)</span>  <span class="c1"># (11.69, 8.27)</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span>
+
+    <span class="c1">####################################################################################################################</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">command_line_tool</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="n">heavy_rain_parser</span><span class="p">()</span>
+
+        <span class="c1"># --------------------------------------------------</span>
+        <span class="c1"># use the same directory as the input file and make as subdir with the name of the input_file + &quot;_idf_data&quot;</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{label}</span><span class="s1">_idf_data&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">user</span><span class="o">.</span><span class="n">input</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">out</span><span class="p">):</span>
+            <span class="n">mkdir</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+            <span class="n">action</span> <span class="o">=</span> <span class="s1">&#39;Creating&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">action</span> <span class="o">=</span> <span class="s1">&#39;Using&#39;</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> the subfolder &quot;</span><span class="si">{}</span><span class="s1">&quot; for the interim- and final-results.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="n">out</span><span class="p">))</span>
+
+        <span class="n">fn_pattern</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="s1">&#39;idf_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="c1"># --------------------------------------------------</span>
+        <span class="n">idf</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">series_kind</span><span class="o">=</span><span class="n">user</span><span class="o">.</span><span class="n">series_kind</span><span class="p">,</span> <span class="n">worksheet</span><span class="o">=</span><span class="n">user</span><span class="o">.</span><span class="n">worksheet</span><span class="p">,</span> <span class="n">extended_durations</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># --------------------------------------------------</span>
+        <span class="n">parameters_fn</span> <span class="o">=</span> <span class="n">fn_pattern</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;parameters.yaml&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">parameters_fn</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Found existing interim-results in &quot;</span><span class="si">{}</span><span class="s1">&quot; and using them for calculations.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">parameters_fn</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Start reading the time-series </span><span class="si">{}</span><span class="s1"> for the analysis.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">user</span><span class="o">.</span><span class="n">input</span><span class="p">))</span>
+            <span class="n">ts</span> <span class="o">=</span> <span class="n">import_series</span><span class="p">(</span><span class="n">user</span><span class="o">.</span><span class="n">input</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+            <span class="c1"># --------------------------------------------------</span>
+            <span class="n">idf</span><span class="o">.</span><span class="n">set_series</span><span class="p">(</span><span class="n">ts</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Finished reading.&#39;</span><span class="p">)</span>
+
+        <span class="c1"># --------------------------------------------------</span>
+        <span class="n">idf</span><span class="o">.</span><span class="n">auto_save_parameters</span><span class="p">(</span><span class="n">parameters_fn</span><span class="p">)</span>
+
+        <span class="c1"># --------------------------------------------------</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">height_of_rainfall</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">flow_rate_of_rainfall</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">duration</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">return_period</span>
+
+        <span class="k">if</span> <span class="n">r</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">h</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">d</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">h</span> <span class="o">=</span> <span class="n">rate2height</span><span class="p">(</span><span class="n">rain_flow_rate</span><span class="o">=</span><span class="n">r</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="n">d</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="n">d</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">h</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">d</span> <span class="o">=</span> <span class="n">h</span><span class="o">/</span><span class="n">r</span> <span class="o">*</span> <span class="mi">1000</span><span class="o">/</span><span class="mi">6</span>
+
+        <span class="k">if</span> <span class="n">user</span><span class="o">.</span><span class="n">r_720_1</span><span class="p">:</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="mi">720</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="k">if</span> <span class="nb">any</span><span class="p">((</span><span class="n">h</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">t</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="nb">all</span><span class="p">((</span><span class="n">d</span><span class="p">,</span> <span class="n">t</span><span class="p">)):</span>
+                <span class="k">pass</span>
+
+            <span class="k">elif</span> <span class="nb">all</span><span class="p">((</span><span class="n">d</span><span class="p">,</span> <span class="n">h</span><span class="p">)):</span>
+                <span class="n">t</span> <span class="o">=</span> <span class="n">idf</span><span class="o">.</span><span class="n">get_return_period</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;The return period is </span><span class="si">{:0.1f}</span><span class="s1"> years.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="p">))</span>
+
+            <span class="k">elif</span> <span class="nb">all</span><span class="p">((</span><span class="n">h</span><span class="p">,</span> <span class="n">t</span><span class="p">)):</span>
+                <span class="n">d</span> <span class="o">=</span> <span class="n">idf</span><span class="o">.</span><span class="n">get_duration</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;The duration is </span><span class="si">{:0.1f}</span><span class="s1"> minutes.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">d</span><span class="p">))</span>
+
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Resultierende Regenhöhe h_N(T_n=</span><span class="si">{t:0.1f}</span><span class="s1">a, D=</span><span class="si">{d:0.1f}</span><span class="s1">min) = </span><span class="si">{h:0.2f}</span><span class="s1"> mm&#39;</span>
+                  <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="o">=</span><span class="n">t</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="n">d</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">idf</span><span class="o">.</span><span class="n">depth_of_rainfall</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">t</span><span class="p">)))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Resultierende Regenspende r_N(T_n=</span><span class="si">{t:0.1f}</span><span class="s1">a, D=</span><span class="si">{d:0.1f}</span><span class="s1">min) = </span><span class="si">{r:0.2f}</span><span class="s1"> L/(s*ha)&#39;</span>
+                  <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="o">=</span><span class="n">t</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="n">d</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="n">idf</span><span class="o">.</span><span class="n">rain_flow_rate</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">t</span><span class="p">)))</span>
+
+        <span class="c1"># --------------------------------------------------</span>
+        <span class="k">if</span> <span class="n">user</span><span class="o">.</span><span class="n">plot</span><span class="p">:</span>
+            <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">idf</span><span class="o">.</span><span class="n">result_figure</span><span class="p">()</span>
+            <span class="n">plot_fn</span> <span class="o">=</span> <span class="n">fn_pattern</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;curves_plot.png&#39;</span><span class="p">)</span>
+            <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">plot_fn</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">260</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
+            <span class="n">show_file</span><span class="p">(</span><span class="n">plot_fn</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Created the IDF-curves-plot and saved the file as &quot;</span><span class="si">{}</span><span class="s1">&quot;.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">plot_fn</span><span class="p">))</span>
+
+        <span class="c1"># --------------------------------------------------</span>
+        <span class="k">if</span> <span class="n">user</span><span class="o">.</span><span class="n">export_table</span><span class="p">:</span>
+            <span class="n">table</span> <span class="o">=</span> <span class="n">idf</span><span class="o">.</span><span class="n">result_table</span><span class="p">(</span><span class="n">add_names</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">to_string</span><span class="p">())</span>
+            <span class="n">table_fn</span> <span class="o">=</span> <span class="n">fn_pattern</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;table.csv&#39;</span><span class="p">)</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">table_fn</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;;&#39;</span><span class="p">,</span> <span class="n">decimal</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">float_format</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%0.2f</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Created the IDF-curves-plot and saved the file as &quot;</span><span class="si">{}</span><span class="s1">&quot;.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">table_fn</span><span class="p">))</span>
+
+    <span class="c1">####################################################################################################################</span>
+<div class="viewcode-block" id="IntensityDurationFrequencyAnalyse.get_return_periods_frame"><a class="viewcode-back" href="../../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.get_return_periods_frame">[docs]</a>    <span class="k">def</span> <span class="nf">get_return_periods_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">series</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">durations</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            series (pandas.Series):</span>
+<span class="sd">            durations (list): list of durations in minutes which are of interest (default: pre defined durations)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pandas.DataFrame: return periods depending of the duration per datetimeindex</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">durations</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">durations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">duration_steps</span>
+
+        <span class="k">if</span> <span class="n">series</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">series</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">freq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_freq</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">freq</span> <span class="o">=</span> <span class="n">guess_freq</span><span class="p">(</span><span class="n">series</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+            <span class="n">ts</span> <span class="o">=</span> <span class="n">series</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="n">ts</span> <span class="o">=</span> <span class="n">ts</span><span class="o">.</span><span class="n">asfreq</span><span class="p">(</span><span class="n">freq</span><span class="p">)</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">ts</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+
+        <span class="n">freq_num</span> <span class="o">=</span> <span class="n">delta2min</span><span class="p">(</span><span class="n">freq</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">ts</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">30000</span><span class="p">:</span>   <span class="c1"># if &gt; 3 weeks, use a progressbar</span>
+            <span class="n">dur_loop</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">durations</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;calculating return periods data-frame&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dur_loop</span> <span class="o">=</span> <span class="n">durations</span>
+
+        <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dur_loop</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">d</span> <span class="o">%</span> <span class="n">freq_num</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Using durations (= </span><span class="si">{}</span><span class="s1"> minutes), &#39;</span>
+                              <span class="s1">&#39;which are not a multiple of the base frequency (= </span><span class="si">{}</span><span class="s1"> minutes) of the series, &#39;</span>
+                              <span class="s1">&#39;will lead to misinterpretations.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">freq_num</span><span class="p">))</span>
+            <span class="n">ts_sum</span> <span class="o">=</span> <span class="n">ts</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="n">d</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+            <span class="n">df</span><span class="p">[</span><span class="n">d</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_return_period</span><span class="p">(</span><span class="n">height_of_rainfall</span><span class="o">=</span><span class="n">ts_sum</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="n">d</span><span class="p">)</span>
+
+        <span class="c1"># printable_names (bool): if durations should be as readable in dataframe, else in minutes</span>
+        <span class="c1"># df = df.rename(minutes_readable, axis=0)</span>
+
+        <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">return_periods_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        get the return periods over the whole time-series for the default duration steps.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pandas.DataFrame: data-frame of return periods where the columns are the duration steps</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_return_periods_frame</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_return_periods_frame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_return_periods_frame</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_return_periods_frame</span>
+
+<div class="viewcode-block" id="IntensityDurationFrequencyAnalyse.write_return_periods_frame"><a class="viewcode-back" href="../../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.write_return_periods_frame">[docs]</a>    <span class="k">def</span> <span class="nf">write_return_periods_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;save the return-periods dataframe as a parquet-file to save computation time.&quot;&quot;&quot;</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">return_periods_frame</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">to_series</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">to_parquet</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="IntensityDurationFrequencyAnalyse.read_return_periods_frame"><a class="viewcode-back" href="../../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.read_return_periods_frame">[docs]</a>    <span class="k">def</span> <span class="nf">read_return_periods_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;read the return-periods dataframe as a parquet-file to save computation time.&quot;&quot;&quot;</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">to_series</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_return_periods_frame</span> <span class="o">=</span> <span class="n">df</span></div>
+
+<div class="viewcode-block" id="IntensityDurationFrequencyAnalyse.auto_save_return_periods_frame"><a class="viewcode-back" href="../../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.auto_save_return_periods_frame">[docs]</a>    <span class="k">def</span> <span class="nf">auto_save_return_periods_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;auto-save the return-periods dataframe as a parquet-file to save computation time.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">read_return_periods_frame</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">write_return_periods_frame</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span></div>
+
+    <span class="c1">####################################################################################################################</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">rain_events</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        get the all the rain events of the time-series</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pandas.DataFrame: data-frame of events with start-, end-time and duration</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rain_events</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">events</span> <span class="o">=</span> <span class="n">rain_events</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">series</span><span class="p">)</span>
+            <span class="n">events</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">DUR</span><span class="p">]</span> <span class="o">=</span> <span class="n">event_duration</span><span class="p">(</span><span class="n">events</span><span class="p">)</span>
+            <span class="n">events</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">LP</span><span class="p">]</span> <span class="o">=</span> <span class="n">agg_events</span><span class="p">(</span><span class="n">events</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">series</span><span class="p">,</span> <span class="s1">&#39;sum&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="c1"># events = events.sort_values(by=COL.LP, ascending=False)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_rain_events</span> <span class="o">=</span> <span class="n">events</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rain_events</span>
+
+<div class="viewcode-block" id="IntensityDurationFrequencyAnalyse.write_rain_events"><a class="viewcode-back" href="../../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.write_rain_events">[docs]</a>    <span class="k">def</span> <span class="nf">write_rain_events</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;;&#39;</span><span class="p">,</span> <span class="n">decimal</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;save the rain-events dataframe as a csv-file for external use or to save computation time.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rain_events</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="n">sep</span><span class="p">,</span> <span class="n">decimal</span><span class="o">=</span><span class="n">decimal</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="IntensityDurationFrequencyAnalyse.read_rain_events"><a class="viewcode-back" href="../../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.read_rain_events">[docs]</a>    <span class="k">def</span> <span class="nf">read_rain_events</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;;&#39;</span><span class="p">,</span> <span class="n">decimal</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;read the rain-events dataframe as a csv-file to save computation time.&quot;&quot;&quot;</span>
+        <span class="n">events</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">skipinitialspace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="n">sep</span><span class="p">,</span> <span class="n">decimal</span><span class="o">=</span><span class="n">decimal</span><span class="p">)</span>
+        <span class="n">events</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">START</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">events</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">START</span><span class="p">])</span>
+        <span class="n">events</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">END</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">events</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">END</span><span class="p">])</span>
+        <span class="n">events</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">DUR</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_timedelta</span><span class="p">(</span><span class="n">events</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">DUR</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rain_events</span> <span class="o">=</span> <span class="n">events</span></div>
+
+<div class="viewcode-block" id="IntensityDurationFrequencyAnalyse.auto_save_rain_events"><a class="viewcode-back" href="../../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.auto_save_rain_events">[docs]</a>    <span class="k">def</span> <span class="nf">auto_save_rain_events</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;;&#39;</span><span class="p">,</span> <span class="n">decimal</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;auto-save the rain-events dataframe as a csv-file to save computation time.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">read_rain_events</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="n">sep</span><span class="p">,</span> <span class="n">decimal</span><span class="o">=</span><span class="n">decimal</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">write_rain_events</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="n">sep</span><span class="p">,</span> <span class="n">decimal</span><span class="o">=</span><span class="n">decimal</span><span class="p">)</span></div>
+
+    <span class="c1">####################################################################################################################</span>
+<div class="viewcode-block" id="IntensityDurationFrequencyAnalyse.event_report"><a class="viewcode-back" href="../../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.event_report">[docs]</a>    <span class="k">def</span> <span class="nf">event_report</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">min_event_rain_sum</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> <span class="n">min_return_period</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">durations</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        create pdf file with the biggest rain events</span>
+<span class="sd">        for each event is represented by a plot of the rain series</span>
+<span class="sd">        and a IDF analysis where the return periods are calculated</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            filename (str): path (directory + filename) for the created pdf-report</span>
+<span class="sd">            min_event_rain_sum (float): only events with a bigger rain sum will be created</span>
+<span class="sd">            min_return_period (float): only events with a bigger return period will be analysed</span>
+<span class="sd">                                       (the plot will be created anyway)</span>
+<span class="sd">            out_path (str): path and filename of the final report</span>
+<span class="sd">            durations (list[int]): analysed durations</span>
+<span class="sd">                        (default: [5, 10, 15, 20, 30, 45, 60, 90, 120, 180, 240, 360, 540, 720, 1080, 1440, 2880, 4320])</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">durations</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">durations</span> <span class="o">=</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">240</span><span class="p">,</span> <span class="mi">360</span><span class="p">,</span> <span class="mi">540</span><span class="p">,</span> <span class="mi">720</span><span class="p">,</span> <span class="mi">1080</span><span class="p">,</span> <span class="mi">1440</span><span class="p">,</span> <span class="mi">2880</span><span class="p">,</span> <span class="mi">4320</span><span class="p">]</span>
+
+        <span class="n">events</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rain_events</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_max_return_periods_to_events</span><span class="p">(</span><span class="n">events</span><span class="p">)</span>
+
+        <span class="n">main_events</span> <span class="o">=</span> <span class="n">events</span><span class="p">[</span><span class="n">events</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">LP</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">min_event_rain_sum</span><span class="p">]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="n">COL</span><span class="o">.</span><span class="n">LP</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s1">&#39;index&#39;</span><span class="p">)</span>
+
+        <span class="n">unit</span> <span class="o">=</span> <span class="s1">&#39;mm&#39;</span>
+        <span class="n">column_name</span> <span class="o">=</span> <span class="s1">&#39;Precipitation&#39;</span>
+
+        <span class="n">pdf</span> <span class="o">=</span> <span class="n">PdfPages</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">main_events</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+            <span class="n">fig</span><span class="p">,</span> <span class="n">caption</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">event_plot</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">durations</span><span class="o">=</span><span class="n">durations</span><span class="p">,</span> <span class="n">min_return_period</span><span class="o">=</span><span class="n">min_return_period</span><span class="p">,</span>
+                                           <span class="n">unit</span><span class="o">=</span><span class="n">unit</span><span class="p">,</span> <span class="n">column_name</span><span class="o">=</span><span class="n">column_name</span><span class="p">)</span>
+
+            <span class="c1"># -------------------------------------</span>
+            <span class="n">fig</span><span class="o">.</span><span class="n">get_axes</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">caption</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n\n\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+            <span class="c1"># DIN A4</span>
+            <span class="n">fig</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">(</span><span class="n">w</span><span class="o">=</span><span class="mf">8.27</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mf">11.69</span><span class="p">)</span>
+            <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+            <span class="n">pdf</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
+
+        <span class="n">pdf</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="nf">event_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="n">durations</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;mm&#39;</span><span class="p">,</span> <span class="n">column_name</span><span class="o">=</span><span class="s1">&#39;Precipitation&#39;</span><span class="p">,</span> <span class="n">min_return_period</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">START</span><span class="p">]</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">END</span><span class="p">]</span>
+
+        <span class="n">plot_range</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="n">start</span> <span class="o">-</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_freq</span><span class="p">),</span> <span class="n">end</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_freq</span><span class="p">))</span>
+
+        <span class="n">idf_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">return_periods_frame</span><span class="p">[</span><span class="n">plot_range</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">COL</span><span class="o">.</span><span class="n">MAX_PERIOD</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">event</span><span class="p">:</span>
+            <span class="n">event</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">MAX_PERIOD</span><span class="p">]</span> <span class="o">=</span> <span class="n">idf_table</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+            <span class="n">event</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">MAX_PERIOD_DURATION</span><span class="p">]</span> <span class="o">=</span> <span class="n">idf_table</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">idxmax</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">durations</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">durations</span> <span class="o">=</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">240</span><span class="p">,</span> <span class="mi">360</span><span class="p">,</span> <span class="mi">540</span><span class="p">,</span> <span class="mi">720</span><span class="p">,</span> <span class="mi">1080</span><span class="p">,</span> <span class="mi">1440</span><span class="p">,</span> <span class="mi">2880</span><span class="p">,</span> <span class="mi">4320</span><span class="p">]</span>
+
+        <span class="n">caption</span> <span class="o">=</span> <span class="s1">&#39;rain event</span><span class="se">\n</span><span class="s1">&#39;</span> \
+                  <span class="s1">&#39;between </span><span class="si">{}</span><span class="s1"> and </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span> \
+                  <span class="s1">&#39;with a total sum of </span><span class="si">{:0.1f}</span><span class="s1"> </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span> \
+                  <span class="s1">&#39;and a duration of </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span> \
+                  <span class="s1">&#39;The maximum return period was </span><span class="si">{:0.2f}</span><span class="s1">a</span><span class="se">\n</span><span class="s1">&#39;</span> \
+                  <span class="s1">&#39;at a duration of </span><span class="si">{}</span><span class="s1">.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">start</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1"> %H:%M&#39;</span><span class="p">),</span>
+                                                <span class="n">end</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1"> %H:%M&#39;</span><span class="p">),</span>
+                                                <span class="n">event</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">LP</span><span class="p">],</span>
+                                                <span class="n">unit</span><span class="p">,</span>
+                                                <span class="n">end</span> <span class="o">-</span> <span class="n">start</span><span class="p">,</span>
+                                                <span class="n">event</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">MAX_PERIOD</span><span class="p">],</span>
+                                                <span class="n">minutes_readable</span><span class="p">(</span><span class="n">event</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">MAX_PERIOD_DURATION</span><span class="p">]))</span>
+
+        <span class="n">ts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">series</span><span class="p">[</span><span class="n">plot_range</span><span class="p">]</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_freq</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="c1"># -------------------------------------</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">event</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">MAX_PERIOD</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">min_return_period</span><span class="p">:</span>
+            <span class="n">rain_ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">idf_bar_ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">211</span><span class="p">)</span>
+            <span class="n">idf_bar_ax</span> <span class="o">=</span> <span class="n">idf_bar_axes</span><span class="p">(</span><span class="n">idf_bar_ax</span><span class="p">,</span> <span class="n">idf_table</span><span class="p">,</span> <span class="n">durations</span><span class="p">)</span>
+            <span class="n">rain_ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">212</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="n">idf_bar_ax</span><span class="p">)</span>
+
+        <span class="c1"># -------------------------------------</span>
+        <span class="n">ts_sum</span><span class="p">,</span> <span class="n">minutes</span> <span class="o">=</span> <span class="n">resample_rain_series</span><span class="p">(</span><span class="n">ts</span><span class="p">)</span>
+        <span class="n">rain_ax</span> <span class="o">=</span> <span class="n">rain_bar_plot</span><span class="p">(</span><span class="n">ts_sum</span><span class="p">,</span> <span class="n">rain_ax</span><span class="p">)</span>
+        <span class="n">rain_ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> in </span><span class="si">{}</span><span class="s1">/</span><span class="si">{}</span><span class="s1">min&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">column_name</span><span class="p">,</span> <span class="n">unit</span><span class="p">,</span> <span class="n">minutes</span> <span class="k">if</span> <span class="n">minutes</span> <span class="o">!=</span> <span class="mi">1</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="p">))</span>
+        <span class="n">rain_ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">ts</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ts</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">caption</span>
+
+    <span class="k">def</span> <span class="nf">add_max_return_periods_to_events</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">events</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">COL</span><span class="o">.</span><span class="n">MAX_PERIOD</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">events</span><span class="p">:</span>
+            <span class="n">max_periods</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">return_periods_frame</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">max_periods_duration</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">return_periods_frame</span><span class="o">.</span><span class="n">idxmax</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">datetime_max</span> <span class="o">=</span> <span class="n">agg_events</span><span class="p">(</span><span class="n">events</span><span class="p">,</span> <span class="n">max_periods</span><span class="p">,</span> <span class="s1">&#39;idxmax&#39;</span><span class="p">)</span>
+            <span class="n">events</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">MAX_PERIOD</span><span class="p">]</span> <span class="o">=</span> <span class="n">max_periods</span><span class="p">[</span><span class="n">datetime_max</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+            <span class="n">events</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">MAX_PERIOD_DURATION</span><span class="p">]</span> <span class="o">=</span> <span class="n">max_periods_duration</span><span class="p">[</span><span class="n">datetime_max</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+    <span class="c1">####################################################################################################################</span>
+    <span class="k">def</span> <span class="nf">event_return_period_report</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">min_return_period</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">events</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rain_events</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_max_return_periods_to_events</span><span class="p">(</span><span class="n">events</span><span class="p">)</span>
+
+        <span class="n">main_events</span> <span class="o">=</span> <span class="n">events</span><span class="p">[</span><span class="n">events</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">MAX_PERIOD</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">min_return_period</span><span class="p">]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="n">COL</span><span class="o">.</span><span class="n">MAX_PERIOD</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="n">pdf</span> <span class="o">=</span> <span class="n">PdfPages</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">main_events</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s1">&#39;index&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+            <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">return_period_event_figure</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+
+            <span class="c1"># -------------------------------------</span>
+            <span class="c1"># DIN A4</span>
+            <span class="n">fig</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">(</span><span class="n">h</span><span class="o">=</span><span class="mf">11.69</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="mf">8.27</span><span class="p">)</span>
+            <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+            <span class="n">pdf</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
+
+        <span class="n">pdf</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">return_period_event_figure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="n">period_line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">return_periods_frame</span><span class="p">[</span><span class="n">event</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">START</span><span class="p">]:</span><span class="n">event</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">END</span><span class="p">]]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+
+        <span class="n">period_line</span><span class="p">[</span><span class="n">period_line</span> <span class="o">&lt;</span> <span class="mf">0.75</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span>
+        <span class="n">period_line</span> <span class="o">=</span> <span class="n">period_line</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">period_line</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>  <span class="c1"># type: plt.Axes</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;rain event</span><span class="se">\n</span><span class="s1">&#39;</span>
+                     <span class="s1">&#39;between </span><span class="si">{}</span><span class="s1"> and </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span>
+                     <span class="s1">&#39;with a total sum of </span><span class="si">{:0.1f}</span><span class="s1"> mm</span><span class="se">\n</span><span class="s1">&#39;</span>
+                     <span class="s1">&#39;and a duration of </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span>
+                     <span class="s1">&#39;The maximum return period was </span><span class="si">{:0.2f}</span><span class="s1">a</span><span class="se">\n</span><span class="s1">&#39;</span>
+                     <span class="s1">&#39;at a duration of </span><span class="si">{}</span><span class="s1">.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">event</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">START</span><span class="p">]</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1"> %H:%M&#39;</span><span class="p">),</span>
+                                                   <span class="n">event</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">END</span><span class="p">]</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1"> %H:%M&#39;</span><span class="p">),</span>
+                                                   <span class="n">event</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">LP</span><span class="p">],</span>
+                                                   <span class="n">event</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">END</span><span class="p">]</span> <span class="o">-</span> <span class="n">event</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">START</span><span class="p">],</span>
+                                                   <span class="n">period_line</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span>
+                                                   <span class="n">period_line</span><span class="o">.</span><span class="n">idxmax</span><span class="p">()))</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="n">period_line</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">([</span><span class="n">minutes_readable</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">period_line</span><span class="o">.</span><span class="n">index</span><span class="p">])</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;duration steps&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;return period in years&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_figure</span><span class="p">(),</span> <span class="n">ax</span></div>
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Intensity Duration Frequency Analyse 0.1.11-14 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">idf_analysis.idf_class</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Pichler.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.2.1.
+    </div>
+  </body>
+</html>
