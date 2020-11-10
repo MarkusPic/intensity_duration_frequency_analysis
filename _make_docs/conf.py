@@ -97,6 +97,7 @@ pygments_style = None
 # html_theme = 'nature'
 html_theme = 'classic'
 html_theme = 'nature'
+html_theme = 'sphinx_rtd_theme'
 # html_theme = 'alabaster'
 
 # Theme options are theme-specific and customize the look and feel of a theme

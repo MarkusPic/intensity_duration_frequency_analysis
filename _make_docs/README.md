@@ -1,12 +1,16 @@
 © [Institute of Urban Water Management and Landscape Water Engineering](https://www.sww.tugraz.at), [Graz University of Technology](https://www.tugraz.at/home/) and [Markus Pichler](mailto:markus.pichler@tugraz.at)
 
 
-# Description
+# Intensity duration frequency analysis (based on KOSTRA)
 
 
 [![license](https://img.shields.io/github/license/markuspic/intensity_duration_frequency_analysis.svg?style=flat)](https://github.com/MarkusPic/intensity_duration_frequency_analysis/blob/master/LICENSE)
 [![docs ](https://img.shields.io/badge/docs-good-brightgreen.svg?style=flat)](https://markuspic.github.io/intensity_duration_frequency_analysis/html/index.html)
 [![PyPI](https://img.shields.io/pypi/v/idf-analysis.svg)](https://pypi.python.org/pypi/idf-analysis)
+
+![PyPI - Downloads](https://img.shields.io/pypi/dd/idf-analysis)
+![PyPI - Downloads](https://img.shields.io/pypi/dw/idf-analysis)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/idf-analysis)
 
 heavy rain as a function of the duration and the return period acc. to [DWA-A 531 (2012)](http://www.dwa.de/dwa/shop/shop.nsf/Produktanzeige?openform&produktid=P-DWAA-8XMUY2)
 This program reads the measurement data of the rainfall
@@ -78,7 +82,7 @@ To start the script use following commands in the terminal/Prompt
 
 ```idf_analysis```
 
-The documentation of the python-API can be found here https://markuspic.github.io/intensity_duration_frequency_analysis/html/api.html.
+The documentation of the python-API can be found [here](https://markuspic.github.io/intensity_duration_frequency_analysis/api.html).
 
 # Commandline tool 
 

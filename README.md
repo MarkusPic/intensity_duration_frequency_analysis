@@ -82,7 +82,7 @@ To start the script use following commands in the terminal/Prompt
 
 ```idf_analysis```
 
-The documentation of the python-API can be found here https://markuspic.github.io/intensity_duration_frequency_analysis/html/api.html.
+The documentation of the python-API can be found [here](https://markuspic.github.io/intensity_duration_frequency_analysis/api.html).
 
 # Commandline tool 
 
