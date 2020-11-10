@@ -95,8 +95,8 @@ pygments_style = None
 # a list of builtin themes.
 #
 # html_theme = 'nature'
-html_theme = 'classic'
-html_theme = 'nature'
+# html_theme = 'classic'
+# html_theme = 'nature'
 html_theme = 'sphinx_rtd_theme'
 # html_theme = 'alabaster'
 
