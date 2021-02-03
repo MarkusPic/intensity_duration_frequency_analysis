@@ -6,5 +6,5 @@ pytz
 tqdm
 scipy
 PyYAML>=5
-fastparquet
+#fastparquet
 pyarrow
