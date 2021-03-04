@@ -40,6 +40,7 @@ class COL:
     MAX_OVERLAPPING_SUM = 'max_overlapping_sum'
     MAX_PERIOD = 'max_return_period'
     MAX_PERIOD_DURATION = 'max_return_period_duration'
+    LAST = 'last_event'
 
 
 # parameters for the function

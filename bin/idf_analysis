@@ -11,4 +11,7 @@ __license__ = "MIT"
 
 from idf_analysis import IntensityDurationFrequencyAnalyse
 
+import matplotlib.pyplot as plt
+plt.style.use('bmh')
+
 IntensityDurationFrequencyAnalyse.command_line_tool()

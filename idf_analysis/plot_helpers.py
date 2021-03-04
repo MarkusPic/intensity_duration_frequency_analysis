@@ -26,8 +26,10 @@ def idf_bar_axes(ax, idf_table, durations=None, return_periods=None):
     Returns:
         matplotlib.pyplot.Axes:
     """
-    if durations is None:
-        durations = [5, 10, 15, 20, 30, 45, 60, 90, 120, 180, 240, 360, 540, 720, 1080, 1440, 2880, 4320]
+    if durations is not None:
+        # durations = [5, 10, 15, 20, 30, 45, 60, 90, 120, 180, 240, 360, 540, 720, 1080, 1440, 2880, 4320]
+        idf_table = idf_table[durations]
+
     if return_periods is None:
         return_periods = [0.5, 1, 2, 5, 10, 20, 50, 100]
 
@@ -40,14 +42,14 @@ def idf_bar_axes(ax, idf_table, durations=None, return_periods=None):
     ax.legend(custom_lines, names, bbox_to_anchor=(0., 1.02, 1., .102), loc=3, ncol=len(color_return_period),
               mode="expand", borderaxespad=0., title='return periods')
 
-    duration_size = len(durations)
+    duration_size = len(idf_table.columns)
     # labels for the y axis
     durations_index = range(duration_size)
     dh = 1
     ax.set_yticks([i + dh/2 for i in durations_index], minor=True)
     ax.set_yticks(list(durations_index), minor=False)
 
-    ax.set_yticklabels(duration_steps_readable(durations), minor=True)
+    ax.set_yticklabels(duration_steps_readable(idf_table.columns), minor=True)
     ax.set_yticklabels([''] * duration_size, minor=False)
     ax.set_ylabel('duration of the design rainfall')
 
@@ -65,8 +67,10 @@ def idf_bar_axes(ax, idf_table, durations=None, return_periods=None):
         for i, t in enumerate(return_periods):
             c = color_return_period[i]
             # not really a rain event, but the results are the same
-            tab = rain_events(tn, ignore_rain_below=t, min_gap=freq)
-
+            tab2 = rain_events(tn, ignore_rain_below=t, min_gap=pd.Timedelta(minutes=d))
+            tab = rain_events(tn, ignore_rain_below=t, min_gap=min_duration)
+            if tab.size != tab2.size:
+                print()
             if tab.empty:
                 continue
 

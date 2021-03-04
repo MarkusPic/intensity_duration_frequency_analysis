@@ -19,11 +19,11 @@ from tqdm import tqdm
 
 from .arg_parser import heavy_rain_parser
 from .idf_parameters import IdfParameters
-from .little_helpers import minutes_readable, height2rate, delta2min, rate2height
+from .little_helpers import minutes_readable, height2rate, delta2min, rate2height, frame_looper
 from .definitions import *
 from .in_out import import_series
 from .sww_utils import (remove_timezone, guess_freq, rain_events, agg_events, event_duration, resample_rain_series,
-                        rain_bar_plot, IdfError)
+                        rain_bar_plot, IdfError, )
 from .plot_helpers import idf_bar_axes
 from .additional_scripts import measured_points
 
@@ -62,6 +62,7 @@ class IntensityDurationFrequencyAnalyse:
         self._parameter = None  # type: IdfParameters #  how to calculate the idf curves
         self._return_periods_frame = None  # type: pd.DataFrame # with return periods of all given durations
         self._rain_events = None
+        self._rainfall_sum_frame = None  # type: pd.DataFrame # with rain sums of all given durations
 
         # sampling points of the duration steps in minutes
         self._duration_steps = [5, 10, 15, 20, 30, 45, 60, 90]
@@ -144,7 +145,8 @@ class IntensityDurationFrequencyAnalyse:
             IdfParameters: calculation parameters
         """
         if self._parameter is None:
-            self._parameter = IdfParameters.from_series(self.series, self.duration_steps, self.series_kind, self.worksheet)
+            self._parameter = IdfParameters.from_series(self.series, self.duration_steps, self.series_kind,
+                                                        self.worksheet)
         return self._parameter
 
     def write_parameters(self, filename):
@@ -303,7 +305,6 @@ class IntensityDurationFrequencyAnalyse:
     ####################################################################################################################
     def result_figure(self, min_duration=5.0, max_duration=720.0, logx=False, return_periods=None, color=False):
         duration_steps = np.arange(min_duration, max_duration + 1, 1)
-        plt.style.use('bmh')
 
         if return_periods is None:
             return_periods = [1, 2, 5, 10, 50, 100]
@@ -383,7 +384,7 @@ class IntensityDurationFrequencyAnalyse:
                 h = rate2height(rain_flow_rate=r, duration=d)
 
             elif d is None and h is not None:
-                d = h/r * 1000/6
+                d = h / r * 1000 / 6
 
         if user.r_720_1:
             d = 720
@@ -424,6 +425,61 @@ class IntensityDurationFrequencyAnalyse:
             print('Created the IDF-curves-plot and saved the file as "{}".'.format(table_fn))
 
     ####################################################################################################################
+    def get_rainfall_sum_frame(self, series=None, durations=None):
+        """
+
+        Args:
+            series (pandas.Series):
+            durations (list): list of durations in minutes which are of interest (default: pre defined
+            durations)
+
+        Returns:
+            pandas.DataFrame: rain sum depending of the duration per datetimeindex
+        """
+        if durations is None:
+            durations = self.duration_steps
+
+        if series is None:
+            if self._rainfall_sum_frame is not None:
+                return self._rainfall_sum_frame
+            ts = self.series.copy()
+            freq = self._freq
+        else:
+            freq = guess_freq(series.index)
+            # ts = series.copy()
+            ts = series.replace(0, np.NaN).dropna()
+
+        # ts = ts.asfreq(freq).fillna(0)
+        df = pd.DataFrame(index=ts.index)
+        # df = dict()
+
+        freq_num = delta2min(freq)
+
+        for d in frame_looper(ts.index.size, columns=durations, label='rainfall_sum'):
+            if d % freq_num != 0:
+                warnings.warn('Using durations (= {} minutes), '
+                              'which are not a multiple of the base frequency (= {} minutes) of the series, '
+                              'will lead to misinterpretations.'.format(d, freq_num))
+            df[d] = ts.rolling(pd.Timedelta(minutes=d)).sum()
+
+        # printable_names (bool): if durations should be as readable in dataframe, else in minutes
+        # df = df.rename(minutes_readable, axis=0)
+
+        return df#.round(2)
+
+    @property
+    def rainfall_sum_frame(self):
+        """
+        get the return periods over the whole time-series for the default duration steps.
+
+        Returns:
+            pandas.DataFrame: data-frame of return periods where the columns are the duration steps
+        """
+        if self._rainfall_sum_frame is None:
+            self._rainfall_sum_frame = self.get_rainfall_sum_frame()
+        return self._rainfall_sum_frame
+
+    ####################################################################################################################
     def get_return_periods_frame(self, series=None, durations=None):
         """
 
@@ -434,38 +490,12 @@ class IntensityDurationFrequencyAnalyse:
         Returns:
             pandas.DataFrame: return periods depending of the duration per datetimeindex
         """
-        if durations is None:
-            durations = self.duration_steps
-
-        if series is None:
-            ts = self.series.copy()
-            freq = self._freq
-        else:
-            freq = guess_freq(series.index)
-            ts = series.copy()
-
-        ts = ts.asfreq(freq).fillna(0)
-        df = pd.DataFrame(index=ts.index)
-
-        freq_num = delta2min(freq)
-
-        if ts.size > 30000:   # if > 3 weeks, use a progressbar
-            dur_loop = tqdm(durations, desc='calculating return periods data-frame')
-        else:
-            dur_loop = durations
-
-        for d in dur_loop:
-            if d % freq_num != 0:
-                warnings.warn('Using durations (= {} minutes), '
-                              'which are not a multiple of the base frequency (= {} minutes) of the series, '
-                              'will lead to misinterpretations.'.format(d, freq_num))
-            ts_sum = ts.rolling(pd.Timedelta(minutes=d)).sum()
-            df[d] = self.get_return_period(height_of_rainfall=ts_sum, duration=d)
-
-        # printable_names (bool): if durations should be as readable in dataframe, else in minutes
-        # df = df.rename(minutes_readable, axis=0)
-
-        return df.round(1)
+        sums = self.get_rainfall_sum_frame(series=series, durations=durations)
+        df = pd.DataFrame(index=sums.index)
+        # df = dict()
+        for d in frame_looper(sums.index.size, columns=sums.columns, label='return_periods'):
+            df[d] = self.get_return_period(height_of_rainfall=sums[d][sums[d] > 0.1], duration=d)
+        return df#.fillna(0)#.round(2)
 
     @property
     def return_periods_frame(self):
@@ -483,7 +513,7 @@ class IntensityDurationFrequencyAnalyse:
         """save the return-periods dataframe as a parquet-file to save computation time."""
         df = self.return_periods_frame.copy()
         df.columns = df.columns.to_series().astype(str)
-        df.to_parquet(filename, **kwargs)
+        df.round(2).to_parquet(filename, **kwargs)
 
     def read_return_periods_frame(self, filename, **kwargs):
         """read the return-periods dataframe as a parquet-file to save computation time."""
@@ -504,6 +534,8 @@ class IntensityDurationFrequencyAnalyse:
         """
         get the all the rain events of the time-series
 
+        default minimal gap between events is 4 hours
+
         Returns:
             pandas.DataFrame: data-frame of events with start-, end-time and duration
         """
@@ -511,7 +543,7 @@ class IntensityDurationFrequencyAnalyse:
             events = rain_events(self.series)
             events[COL.DUR] = event_duration(events)
             events[COL.LP] = agg_events(events, self.series, 'sum').round(1)
-
+            events[COL.LAST] = events[COL.START] - events[COL.END].shift()
             # events = events.sort_values(by=COL.LP, ascending=False)
             self._rain_events = events
 
@@ -527,6 +559,7 @@ class IntensityDurationFrequencyAnalyse:
         events[COL.START] = pd.to_datetime(events[COL.START])
         events[COL.END] = pd.to_datetime(events[COL.END])
         events[COL.DUR] = pd.to_timedelta(events[COL.DUR])
+        events[COL.LAST] = pd.to_timedelta(events[COL.LAST])
         self._rain_events = events
 
     def auto_save_rain_events(self, filename, sep=';', decimal='.'):
@@ -535,6 +568,15 @@ class IntensityDurationFrequencyAnalyse:
             self.read_rain_events(filename, sep=sep, decimal=decimal)
         else:
             self.write_rain_events(filename, sep=sep, decimal=decimal)
+
+    def add_max_return_periods_to_events(self, events):
+        if COL.MAX_PERIOD not in events:
+            max_periods = self.return_periods_frame.max(axis=1)
+            max_periods_duration = self.return_periods_frame.idxmax(axis=1)
+            datetime_max = agg_events(events, max_periods, 'idxmax')
+            datetime_max = np.where(np.isnan(datetime_max), events[COL.START].values, datetime_max)
+            events[COL.MAX_PERIOD] = max_periods[datetime_max].values
+            events[COL.MAX_PERIOD_DURATION] = max_periods_duration[datetime_max].values
 
     ####################################################################################################################
     def event_report(self, filename, min_event_rain_sum=25, min_return_period=0.5, durations=None):
@@ -558,7 +600,8 @@ class IntensityDurationFrequencyAnalyse:
         events = self.rain_events
         self.add_max_return_periods_to_events(events)
 
-        main_events = events[events[COL.LP] > min_event_rain_sum].sort_values(by=COL.LP, ascending=False).to_dict(orient='index')
+        main_events = events[events[COL.LP] > min_event_rain_sum].sort_values(by=COL.LP, ascending=False).to_dict(
+            orient='index')
 
         unit = 'mm'
         column_name = 'Precipitation'
@@ -591,9 +634,6 @@ class IntensityDurationFrequencyAnalyse:
         if COL.MAX_PERIOD not in event:
             event[COL.MAX_PERIOD] = idf_table.max().max()
             event[COL.MAX_PERIOD_DURATION] = idf_table.max().idxmax()
-
-        if durations is None:
-            durations = [5, 10, 15, 20, 30, 45, 60, 90, 120, 180, 240, 360, 540, 720, 1080, 1440, 2880, 4320]
 
         caption = 'rain event\n' \
                   'between {} and {}\n' \
@@ -629,14 +669,6 @@ class IntensityDurationFrequencyAnalyse:
 
         return fig, caption
 
-    def add_max_return_periods_to_events(self, events):
-        if COL.MAX_PERIOD not in events:
-            max_periods = self.return_periods_frame.max(axis=1)
-            max_periods_duration = self.return_periods_frame.idxmax(axis=1)
-            datetime_max = agg_events(events, max_periods, 'idxmax')
-            events[COL.MAX_PERIOD] = max_periods[datetime_max].values
-            events[COL.MAX_PERIOD_DURATION] = max_periods_duration[datetime_max].values
-
     ####################################################################################################################
     def event_return_period_report(self, filename, min_return_period=1):
         events = self.rain_events
@@ -651,7 +683,7 @@ class IntensityDurationFrequencyAnalyse:
 
             # -------------------------------------
             # DIN A4
-            fig.set_size_inches(h=11.69/2, w=8.27)
+            fig.set_size_inches(h=11.69 / 2, w=8.27)
             fig.tight_layout()
             pdf.savefig(fig)
             plt.close(fig)

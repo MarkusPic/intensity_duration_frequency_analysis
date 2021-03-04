@@ -115,8 +115,6 @@ def result_plot_v2(idf, filename, min_duration=5.0, max_duration=720.0, logx=Fal
     duration_steps = np.arange(min_duration, max_duration + 1, 1)
     colors = ['r', 'g', 'b', 'y', 'm']
 
-    plt.style.use('bmh')
-
     # return_periods = [0.5, 1, 10, 50, 100]
     return_periods = [1, 2, 5, 10, 50]
 

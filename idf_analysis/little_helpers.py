@@ -6,6 +6,7 @@ __version__ = "0.1"
 __license__ = "MIT"
 
 import pandas as pd
+from tqdm import tqdm
 
 
 def delta2min(time_delta):
@@ -96,3 +97,10 @@ def rate2height(rain_flow_rate, duration):
         float | np.ndarray | pd.Series: height of rainfall in [mm]
     """
     return rain_flow_rate * duration / (1000 / 6)
+
+
+def frame_looper(size, columns, label='return periods'):
+    if size > 30000:  # if > 3 weeks, use a progressbar
+        return tqdm(columns, desc=f'calculating {label} data-frame')
+    else:
+        return columns

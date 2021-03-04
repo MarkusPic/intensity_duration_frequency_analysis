@@ -21,17 +21,31 @@ idf.auto_save_parameters(path.join(output_directory, 'idf_parameters.yaml'))
 # --------
 # idf.write_return_periods_frame(path.join(output_directory, 'idf_return_periods_frame.parq'))
 # exit()
-idf.auto_save_return_periods_frame(path.join(output_directory, 'idf_return_periods_frame.parq'))
+# idf.auto_save_return_periods_frame(path.join(output_directory, 'idf_return_periods_frame.parq'))
 
 # --------
 # events = idf.rain_events
 # idf.add_max_return_periods_to_events(events)
 # idf.write_rain_events(path.join(output_directory, 'events.csv'), sep=',', decimal='.')
 # exit()
-idf.auto_save_rain_events(path.join(output_directory, 'events.csv'), sep=',', decimal='.')
+# idf.auto_save_rain_events(path.join(output_directory, 'events.csv'), sep=',', decimal='.')
 
 # --------
 # idf.event_report(path.join(output_directory, 'idf_event_analysis.pdf'), min_event_rain_sum=60, min_return_period=0.5, durations=None)
 
 # --------
 # idf.event_return_period_report(path.join(output_directory, 'idf_event_return_period_analysis.pdf'))
+
+# --------
+e = idf.rain_events
+
+e = e[e[COL.LP] > 10]
+# idf.add_max_return_periods_to_events(idf.rain_events)
+# e = e[e[COL.MAX_PERIOD] > 2]
+
+event = idf.rain_events.loc[125]
+
+
+fig, caption = idf.event_plot(event, durations=idf.duration_steps[:11])
+fig.tight_layout()
+fig.show()
