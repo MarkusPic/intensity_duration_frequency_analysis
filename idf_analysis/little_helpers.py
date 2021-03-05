@@ -8,6 +8,8 @@ __license__ = "MIT"
 import pandas as pd
 from tqdm import tqdm
 
+from idf_analysis.definitions import COL
+
 
 def delta2min(time_delta):
     """
@@ -104,3 +106,23 @@ def frame_looper(size, columns, label='return periods'):
         return tqdm(columns, desc=f'calculating {label} data-frame')
     else:
         return columns
+
+
+def event_caption(event, unit='mm'):
+    caption = 'rain event\n'
+    if (COL.START in event) and (COL.END in event):
+        caption += 'between {:%Y-%m-%d %H:%M} and {:%Y-%m-%d %H:%M}\n'.format(event[COL.START], event[COL.END])
+
+    if COL.LP in event:
+        caption += 'with a total sum of {:0.1f} {}\n'.format(event[COL.LP], unit)
+
+    if COL.DUR in event:
+        caption += 'and a duration of {}\n'.format(event[COL.DUR])
+
+    if COL.MAX_PERIOD in event:
+        caption += 'The maximum return period was {:0.2f} a\n'.format(event[COL.MAX_PERIOD])
+
+    if COL.MAX_PERIOD_DURATION in event:
+        caption += 'at a duration of {}.'.format(minutes_readable(event[COL.MAX_PERIOD_DURATION]))
+
+    return caption

@@ -19,7 +19,7 @@ from tqdm import tqdm
 
 from .arg_parser import heavy_rain_parser
 from .idf_parameters import IdfParameters
-from .little_helpers import minutes_readable, height2rate, delta2min, rate2height, frame_looper
+from .little_helpers import minutes_readable, height2rate, delta2min, rate2height, frame_looper, event_caption
 from .definitions import *
 from .in_out import import_series
 from .sww_utils import (remove_timezone, guess_freq, rain_events, agg_events, event_duration, resample_rain_series,
@@ -446,10 +446,10 @@ class IntensityDurationFrequencyAnalyse:
             freq = self._freq
         else:
             freq = guess_freq(series.index)
-            # ts = series.copy()
-            ts = series.replace(0, np.NaN).dropna()
+            ts = series.copy()
+            ts = ts.asfreq(freq).fillna(0)
+            # ts = series.replace(0, np.NaN).dropna()
 
-        # ts = ts.asfreq(freq).fillna(0)
         df = pd.DataFrame(index=ts.index)
         # df = dict()
 
@@ -574,6 +574,7 @@ class IntensityDurationFrequencyAnalyse:
             max_periods = self.return_periods_frame.max(axis=1)
             max_periods_duration = self.return_periods_frame.idxmax(axis=1)
             datetime_max = agg_events(events, max_periods, 'idxmax')
+            # TODO: where are values NaN ???
             datetime_max = np.where(np.isnan(datetime_max), events[COL.START].values, datetime_max)
             events[COL.MAX_PERIOD] = max_periods[datetime_max].values
             events[COL.MAX_PERIOD_DURATION] = max_periods_duration[datetime_max].values
@@ -624,29 +625,17 @@ class IntensityDurationFrequencyAnalyse:
         pdf.close()
 
     def event_plot(self, event, durations=None, unit='mm', column_name='Precipitation', min_return_period=0.5):
+        event = event.to_dict()
         start = event[COL.START]
         end = event[COL.END]
 
         plot_range = slice(start - pd.Timedelta(self._freq), end + pd.Timedelta(self._freq))
 
-        idf_table = self.return_periods_frame[plot_range]
+        return_periods_frame = self.return_periods_frame[plot_range]
 
         if COL.MAX_PERIOD not in event:
-            event[COL.MAX_PERIOD] = idf_table.max().max()
-            event[COL.MAX_PERIOD_DURATION] = idf_table.max().idxmax()
-
-        caption = 'rain event\n' \
-                  'between {} and {}\n' \
-                  'with a total sum of {:0.1f} {}\n' \
-                  'and a duration of {}\n' \
-                  'The maximum return period was {:0.2f}a\n' \
-                  'at a duration of {}.'.format(start.strftime('%Y-%m-%d %H:%M'),
-                                                end.strftime('%Y-%m-%d %H:%M'),
-                                                event[COL.LP],
-                                                unit,
-                                                end - start,
-                                                event[COL.MAX_PERIOD],
-                                                minutes_readable(event[COL.MAX_PERIOD_DURATION]))
+            event[COL.MAX_PERIOD] = return_periods_frame.max().max()
+            event[COL.MAX_PERIOD_DURATION] = return_periods_frame.max().idxmax()
 
         ts = self.series[plot_range].resample(self._freq).sum().fillna(0).copy()
 
@@ -657,8 +646,17 @@ class IntensityDurationFrequencyAnalyse:
             rain_ax = fig.add_subplot(111)
 
         else:
+            if durations:
+                max_dur = max(durations)
+            else:
+                max_dur = max(self.duration_steps)
+            return_periods_frame_extended = self.get_return_periods_frame(
+                self.series[start - pd.Timedelta(minutes=max_dur):
+                            end + pd.Timedelta(self._freq)].asfreq(self._freq).fillna(0)
+            )
+
             idf_bar_ax = fig.add_subplot(211)
-            idf_bar_ax = idf_bar_axes(idf_bar_ax, idf_table, durations)
+            idf_bar_ax = idf_bar_axes(idf_bar_ax, return_periods_frame_extended, durations)
             rain_ax = fig.add_subplot(212, sharex=idf_bar_ax)
 
         # -------------------------------------
@@ -667,7 +665,7 @@ class IntensityDurationFrequencyAnalyse:
         rain_ax.set_ylabel('{} in {}/{}min'.format(column_name, unit, minutes if minutes != 1 else ''))
         rain_ax.set_xlim(ts.index[0], ts.index[-1])
 
-        return fig, caption
+        return fig, event_caption(event, unit)
 
     ####################################################################################################################
     def event_return_period_report(self, filename, min_return_period=1):

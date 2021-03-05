@@ -32,24 +32,6 @@ def measured_points(idf, return_periods, interim_results=None, max_duration=None
                      data=interim_results['u'] + interim_results['w'] * np.log(return_periods))
 
 
-def add_return_periods_to_events(idf):
-    events = idf.rain_events
-    events_dict = events.to_dict(orient='index')
-
-    for no, event in events_dict.items():
-        print(no, '/', len(events.index))
-        start = event[COL.START]
-        end = event[COL.END]
-        idf_table = idf.return_periods_frame[start:end]
-        idf_table = idf_table.rename(minutes_readable, axis=0)
-        max_period, duration = idf_table.max().max(), idf_table.max().idxmax()
-        events_dict[no]['max_period'] = max_period
-        events_dict[no]['at_duration'] = duration
-
-    new_events = pd.DataFrame.from_dict(events_dict, orient='index')
-    return new_events
-
-
 def return_period_scatter(idf, filename='all_events_max_return_period.pdf', min_return_period=0.5, durations=None):
     if durations is None:
         durations = [5, 10, 15, 20, 30, 45, 60, 90, 120, 180, 240, 360, 540, 720, 1080, 1440, 2880, 4320]

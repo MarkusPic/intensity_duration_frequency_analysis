@@ -49,3 +49,9 @@ event = idf.rain_events.loc[125]
 fig, caption = idf.event_plot(event, durations=idf.duration_steps[:11])
 fig.tight_layout()
 fig.show()
+
+fig, caption = idf.event_plot(event)
+fig.tight_layout()
+fig.show()
+
+rpf = idf.return_periods_frame[event[COL.START]:event[COL.END]]
