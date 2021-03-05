@@ -16,7 +16,7 @@ with open('requirements.txt') as f:
 
 setup(
     name='idf-analysis',
-    version='0.1.11-17',
+    version='0.1.11-18',
     packages=['idf_analysis'],
     url='https://github.com/MarkusPic/intensity_duration_frequency_analysis',
     license='MIT',

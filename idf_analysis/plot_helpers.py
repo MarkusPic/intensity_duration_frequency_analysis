@@ -67,10 +67,10 @@ def idf_bar_axes(ax, idf_table, durations=None, return_periods=None):
         for i, t in enumerate(return_periods):
             c = color_return_period[i]
             # not really a rain event, but the results are the same
-            tab2 = rain_events(tn, ignore_rain_below=t, min_gap=pd.Timedelta(minutes=d))
+            # tab2 = rain_events(tn, ignore_rain_below=t, min_gap=pd.Timedelta(minutes=d))
             tab = rain_events(tn, ignore_rain_below=t, min_gap=min_duration)
-            if tab.size != tab2.size:
-                print()
+            # if tab.size != tab2.size:
+            #     print()
             if tab.empty:
                 continue
 
