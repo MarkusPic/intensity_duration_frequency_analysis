@@ -123,6 +123,11 @@ def rain_events(series, ignore_rain_below=0, min_gap=pd.Timedelta(hours=4)):
     Returns:
         pandas.DataFrame: table of the rain events
     """
+
+    # According to DWA A-531 Chapter 4.2, events should be atleast
+    # 4 hours apart to be statistically indepedent of each other
+    if min_gap < pd.Timedelta(hours=4):
+        min_gap = pd.Timedelta(hours=4)
     # best OKOSTRA adjustment with 0.0
     # by ignoring 0.1 mm the results are getting bigger
 
