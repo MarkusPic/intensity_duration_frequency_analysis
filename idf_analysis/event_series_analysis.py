@@ -173,8 +173,12 @@ def calculate_u_w(file_input, duration_steps, series_kind):
         # events[COL.rolling_sum_valuesAX_OVERLAPPING_SUM] = agg_events(events, roll_sum, 'max') * improve
         rolling_sum_values = agg_events(events, roll_sum, 'max') * improve
 
+        year_list = []
+        for e in events[COL.START]:
+            year_list.append(e.year)
+
         if series_kind == ANNUAL:
-            interim_results[duration_integer] = annual_series(rolling_sum_values, events[COL.START].year.values)
+            interim_results[duration_integer] = annual_series(rolling_sum_values, year_list)
         elif series_kind == PARTIAL:
             interim_results[duration_integer] = partial_series(rolling_sum_values, measurement_period)
         else:
