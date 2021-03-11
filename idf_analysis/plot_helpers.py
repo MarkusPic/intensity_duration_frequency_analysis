@@ -84,9 +84,12 @@ def idf_bar_axes(ax, idf_table, durations=None, return_periods=None):
 
             ax.broken_barh(bar_x, (hi, dh), facecolors=c)
 
+    ax.tick_params(axis='y', which='minor', length=0)
+    ax.grid(axis='y', which='major')
+
     ax.set_ylim(0, duration_size)
     ax.set_xticklabels([])
     ax.xaxis.set_major_formatter(NullFormatter())
-    ax.axhline(0, color='k')
+    # ax.axhline(0, color='k')
     ax.axhline(duration_size / 2, color='k')
     return ax

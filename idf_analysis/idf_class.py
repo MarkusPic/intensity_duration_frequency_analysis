@@ -303,7 +303,7 @@ class IntensityDurationFrequencyAnalyse:
         return result_table
 
     ####################################################################################################################
-    def result_figure(self, min_duration=5.0, max_duration=720.0, logx=False, return_periods=None, color=False):
+    def result_figure(self, min_duration=5.0, max_duration=720.0, logx=False, return_periods=None, color=True, ax=None, linestyle=None):
         duration_steps = np.arange(min_duration, max_duration + 1, 1)
 
         if return_periods is None:
@@ -312,7 +312,7 @@ class IntensityDurationFrequencyAnalyse:
         table = self.result_table(durations=duration_steps, return_periods=return_periods)
         if color:
             table.columns.name = 'T$\\mathsf{_N}$ in (a)'
-        ax = table.plot(color=(None if color else 'black'), logx=logx, legend=color)
+        ax = table.plot(color=(None if color else 'black'), logx=logx, legend=color, ax=ax, ls=linestyle)
 
         for _, return_time in enumerate(return_periods):
             p = measured_points(self, return_time, max_duration=max_duration)
@@ -601,7 +601,7 @@ class IntensityDurationFrequencyAnalyse:
         events = self.rain_events
         self.add_max_return_periods_to_events(events)
 
-        main_events = events[events[COL.LP] > min_event_rain_sum].sort_values(by=COL.LP, ascending=False).to_dict(
+        main_events = events[(events[COL.LP] > min_event_rain_sum) & (events[COL.MAX_PERIOD] > min_return_period)].sort_values(by=COL.MAX_PERIOD, ascending=False).to_dict(
             orient='index')
 
         unit = 'mm'
@@ -625,7 +625,8 @@ class IntensityDurationFrequencyAnalyse:
         pdf.close()
 
     def event_plot(self, event, durations=None, unit='mm', column_name='Precipitation', min_return_period=0.5):
-        event = event.to_dict()
+        if isinstance(event, pd.Series):
+            event = event.to_dict()
         start = event[COL.START]
         end = event[COL.END]
 
@@ -650,9 +651,10 @@ class IntensityDurationFrequencyAnalyse:
                 max_dur = max(durations)
             else:
                 max_dur = max(self.duration_steps)
+
             return_periods_frame_extended = self.get_return_periods_frame(
                 self.series[start - pd.Timedelta(minutes=max_dur):
-                            end + pd.Timedelta(self._freq)].asfreq(self._freq).fillna(0)
+                            end + pd.Timedelta(self._freq)].resample(self._freq).sum()
             )
 
             idf_bar_ax = fig.add_subplot(211)
