@@ -303,7 +303,8 @@ class IntensityDurationFrequencyAnalyse:
         return result_table
 
     ####################################################################################################################
-    def result_figure(self, min_duration=5.0, max_duration=720.0, logx=False, return_periods=None, color=True, ax=None, linestyle=None):
+    def result_figure(self, min_duration=5.0, max_duration=720.0, logx=False, return_periods=None, color=True, ax=None,
+                      linestyle=None, add_interim=False):
         duration_steps = np.arange(min_duration, max_duration + 1, 1)
 
         if return_periods is None:
@@ -311,12 +312,13 @@ class IntensityDurationFrequencyAnalyse:
 
         table = self.result_table(durations=duration_steps, return_periods=return_periods)
         if color:
-            table.columns.name = 'T$\\mathsf{_N}$ in (a)'
+            table.columns.name = 'T$\\mathsf{_N}$ in a'
         ax = table.plot(color=(None if color else 'black'), logx=logx, legend=color, ax=ax, ls=linestyle)
 
         for _, return_time in enumerate(return_periods):
-            p = measured_points(self, return_time, max_duration=max_duration)
-            ax.plot(p, 'k' + 'x')
+            if add_interim:
+                p = measured_points(self, return_time, max_duration=max_duration)
+                ax.plot(p, 'k' + 'x')
 
             if not color:
                 x, y = list(p.tail(1).items())[0]
@@ -325,8 +327,8 @@ class IntensityDurationFrequencyAnalyse:
                         )
 
         ax.tick_params(axis='both', which='both', direction='out')
-        ax.set_xlabel('Duration D in (min)')
-        ax.set_ylabel('Rainfall h$\\mathsf{_N}$ in (mm)')
+        ax.set_xlabel('Duration D in min')
+        ax.set_ylabel('Rainfall h$\\mathsf{_N}$ in mm')
         ax.set_title('IDF curves')
 
         fig = ax.get_figure()

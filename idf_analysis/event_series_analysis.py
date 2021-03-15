@@ -147,12 +147,15 @@ def calculate_u_w(file_input, duration_steps, series_kind):
     # -------------------------------
     # acc. to DWA-A 531 chap. 4.2:
     # The values must be independent of each other for the statistical evaluations.
-    # estimated four hours acc. (SCHILLING 1984)
+    # estimated four hours acc. (Schilling, 1984)
     # for larger durations - use the duration as minimal gap
-    #
+    min_gap_schilling = pd.Timedelta(hours=4)
+
+    # --------------
+    # if
     # use only duration for splitting events
     # may increase design-rain-height of smaller durations
-    #
+
     # -------------------------------
     pbar = tqdm(duration_steps, desc='Calculating Parameters u and w')
     for duration_integer in pbar:
@@ -163,7 +166,12 @@ def calculate_u_w(file_input, duration_steps, series_kind):
         if duration < pd.Timedelta(base_frequency):
             continue
 
-        events = rain_events(ts, min_gap=duration)
+        if duration < min_gap_schilling:
+            min_gap = min_gap_schilling
+        else:
+            min_gap = duration
+
+        events = rain_events(ts, min_gap=min_gap)
 
         # correction factor acc. to DWA-A 531 chap. 4.3
         improve = _improve_factor(duration / base_frequency)
@@ -174,7 +182,7 @@ def calculate_u_w(file_input, duration_steps, series_kind):
         rolling_sum_values = agg_events(events, roll_sum, 'max') * improve
 
         if series_kind == ANNUAL:
-            interim_results[duration_integer] = annual_series(rolling_sum_values, events[COL.START].year.values)
+            interim_results[duration_integer] = annual_series(rolling_sum_values, events[COL.START].dt.year.values)
         elif series_kind == PARTIAL:
             interim_results[duration_integer] = partial_series(rolling_sum_values, measurement_period)
         else:
