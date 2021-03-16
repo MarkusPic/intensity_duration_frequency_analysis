@@ -104,6 +104,7 @@ class IntensityDurationFrequencyAnalyse:
         self.series = series.replace(0, np.NaN).dropna()
         self._return_periods_frame = None
         self._rain_events = None
+        self._rainfall_sum_frame = None
 
     # __________________________________________________________________________________________________________________
     @property
