@@ -1,0 +1,16 @@
+# acc. to DWA-A 531 chap. 5.2.1
+0:
+  u:
+    function: hyperbolic
+  w:
+    function: double_logarithmic
+60:
+  u:
+    function: double_logarithmic
+  w:
+    function: double_logarithmic
+720:
+  u:
+    function: linear
+  w:
+    function: linear

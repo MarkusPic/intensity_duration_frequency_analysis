@@ -1,6 +1,6 @@
 import numpy as np
 
-from .definitions import *
+from .definitions import APPROACH
 
 
 def folded_log_formulation(duration, param, case, param_mean=None, duration_mean=None):
@@ -26,12 +26,12 @@ def folded_log_formulation(duration, param, case, param_mean=None, duration_mean
 
     divisor = ((np.log(duration) - mean_ln_duration) ** 2).sum()
 
-    if case == LOG2:
+    if case == APPROACH.LOG2:
         # for the twofold formulation
         b = ((np.log(param) - mean_ln_param) * (np.log(duration) - mean_ln_duration)).sum() / divisor
         a = mean_ln_param - b * mean_ln_duration
 
-    elif case == LOG1:
+    elif case == APPROACH.LOG1:
         # for the onefold formulation
         b = ((param - param_mean) * (np.log(duration) - mean_ln_duration)).sum() / divisor
         a = param_mean - b * mean_ln_duration

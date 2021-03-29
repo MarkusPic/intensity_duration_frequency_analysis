@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
-from .definitions import *
+from .definitions import PARAM, SERIES, COL
 from .sww_utils import year_delta, guess_freq, rain_events, agg_events
 
 
@@ -126,7 +126,7 @@ def calculate_u_w(file_input, duration_steps, series_kind):
         series_kind (str): 'annual' or 'partial'
 
     Returns:
-        pandas.DataFrame: with key=durations and values=dict(u, w)
+        dict: with key=durations and values=dict(u, w)
     """
     ts = file_input.copy()
     # -------------------------------
@@ -181,14 +181,11 @@ def calculate_u_w(file_input, duration_steps, series_kind):
         # events[COL.rolling_sum_valuesAX_OVERLAPPING_SUM] = agg_events(events, roll_sum, 'max') * improve
         rolling_sum_values = agg_events(events, roll_sum, 'max') * improve
 
-        if series_kind == ANNUAL:
+        if series_kind == SERIES.ANNUAL:
             interim_results[duration_integer] = annual_series(rolling_sum_values, events[COL.START].dt.year.values)
-        elif series_kind == PARTIAL:
+        elif series_kind == SERIES.PARTIAL:
             interim_results[duration_integer] = partial_series(rolling_sum_values, measurement_period)
         else:
             raise NotImplementedError
 
-    # -------------------------------
-    interim_results = pd.DataFrame.from_dict(interim_results, orient='index')
-    interim_results.index.name = COL.DUR
     return interim_results

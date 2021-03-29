@@ -7,7 +7,7 @@ from os import path
 
 output_directory = path.join('ehyd_112086_idf_data')
 # initialize of the analysis class
-idf = IntensityDurationFrequencyAnalyse(series_kind=PARTIAL, worksheet=DWA, extended_durations=True)
+idf = IntensityDurationFrequencyAnalyse(series_kind=SERIES.PARTIAL, worksheet=METHOD.KOSTRA, extended_durations=True)
 
 # reading the pandas series of the precipitation (data from ehyd.gv.at - ID=112086)
 series = pd.read_parquet('ehyd_112086.parquet')['precipitation']

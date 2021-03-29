@@ -4,35 +4,13 @@ import pandas as pd
 from matplotlib.lines import Line2D
 from webbrowser import open as show_file
 
+from . import IntensityDurationFrequencyAnalyse
 from .definitions import *
 from .little_helpers import minutes_readable
 from .sww_utils import agg_events
 
 
-def measured_points(idf, return_periods, interim_results=None, max_duration=None):
-    """
-    get the calculation results of the rainfall with u and w without the estimation of the formulation
-
-    Args:
-        idf (IntensityDurationFrequencyAnalyse): idf class
-        return_periods (float | np.array | list | pd.Series): return period in [a]
-        interim_results (pd.DataFrame): data with duration as index and u & w as data
-        max_duration (float): max duration in [min]
-
-    Returns:
-        pd.Series: series with duration as index and the height of the rainfall as data
-    """
-    if interim_results is None:
-        interim_results = idf.parameters.get_interim_results()
-
-    if max_duration is not None:
-        interim_results = interim_results.loc[:max_duration].copy()
-
-    return pd.Series(index=interim_results.index,
-                     data=interim_results['u'] + interim_results['w'] * np.log(return_periods))
-
-
-def return_period_scatter(idf, filename='all_events_max_return_period.pdf', min_return_period=0.5, durations=None):
+def return_period_scatter(idf: IntensityDurationFrequencyAnalyse, filename='all_events_max_return_period.pdf', min_return_period=0.5, durations=None):
     if durations is None:
         durations = [5, 10, 15, 20, 30, 45, 60, 90, 120, 180, 240, 360, 540, 720, 1080, 1440, 2880, 4320]
 
@@ -93,7 +71,7 @@ def return_period_scatter(idf, filename='all_events_max_return_period.pdf', min_
     plt.close(fig)
 
 
-def result_plot_v2(idf, filename, min_duration=5.0, max_duration=720.0, logx=False, show=False):
+def result_plot_v2(idf: IntensityDurationFrequencyAnalyse, filename, min_duration=5.0, max_duration=720.0, logx=False, show=False):
     duration_steps = np.arange(min_duration, max_duration + 1, 1)
     colors = ['r', 'g', 'b', 'y', 'm']
 
@@ -109,7 +87,7 @@ def result_plot_v2(idf, filename, min_duration=5.0, max_duration=720.0, logx=Fal
     for i in range(len(return_periods)):
         return_time = return_periods[i]
         color = colors[i]
-        p = measured_points(idf, return_time, max_duration=max_duration)
+        p = idf.parameters.measured_points(return_time, max_duration=max_duration)
         p.index = pd.to_timedelta(p.index, unit='m')
         ax.plot(p, color + 'x')
 

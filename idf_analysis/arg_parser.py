@@ -7,7 +7,7 @@ __license__ = "MIT"
 
 import argparse
 
-from .definitions import DWA, ATV, DWA_adv, PARTIAL, ANNUAL
+from .definitions import SERIES, METHOD
 
 
 class Borders(object):
@@ -55,13 +55,13 @@ def heavy_rain_parser():
     # --------------------------------------------
     parser.add_argument('-ws', '--worksheet',
                         help='From which worksheet the recommendations for calculating the parameters should be taken.',
-                        default=DWA,
-                        required=False, type=str, choices=[ATV, DWA, DWA_adv])
+                        default=METHOD.KOSTRA,
+                        required=False, type=str, choices=METHOD.OPTIONS)
     parser.add_argument('-kind', '--series_kind',
                         help='The kind of series used for the calculation. '
                              '(Calculation with partial series is more precise and recommended.)',
-                        default=PARTIAL,
-                        required=False, type=str, choices=[PARTIAL, ANNUAL])
+                        default=SERIES.PARTIAL,
+                        required=False, type=str, choices=SERIES.OPTIONS)
     # --------------------------------------------
     parser.add_argument('-t', '--return_period',
                         help='return period in years' + calc_help,

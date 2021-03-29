@@ -18,14 +18,13 @@ import pandas as pd
 from tqdm import tqdm
 
 from .arg_parser import heavy_rain_parser
-from .idf_parameters import IdfParameters
+from .idf_backend import IdfParameters
 from .little_helpers import minutes_readable, height2rate, delta2min, rate2height, frame_looper, event_caption
 from .definitions import *
 from .in_out import import_series
 from .sww_utils import (remove_timezone, guess_freq, rain_events, agg_events, event_duration, resample_rain_series,
                         rain_bar_plot, IdfError, )
 from .plot_helpers import idf_bar_axes
-from .additional_scripts import measured_points
 
 
 ########################################################################################################################
@@ -39,7 +38,7 @@ class IntensityDurationFrequencyAnalyse:
     for duration steps up to 12 hours (and more) and return period in a range of '0.5a <= T_n <= 100a'
     """
 
-    def __init__(self, series_kind=PARTIAL, worksheet=DWA, extended_durations=False):
+    def __init__(self, series_kind=SERIES.PARTIAL, worksheet=METHOD.KOSTRA, extended_durations=False):
         """
         heavy rain as a function of the duration and the return period acc. to DWA-A 531 (2012)
 
@@ -53,23 +52,19 @@ class IntensityDurationFrequencyAnalyse:
             worksheet (str): ['DWA-A_531', 'ATV-A_121', 'DWA-A_531_advektiv']
             extended_durations (bool): add [720, 1080, 1440, 2880, 4320, 5760, 7200, 8640] minutes to the calculation
         """
-        self.series_kind = series_kind
-        self.worksheet = worksheet
-
         self._series = None  # type: pd.Series # rain time-series
         self._freq = None  # frequency of the rain series
 
-        self._parameter = None  # type: IdfParameters #  how to calculate the idf curves
+        #  how to calculate the idf curves
+        # IdfParameters.__init__(self, series_kind=series_kind, worksheet=worksheet,
+        #                                 extended_durations=extended_durations)
+        self._parameter = IdfParameters(series_kind=series_kind, worksheet=worksheet,
+                                        extended_durations=extended_durations)
+        # self._parameter = None  # type: IdfParameters #  how to calculate the idf curves
+
         self._return_periods_frame = None  # type: pd.DataFrame # with return periods of all given durations
         self._rain_events = None
         self._rainfall_sum_frame = None  # type: pd.DataFrame # with rain sums of all given durations
-
-        # sampling points of the duration steps in minutes
-        self._duration_steps = [5, 10, 15, 20, 30, 45, 60, 90]
-        # self._duration_steps += [i * 60 for i in [3, 4.5, 6, 7.5, 10, 12, 18]]  # duration steps in hours
-        self._duration_steps += [i * 60 for i in [2, 3, 4, 6, 9, 12, 18]]  # duration steps in hours
-        if extended_durations:
-            self._duration_steps += [i * 60 * 24 for i in [1, 2, 3, 4, 5, 6]]  # duration steps in days
 
     # __________________________________________________________________________________________________________________
     @property
@@ -100,7 +95,7 @@ class IntensityDurationFrequencyAnalyse:
 
         self._freq = guess_freq(series.index)
         freq_minutes = delta2min(self._freq)
-        self.duration_steps = list(filter(lambda d: d >= freq_minutes, self.duration_steps))
+        self._parameter.filter_durations(freq_minutes)
         self.series = series.replace(0, np.NaN).dropna()
         self._return_periods_frame = None
         self._rain_events = None
@@ -114,9 +109,9 @@ class IntensityDurationFrequencyAnalyse:
         Returns:
             list | numpy.ndarray: duration steps in minutes
         """
-        if self._duration_steps is None:
-            raise IdfError('No Series defined for IDF-Analysis!')
-        return self._duration_steps
+        # if not self.parameters:
+        #     raise IdfError('No Series defined for IDF-Analysis!')
+        return self.parameters.durations
 
     @duration_steps.setter
     def duration_steps(self, durations):
@@ -127,7 +122,7 @@ class IntensityDurationFrequencyAnalyse:
         """
         if not isinstance(durations, (list, np.ndarray)):
             raise IdfError('Duration steps have to be {} got "{}"'.format((list, np.ndarray), type(durations)))
-        self._duration_steps = durations
+        self.parameters.durations = durations
 
     # __________________________________________________________________________________________________________________
     @property
@@ -145,9 +140,8 @@ class IntensityDurationFrequencyAnalyse:
         Returns:
             IdfParameters: calculation parameters
         """
-        if self._parameter is None:
-            self._parameter = IdfParameters.from_series(self.series, self.duration_steps, self.series_kind,
-                                                        self.worksheet)
+        if not self._parameter:
+            self._parameter.calc_from_series(self.series)
         return self._parameter
 
     def write_parameters(self, filename):
@@ -177,19 +171,6 @@ class IntensityDurationFrequencyAnalyse:
             self.write_parameters(filename)
 
     # __________________________________________________________________________________________________________________
-    def get_u_w(self, duration):
-        """
-        calculate the u and w parameters depending on the durations
-
-        Args:
-            duration (int | float | list | numpy.ndarray | pandas.Series): in minutes
-
-        Returns:
-            (numpy.ndarray, numpy.ndarray) | (float, float): u and w
-        """
-        return self.parameters.get_u_w(duration)
-
-    # __________________________________________________________________________________________________________________
     def depth_of_rainfall(self, duration, return_period):
         """
         calculate the height of the rainfall h in L/m² = mm
@@ -201,7 +182,7 @@ class IntensityDurationFrequencyAnalyse:
         Returns:
             int | float | list | numpy.ndarray | pandas.Series: height of the rainfall h in L/m² = mm
         """
-        if self.series_kind == ANNUAL:
+        if self.parameters.series_kind == SERIES.ANNUAL:
             if return_period < 5:
                 print('WARNING: Using an annual series and a return period < 5 a will result in faulty values!')
 
@@ -213,7 +194,7 @@ class IntensityDurationFrequencyAnalyse:
         else:
             log_tn = np.log(return_period)
 
-        u, w = self.get_u_w(duration)
+        u, w = self.parameters.get_u_w(duration)
         return u + w * log_tn
 
     # __________________________________________________________________________________________________________________
@@ -255,7 +236,7 @@ class IntensityDurationFrequencyAnalyse:
         Returns:
             int | float | list | numpy.ndarray | pandas.Series: return period in years
         """
-        u, w = self.get_u_w(duration)
+        u, w = self.parameters.get_u_w(duration)
         return np.exp((height_of_rainfall - u) / w)
 
     # __________________________________________________________________________________________________________________
@@ -318,11 +299,12 @@ class IntensityDurationFrequencyAnalyse:
 
         for _, return_time in enumerate(return_periods):
             if add_interim:
-                p = measured_points(self, return_time, max_duration=max_duration)
+                p = self.parameters.measured_points(return_time, max_duration=max_duration)
+                # p = measured_points(self, return_time, max_duration=max_duration)
                 ax.plot(p, 'k' + 'x')
 
             if not color:
-                x, y = list(p.tail(1).items())[0]
+                x, y = list(table[return_time].tail(1).items())[0]
                 ax.text(x + 10, y, '{} a'.format(return_time), verticalalignment='center', horizontalalignment='left',
                         # bbox=dict(facecolor='white', alpha=1.0, lw=1)
                         )
