@@ -41,6 +41,29 @@ class IdfParameters:
         self._calc_params()
         self._balance_parameter_change()
 
+    def reverse_engineering(self, idf_table):
+        durations = idf_table.index.values
+        u = idf_table[1].values
+        w_dat = idf_table.sub(u, axis=0)
+        # --
+        w = list()
+        for dur in durations:
+            dat = w_dat.loc[dur]
+            log_tn_i = np.log(dat.index.values)
+            w.append(sum(dat.values * log_tn_i) / sum(log_tn_i ** 2))
+
+        # -------
+        # ax = dat.plot(logx=True)
+        # fig = ax.get_figure()
+        # fig.show()
+        # print(results.summary())
+
+        self.durations = durations
+        self.parameters_series[PARAM.U] = np.array(u)
+        self.parameters_series[PARAM.W] = np.array(w)
+        self._calc_params()
+        self._balance_parameter_change()
+
     # -------------------------------------------------------------
     @property
     def durations(self):
