@@ -200,7 +200,7 @@ def event_duration(events):
 
 
 ########################################################################################################################
-def rain_bar_plot(rain, ax=None, color='#1E88E5', reverse=False):
+def rain_bar_plot(rain, ax=None, color='#1E88E5', reverse=False, step='post', joinstyle='miter', capstyle='butt'):
     """
     make a standard precipitation/rain plot
 
@@ -209,12 +209,15 @@ def rain_bar_plot(rain, ax=None, color='#1E88E5', reverse=False):
         ax (matplotlib.axes.Axes):
         color (str):
         reverse (bool):
+        drawstyle (str):  'steps-mid' 'steps-post' steps-pre'
 
     Returns:
         matplotlib.axes.Axes: rain plot
     """
-    ax = rain.plot(ax=ax, drawstyle='steps-mid', color=color, solid_capstyle='butt', solid_joinstyle='miter', lw=0)
-    ax.fill_between(rain.index, rain.values, 0, step='mid', zorder=1000, color=color, capstyle='butt', joinstyle='miter')
+    ax = rain.plot(ax=ax, drawstyle=f'steps-{step}', color=color, solid_capstyle=capstyle, solid_joinstyle=joinstyle,
+                   lw=0)
+    ax.fill_between(rain.index, rain.values, 0, step=step, zorder=1000, color=color, capstyle=capstyle,
+                    joinstyle=joinstyle)
 
     if reverse:
         # ax.set_ylim(top=0, bottom=rain.max() * 1.1)
