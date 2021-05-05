@@ -86,7 +86,18 @@ class IdfParameters:
         self.durations = duration_steps
 
     def filter_durations(self, freq_minutes):
-        self.durations = self.durations[self.durations >= freq_minutes]
+        self.limit_duration(lowest=freq_minutes)
+
+    def limit_duration(self, lowest=None, highest=None):
+        bool_array = self.durations == False
+        if lowest is not None:
+            bool_array |= self.durations >= lowest
+        if highest is not None:
+            bool_array |= self.durations <= highest
+
+        self.durations = self.durations[bool_array]
+        self.parameters_series['u'] = self.parameters_series['u'][bool_array]
+        self.parameters_series['w'] = self.parameters_series['w'][bool_array]
 
     # -------------------------------------------------------------
     def get_approaches(self, worksheet):

@@ -581,7 +581,7 @@ class IntensityDurationFrequencyAnalyse:
                         (default: [5, 10, 15, 20, 30, 45, 60, 90, 120, 180, 240, 360, 540, 720, 1080, 1440, 2880, 4320])
         """
         if durations is None:
-            durations = [5, 10, 15, 20, 30, 45, 60, 90, 120, 180, 240, 360, 540, 720, 1080, 1440, 2880, 4320]
+            durations = self.parameters.durations
 
         events = self.rain_events
         self.add_max_return_periods_to_events(events)
@@ -632,7 +632,7 @@ class IntensityDurationFrequencyAnalyse:
             rain_ax = fig.add_subplot(111)
 
         else:
-            if durations:
+            if durations is not None:
                 max_dur = max(durations)
             else:
                 max_dur = max(self.duration_steps)
