@@ -13,23 +13,18 @@ from .little_helpers import duration_steps_readable
 from .sww_utils import guess_freq, rain_events, event_duration
 
 
-def idf_bar_axes(ax, idf_table, durations=None, return_periods=None):
+def idf_bar_axes(ax, idf_table, return_periods=None):
     """
     create
 
     Args:
         ax (matplotlib.pyplot.Axes):
         idf_table (pandas.DataFrame):
-        durations (list):
         return_periods (list):
 
     Returns:
         matplotlib.pyplot.Axes:
     """
-    if durations is not None:
-        # durations = [5, 10, 15, 20, 30, 45, 60, 90, 120, 180, 240, 360, 540, 720, 1080, 1440, 2880, 4320]
-        idf_table = idf_table[durations]
-
     if return_periods is None:
         return_periods = [0.5, 1, 2, 5, 10, 20, 50, 100]
 

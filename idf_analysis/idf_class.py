@@ -639,11 +639,12 @@ class IntensityDurationFrequencyAnalyse:
 
             return_periods_frame_extended = self.get_return_periods_frame(
                 self.series[start - pd.Timedelta(minutes=max_dur):
-                            end + pd.Timedelta(self._freq)].resample(self._freq).sum()
+                            end + pd.Timedelta(self._freq)].resample(self._freq).sum(),
+                durations=durations
             )
 
             idf_bar_ax = fig.add_subplot(211)
-            idf_bar_ax = idf_bar_axes(idf_bar_ax, return_periods_frame_extended, durations)
+            idf_bar_ax = idf_bar_axes(idf_bar_ax, return_periods_frame_extended)
             rain_ax = fig.add_subplot(212, sharex=idf_bar_ax)
 
         # -------------------------------------
