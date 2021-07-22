@@ -307,8 +307,42 @@ class IdfParameters:
     @classmethod
     def from_yaml(cls, filename):
         data = read_yaml(filename)
+        if isinstance(data, list):
+            return cls.from_yaml_depreciated(filename)
         p = cls(series_kind=data[PARAM.SERIES])
         p.durations = data[PARAM.DUR]
+        # list to numpy.array
         p.parameters_series = {p: np.array(l) for p, l in data[PARAM.PARAMS_SERIES].items()}
         p.parameters_final = data[PARAM.PARAMS_FINAL]
+        return p
+
+    @classmethod
+    def from_yaml_depreciated(cls, filename, series_kind=SERIES.PARTIAL):
+        data = read_yaml(filename)
+        p = cls(series_kind=series_kind)
+        p.durations = list()
+        p.parameters_series = {PARAM.U: list(), PARAM.W: list()}
+        p.parameters_final = dict()
+        for part in data:
+            start_dur = float(part['von'])
+            start_idx = 0
+            if start_dur in part[COL.DUR]:
+                start_idx = 1
+            p._durations += part[COL.DUR][start_idx:]
+            part_params = dict()
+
+            for u_or_w in PARAM.U_AND_W:
+                part_params[u_or_w] = {PARAM.FUNCTION: part[u_or_w]}
+                if part[u_or_w] != APPROACH.LIN:
+                    part_params[u_or_w][PARAM.A] = part[f'{PARAM.A}_{u_or_w}']
+                    part_params[u_or_w][PARAM.B] = part[f'{PARAM.B}_{u_or_w}']
+
+                p.parameters_series[u_or_w] += part[PARAM.VALUES(u_or_w)][start_idx:]
+
+            p.parameters_final[start_dur] = part_params
+
+        p.parameters_series = {param: np.array(l) for param, l in p.parameters_series.items()}
+        if '.yaml' in filename:
+            os.rename(filename, filename.replace('.yaml', '_OLD.yaml'))
+            p.to_yaml(filename)
         return p
