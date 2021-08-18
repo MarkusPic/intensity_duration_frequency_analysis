@@ -9,30 +9,38 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # ----------------------------------
-# df = ehyd_design_rainfall_ascii_reader(get_ehyd_file(grid_point_number=5214))
-# df.to_csv('design_rain_ehyd_5214.csv')
-df = pd.read_csv('design_rain_ehyd_5214.csv', index_col=[0, 1])
-df.columns = df.columns.astype(int)
-idf_table = get_max_calculation_method(df)
-idf_table = df.xs('ÖKOSTRA', axis=0, level=INDICES.CALCULATION_METHOD, drop_level=True).copy()
+# grid_point_number = 5214
+for location, grid_point_number in {'graz': 5214, 'poellau': 4683}.items():
+    fn = f'design_rain_ehyd_{grid_point_number}.csv'
 
-idf_reverse = IntensityDurationFrequencyAnalyse(series_kind=SERIES.PARTIAL, worksheet=METHOD.KOSTRA, extended_durations=True)
-idf_reverse._parameter.reverse_engineering(idf_table)
+    if path.isfile(fn):
+        df = pd.read_csv(fn, index_col=[0, 1])
+        df.columns = df.columns.astype(int)
+    else:
+        df = ehyd_design_rainfall_ascii_reader(get_ehyd_file(grid_point_number=grid_point_number))
+        df.to_csv(fn)
 
-output_directory = path.join('design_rain_ehyd_5214')
-idf_reverse.auto_save_parameters(path.join(output_directory, 'idf_parameters.yaml'))
+    idf_table = get_max_calculation_method(df)
+    idf_table = df.xs('ÖKOSTRA', axis=0, level=INDICES.CALCULATION_METHOD, drop_level=True).copy()
+
+    idf_reverse = IntensityDurationFrequencyAnalyse(series_kind=SERIES.PARTIAL, worksheet=METHOD.KOSTRA, extended_durations=True)
+    idf_reverse._parameter.reverse_engineering(idf_table)
+
+    output_directory = path.join(f'design_rain_ehyd_{grid_point_number}')
+    idf_reverse.auto_save_parameters(path.join(output_directory, 'idf_parameters.yaml'))
+    # exit()
+    # ----------------------------------
+    max_duration = 2880
+    fig, ax = idf_reverse.result_figure(color=True, logx=True, max_duration=max_duration)
+    fig.set_size_inches(12, 8)
+
+    ax = idf_table.loc[:max_duration, [1, 2, 5, 10, 50, 100]].plot(ax=ax, marker='x', lw=0)
+    # ax.set_xlim(0, 720)
+    fig.tight_layout()
+    fig.show()
+    fig.savefig(path.join(f'idf_reverse_curves_plot_color_{location}.png'), dpi=200)
+
 exit()
-# ----------------------------------
-max_duration = 2880
-fig, ax = idf_reverse.result_figure(color=True, logx=True, max_duration=max_duration)
-fig.set_size_inches(12, 8)
-
-ax = idf_table.loc[:max_duration, [1, 2, 5, 10, 50, 100]].plot(ax=ax, marker='x', lw=0)
-# ax.set_xlim(0, 720)
-fig.tight_layout()
-fig.show()
-fig.savefig(path.join('idf_reverse_curves_plot_color.png'), dpi=200)
-
 # ----------------------------------
 # sub-folder for the results
 output_directory = path.join('ehyd_112086_idf_data')
