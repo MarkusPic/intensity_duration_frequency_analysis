@@ -6,6 +6,8 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
+from scipy.stats import linregress
+
 from .definitions import PARAM, SERIES, COL
 from .sww_utils import year_delta, guess_freq, rain_events, agg_events
 
@@ -27,18 +29,11 @@ def annual_series(rolling_sum_values, year_index):
     #                             index=events[COL.START].values).resample('AS').max().index
     annually_series = np.sort(annually_series)[::-1]
 
-    mean_sample_rainfall = annually_series.mean()
     sample_size = annually_series.size
-
     index = np.arange(sample_size) + 1
     x = -np.log(np.log((sample_size + 0.2) / (sample_size - index + 0.6)))
-    x_mean = x.mean()
 
-    w = ((x * annually_series).sum() - sample_size * mean_sample_rainfall * x_mean) / \
-        ((x ** 2).sum() - sample_size * x_mean ** 2)
-    u = mean_sample_rainfall - w * x_mean
-
-    return {PARAM.U: u, PARAM.W: w}
+    return _lin_regress(x, annually_series)
 
 
 def _plotting_formula(k, l, m):
@@ -77,18 +72,28 @@ def partial_series(rolling_sum_values, measurement_period):
     threshold_sample_size = int(floor(measurement_period * e))
     partially_series = partially_series[:threshold_sample_size]
 
-    mean_sample_rainfall = partially_series.mean()
     sample_size = threshold_sample_size
     index = np.arange(sample_size) + 1
     log_return_periods = np.log(_plotting_formula(index, sample_size, measurement_period))
-    ln_t_n_mean = log_return_periods.mean()
 
-    w = ((log_return_periods * partially_series).sum() - sample_size * mean_sample_rainfall * ln_t_n_mean) / \
-        ((log_return_periods ** 2).sum() - sample_size * ln_t_n_mean ** 2)
+    return _lin_regress(log_return_periods, partially_series)
 
-    u = mean_sample_rainfall - w * ln_t_n_mean
 
-    return {PARAM.U: u, PARAM.W: w}
+def _lin_regress2(x, y):
+    sample_size = len(x)
+    x_mean = np.mean(x)
+    y_mean = np.mean(y)
+
+    slope = ((x * y).sum() - sample_size * y_mean * x_mean) / \
+        ((x ** 2).sum() - sample_size * x_mean ** 2)
+
+    intercept = y_mean - slope * x_mean
+    return {PARAM.U: intercept, PARAM.W: slope}
+
+
+def _lin_regress(x, y):
+    res = linregress(x, y)
+    return {PARAM.U: res.intercept, PARAM.W: res.slope}
 
 
 def _improve_factor(interval):

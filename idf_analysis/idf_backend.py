@@ -96,8 +96,10 @@ class IdfParameters:
             bool_array |= self.durations <= highest
 
         self.durations = self.durations[bool_array]
-        self.parameters_series['u'] = self.parameters_series['u'][bool_array]
-        self.parameters_series['w'] = self.parameters_series['w'][bool_array]
+        for param in PARAM.U_AND_W:
+            if param in self.parameters_series:
+                self.parameters_series[param] = self.parameters_series[param][bool_array]
+        # self.parameters_series[PARAM.W] = self.parameters_series[PARAM.W][bool_array]
 
     # -------------------------------------------------------------
     def get_approaches(self, worksheet):

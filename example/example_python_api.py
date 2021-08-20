@@ -17,7 +17,9 @@ idf.set_series(series)
 # idf.write_parameters(path.join(output_directory, 'idf_parameters.yaml'))
 # exit()
 # auto-save the calculated parameter so save time for a later use
-idf.auto_save_parameters(path.join(output_directory, 'idf_parameters.yaml'))
+idf.auto_save_parameters(path.join(output_directory, 'idf_parameters_new.yaml'))
+
+exit()
 
 idf.result_figure(color=False)
 
