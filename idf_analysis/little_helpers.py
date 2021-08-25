@@ -111,18 +111,31 @@ def frame_looper(size, columns, label='return periods'):
 def event_caption(event, unit='mm'):
     caption = 'rain event\n'
     if (COL.START in event) and (COL.END in event):
-        caption += 'between {:%Y-%m-%d %H:%M} and {:%Y-%m-%d %H:%M}\n'.format(event[COL.START], event[COL.END])
+        caption += f'between {event[COL.START]:%Y-%m-%d %H:%M} and {event[COL.END]:%Y-%m-%d %H:%M} '
 
     if COL.LP in event:
-        caption += 'with a total sum of {:0.1f} {}\n'.format(event[COL.LP], unit)
+        caption += f'with a total sum of {event[COL.LP]:0.1f} {unit} '
 
     if COL.DUR in event:
-        caption += 'and a duration of {}\n'.format(event[COL.DUR])
+        caption += f'and a duration of {event[COL.DUR]} '
+
+    caption += '. \n'
 
     if COL.MAX_PERIOD in event:
-        caption += 'The maximum return period was {:0.2f} a\n'.format(event[COL.MAX_PERIOD])
+        caption += f'The maximum return period was {return_period_formatter(event[COL.MAX_PERIOD])} a\n'
 
-    if COL.MAX_PERIOD_DURATION in event:
-        caption += 'at a duration of {}.'.format(minutes_readable(event[COL.MAX_PERIOD_DURATION]))
+        if COL.MAX_PERIOD_DURATION in event:
+            caption += f'at a duration of {minutes_readable(event[COL.MAX_PERIOD_DURATION])}.'
 
     return caption
+
+
+def return_period_formatter(t):
+    if t < 1:
+        return '< 1'
+    elif t > 200:
+        return '$\\gg$ 100'
+    elif t > 100:
+        return '> 100'
+    else:
+        return f'{t:0.1f}'

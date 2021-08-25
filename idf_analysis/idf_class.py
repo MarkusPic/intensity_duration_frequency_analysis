@@ -613,7 +613,7 @@ class IntensityDurationFrequencyAnalyse:
 
         pdf.close()
 
-    def event_plot(self, event, durations=None, unit='mm', column_name='Precipitation', min_return_period=0.5):
+    def event_plot(self, event, durations=None, unit='mm', column_name='Precipitation', min_return_period=1):
         if isinstance(event, pd.Series):
             event = event.to_dict()
         start = event[COL.START]

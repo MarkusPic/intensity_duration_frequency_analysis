@@ -12,23 +12,32 @@ from .definitions import COL
 from .little_helpers import duration_steps_readable
 from .sww_utils import guess_freq, rain_events, event_duration
 
+RETURN_PERIOD_COLORS = {
+    # 0.5: '#e0ffff',  # 'lightcyan',
+    1: '#00ffff',  # 'cyan',
+    2: '#add8e6',  # 'lightblue',
+    5: '#0000ff',  # 'blue',
+    10: '#ffff00',  # 'yellow',
+    20: '#ffa500',  # 'orange',
+    50: '#ff0000',  # 'red',
+    100: '#ff00ff',  # 'magenta',
+}
 
-def idf_bar_axes(ax, idf_table, return_periods=None):
+
+def idf_bar_axes(ax, idf_table, return_period_colors=RETURN_PERIOD_COLORS):
     """
     create
 
     Args:
         ax (matplotlib.pyplot.Axes):
         idf_table (pandas.DataFrame):
-        return_periods (list):
+        return_period_colors (dict): color of each return period {return period: color}
 
     Returns:
         matplotlib.pyplot.Axes:
     """
-    if return_periods is None:
-        return_periods = [0.5, 1, 2, 5, 10, 20, 50, 100]
-
-    color_return_period = ['lightcyan', 'cyan', 'lightblue', 'blue', 'yellow', 'orange', 'red', 'magenta']
+    return_periods = list(return_period_colors.keys())
+    color_return_period = list(return_period_colors.values())
 
     # legend
     from matplotlib.lines import Line2D
@@ -59,8 +68,8 @@ def idf_bar_axes(ax, idf_table, return_periods=None):
     for hi, d in enumerate(idf_table.columns):
         tn = idf_table[d]
 
-        for i, t in enumerate(return_periods):
-            c = color_return_period[i]
+        for t in return_periods:
+            c = return_period_colors[t]
             # not really a rain event, but the results are the same
             # tab2 = rain_events(tn, ignore_rain_below=t, min_gap=pd.Timedelta(minutes=d))
             tab = rain_events(tn, ignore_rain_below=t, min_gap=freq)
