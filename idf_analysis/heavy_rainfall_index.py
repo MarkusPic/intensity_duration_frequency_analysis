@@ -569,7 +569,7 @@ class HeavyRainfallIndexAnalyse(IntensityDurationFrequencyAnalyse):
         # self.method = self.METHODS.SCHMITT
         sri_table_event[self.METHODS.SCHMITT] = self.get_event_sri_max(event[COL.START], event[COL.END]).astype(int)
 
-        sri_table_event['max. Regensumme'] = self.rainfall_sum_frame[event[COL.START]:event[COL.END]].max()
-        sri_table_event['max. Wiederkehrperiode'] = self.return_periods_frame[event[COL.START]:event[COL.END]].max()
+        sri_table_event[COL.MAX_OVERLAPPING_SUM] = self.rainfall_sum_frame[event[COL.START]:event[COL.END]].max()
+        sri_table_event[COL.MAX_PERIOD] = self.return_periods_frame[event[COL.START]:event[COL.END]].max()
 
         return sri_table_event.rename(minutes_readable)
