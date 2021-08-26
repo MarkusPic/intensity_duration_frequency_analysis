@@ -24,53 +24,94 @@ COL.MAX_SRI_DURATION = 'max_SRI_duration_{}'
 
 ####################################################################################################################
 def grisa_factor(tn):
-    return 1 + (np.log(tn) / np.log(2))
-    """M
+    """
     calculates the grisa-factor according to Grisa's formula
-    
+
     Args:
         tn (float): in [years]
 
     Returns:
-        float 
+        float: factor
     """
+    return 1 + (np.log(tn) / np.log(2))
 
 
 def next_bigger(v, l):
     return l[next(x for x, val in enumerate(l) if val >= v)]
 
 
-# Zuweisung nach Schmitt des SRI über der Wiederkehrperiode
-schmitt_sri_tn = {
-    1: 1,
-    2: 1,
-    3: 2,
-    5: 2,
-    10: 3,
-    20: 4,
-    25: 4,
-    30: 5,
-    50: 6,
-    75: 6,
-    100: 7
-}
+class SCHMITT:
+    # Zuweisung nach Schmitt des SRI über der Wiederkehrperiode
+    SRI_TN = {
+        1: 1,
+        2: 1,
+        3: 2,
+        5: 2,
+        10: 3,
+        20: 4,
+        25: 4,
+        30: 5,
+        50: 6,
+        75: 6,
+        100: 7
+    }
 
-# Erhöhungsfaktoren nach Schmitt für SRI 8,9,10,11,12 basierend auf SRI 7
-# untere und obere Grenze
-schmitt_multi_factor = {
-    8: (1.2, 1.39),
-    9: (1.4, 1.59),
-    10: (1.6, 2.19),
-    11: (2.2, 2.78),
-    12: (2.8, 2.8),
-}
+    # Erhöhungsfaktoren nach Schmitt für SRI 8,9,10,11,12 basierend auf SRI 7
+    # untere und obere Grenze
+    MULTI_FACTOR = {
+        8: (1.2, 1.39),
+        9: (1.4, 1.59),
+        10: (1.6, 2.19),
+        11: (2.2, 2.78),
+        12: (2.8, 2.8),
+    }
 
-schmitt_verbal = {
-    (1, 2): 'Starkregen',
-    (3, 5): 'intensiver Starkregen',
-    (6, 7): 'außergewöhnlicher Starkregen',
-    (8, 12): 'extremer Starkregen'
-}
+    VERBAL = {
+        (1, 2): 'Starkregen',
+        (3, 5): 'intensiver Starkregen',
+        (6, 7): 'außergewöhnlicher Starkregen',
+        (8, 12): 'extremer Starkregen'
+    }
+
+    INDICES_COLOR = {1: (0.69, 0.9, 0.1),
+                     2: (0.8, 1, 0.6),
+                     3: (0.9, 1, 0.3),
+                     4: (1, 0.96, 0),
+                     5: (1, 0.63, 0),
+                     6: (1, 0.34, 0),
+                     7: (1, 0.16, 0),
+                     8: (0.97, 0.12, 0.24),
+                     9: (1, 0.10, 0.39),
+                     10: (0.97, 0.03, 0.51),
+                     11: (0.92, 0.08, 0.75),
+                     12: (0.66, 0.11, 0.86)}
+
+    INDICES_COLOR_RGB = {1: (176, 230, 25),
+                         2: (204, 255, 153),
+                         3: (230, 255, 77),
+                         4: (255, 244, 0),
+                         5: (255, 160, 0),
+                         6: (255, 86, 0),
+                         7: (255, 40, 0),
+                         8: (247, 30, 61),
+                         9: (255, 26, 99),
+                         10: (247, 9, 130),
+                         11: (235, 21, 191),
+                         12: (189, 28, 220)}
+
+    INDICES_COLOR_HEX = {1: "#b0e619",
+                         2: "#ccff99",
+                         3: "#e6ff4d",
+                         4: "#fff400",
+                         5: "#ffa000",
+                         6: "#ff5600",
+                         7: "#ff2800",
+                         8: "#f71e3d",
+                         9: "#ff1a63",
+                         10: "#f70982",
+                         11: "#eb15bf",
+                         12: "#bd1cdc"}
+
 
 krueger_pfister_verbal = {
     (1, 4): 'moderat',
@@ -109,18 +150,7 @@ class HeavyRainfallIndexAnalyse(IntensityDurationFrequencyAnalyse):
         def all(cls):
             return cls.SCHMITT, cls.KRUEGER_PFISTER, cls.MUDERSBACH
 
-    indices_color = {1: (0.69, 0.9, 0.1),
-                     2: (0.8, 1, 0.6),
-                     3: (0.9, 1, 0.3),
-                     4: (1, 0.96, 0),
-                     5: (1, 0.63, 0),
-                     6: (1, 0.34, 0),
-                     7: (1, 0.16, 0),
-                     8: (0.97, 0.12, 0.24),
-                     9: (1, 0.10, 0.39),
-                     10: (0.97, 0.03, 0.51),
-                     11: (0.92, 0.08, 0.75),
-                     12: (0.66, 0.11, 0.86)}
+    indices_color = SCHMITT.INDICES_COLOR
 
     def __init__(self, *args, method=METHODS.SCHMITT, **kwargs):
         IntensityDurationFrequencyAnalyse.__init__(self, *args, **kwargs)
@@ -160,24 +190,24 @@ class HeavyRainfallIndexAnalyse(IntensityDurationFrequencyAnalyse):
 
         elif self.method == self.METHODS.SCHMITT:
             if isinstance(tn, (pd.Series, np.ndarray)):
-                breaks = [-np.inf] + list(schmitt_sri_tn.keys()) + [np.inf]
-                d = dict(zip(range(11), schmitt_sri_tn.values()))
+                breaks = [-np.inf] + list(SCHMITT.SRI_TN.keys()) + [np.inf]
+                d = dict(zip(range(11), SCHMITT.SRI_TN.values()))
                 sri = pd.cut(tn, breaks, labels=False).replace(d)
 
                 over_100 = tn > 100
                 hn_100 = self.depth_of_rainfall(duration, 100)
-                breaks2 = [1] + [f[0] for f in schmitt_multi_factor.values()][1:] + [np.inf]
+                breaks2 = [1] + [f[0] for f in SCHMITT.MULTI_FACTOR.values()][1:] + [np.inf]
                 d2 = dict(zip(range(len(breaks2) - 1), range(8, 13)))
                 sri.loc[over_100] = pd.cut(height_of_rainfall.loc[over_100] / hn_100, breaks2, labels=False).replace(d2)
 
             else:
                 if tn >= 100:
                     hn_100 = self.depth_of_rainfall(duration, 100)
-                    for sri, mul in schmitt_multi_factor.items():
+                    for sri, mul in SCHMITT.MULTI_FACTOR.items():
                         if height_of_rainfall <= hn_100 * mul[0]:
                             break
                 else:
-                    sri = schmitt_sri_tn[next_bigger(tn, list(schmitt_sri_tn.keys()))]
+                    sri = SCHMITT.SRI_TN[next_bigger(tn, list(SCHMITT.SRI_TN.keys()))]
 
         elif self.method == self.METHODS.KRUEGER_PFISTER:
             h_24h = self.depth_of_rainfall(duration=24 * 60, return_period=tn)
@@ -210,9 +240,9 @@ class HeavyRainfallIndexAnalyse(IntensityDurationFrequencyAnalyse):
         idf_table = self.result_table(durations)
 
         if self.method == self.METHODS.SCHMITT:
-            sri_table = idf_table.rename(columns=schmitt_sri_tn)
+            sri_table = idf_table.rename(columns=SCHMITT.SRI_TN)
 
-            for sri, mul in schmitt_multi_factor.items():
+            for sri, mul in SCHMITT.MULTI_FACTOR.items():
                 sri_table[sri] = mul[1] * sri_table[7]
 
             sri_table = sri_table.loc[:, ~sri_table.columns.duplicated('last')]
@@ -278,7 +308,7 @@ class HeavyRainfallIndexAnalyse(IntensityDurationFrequencyAnalyse):
 
         if self.method == self.METHODS.SCHMITT:
             for col in sri_table:
-                sri_table[col] = schmitt_sri_tn[col]
+                sri_table[col] = SCHMITT.SRI_TN[col]
 
         elif self.method == self.METHODS.MUDERSBACH:
             sri_table[1] = 1

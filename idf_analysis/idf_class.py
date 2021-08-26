@@ -616,14 +616,11 @@ class IntensityDurationFrequencyAnalyse:
     def event_plot(self, event, durations=None, unit='mm', column_name='Precipitation', min_return_period=1):
         if isinstance(event, pd.Series):
             event = event.to_dict()
-        start = event[COL.START]
-        end = event[COL.END]
 
-        plot_range = slice(start - pd.Timedelta(self._freq), end + pd.Timedelta(self._freq))
-
-        return_periods_frame = self.return_periods_frame[plot_range]
+        plot_range = slice(event[COL.START] - pd.Timedelta(self._freq), event[COL.END] + pd.Timedelta(self._freq))
 
         if COL.MAX_PERIOD not in event:
+            return_periods_frame = self.return_periods_frame[plot_range]
             event[COL.MAX_PERIOD] = return_periods_frame.max().max()
             event[COL.MAX_PERIOD_DURATION] = return_periods_frame.max().idxmax()
 
@@ -642,8 +639,8 @@ class IntensityDurationFrequencyAnalyse:
                 max_dur = max(self.duration_steps)
 
             return_periods_frame_extended = self.get_return_periods_frame(
-                self.series[start - pd.Timedelta(minutes=max_dur):
-                            end + pd.Timedelta(self._freq)].resample(self._freq).sum(),
+                self.series[event[COL.START] - pd.Timedelta(minutes=max_dur):
+                            event[COL.END] + pd.Timedelta(self._freq)].resample(self._freq).sum(),
                 durations=durations
             )
 

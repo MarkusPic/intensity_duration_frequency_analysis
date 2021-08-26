@@ -111,21 +111,21 @@ def frame_looper(size, columns, label='return periods'):
 def event_caption(event, unit='mm'):
     caption = 'rain event\n'
     if (COL.START in event) and (COL.END in event):
-        caption += f'between {event[COL.START]:%Y-%m-%d %H:%M} and {event[COL.END]:%Y-%m-%d %H:%M} '
+        caption += f' between {event[COL.START]:%Y-%m-%d %H:%M} and {event[COL.END]:%Y-%m-%d %H:%M}'
 
     if COL.LP in event:
-        caption += f'with a total sum of {event[COL.LP]:0.1f} {unit} '
+        caption += f' with a total sum of {event[COL.LP]:0.1f} {unit}'
 
     if COL.DUR in event:
-        caption += f'and a duration of {event[COL.DUR]} '
+        caption += f' and a duration of {event[COL.DUR]}'
 
-    caption += '. \n'
+    caption += '.\n'
 
     if COL.MAX_PERIOD in event:
-        caption += f'The maximum return period was {return_period_formatter(event[COL.MAX_PERIOD])} a\n'
+        caption += f' The maximum return period was {return_period_formatter(event[COL.MAX_PERIOD])} a\n'
 
         if COL.MAX_PERIOD_DURATION in event:
-            caption += f'at a duration of {minutes_readable(event[COL.MAX_PERIOD_DURATION])}.'
+            caption += f' at a duration of {minutes_readable(event[COL.MAX_PERIOD_DURATION])}.'
 
     return caption
 
