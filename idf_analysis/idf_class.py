@@ -483,7 +483,7 @@ class IntensityDurationFrequencyAnalyse:
         df = pd.DataFrame(index=sums.index)
         # df = dict()
         for d in frame_looper(sums.index.size, columns=sums.columns, label='return_periods'):
-            df[d] = self.get_return_period(height_of_rainfall=sums[d][sums[d] > 0.1], duration=d)
+            df[d] = self.get_return_period(height_of_rainfall=sums[d][sums[d] >= 0.1], duration=d)
         return df#.fillna(0)#.round(2)
 
     @property
