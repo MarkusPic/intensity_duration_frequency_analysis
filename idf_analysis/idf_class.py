@@ -680,7 +680,7 @@ class IntensityDurationFrequencyAnalyse:
     def return_period_event_figure(self, event):
         period_line = self.return_periods_frame[event[COL.START]:event[COL.END]].max()
 
-        period_line[period_line < 0.75] = np.NaN
+        # period_line[period_line < 0.75] = np.NaN
         period_line = period_line.dropna()
 
         ax = period_line.plot()  # type: plt.Axes
@@ -696,7 +696,11 @@ class IntensityDurationFrequencyAnalyse:
                                                    event[COL.END] - event[COL.START],
                                                    period_line.max(),
                                                    period_line.idxmax()))
-
+        # ax.set_xscale('log')
+        # ax.set_yscale('log')
+        # print(ax.get_ylim())
+        # ax.set_ylim(0.01, 300)
+        # exit()
         ax.set_xticks(period_line.index)
         ax.set_xticklabels([minutes_readable(m) for m in period_line.index])
         ax.set_xlabel('duration steps')
