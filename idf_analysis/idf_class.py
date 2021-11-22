@@ -6,9 +6,9 @@ __version__ = "0.1"
 __license__ = "MIT"
 
 import warnings
-from math import floor
 from os import path, mkdir
 from webbrowser import open as show_file
+
 from scipy.optimize import newton
 
 import matplotlib.pyplot as plt
@@ -36,8 +36,15 @@ class IntensityDurationFrequencyAnalyse:
     and calculates the distribution of the rainfall as a function of the return period and the duration
     
     for duration steps up to 12 hours (and more) and return period in a range of '0.5a <= T_n <= 100a'
-    """
 
+    Attributes:
+        _series (pandas.Series): rain time-series
+        _freq (pandas.DateOffset): frequency of the rain series
+        _return_periods_frame (pandas.DataFrame): with return periods of all given durations
+        _rain_events (pandas.DataFrame):
+        _rainfall_sum_frame (pandas.DataFrame): with rain sums of all given durations
+
+    """
     def __init__(self, series_kind=SERIES.PARTIAL, worksheet=METHOD.KOSTRA, extended_durations=False):
         """
         heavy rain as a function of the duration and the return period acc. to DWA-A 531 (2012)
@@ -52,8 +59,8 @@ class IntensityDurationFrequencyAnalyse:
             worksheet (str): ['DWA-A_531', 'ATV-A_121', 'DWA-A_531_advektiv']
             extended_durations (bool): add [720, 1080, 1440, 2880, 4320, 5760, 7200, 8640] minutes to the calculation
         """
-        self._series = None  # type: pd.Series # rain time-series
-        self._freq = None  # frequency of the rain series
+        self._series = None
+        self._freq = None
 
         #  how to calculate the idf curves
         # IdfParameters.__init__(self, series_kind=series_kind, worksheet=worksheet,
@@ -62,19 +69,19 @@ class IntensityDurationFrequencyAnalyse:
                                         extended_durations=extended_durations)
         # self._parameter = None  # type: IdfParameters #  how to calculate the idf curves
 
-        self._return_periods_frame = None  # type: pd.DataFrame # with return periods of all given durations
+        self._return_periods_frame = None
         self._rain_events = None
-        self._rainfall_sum_frame = None  # type: pd.DataFrame # with rain sums of all given durations
+        self._rainfall_sum_frame = None
 
     # __________________________________________________________________________________________________________________
     @property
-    def series(self):
+    def series(self) -> pd.Series:
         if self._series is None:
             raise IdfError('No Series defined for IDF-Analysis!')
         return self._series
 
     @series.setter
-    def series(self, series):
+    def series(self, series: pd.Series):
         self._series = series
 
     def set_series(self, series):
