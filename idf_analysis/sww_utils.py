@@ -129,17 +129,20 @@ def rain_events(series, ignore_rain_below=0, min_gap=pd.Timedelta(hours=4)):
     # remove values below a from the database
     temp = series[series > ignore_rain_below].index.to_series()
 
+    if temp.empty:
+        return pd.DataFrame()
+
     # 4 hours of no rain between events
+    bool_end = temp.diff(periods=-1) < -min_gap
+    bool_end.iloc[-1] = True
 
-    event_end = temp[temp.diff(periods=-1) < -min_gap]
-    event_end = event_end.append(temp.tail(1), ignore_index=True)
+    bool_start = temp.diff() > min_gap
+    bool_start.iloc[0] = True
 
-    event_start = temp[temp.diff() > min_gap]
-    event_start = event_start.append(temp.head(1), ignore_index=True)
-    event_start = event_start.sort_values().reset_index(drop=True)
-
-    events = pd.concat([event_start, event_end], axis=1, ignore_index=True)
-    events.columns = [COL.START, COL.END]
+    events = pd.DataFrame.from_dict({
+        COL.START: temp[bool_start].values,
+        COL.END: temp[bool_end].values,
+    })
     return events
 
 
@@ -181,6 +184,9 @@ def agg_events(events, series, agg='sum'):
     if events.index.size > 3500:
         res = series.groupby(event_number_to_series(events, series.index)).agg(agg).values
     else:
+        # res = []
+        # for _, event in events.iterrows():
+        #     res.append(series[event[COL.START]:event[COL.END]].agg(agg))
         res = events.apply(lambda event: series[event[COL.START]:event[COL.END]].agg(agg), axis=1).values
     return res
 

@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 import numpy as np
 import pandas as pd
-from tqdm import tqdm
+from tqdm.auto import tqdm
 
 from .arg_parser import heavy_rain_parser
 from .idf_backend import IdfParameters
@@ -567,8 +567,9 @@ class IntensityDurationFrequencyAnalyse:
 
     def add_max_return_periods_to_events(self, events):
         if COL.MAX_PERIOD not in events:
-            max_periods = self.return_periods_frame.max(axis=1)
-            max_periods_duration = self.return_periods_frame.idxmax(axis=1)
+            return_periods_frame = self.return_periods_frame
+            max_periods = return_periods_frame.max(axis=1)
+            max_periods_duration = return_periods_frame.idxmax(axis=1)
             datetime_max = agg_events(events, max_periods, 'idxmax')
             # TODO: where are values NaN ???
             datetime_max = np.where(np.isnan(datetime_max), events[COL.START].values, datetime_max)

@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas
 import pandas as pd
+from matplotlib.colors import ListedColormap, Normalize
 from matplotlib.ticker import NullFormatter
 
 from idf_analysis import IntensityDurationFrequencyAnalyse
@@ -151,6 +152,10 @@ class HeavyRainfallIndexAnalyse(IntensityDurationFrequencyAnalyse):
             return cls.SCHMITT, cls.KRUEGER_PFISTER, cls.MUDERSBACH
 
     indices_color = SCHMITT.INDICES_COLOR
+
+    @classmethod
+    def color_map_index(cls, idx):
+        return ListedColormap([(1, 1, 1)] + list(cls.indices_color.values()))(Normalize(vmin=0, vmax=12)(idx))
 
     def __init__(self, *args, method=METHODS.SCHMITT, **kwargs):
         IntensityDurationFrequencyAnalyse.__init__(self, *args, **kwargs)
@@ -411,10 +416,7 @@ class HeavyRainfallIndexAnalyse(IntensityDurationFrequencyAnalyse):
         maximum SRI is added to the table
 
         Args:
-            events (list): list of rainfall events
-
-        Returns:
-            pandas.DataFrame: table
+            events (pandas.DataFrame): list of rainfall events
         """
         if COL.MAX_SRI.format(self.method) not in events:
             events[COL.MAX_SRI.format(self.method)] = None
