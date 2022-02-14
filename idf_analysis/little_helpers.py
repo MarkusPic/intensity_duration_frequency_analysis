@@ -6,7 +6,7 @@ __version__ = "0.1"
 __license__ = "MIT"
 
 import pandas as pd
-from tqdm import tqdm
+from tqdm.auto import tqdm
 
 from idf_analysis.definitions import COL
 
