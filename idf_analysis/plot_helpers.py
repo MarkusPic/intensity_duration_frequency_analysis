@@ -79,7 +79,7 @@ def idf_bar_axes(ax, idf_table, return_period_colors=RETURN_PERIOD_COLORS):
                 continue
 
             if 1:
-                durations = (event_duration(tab) / min_duration).tolist()
+                durations = ((event_duration(tab) + freq) / min_duration).tolist()
                 rel_starts = ((tab[COL.START] - idf_table.index[0]) / min_duration + start_period).tolist()
                 bar_x = list(zip(rel_starts, durations))
             else:

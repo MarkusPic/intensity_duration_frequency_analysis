@@ -111,7 +111,7 @@ def year_delta(years):
 
 
 ########################################################################################################################
-def rain_events(series, ignore_rain_below=0, min_gap=pd.Timedelta(hours=4)):
+def rain_events(series, ignore_rain_below=0.01, min_gap=pd.Timedelta(hours=4)):
     """
     get rain events as a table with start and end times
 
@@ -127,7 +127,7 @@ def rain_events(series, ignore_rain_below=0, min_gap=pd.Timedelta(hours=4)):
     # by ignoring 0.1 mm the results are getting bigger
 
     # remove values below a from the database
-    temp = series[series > ignore_rain_below].index.to_series()
+    temp = series[series >= ignore_rain_below].index.to_series()
 
     if temp.empty:
         return pd.DataFrame()

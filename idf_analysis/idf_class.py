@@ -25,6 +25,7 @@ from .in_out import import_series
 from .sww_utils import (remove_timezone, guess_freq, rain_events, agg_events, event_duration, resample_rain_series,
                         rain_bar_plot, IdfError, )
 from .plot_helpers import idf_bar_axes
+from .synthetic_rainseries import _BlockRain, _EulerRain
 
 
 ########################################################################################################################
@@ -113,6 +114,7 @@ class IntensityDurationFrequencyAnalyse:
     def duration_steps(self):
         """
         get duration steps (in minutes) for the parameter calculation and basic evaluations
+
         Returns:
             list | numpy.ndarray: duration steps in minutes
         """
@@ -649,7 +651,7 @@ class IntensityDurationFrequencyAnalyse:
                 self.series[event[COL.START] - pd.Timedelta(minutes=max_dur):
                             event[COL.END] + pd.Timedelta(self._freq)].resample(self._freq).sum(),
                 durations=durations
-            )
+            ).round(1)
 
             idf_bar_ax = fig.add_subplot(211)
             idf_bar_ax = idf_bar_axes(idf_bar_ax, return_periods_frame_extended)
@@ -713,3 +715,27 @@ class IntensityDurationFrequencyAnalyse:
         ax.set_xlabel('duration steps')
         ax.set_ylabel('return period in years')
         return ax.get_figure(), ax
+
+    @classmethod
+    def from_idf_table(cls, idf_table, worksheet=METHOD.KOSTRA):
+        """
+        Create an IDF-analysis-object based on an idf-tabel (i.e. from a given KOSTRA table)
+
+        Args:
+            idf_table (pandas.DataFrame): idf-table with index=Durations and columns=return Period and values=Rainheight
+            worksheet (str | optional): name of the worksheet to use.  default: 'KOSTRA'
+
+        Returns:
+            IntensityDurationFrequencyAnalyse: idf-object
+        """
+        idf = cls(worksheet=worksheet)
+        idf._parameter.reverse_engineering(idf_table)
+        return idf
+
+    @property
+    def model_rain_block(self):
+        return _BlockRain(self)
+
+    @property
+    def model_rain_euler(self):
+        return _EulerRain(self)
