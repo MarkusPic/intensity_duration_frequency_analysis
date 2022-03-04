@@ -443,7 +443,7 @@ class HeavyRainfallIndexAnalyse(IntensityDurationFrequencyAnalyse):
             d = self.rainfall_sum_frame[start:end].max().to_dict()
         else:
             d = rainfall_sum_frame[start:end].max().to_dict()
-        sri = dict()
+        sri = {}
         for dur, h in d.items():
             sri[dur] = self.get_sri(h, dur)
         return pd.Series(sri, name=self.method)

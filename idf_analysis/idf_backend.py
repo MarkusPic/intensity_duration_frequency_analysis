@@ -24,8 +24,8 @@ class IdfParameters:
         self._durations = None
         self._set_default_durations(extended_durations)
 
-        self.parameters_series = dict()  # parameters u and w (distribution function) from the event series analysis
-        self.parameters_final = dict()  # parameters of the distribution function after the regression
+        self.parameters_series = {}  # parameters u and w (distribution function) from the event series analysis
+        self.parameters_final = {}  # parameters of the distribution function after the regression
 
         self.get_approaches(worksheet)
 
@@ -324,14 +324,14 @@ class IdfParameters:
         p = cls(series_kind=series_kind)
         p.durations = list()
         p.parameters_series = {PARAM.U: list(), PARAM.W: list()}
-        p.parameters_final = dict()
+        p.parameters_final = {}
         for part in data:
             start_dur = float(part['von'])
             start_idx = 0
             if start_dur in part[COL.DUR]:
                 start_idx = 1
             p._durations += part[COL.DUR][start_idx:]
-            part_params = dict()
+            part_params = {}
 
             for u_or_w in PARAM.U_AND_W:
                 part_params[u_or_w] = {PARAM.FUNCTION: part[u_or_w]}

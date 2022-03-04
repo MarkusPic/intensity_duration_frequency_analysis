@@ -147,7 +147,7 @@ def calculate_u_w(file_input, duration_steps, series_kind):
     base_frequency = guess_freq(ts.index)  # DateOffset/Timedelta
 
     # ------------------------------------------------------------------------------------------------------------------
-    interim_results = dict()
+    interim_results = {}
 
     # -------------------------------
     # acc. to DWA-A 531 chap. 4.2:

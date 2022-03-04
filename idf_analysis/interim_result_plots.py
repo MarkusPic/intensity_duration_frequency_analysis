@@ -21,8 +21,8 @@ def return_period_scatter(idf: IntensityDurationFrequencyAnalyse, filename='all_
     events[COL.LP] = agg_events(events, idf.series, 'sum')
     events = events[events[COL.LP] > 25].copy()
 
-    tn_long_list = dict()
-    tn_short_list = dict()
+    tn_long_list = {}
+    tn_short_list = {}
 
     for _, event in events.iterrows():
         start = event[COL.START]

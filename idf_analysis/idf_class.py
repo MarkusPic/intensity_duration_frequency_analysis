@@ -285,7 +285,7 @@ class IntensityDurationFrequencyAnalyse:
         if return_periods is None:
             return_periods = [1, 2, 3, 5, 10, 20, 25, 30, 50, 75, 100]
 
-        result_table = dict()
+        result_table = {}
         for t in return_periods:
             result_table[t] = self.depth_of_rainfall(durations, t)
 
@@ -449,7 +449,7 @@ class IntensityDurationFrequencyAnalyse:
             # ts = series.replace(0, np.NaN).dropna()
 
         df = pd.DataFrame(index=ts.index)
-        # df = dict()
+        # df = {}
 
         freq_num = delta2min(freq)
 
@@ -490,7 +490,7 @@ class IntensityDurationFrequencyAnalyse:
         """
         sums = self.get_rainfall_sum_frame(series=series, durations=durations)
         df = pd.DataFrame(index=sums.index)
-        # df = dict()
+        # df = {}
         for d in frame_looper(sums.index.size, columns=sums.columns, label='return_periods'):
             df[d] = self.get_return_period(height_of_rainfall=sums[d][sums[d] >= 0.1], duration=d)
         return df#.fillna(0)#.round(2)
