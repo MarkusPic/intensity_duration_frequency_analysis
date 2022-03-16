@@ -56,7 +56,7 @@ def return_period_scatter(idf: IntensityDurationFrequencyAnalyse, filename='all_
     def line_in_legend(color=None, marker=None, lw=None, ls=None, **kwargs):
         return Line2D([0], [0], color=color, marker=marker, linewidth=lw, linestyle=ls, **kwargs)
 
-    custom_lines = list()
+    custom_lines = []
     custom_lines.append(line_in_legend(color='red', marker='o', lw=0))
     custom_lines.append(line_in_legend(color='blue', marker='o', lw=0))
     # -----------------

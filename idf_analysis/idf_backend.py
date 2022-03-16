@@ -46,7 +46,7 @@ class IdfParameters:
         u = idf_table[1].values
         w_dat = idf_table.sub(u, axis=0)
         # --
-        w = list()
+        w = []
         for dur in durations:
             dat = w_dat.loc[dur]
             log_tn_i = np.log(dat.index.values)
@@ -322,8 +322,8 @@ class IdfParameters:
     def from_yaml_depreciated(cls, filename, series_kind=SERIES.PARTIAL):
         data = read_yaml(filename)
         p = cls(series_kind=series_kind)
-        p.durations = list()
-        p.parameters_series = {PARAM.U: list(), PARAM.W: list()}
+        p.durations = []
+        p.parameters_series = {PARAM.U: [], PARAM.W: []}
         p.parameters_final = {}
         for part in data:
             start_dur = float(part['von'])
