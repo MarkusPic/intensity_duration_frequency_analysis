@@ -570,11 +570,12 @@ class IntensityDurationFrequencyAnalyse:
     def add_max_return_periods_to_events(self, events):
         if COL.MAX_PERIOD not in events:
             return_periods_frame = self.return_periods_frame
-            max_periods = return_periods_frame.max(axis=1)
+            max_periods = return_periods_frame.max(axis=1).fillna(0)  # fill NaN -> weil < 0.1 gefiltert wurde
             max_periods_duration = return_periods_frame.idxmax(axis=1)
             datetime_max = agg_events(events, max_periods, 'idxmax')
-            # TODO: where are values NaN ???
             datetime_max = np.where(np.isnan(datetime_max), events[COL.START].values, datetime_max)
+            # alternative:
+            # [xv if c else yv for c, xv, yv in zip(np.isnan(datetime_max), events[COL.START].values, datetime_max)]
             events[COL.MAX_PERIOD] = max_periods[datetime_max].values
             events[COL.MAX_PERIOD_DURATION] = max_periods_duration[datetime_max].values
 
