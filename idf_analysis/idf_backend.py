@@ -222,7 +222,7 @@ class IdfParameters:
                          data=interim_results['u'] + interim_results['w'] * np.log(return_periods))
 
     def get_duration_section(self, duration, param):
-        for lower, upper in self._iter_params():
+        for lower, upper in reversed(list(self._iter_params())):
             if lower <= duration <= upper:
                 return self.parameters_final[lower][param]
 
