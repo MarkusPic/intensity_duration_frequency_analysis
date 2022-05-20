@@ -69,7 +69,7 @@ def partial_series(rolling_sum_values, measurement_period):
     # use only the (2-3 multiplied with the number of measuring years) of the biggest
     # values in the database (-> acc. to ATV-A 121 chap. 4.3; DWA-A 531 chap. 4.4)
     # as an requirement for the extreme value distribution
-    threshold_sample_size = int(floor(measurement_period * e))
+    threshold_sample_size = int(min(floor(measurement_period * e), len(partially_series)))
     partially_series = partially_series[:threshold_sample_size]
 
     sample_size = threshold_sample_size
