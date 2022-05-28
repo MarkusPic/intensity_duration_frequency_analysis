@@ -16,7 +16,7 @@ Functions to analyse the precipitations series based on the core method.
     :members:
     :no-undoc-members:
 
-.. autoclass:: idf_analysis.idf_parameters.IdfParameters
+.. autoclass:: idf_analysis.idf_backend.IdfParameters
     :members:
     :no-undoc-members:
 
@@ -57,14 +57,3 @@ Functions to add or manipulate plotting figures.
 .. automodule:: idf_analysis.plot_helpers
     :members:
     :no-undoc-members:
-
-Additional functions
---------------------
-
-Some Functions which were developed over time,
-but to specific to be added to the main class.
-
-.. automodule:: idf_analysis.additional_scripts
-    :members:
-    :no-undoc-members:
-

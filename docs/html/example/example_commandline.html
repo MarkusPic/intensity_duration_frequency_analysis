@@ -1,0 +1,567 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Example Commandline Use &#8212; Intensity Duration Frequency Analyse 0.1.12 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/nature.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Intensity Duration Frequency Analyse" href="example_python_api.html" />
+    <link rel="prev" title="Base Functions" href="../base_functions.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="example_python_api.html" title="Intensity Duration Frequency Analyse"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../base_functions.html" title="Base Functions"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Intensity Duration Frequency Analyse 0.1.12 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Example Commandline Use</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt *,
+div.nbinput.container div.input_area pre,
+div.nboutput.container div.output_area pre,
+div.nbinput.container div.input_area .highlight,
+div.nboutput.container div.output_area .highlight {
+    border: none;
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+div.nbinput.container > div[class*=highlight],
+div.nboutput.container > div[class*=highlight] {
+    margin: 0;
+}
+
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt * {
+    background: none;
+}
+
+div.nboutput.container div.output_area .highlight,
+div.nboutput.container div.output_area pre {
+    background: unset;
+}
+
+div.nboutput.container div.output_area div.highlight {
+    color: unset;  /* override Pygments text color */
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    width: 4.5ex;
+    padding-top: 5px;
+    position: relative;
+    user-select: none;
+}
+
+div.nbinput.container div.prompt > div,
+div.nboutput.container div.prompt > div {
+    position: absolute;
+    right: 0;
+    margin-right: 0.3ex;
+}
+
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        width: unset;
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+
+    div.nbinput.container div.prompt > div,
+    div.nboutput.container div.prompt > div {
+        position: unset;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    /*background: #f5f5f5;*/
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 5px;
+    margin: 0;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt .copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+</style>
+<section id="Example-Commandline-Use">
+<h1>Example Commandline Use<a class="headerlink" href="#Example-Commandline-Use" title="Permalink to this headline">¶</a></h1>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span> python -m idf_analysis -h
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+usage: __main__.py [-h] -i INPUT
+                   [-ws {ATV-A_121,DWA-A_531,DWA-A_531_advektiv}]
+                   [-kind {partial,annual}] [-t {&gt;= 0.5 a and &lt;= 100 a}]
+                   [-d {&gt;= 5 min and &lt;= 8640 min}] [-r {&gt;= 0 L/s*ha}]
+                   [-h_N {&gt;= 0 mm}] [--r_720_1] [--plot] [--export_table]
+
+heavy rain as a function of the duration and the return period acc. to DWA-A
+531 (2012) All files will be saved in the same directory of the input file but
+in a subfolder called like the inputfile + &#34;_idf_data&#34;. Inside this folder a
+file called &#34;idf_parameter.yaml&#34;-file will be saved and contains interim-
+calculation-results and will be automatically reloaded on the next call.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -i INPUT, --input INPUT
+                        input file with the rain time-series (csv or parquet)
+  -ws {ATV-A_121,DWA-A_531,DWA-A_531_advektiv}, --worksheet {ATV-A_121,DWA-A_531,DWA-A_531_advektiv}
+                        From which worksheet the recommendations for
+                        calculating the parameters should be taken.
+  -kind {partial,annual}, --series_kind {partial,annual}
+                        The kind of series used for the calculation.
+                        (Calculation with partial series is more precise and
+                        recommended.)
+  -t {&gt;= 0.5 a and &lt;= 100 a}, --return_period {&gt;= 0.5 a and &lt;= 100 a}
+                        return period in years (If two of the three variables
+                        (rainfall (height or flow-rate), duration, return
+                        period) are given, the third variable is calculated.)
+  -d {&gt;= 5 min and &lt;= 8640 min}, --duration {&gt;= 5 min and &lt;= 8640 min}
+                        duration in minutes (If two of the three variables
+                        (rainfall (height or flow-rate), duration, return
+                        period) are given, the third variable is calculated.)
+  -r {&gt;= 0 L/(s*ha)}, --flow_rate_of_rainfall {&gt;= 0 L/(s*ha)}
+                        rainfall in Liter/(s * ha) (If two of the three
+                        variables (rainfall (height or flow-rate), duration,
+                        return period) are given, the third variable is
+                        calculated.)
+  -h_N {&gt;= 0 mm}, --height_of_rainfall {&gt;= 0 mm}
+                        rainfall in mm or Liter/m^2 (If two of the three
+                        variables (rainfall (height or flow-rate), duration,
+                        return period) are given, the third variable is
+                        calculated.)
+  --r_720_1             design rainfall with a duration of 720 minutes (=12 h)
+                        and a return period of 1 year
+  --plot                get a plot of the idf relationship
+  --export_table        get a table of the most frequent used values
+</pre></div></div>
+</div>
+<p>I used the rain-time-series from ehyd.gv.at with the ID 112086 (Graz-Andritz)</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span> python -m idf_analysis -i ehyd_112086.parquet
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Using the subfolder &#34;ehyd_112086_idf_data&#34; for the interim- and final-results.
+Found existing interim-results in &#34;ehyd_112086_idf_data\idf_parameters.yaml&#34; and using them for calculations.
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span> python -m idf_analysis -i ehyd_112086.parquet --r_720_1
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Using the subfolder &#34;ehyd_112086_idf_data&#34; for the interim- and final-results.
+Found existing interim-results in &#34;ehyd_112086_idf_data\idf_parameters.yaml&#34; and using them for calculations.
+Resultierende Regenhöhe h_N(T_n=1.0a, D=720.0min) = 49.29 mm
+Resultierende Regenspende r_N(T_n=1.0a, D=720.0min) = 11.41 L/(s*ha)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span> python -m idf_analysis -i ehyd_112086.parquet -d <span class="m">720</span> -t <span class="m">1</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Using the subfolder &#34;ehyd_112086_idf_data&#34; for the interim- and final-results.
+Found existing interim-results in &#34;ehyd_112086_idf_data\idf_parameters.yaml&#34; and using them for calculations.
+Resultierende Regenhöhe h_N(T_n=1.0a, D=720.0min) = 49.29 mm
+Resultierende Regenspende r_N(T_n=1.0a, D=720.0min) = 11.41 L/(s*ha)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span> python -m idf_analysis -i ehyd_112086.parquet -d <span class="m">720</span> -h_N <span class="m">60</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Using the subfolder &#34;ehyd_112086_idf_data&#34; for the interim- and final-results.
+Found existing interim-results in &#34;ehyd_112086_idf_data\idf_parameters.yaml&#34; and using them for calculations.
+The return period is 2.0 years.
+Resultierende Regenhöhe h_N(T_n=2.0a, D=720.0min) = 60.00 mm
+Resultierende Regenspende r_N(T_n=2.0a, D=720.0min) = 13.89 L/(s*ha)
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span> python -m idf_analysis -i ehyd_112086.parquet -t <span class="m">5</span> -t <span class="m">15</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span> python -m idf_analysis -i ehyd_112086.parquet --plot
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Using the subfolder &#34;ehyd_112086_idf_data&#34; for the interim- and final-results.
+Found existing interim-results in &#34;ehyd_112086_idf_data\idf_parameters.yaml&#34; and using them for calculations.
+Created the IDF-curves-plot and saved the file as &#34;ehyd_112086_idf_data\idf__curves_plot.png&#34;.
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span> python -m idf_analysis -i ehyd_112086.parquet --export_table
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Using the subfolder &#34;ehyd_112086_idf_data&#34; for the interim- and final-results.
+Found existing interim-results in &#34;ehyd_112086_idf_data\idf_parameters.yaml&#34; and using them for calculations.
+return period (a)    1       2       3       5       10      20      25      30      50      75      100
+frequency (1/a)    1.000   0.500   0.333   0.200   0.100   0.050   0.040   0.033   0.020   0.013   0.010
+duration (min)
+5.0                 9.39   10.97   11.89   13.04   14.61   16.19   16.69   17.11   18.26   19.18   19.83
+10.0               15.15   17.62   19.06   20.88   23.35   25.82   26.62   27.27   29.09   30.54   31.56
+15.0               19.03   22.25   24.13   26.51   29.72   32.94   33.98   34.83   37.20   39.08   40.42
+20.0               21.83   25.71   27.99   30.85   34.73   38.62   39.87   40.89   43.75   46.02   47.63
+30.0               25.60   30.66   33.62   37.35   42.41   47.47   49.10   50.43   54.16   57.12   59.22
+45.0               28.92   35.51   39.37   44.23   50.83   57.42   59.54   61.28   66.14   69.99   72.73
+60.0               30.93   38.89   43.54   49.40   57.36   65.31   67.88   69.97   75.83   80.49   83.79
+90.0               33.37   41.74   46.64   52.80   61.17   69.54   72.23   74.43   80.60   85.49   88.96
+180.0              38.01   47.13   52.46   59.18   68.30   77.42   80.36   82.76   89.48   94.81   98.60
+270.0              41.01   50.60   56.21   63.28   72.87   82.46   85.55   88.07   95.14  100.75  104.73
+360.0              43.29   53.23   59.04   66.37   76.31   86.25   89.45   92.06   99.39  105.20  109.33
+450.0              45.14   55.36   61.33   68.87   79.08   89.30   92.59   95.28  102.81  108.79  113.03
+600.0              47.64   58.23   64.43   72.23   82.82   93.41   96.82   99.61  107.42  113.61  118.01
+720.0              49.29   60.13   66.47   74.45   85.29   96.12   99.61  102.46  110.44  116.78  121.28
+1080.0             54.41   64.97   71.15   78.94   89.50  100.06  103.46  106.24  114.02  120.20  124.58
+1440.0             58.02   67.72   73.39   80.54   90.24   99.93  103.05  105.61  112.75  118.42  122.45
+2880.0             66.70   77.41   83.68   91.57  102.29  113.00  116.45  119.26  127.16  133.42  137.87
+4320.0             71.93   85.72   93.78  103.95  117.73  131.52  135.96  139.58  149.75  157.81  163.53
+5760.0             78.95   95.65  105.42  117.72  134.43  151.13  156.50  160.89  173.20  182.97  189.90
+7200.0             83.53  101.38  111.82  124.98  142.83  160.68  166.43  171.12  184.28  194.72  202.13
+8640.0             85.38  104.95  116.40  130.82  150.38  169.95  176.25  181.40  195.82  207.27  215.39
+Created the IDF-curves-plot and saved the file as &#34;ehyd_112086_idf_data\idf_table.csv&#34;.
+</pre></div></div>
+</div>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="../base_functions.html"
+                          title="previous chapter">Base Functions</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="example_python_api.html"
+                          title="next chapter">Intensity Duration Frequency Analyse</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/example/example_commandline.ipynb.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="example_python_api.html" title="Intensity Duration Frequency Analyse"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../base_functions.html" title="Base Functions"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Intensity Duration Frequency Analyse 0.1.12 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Example Commandline Use</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2022, Pichler.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
+    </div>
+  </body>
+</html>

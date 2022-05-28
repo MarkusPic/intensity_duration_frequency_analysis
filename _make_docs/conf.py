@@ -12,6 +12,7 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 
+import datetime
 import os
 import sys
 
@@ -22,13 +23,15 @@ sys.path.insert(0, os.path.abspath('..'))
 # -- Project information -----------------------------------------------------
 
 project = 'Intensity Duration Frequency Analyse'
-copyright = '2020, Pichler'
+copyright = f'{datetime.datetime.now().year}, Pichler'
 author = 'Pichler'
 
+from idf_analysis import __version__
+
 # The short X.Y version
-version = ''
+version = __version__[:3]
 # The full version, including alpha/beta/rc tags
-release = '0.1.11-14'
+release = __version__
 
 
 # -- General configuration ---------------------------------------------------
@@ -86,7 +89,7 @@ language = None
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', '**.ipynb_checkpoints']
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = None
+# pygments_style = None
 
 
 # -- Options for HTML output -------------------------------------------------
@@ -96,8 +99,9 @@ pygments_style = None
 #
 # html_theme = 'nature'
 # html_theme = 'classic'
-# html_theme = 'nature'
-html_theme = 'sphinx_rtd_theme'
+html_theme = 'nature'
+# html_theme = 'sphinx_rtd_theme'
+# html_theme = 'pydata_sphinx_theme'
 # html_theme = 'alabaster'
 
 # Theme options are theme-specific and customize the look and feel of a theme
@@ -125,12 +129,12 @@ html_theme = 'sphinx_rtd_theme'
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'IntensityDurationFrequencyAnalysedoc'
+# htmlhelp_basename = 'IntensityDurationFrequencyAnalysedoc'
 
 
 # -- Options for LaTeX output ------------------------------------------------
 
-latex_elements = {
+# latex_elements = {
     # The paper size ('letterpaper' or 'a4paper').
     #
     # 'papersize': 'letterpaper',
@@ -146,25 +150,25 @@ latex_elements = {
     # Latex figure (float) alignment
     #
     # 'figure_align': 'htbp',
-}
+# }
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
-latex_documents = [
-    (master_doc, 'IntensityDurationFrequencyAnalyse.tex', 'Intensity Duration Frequency Analyse Documentation',
-     'Pichler', 'manual'),
-]
+# latex_documents = [
+#     (master_doc, 'IntensityDurationFrequencyAnalyse.tex', 'Intensity Duration Frequency Analyse Documentation',
+#      'Pichler', 'manual'),
+# ]
 
 
 # -- Options for manual page output ------------------------------------------
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [
-    (master_doc, 'intensitydurationfrequencyanalyse', 'Intensity Duration Frequency Analyse Documentation',
-     [author], 1)
-]
+# man_pages = [
+#     (master_doc, 'intensitydurationfrequencyanalyse', 'Intensity Duration Frequency Analyse Documentation',
+#      [author], 1)
+# ]
 
 
 # -- Options for Texinfo output ----------------------------------------------
@@ -172,17 +176,17 @@ man_pages = [
 # Grouping the document tree into Texinfo files. List of tuples
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
-texinfo_documents = [
-    (master_doc, 'IntensityDurationFrequencyAnalyse', 'Intensity Duration Frequency Analyse Documentation',
-     author, 'IntensityDurationFrequencyAnalyse', 'One line description of project.',
-     'Miscellaneous'),
-]
+# texinfo_documents = [
+#     (master_doc, 'IntensityDurationFrequencyAnalyse', 'Intensity Duration Frequency Analyse Documentation',
+#      author, 'IntensityDurationFrequencyAnalyse', 'One line description of project.',
+#      'Miscellaneous'),
+# ]
 
 
 # -- Options for Epub output -------------------------------------------------
 
 # Bibliographic Dublin Core info.
-epub_title = project
+# epub_title = project
 
 # The unique identifier of the text. This can be a ISBN number
 # or the project homepage.
