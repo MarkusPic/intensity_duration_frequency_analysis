@@ -14,15 +14,16 @@ from .sww_utils import year_delta, guess_freq, rain_events, agg_events
 
 def annual_series(rolling_sum_values, year_index):
     """
-    create an annual series of the maximum overlapping sum per year and calculate the "u" and "w" parameters
+    Create an annual series of the maximum overlapping sum per year and calculate the "u" and "w" parameters.
+
     acc. to DWA-A 531 chap. 5.1.5
 
     Args:
-        rolling_sum_values (numpy.ndarray): array with maximum rolling sum per event per year.
-        year_index (numpy.ndarray): array with year of the event.
+        rolling_sum_values (numpy.ndarray): Array with maximum rolling sum per event per year.
+        year_index (numpy.ndarray): Array with year of the event.
 
     Returns:
-        tuple[float, float]: parameter u and w from the annual series for a specific duration step as a tuple
+        dict[str, float]: Parameter u and w from the annual series for a specific duration step as a tuple.
     """
     annually_series = pd.Series(rolling_sum_values).groupby(year_index).max().values
     # annually_series = pd.Series(data=rolling_sum_values,
@@ -53,23 +54,29 @@ def _plotting_formula(k, l, m):
 
 def partial_series(rolling_sum_values, measurement_period):
     """
-    create an partial series of the largest overlapping sums and calculate the "u" and "w" parameters
+    Create a partial series of the largest overlapping sums and calculate the "u" and "w" parameters.
+
     acc. to DWA-A 531 chap. 5.1.4
 
     Args:
-        rolling_sum_values (numpy.ndarray): array with maximum rolling sum per event
-        measurement_period (float): in years
+        rolling_sum_values (numpy.ndarray): Array with maximum rolling sum per event.
+        measurement_period (float): Measurement period in years.
 
     Returns:
-        tuple[float, float]: parameter u and w from the partial series for a specific duration step as a tuple
+        dict[str, float]: parameter u and w from the partial series for a specific duration step as a tuple
     """
     partially_series = rolling_sum_values
     partially_series = np.sort(partially_series)[::-1]
 
-    # use only the (2-3 multiplied with the number of measuring years) of the biggest
-    # values in the database (-> acc. to ATV-A 121 chap. 4.3; DWA-A 531 chap. 4.4)
-    # as an requirement for the extreme value distribution
+    # Use only the (2-3 multiplied with the number of measuring years) of the biggest
+    # values in the database (-> acc. to ATV-A 121 chap. 4.3; DWA-A 531 chap. 4.4).
+    # As a requirement for the extreme value distribution.
     threshold_sample_size = int(floor(measurement_period * e))
+
+    if partially_series.size < threshold_sample_size:
+        warnings.warn('Fewer events in series than recommended for extreme value analysis. Use the results with mindfulness.')
+        threshold_sample_size = partially_series.size
+
     partially_series = partially_series[:threshold_sample_size]
 
     sample_size = threshold_sample_size
@@ -120,8 +127,12 @@ def _improve_factor(interval):
 
 def calculate_u_w(file_input, duration_steps, series_kind):
     """
-    statistical analysis for each duration step acc. to DWA-A 531 chap. 5.1
-    save the parameters of the distribution function as interim results
+    Statistical analysis for each duration step.
+
+    acc. to DWA-A 531 chap. 5.1
+
+    Save the parameters of the distribution function as interim results.
+
     acc. to DWA-A 531 chap. 4.4: use the annual series only for measurement periods over 20 years
 
 
@@ -131,7 +142,7 @@ def calculate_u_w(file_input, duration_steps, series_kind):
         series_kind (str): 'annual' or 'partial'
 
     Returns:
-        dict: with key=durations and values=dict(u, w)
+        dict[int, dict]: with key=durations and values=dict(u, w)
     """
     ts = file_input.copy()
     # -------------------------------

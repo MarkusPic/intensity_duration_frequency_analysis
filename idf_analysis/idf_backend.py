@@ -104,7 +104,7 @@ class IdfParameters:
     # -------------------------------------------------------------
     def get_approaches(self, worksheet):
         """
-        approaches depending on the duration and the parameter
+        Approaches depending on the duration and the parameter.
 
         Args:
             worksheet (str): worksheet name for the analysis:
@@ -127,7 +127,7 @@ class IdfParameters:
 
     def _calc_params(self, params_mean=None, duration_mean=None):
         """
-        calculate parameters a_u, a_w, b_u and b_w and add it to the dict
+        Calculate parameters a_u, a_w, b_u and b_w and add it to the dict
 
         Args:
             params_mean (dict[float]):
@@ -138,6 +138,12 @@ class IdfParameters:
         """
         for dur_lower_bound, dur_upper_bound in self._iter_params():
             param_part = (self.durations >= dur_lower_bound) & (self.durations <= dur_upper_bound)
+
+            if param_part.sum() == 1:
+                del self.parameters_final[dur_lower_bound]
+                # Only one duration step in this duration range.
+                # Only one value available in the series for this regression.
+                continue
 
             params_dur = self.parameters_final[dur_lower_bound]
 

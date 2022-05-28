@@ -269,7 +269,7 @@ class IntensityDurationFrequencyAnalyse:
     # __________________________________________________________________________________________________________________
     def result_table(self, durations=None, return_periods=None, add_names=False):
         """
-        get a standard idf table of rainfall depth with return periods as columns and durations as rows
+        Get an idf-table of rainfall depth with return periods as columns and durations as rows.
 
         Args:
             durations (list | numpy.ndarray): list of durations in minutes for the table
@@ -300,6 +300,23 @@ class IntensityDurationFrequencyAnalyse:
     ####################################################################################################################
     def result_figure(self, min_duration=5.0, max_duration=720.0, logx=False, return_periods=None, color=True, ax=None,
                       linestyle=None, add_interim=False):
+        """
+        Create a plot with the idf-curves with duration on the x-axis and rainfall depth on the y-axis.
+
+        Args:
+            min_duration (float): Shortest duration on the plot.
+            max_duration (float): Longest duration on the plot.
+            logx (bool): Use a logarithmic scale on the x-axis.
+            return_periods (list[int] | Optional): List of return periods to plot. Default = [1, 2, 5, 10, 50, 100]
+            color (bool): Use color and a legend to differentiate between the return periods (default).
+                Otherwise, annotation text and black lines.
+            ax (plt.Axes): Axes to plot on. Default = create new one.
+            linestyle (str): Line-style for the plotted lines.
+            add_interim (bool): Add interim results from the series analysis as scatter points.
+
+        Returns:
+            (plt.Figure, plt.Axes): figure and axes of the plot.
+        """
         duration_steps = np.arange(min_duration, max_duration + 1, 1)
 
         if return_periods is None:
@@ -425,14 +442,16 @@ class IntensityDurationFrequencyAnalyse:
     ####################################################################################################################
     def get_rainfall_sum_frame(self, series=None, durations=None):
         """
+        Get a rainfall sum frame for any series with the duration steps as columns.
+
+        Default: The time-series and the duration-steps of the analysis.
 
         Args:
-            series (pandas.Series):
-            durations (list): list of durations in minutes which are of interest (default: pre defined
-            durations)
+            series (pandas.Series, Optional): rainfall time-series
+            durations (list, Optional): list of durations in minutes which are of interest (default: pre-defined durations)
 
         Returns:
-            pandas.DataFrame: rain sum depending of the duration per datetimeindex
+            pandas.DataFrame: Rain sum depending on the duration per datetime-index.
         """
         if durations is None:
             durations = self.duration_steps
@@ -468,10 +487,10 @@ class IntensityDurationFrequencyAnalyse:
     @property
     def rainfall_sum_frame(self):
         """
-        get the return periods over the whole time-series for the default duration steps.
+        Get the rainfall sum over the whole time-series for the default duration steps.
 
         Returns:
-            pandas.DataFrame: data-frame of return periods where the columns are the duration steps
+            pandas.DataFrame: Rain sum depending on the duration per datetime-index.
         """
         if self._rainfall_sum_frame is None:
             self._rainfall_sum_frame = self.get_rainfall_sum_frame()
@@ -480,13 +499,16 @@ class IntensityDurationFrequencyAnalyse:
     ####################################################################################################################
     def get_return_periods_frame(self, series=None, durations=None):
         """
+        Get the return periods for any time-series with the duration steps as columns.
+
+        Default: The time-series and the duration-steps of the analysis.
 
         Args:
-            series (pandas.Series):
-            durations (list): list of durations in minutes which are of interest (default: pre defined durations)
+            series (pandas.Series, Optional): rainfall time-series
+            durations (list, Optional): Durations in minutes which are of interest (default: pre-defined durations)
 
         Returns:
-            pandas.DataFrame: return periods depending of the duration per datetimeindex
+            pandas.DataFrame: Return periods depending on the duration per datetime-index.
         """
         sums = self.get_rainfall_sum_frame(series=series, durations=durations)
         df = pd.DataFrame(index=sums.index)
@@ -498,7 +520,7 @@ class IntensityDurationFrequencyAnalyse:
     @property
     def return_periods_frame(self):
         """
-        get the return periods over the whole time-series for the default duration steps.
+        Get the return periods over the whole time-series for the default duration steps.
 
         Returns:
             pandas.DataFrame: data-frame of return periods where the columns are the duration steps
@@ -735,8 +757,20 @@ class IntensityDurationFrequencyAnalyse:
 
     @property
     def model_rain_block(self):
+        """
+        Create a model block rain class.
+
+        Returns:
+            _BlockRain: Synthetic model block rain.
+        """
         return _BlockRain(self)
 
     @property
     def model_rain_euler(self):
+        """
+        Create a model Euler rain class.
+
+        Returns:
+            _EulerRain: Synthetic model Euler rain.
+        """
         return _EulerRain(self)

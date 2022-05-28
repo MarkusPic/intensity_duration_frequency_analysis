@@ -1,5 +1,4 @@
-from ehyd_tools.design_rainfall import (ehyd_design_rainfall_ascii_reader, get_ehyd_file, get_max_calculation_method,
-                                        get_rainfall_height, INDICES, )
+from ehyd_tools.design_rainfall import (get_ehyd_design_rainfall, get_max_calculation_method, INDICES, )
 
 from idf_analysis import IntensityDurationFrequencyAnalyse
 from idf_analysis.definitions import *
@@ -17,7 +16,7 @@ for location, grid_point_number in {'graz': 5214, 'poellau': 4683}.items():
         df = pd.read_csv(fn, index_col=[0, 1])
         df.columns = df.columns.astype(int)
     else:
-        df = ehyd_design_rainfall_ascii_reader(get_ehyd_file(grid_point_number=grid_point_number))
+        df = get_ehyd_design_rainfall(grid_point_number=grid_point_number)
         df.to_csv(fn)
 
     idf_table = get_max_calculation_method(df)
