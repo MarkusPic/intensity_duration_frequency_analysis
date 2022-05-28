@@ -10,7 +10,7 @@
 
 [![PyPI - Downloads](https://img.shields.io/pypi/dd/idf-analysis)](https://pypi.python.org/pypi/idf-analysis)
 [![PyPI - Downloads](https://img.shields.io/pypi/dw/idf-analysis)](https://pypi.python.org/pypi/idf-analysis)
-[![PyPI - Downloads](https://img.shields.io/pypi/dm/idf-analysis)](https://pypi.python.org/pypi/idf-analysis)
+[![PyPI - Downloads](https://img.shields.io/pypi/dm/idf-analysis)](https://pypi.python.org/pypi/idf-analysis) [![Join the chat at https://gitter.im/MarkusPic/intensity_duration_frequency_analysis](https://badges.gitter.im/MarkusPic/intensity_duration_frequency_analysis.svg)](https://gitter.im/MarkusPic/intensity_duration_frequency_analysis?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 heavy rain as a function of the duration and the return period acc. to [DWA-A 531 (2012)](http://www.dwa.de/dwa/shop/shop.nsf/Produktanzeige?openform&produktid=P-DWAA-8XMUY2)
 This program reads the measurement data of the rainfall
