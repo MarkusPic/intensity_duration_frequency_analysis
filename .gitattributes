@@ -1,0 +1,3 @@
+example/* linguist-documentation
+make_pip.sh linguist-detectable=false
+#docs/* linguist-generated
