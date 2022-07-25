@@ -189,7 +189,7 @@ def calculate_u_w(file_input, duration_steps, series_kind):
 
         events = rain_events(ts, min_gap=min_gap)
 
-        # correction factor acc. to DWA-A 531 chap. 4.3
+        # Correction factor acc. to DWA-A 531 chap. 4.3
         improve = _improve_factor(duration / base_frequency)
 
         roll_sum = ts.rolling(duration).sum()

@@ -12,10 +12,10 @@
 [![PyPI - Downloads](https://img.shields.io/pypi/dw/idf-analysis)](https://pypi.python.org/pypi/idf-analysis)
 [![PyPI - Downloads](https://img.shields.io/pypi/dm/idf-analysis)](https://pypi.python.org/pypi/idf-analysis) [![Join the chat at https://gitter.im/MarkusPic/intensity_duration_frequency_analysis](https://badges.gitter.im/MarkusPic/intensity_duration_frequency_analysis.svg)](https://gitter.im/MarkusPic/intensity_duration_frequency_analysis?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-heavy rain as a function of the duration and the return period acc. to [DWA-A 531 (2012)](http://www.dwa.de/dwa/shop/shop.nsf/Produktanzeige?openform&produktid=P-DWAA-8XMUY2)
+Heavy rain as a function of the duration and the return period acc. to [DWA-A 531 (2012)](http://www.dwa.de/dwa/shop/shop.nsf/Produktanzeige?openform&produktid=P-DWAA-8XMUY2).
 This program reads the measurement data of the rainfall
 and calculates the distribution of the design rainfall as a function of the return period and the duration
-for duration steps up to 12 hours (and more) and return period in a range of '0.5a &le; T_n &le; 100a'
+for duration steps up to 12 hours (and more) and return period in a range of '0.5a &le; T_n &le; 100a'.
 
 The guideline was used in the application [KOSTRA-DWD](https://www.dwd.de/DE/leistungen/kostra_dwd_rasterwerte/kostra_dwd_rasterwerte.html).
 
@@ -33,7 +33,7 @@ The guideline was used in the application [KOSTRA-DWD](https://www.dwd.de/DE/lei
 
 ----
 
-This package developed [Markus Pichler](mailto:markus.pichler@tugraz.at) during his bachelor thesis and finalised it in the course of his employment at the [Institute of Urban Water Management and Landscape Water Engineering](https://www.sww.tugraz.at).
+This package was developed by [Markus Pichler](mailto:markus.pichler@tugraz.at) during his bachelor thesis and finalised it in the course of his employment at the [Institute of Urban Water Management and Landscape Water Engineering](https://www.sww.tugraz.at).
 
 
 # Install
