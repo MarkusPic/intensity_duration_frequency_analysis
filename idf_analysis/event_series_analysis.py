@@ -18,6 +18,8 @@ def annual_series(rolling_sum_values, year_index):
 
     acc. to DWA-A 531 chap. 5.1.5
 
+    Gumbel distribution | https://en.wikipedia.org/wiki/Gumbel_distribution
+
     Args:
         rolling_sum_values (numpy.ndarray): Array with maximum rolling sum per event per year.
         year_index (numpy.ndarray): Array with year of the event.
@@ -57,6 +59,8 @@ def partial_series(rolling_sum_values, measurement_period):
     Create a partial series of the largest overlapping sums and calculate the "u" and "w" parameters.
 
     acc. to DWA-A 531 chap. 5.1.4
+
+    Exponential distribution | https://en.wikipedia.org/wiki/Exponential_distribution
 
     Args:
         rolling_sum_values (numpy.ndarray): Array with maximum rolling sum per event.

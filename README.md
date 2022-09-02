@@ -181,3 +181,31 @@ optional arguments:
 | 5760 | 78.95 |  95.65 | 105.42 | 117.72 | 134.43 | 151.13 | 156.50 | 160.89 | 173.20 | 182.97 | 189.90 |
 | 7200 | 83.53 | 101.38 | 111.82 | 124.98 | 142.83 | 160.68 | 166.43 | 171.12 | 184.28 | 194.72 | 202.13 |
 | 8640 | 85.38 | 104.95 | 116.40 | 130.82 | 150.38 | 169.95 | 176.25 | 181.40 | 195.82 | 207.27 | 215.39 |
+
+# Background
+
+Pseudocode for the parameter calculation.
+
+```pseudo-code
+For every duration step
+    calculating event sums
+    
+    if using annual event series:  # only recommeded for measurements longer than 20 year
+        converting every max event sum per year to a series
+        calculating parameters u and w using the gumbel distribution
+        
+    elif using partial event series:
+        converting the n (approximatly 2.72 x measurement duration in years) biggest event sums to a series
+        calculating parameters u and w using the exponential distribution
+    
+Splitting IDF curve formulation in to several duration ranges
+For each duration range:
+    For each parameter (u and w):
+        balancing the parameter over all duation steps (in the range) using a given formulation (creating parameters a and b)
+        # one-folded-logaritmic | two-folded-logarithmic | hyperbolic
+
+u(D) = f(a_u, b_u, D)
+w(D) = f(a_w, b_w, D)
+
+h(D,Tn) = u(D) + w(D) * ln(Tn)
+```
