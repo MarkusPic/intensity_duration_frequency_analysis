@@ -1,4 +1,4 @@
-from ehyd_tools.design_rainfall import (get_ehyd_design_rainfall, get_max_calculation_method, INDICES, )
+from ehyd_tools.design_rainfall import (get_max_calculation_method, INDICES, get_ehyd_design_rainfall_offline, )
 
 from idf_analysis import IntensityDurationFrequencyAnalyse
 from idf_analysis.definitions import *
@@ -10,14 +10,8 @@ import numpy as np
 # ----------------------------------
 # grid_point_number = 5214
 for location, grid_point_number in {'graz': 5214, 'poellau': 4683}.items():
-    fn = f'design_rain_ehyd_{grid_point_number}.csv'
 
-    if path.isfile(fn):
-        df = pd.read_csv(fn, index_col=[0, 1])
-        df.columns = df.columns.astype(int)
-    else:
-        df = get_ehyd_design_rainfall(grid_point_number=grid_point_number)
-        df.to_csv(fn)
+    df = get_ehyd_design_rainfall_offline(grid_point_number, pth='')
 
     idf_table = get_max_calculation_method(df)
     idf_table = df.xs('ÖKOSTRA', axis=0, level=INDICES.CALCULATION_METHOD, drop_level=True).copy()
