@@ -5,17 +5,18 @@
 
 
 [![license](https://img.shields.io/github/license/markuspic/intensity_duration_frequency_analysis.svg?style=flat)](https://github.com/MarkusPic/intensity_duration_frequency_analysis/blob/master/LICENSE)
-[![docs ](https://img.shields.io/badge/docs-good-brightgreen.svg?style=flat)](https://markuspic.github.io/intensity_duration_frequency_analysis)
 [![PyPI](https://img.shields.io/pypi/v/idf-analysis.svg)](https://pypi.python.org/pypi/idf-analysis)
+[![Join the chat at https://gitter.im/MarkusPic/intensity_duration_frequency_analysis](https://badges.gitter.im/MarkusPic/intensity_duration_frequency_analysis.svg)](https://gitter.im/MarkusPic/intensity_duration_frequency_analysis?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 [![PyPI - Downloads](https://img.shields.io/pypi/dd/idf-analysis)](https://pypi.python.org/pypi/idf-analysis)
 [![PyPI - Downloads](https://img.shields.io/pypi/dw/idf-analysis)](https://pypi.python.org/pypi/idf-analysis)
 [![PyPI - Downloads](https://img.shields.io/pypi/dm/idf-analysis)](https://pypi.python.org/pypi/idf-analysis)
 
-heavy rain as a function of the duration and the return period acc. to [DWA-A 531 (2012)](http://www.dwa.de/dwa/shop/shop.nsf/Produktanzeige?openform&produktid=P-DWAA-8XMUY2)
+
+Heavy rain as a function of the duration and the return period acc. to [DWA-A 531 (2012)](http://www.dwa.de/dwa/shop/shop.nsf/Produktanzeige?openform&produktid=P-DWAA-8XMUY2).
 This program reads the measurement data of the rainfall
 and calculates the distribution of the design rainfall as a function of the return period and the duration
-for duration steps up to 12 hours (and more) and return period in a range of '0.5a &le; T_n &le; 100a'
+for duration steps up to 12 hours (and more) and return period in a range of '0.5a &le; T_n &le; 100a'.
 
 The guideline was used in the application [KOSTRA-DWD](https://www.dwd.de/DE/leistungen/kostra_dwd_rasterwerte/kostra_dwd_rasterwerte.html).
 
@@ -33,39 +34,15 @@ The guideline was used in the application [KOSTRA-DWD](https://www.dwd.de/DE/lei
 
 ----
 
-This package developed [Markus Pichler](mailto:markus.pichler@tugraz.at) during his bachelor thesis and finalised it in the course of his employment at the [Institute of Urban Water Management and Landscape Water Engineering](https://www.sww.tugraz.at).
+This package was developed by [Markus Pichler](mailto:markus.pichler@tugraz.at) during his bachelor thesis and finalised it in the course of his employment at the [Institute of Urban Water Management and Landscape Water Engineering](https://www.sww.tugraz.at).
 
+## Documentation
 
-# Install
+Read the docs [here 📖](https://markuspic.github.io/intensity_duration_frequency_analysis).
 
-The script is written in Python3. (use a version > 3.5)
+## Installation
 
-## Windows
-
-You have to install python (i.e. the original python from the [website](https://www.python.org/downloads/)).
-
-The following commands show the usage for Linux/Unix systems. 
-
-To use these features on Windows you have to add ```python -m``` before each command 
-and you have to add the path to your python binary to the environment variables [^path1].
-
-[^path1]: https://geek-university.com/python/add-python-to-the-windows-path/
-
-There is also an option during the installation to add python to the PATH automatically. [^path2]
-
-[^path2]: https://datatofish.com/add-python-to-windows-path/
-
-![python_install](https://datatofish.com/wp-content/uploads/2018/10/0001_add_Python_to_Path.png)
-
-## Linux/Unix
-
-Python is pre-installed on most operating systems (as you probably knew).
-
-## Required python packages
-
-Packages required for this program will be installed with pip during the installation process and can be seen in the 'requirements.txt' file.
-
-## Fresh install
+This package is written in Python3. (use a version > 3.5)
 
 ```
 pip install idf-analysis
@@ -76,15 +53,38 @@ Add the following tags to the command for special options:
 - ```--user```: To install the package only for the local user account (no admin rights needed)
 - ```--upgrade```: To update the package
 
-# Usage
+### Windows
+
+You have to install python first (i.e. the original python from the [website](https://www.python.org/downloads/)).
+
+To use the command-line-tool, it is advisable to add the path to your Python binary to the environment variables [^path1].
+There is also an option during the installation to add python to the PATH automatically. [^path2]
+
+[^path1]: https://geek-university.com/python/add-python-to-the-windows-path/
+[^path2]: https://datatofish.com/add-python-to-windows-path/
+
+
+### Linux/Unix
+
+Python is pre-installed on most operating systems (as you probably knew).
+
+### Dependencies
+
+Packages required for this program will be installed with pip during the installation process and can be seen 
+in the [`requirements.txt`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/blob/master/requirements.txt) file.
+
+## Usage
+
+The documentation of the python-API can be found [here](https://markuspic.github.io/intensity_duration_frequency_analysis/api.html).
+
+## Commandline tool
+
+The following commands show the usage for Linux/Unix systems.
+To use these features on Windows you have to add ```python -m``` before each command.
 
 To start the script use following commands in the terminal/Prompt
 
 ```idf_analysis```
-
-The documentation of the python-API can be found [here](https://markuspic.github.io/intensity_duration_frequency_analysis/api.html).
-
-# Commandline tool 
 
 > ```idf_analysis -h```
 

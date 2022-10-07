@@ -179,7 +179,7 @@ class IntensityDurationFrequencyAnalyse:
         else:
             from os import makedirs
             parent = path.dirname(filename)
-            if not path.isdir(parent):
+            if parent and not path.isdir(parent):
                 makedirs(parent)
             self.write_parameters(filename)
 
