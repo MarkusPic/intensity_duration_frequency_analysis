@@ -12,6 +12,12 @@ idf = IntensityDurationFrequencyAnalyse(series_kind=SERIES.PARTIAL, worksheet=ME
 # reading the pandas series of the precipitation (data from ehyd.gv.at - ID=112086)
 series = pd.read_parquet('ehyd_112086.parquet')['precipitation']
 
+# to reproduce this data run:
+# from ehyd_tools.in_out import get_ehyd_data
+# series2 = get_ehyd_data(identifier=112086)
+# series2_sel = series2[series2 != 0]
+# series2_sel = series2_sel.loc[:series.index[-1]]
+
 # setting the series for the analysis
 idf.set_series(series)
 # idf.write_parameters(path.join(output_directory, 'idf_parameters.yaml'))
