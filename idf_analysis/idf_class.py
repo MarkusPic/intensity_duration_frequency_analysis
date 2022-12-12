@@ -164,16 +164,17 @@ class IntensityDurationFrequencyAnalyse:
 
     def read_parameters(self, filename):
         """
-        read parameters from a .yaml-file to save computation time.
-        extract interim results from parameters
+        Read parameters from a .yaml-file to save computation time.
+
+        Extract interim results from parameters.
 
         Args:
-            filename (str): filename of the parameters yaml-file
+            filename (str, Path): filename of the parameters yaml-file
         """
         self._parameter = IdfParameters.from_yaml(filename)
 
     def auto_save_parameters(self, filename):
-        """auto-save the parameters as a yaml-file to save computation time."""
+        """Auto-save the parameters as a yaml-file to save computation time."""
         if path.isfile(filename):
             self.read_parameters(filename)
         else:
