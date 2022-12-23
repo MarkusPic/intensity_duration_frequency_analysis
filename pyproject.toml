@@ -44,6 +44,7 @@ version = { attr = "idf_analysis.__version__" }
 
 [project.urls]
 Documentation = "https://markuspic.github.io/intensity_duration_frequency_analysis/"
+Changelog = "https://github.com/MarkusPic/intensity_duration_frequency_analysis/-/blob/master/CHANGELOG.md"
 homepage = "https://github.com/MarkusPic/intensity_duration_frequency_analysis"
 
 [tool.setuptools.packages.find]
@@ -62,6 +63,6 @@ idf_analysis = "idf_analysis._console_script:command_line_tool"
 branch = "main"
 version_variable = "idf_analysis/__init__.py:__version__"
 major_on_zero = false
-upload_to_pypi = false
+upload_to_pypi = true
 hvcs = 'github'
 version_source = 'tag'
