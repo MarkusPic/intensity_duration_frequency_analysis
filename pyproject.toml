@@ -37,7 +37,7 @@ dependencies = [
 dynamic = ["version"]
 
 [project.optional-dependencies]
-docs = ["sphinx", "nbsphinx", "recommonmark", "pydata_sphinx_theme"]
+docs = ["sphinx", "nbsphinx", "recommonmark", "pydata_sphinx_theme", "ipython==8.5.0"]
 
 [tool.setuptools.dynamic]
 version = { attr = "idf_analysis.__version__" }
