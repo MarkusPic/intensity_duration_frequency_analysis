@@ -33,13 +33,14 @@ jobs:
         run: |
           pip3 install .[docs]
       # ------------------------------
-      - name: Installing the library
-        shell: bash -l {0}
+#      - name: Installing the library
+#        shell: bash -l {0}
 #        run: |
 #          python setup.py install
       # ------------------------------
       - name: Copy readme and examples
         run: |
+            pwd
             ls -lh
             cp ./example ./documentation/example -r
             cp ./README.md ./documentation/README.md
