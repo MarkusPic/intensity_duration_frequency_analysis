@@ -48,6 +48,7 @@ jobs:
         run: |
             cp ./examples ./documentation/examples -r
             cp ./README.md ./documentation/README.md
+            sed -i 's|examples|https://markuspic.github.io/intensity_duration_frequency_analysis|' ./documentation/README.md
 
       - name: Running the Sphinx to gh-pages Action
         # https://github.com/marketplace/actions/sphinx-docs-to-github-pages
