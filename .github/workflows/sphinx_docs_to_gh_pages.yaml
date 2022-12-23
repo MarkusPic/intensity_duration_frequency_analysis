@@ -40,16 +40,17 @@ jobs:
       # ------------------------------
       - name: Copy readme and examples
         run: |
-            pwd
-            ls -lh
+#            pwd
+#            ls -lh
             cp ./examples ./documentation/examples -r
             cp ./README.md ./documentation/README.md
 
-#      - name: Running the Sphinx to gh-pages Action
-#        uses: uibcdf/action-sphinx-docs-to-gh-pages@v1.0.0
-#        with:
-#          branch: main
-#          dir_docs: documentation
+      - name: Running the Sphinx to gh-pages Action
+        # https://github.com/marketplace/actions/sphinx-docs-to-github-pages
+        uses: uibcdf/action-sphinx-docs-to-gh-pages@v1.0.0
+        with:
+          branch: main
+          dir_docs: documentation
 #          sphinxapiopts: '--separate -o . ../'
 #          sphinxapiexclude: '../*setup* ../*.ipynb'
 #          sphinxopts: ''
