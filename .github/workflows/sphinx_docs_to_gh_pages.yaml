@@ -39,9 +39,9 @@ jobs:
 #          python setup.py install
       # ------------------------------
       - name: Copy readme and examples
+        #            pwd
+        #            ls -lh
         run: |
-#            pwd
-#            ls -lh
             cp ./examples ./documentation/examples -r
             cp ./README.md ./documentation/README.md
 
