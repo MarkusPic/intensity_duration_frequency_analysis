@@ -42,7 +42,7 @@ jobs:
         run: |
             pwd
             ls -lh
-            cp ./example ./documentation/example -r
+            cp ./examples ./documentation/examples -r
             cp ./README.md ./documentation/README.md
 
 #      - name: Running the Sphinx to gh-pages Action
