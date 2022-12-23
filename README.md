@@ -186,7 +186,7 @@ optional arguments:
 
 Pseudocode for the parameter calculation.
 
-```pseudo-code
+```
 For every duration step
     calculating event sums
     
