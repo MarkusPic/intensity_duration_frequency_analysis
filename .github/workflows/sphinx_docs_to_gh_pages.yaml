@@ -33,14 +33,14 @@ jobs:
         run: |
           pip3 install .[docs]
       # ------------------------------
-#      - name: Installing the library
-#        shell: bash -l {0}
-#        run: |
-#          python setup.py install
+      - name: Installing the library
+        shell: bash -l {0}
+        run: |
+          python setup.py install
       - name: Installing pandoc
 #        shell: bash -l {0}
         run: |
-          apt install pandoc
+          apt-get install pandoc -y
       # ------------------------------
       - name: Copy readme and examples
         #            pwd
