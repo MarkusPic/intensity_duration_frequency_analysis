@@ -56,3 +56,12 @@ include = ['idf_analysis']
 
 [project.scripts]
 idf_analysis = "idf_analysis._console_script:command_line_tool"
+
+# https://github.com/python-semantic-release/python-semantic-release
+[tool.semantic_release]
+branch = "main"
+version_variable = "idf_analysis/__init__.py:__version__"
+major_on_zero = false
+upload_to_pypi = false
+hvcs = 'github'
+version_source = 'tag'

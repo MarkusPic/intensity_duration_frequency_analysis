@@ -1,0 +1,26 @@
+name: Release package on GitHub and pypi
+
+on:
+  push:
+    branches:
+      - main
+
+# https://python-semantic-release.readthedocs.io/en/latest/automatic-releases/github-actions.html
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GH_TOKEN }}
+
+      - name: Python Semantic Release
+        uses: relekang/python-semantic-release@master
+        with:
+          github_token: ${{ secrets.GH_TOKEN }}
+          repository_username: __token__
+          repository_password: ${{ secrets.PyPI_TOKEN }}
