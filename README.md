@@ -138,24 +138,24 @@ optional arguments:
 
 ## Example
 
-[Example Jupyter notebook for the commandline](example/example_commandline.ipynb)
+[Example Jupyter notebook for the commandline](examples/example_commandline.ipynb)
 
-[Example Jupyter notebook for the python api](example/example_python_api.ipynb)
+[Example Jupyter notebook for the python api](examples/example_python_api.ipynb)
 
-[Example python skript](example/example_python_api.py)
+[Example python skript](examples/example_python_api.py)
 
 
 ### Example Files
 
-[Interim Results of the idf analysis](example/ehyd_112086_idf_data/idf_parameters.yaml)
+[Interim Results of the idf analysis](examples/ehyd_112086_idf_data/idf_parameters.yaml)
 
 ### Example Plot
 
-![IDF-Curves-Plot](example/ehyd_112086_idf_data/idf_curves_plot.png)
+![IDF-Curves-Plot](examples/ehyd_112086_idf_data/idf_curves_plot.png)
 
 ### Example IDF table
 
-[IDF-Table](example/ehyd_112086_idf_data/idf_table_UNIX.csv)
+[IDF-Table](examples/ehyd_112086_idf_data/idf_table_UNIX.csv)
 
 
 | return period in a<br>duration in min  |   1   |    2   |    3   |    5   |    10  |    20  |    25  |    30  |    50  |    75  |    100 |

@@ -13,8 +13,8 @@ Welcome to Intensity Duration Frequency Analyse's documentation!
    README
    api
    base_functions
-   ./../examples/example_commandline
-   ../examples/example_python_api
+   examples/example_commandline
+   examples/example_python_api
 
 
 Indices and tables
