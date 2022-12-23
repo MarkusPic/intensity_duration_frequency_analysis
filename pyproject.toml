@@ -50,5 +50,9 @@ homepage = "https://github.com/MarkusPic/intensity_duration_frequency_analysis"
 include = ['idf_analysis']
 #namespaces = false
 
+[tool.setuptools.package-data]
+#mypkg = ["*.txt"]
+"idf_analysis.approaches" = ["*.yaml"]
+
 [project.scripts]
 idf_analysis = "idf_analysis._console_script:command_line_tool"
