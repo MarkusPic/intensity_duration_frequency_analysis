@@ -13,11 +13,10 @@ import pandas as pd
 from matplotlib.colors import ListedColormap, Normalize
 from matplotlib.ticker import NullFormatter
 
-from idf_analysis import IntensityDurationFrequencyAnalyse
-from idf_analysis.definitions import COL
-from idf_analysis.little_helpers import duration_steps_readable, minutes_readable, frame_looper, event_caption
-from idf_analysis.sww_utils import (guess_freq, rain_events, event_duration, resample_rain_series, rain_bar_plot,
-                                    agg_events, )
+from .idf_class import IntensityDurationFrequencyAnalyse
+from .definitions import COL
+from .little_helpers import duration_steps_readable, minutes_readable, frame_looper, event_caption
+from .sww_utils import guess_freq, rain_events, event_duration, resample_rain_series, rain_bar_plot, agg_events
 
 COL.MAX_SRI = 'max_SRI_{}'
 COL.MAX_SRI_DURATION = 'max_SRI_duration_{}'

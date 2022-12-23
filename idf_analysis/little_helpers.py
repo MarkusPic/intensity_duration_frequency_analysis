@@ -9,7 +9,7 @@ import pandas as pd
 from pandas import Timedelta
 from tqdm.auto import tqdm
 
-from idf_analysis.definitions import COL
+from .definitions import COL
 
 
 def delta2min(time_delta):

@@ -1,0 +1,64 @@
+[metadata]
+name = idf-analysis
+version = attr: idf_analysis.__version__
+
+url = https://github.com/MarkusPic/intensity_duration_frequency_analysis
+project_urls =
+    Documentation = https://markuspic.github.io/intensity_duration_frequency_analysis/
+
+
+license = MIT
+license_file = LICENSE
+author = Markus Pichler
+author_email = markus.pichler@tugraz.at
+description = heavy rain as a function of the duration and the return period acc. to DWA-A 531 (2012)
+long_description = file: README.md
+long_description_content_type = text/markdown
+classifiers =
+    Programming Language :: Python :: 3
+    License :: OSI Approved :: MIT License
+    Operating System :: OS Independent
+    Development Status :: 4 - Beta
+    Natural Language :: English
+    Topic :: Scientific/Engineering
+    Topic :: Scientific/Engineering :: Hydrology
+    Intended Audience :: Science/Research
+
+keywords =
+    duration
+    analysis
+    rainfall
+    dwd
+    idf
+    measurement-data
+    precipitation
+    kostra
+    dwa
+    heavy-rain
+    intensity-duration-frequency
+    design-rainfall
+    duration-steps
+    return-period
+    dwa-a-531
+
+[options]
+python_requires = >= 3.7
+include_package_data = True
+packages = idf_analysis
+scripts =
+    bin/idf_analysis
+install_requires =
+    numpy>=1.14
+    pandas
+    matplotlib>=3
+    tzlocal
+    pytz
+    tqdm
+    scipy
+    PyYAML>=5
+
+
+[options.extras_require]
+PARQUET =
+    pyarrow
+    fastparquet

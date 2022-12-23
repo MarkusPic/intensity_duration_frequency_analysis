@@ -8,7 +8,7 @@ __license__ = "MIT"
 from .idf_class import IntensityDurationFrequencyAnalyse
 
 """
-heavy rain as a function of the duration and the return period acc. to DWA-A 531 (2012)
+Heavy rain as a function of the duration and the return period acc. to DWA-A 531 (2012)
 
 This program reads the measurement data of the rainfall from of a file in nieda-format
 and calculates the distribution of the rainfall as a function of the return period and the duration

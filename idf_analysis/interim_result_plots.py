@@ -4,7 +4,7 @@ import pandas as pd
 from matplotlib.lines import Line2D
 from webbrowser import open as show_file
 
-from . import IntensityDurationFrequencyAnalyse
+from .idf_class import IntensityDurationFrequencyAnalyse
 from .definitions import *
 from .little_helpers import minutes_readable
 from .sww_utils import agg_events

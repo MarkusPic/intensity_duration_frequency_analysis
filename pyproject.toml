@@ -1,3 +1,54 @@
 [build-system]
 requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "idf-analysis"
+description = "heavy rain as a function of the duration and the return period acc. to DWA-A 531 (2012)"
+readme = "README.md"
+authors = [
+    { name = "Markus Pichler", email = "markus.pichler@tugraz.at" }
+]
+requires-python = ">=3.7"
+keywords = ["duration", "analysis", "rainfall", "dwd", "idf", "measurement-data", "precipitation", "kostra", "dwa", "heavy-rain", "intensity-duration-frequency", "design-rainfall", "duration-steps", "return-period", "dwa-a-531"]
+
+license = { text = "MIT" }
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Development Status :: 4 - Beta",
+    "Natural Language :: English",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Hydrology",
+    "Intended Audience :: Science/Research",
+]
+dependencies = [
+    "numpy>=1.14",
+    "pandas",
+    "tqdm",
+    "matplotlib>=3",
+    "tzlocal",
+    "pytz",
+    "scipy",
+    "PyYAML>=5",
+    "pyarrow"
+]
+dynamic = ["version"]
+
+[project.optional-dependencies]
+docs = ["sphinx", "nbsphinx", "recommonmark", "pydata_sphinx_theme"]
+
+[tool.setuptools.dynamic]
+version = { attr = "idf_analysis.__version__" }
+
+[project.urls]
+Documentation = "https://markuspic.github.io/intensity_duration_frequency_analysis/"
+homepage = "https://github.com/MarkusPic/intensity_duration_frequency_analysis"
+
+[tool.setuptools.packages.find]
+include = ['idf_analysis']
+#namespaces = false
+
+[project.scripts]
+idf_analysis = "idf_analysis._console_script:command_line_tool"
