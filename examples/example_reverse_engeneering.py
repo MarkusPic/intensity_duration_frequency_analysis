@@ -1,4 +1,4 @@
-from ehyd_tools.design_rainfall import (get_max_calculation_method, INDICES, get_ehyd_design_rainfall_offline, )
+from ehyd_tools.design_rainfall import get_max_calculation_method, INDICES, get_ehyd_design_rainfall_offline
 
 from idf_analysis import IntensityDurationFrequencyAnalyse
 from idf_analysis.definitions import *
