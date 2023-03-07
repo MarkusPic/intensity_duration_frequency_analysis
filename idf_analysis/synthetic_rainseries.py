@@ -1,3 +1,5 @@
+import warnings
+
 import numpy as np
 import pandas as pd
 from math import floor
@@ -119,6 +121,10 @@ class _EulerRain(_AbstractModelRain):
         index = self._get_index(duration, interval)
         height = pd.Series(data=self._get_idf_value(np.array(index), return_period), index=index)
 
+        if (height != height.expanding().max()).any():
+            warnings.warn('The precipitation depth does not increase with the duration step. -> Adjusting data.')
+            height = height.expanding().max()
+
         height_diff = height.diff()
         height_diff.iloc[0] = height.iloc[0]
 
@@ -131,7 +137,8 @@ class _EulerRain(_AbstractModelRain):
         # reverse first <occurrence_highest_intensity> values
         r.loc[:max_index] = r.loc[max_index::-1].values
 
-        # add Zero value at first posiotion (for SWMM ?)
-        r = r.append(pd.Series({0: 0})).sort_index()
+        # add Zero value at first position (for SWMM ?)
+        # r = r.append(pd.Series({0: 0})).sort_index()
+        r = pd.Series(data=[0] + r.tolist(), index=[0] + r.index.values.tolist())
 
         return r
