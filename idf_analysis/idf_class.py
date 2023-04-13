@@ -11,11 +11,8 @@ from webbrowser import open as show_file
 
 from scipy.optimize import newton
 
-import matplotlib.pyplot as plt
-from matplotlib.backends.backend_pdf import PdfPages
 import numpy as np
 import pandas as pd
-from tqdm.auto import tqdm
 
 from .arg_parser import heavy_rain_parser
 from .idf_backend import IdfParameters
@@ -425,6 +422,7 @@ class IntensityDurationFrequencyAnalyse:
 
         # --------------------------------------------------
         if user.plot:
+            import matplotlib.pyplot as plt
             fig, ax = idf.result_figure()
             plot_fn = fn_pattern.format('curves_plot.png')
             fig.savefig(plot_fn, dpi=260)
@@ -617,6 +615,10 @@ class IntensityDurationFrequencyAnalyse:
             durations (list[int]): analysed durations
                         (default: [5, 10, 15, 20, 30, 45, 60, 90, 120, 180, 240, 360, 540, 720, 1080, 1440, 2880, 4320])
         """
+        import matplotlib.pyplot as plt
+        from matplotlib.backends.backend_pdf import PdfPages
+        from tqdm.auto import tqdm
+
         if durations is None:
             durations = self.parameters.durations
 
@@ -647,6 +649,7 @@ class IntensityDurationFrequencyAnalyse:
         pdf.close()
 
     def event_plot(self, event, durations=None, unit='mm', column_name='Precipitation', min_return_period=1.):
+        import matplotlib.pyplot as plt
         if isinstance(event, pd.Series):
             event = event.to_dict()
 
@@ -691,6 +694,10 @@ class IntensityDurationFrequencyAnalyse:
 
     ####################################################################################################################
     def event_return_period_report(self, filename, min_return_period=1):
+        import matplotlib.pyplot as plt
+        from matplotlib.backends.backend_pdf import PdfPages
+        from tqdm.auto import tqdm
+
         events = self.rain_events
         self.add_max_return_periods_to_events(events)
 
@@ -711,6 +718,7 @@ class IntensityDurationFrequencyAnalyse:
         pdf.close()
 
     def return_period_event_figure(self, event):
+        import matplotlib.pyplot as plt
         period_line = self.return_periods_frame[event[COL.START]:event[COL.END]].max()
 
         # period_line[period_line < 0.75] = np.NaN

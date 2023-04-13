@@ -4,7 +4,6 @@ from math import floor, e
 
 import numpy as np
 import pandas as pd
-from tqdm.auto import tqdm
 
 from scipy.stats import linregress
 
@@ -177,7 +176,12 @@ def calculate_u_w(file_input, duration_steps, series_kind):
     # may increase design-rain-height of smaller durations
 
     # -------------------------------
-    pbar = tqdm(duration_steps, desc='Calculating Parameters u and w')
+    try:
+        from tqdm.auto import tqdm
+        pbar = tqdm(duration_steps, desc='Calculating Parameters u and w')
+    except ModuleNotFoundError:
+        pbar = duration_steps
+
     for duration_integer in pbar:
         pbar.set_description('Calculating Parameters u and w for duration {:0.0f}'.format(duration_integer))
 

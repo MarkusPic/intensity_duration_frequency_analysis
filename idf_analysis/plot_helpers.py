@@ -6,7 +6,6 @@ __version__ = "0.1"
 __license__ = "MIT"
 
 import pandas as pd
-from matplotlib.ticker import NullFormatter
 
 from .definitions import COL
 from .little_helpers import duration_steps_readable
@@ -93,6 +92,7 @@ def idf_bar_axes(ax, idf_table, return_period_colors=RETURN_PERIOD_COLORS):
 
     ax.set_ylim(0, duration_size)
     ax.set_xticklabels([])
+    from matplotlib.ticker import NullFormatter
     ax.xaxis.set_major_formatter(NullFormatter())
     # ax.axhline(0, color='k')
     ax.axhline(duration_size / 2, color='k')

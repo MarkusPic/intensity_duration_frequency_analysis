@@ -7,7 +7,6 @@ __license__ = "MIT"
 
 import pandas as pd
 from pandas import Timedelta
-from tqdm.auto import tqdm
 
 from .definitions import COL
 
@@ -104,7 +103,11 @@ def rate2height(rain_flow_rate, duration):
 
 def frame_looper(size, columns, label='return periods'):
     if size > 30000:  # if > 3 weeks, use a progressbar
-        return tqdm(columns, desc=f'calculating {label} data-frame')
+        try:
+            from tqdm.auto import tqdm
+            return tqdm(columns, desc=f'calculating {label} data-frame')
+        except ModuleNotFoundError:
+            return columns
     else:
         return columns
 
