@@ -1,23 +1,24 @@
+from pathlib import Path
+
 from idf_analysis import IntensityDurationFrequencyAnalyse
 from idf_analysis.definitions import *
 import pandas as pd
-from os import path
 
 # sub-folder for the results
 
-output_directory = path.join('ehyd_112086_idf_data')
+output_directory = Path(__file__).parent / 'ehyd_112086_2019_idf_data'
 # initialize of the analysis class
 idf = IntensityDurationFrequencyAnalyse(series_kind=SERIES.PARTIAL, worksheet=METHOD.KOSTRA, extended_durations=True)
 
 # reading the pandas series of the precipitation (data from ehyd.gv.at - ID=112086)
-series = pd.read_parquet('ehyd_112086.parquet')['precipitation']
+series = pd.read_parquet('ehyd_112086.parquet')['N-Minutensummen-112086']
 
 # setting the series for the analysis
 idf.set_series(series)
 
 # auto-save the calculated parameter so save time for a later use
-idf.auto_save_parameters(path.join(output_directory, 'idf_parameters.yaml'))
-
+idf.auto_save_parameters(output_directory / 'idf_parameters_new.yaml')
+exit()
 # --------
 # idf.write_return_periods_frame(path.join(output_directory, 'idf_return_periods_frame.parq'))
 # exit()

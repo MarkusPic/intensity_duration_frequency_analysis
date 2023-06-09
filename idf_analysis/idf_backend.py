@@ -14,7 +14,7 @@ import os
 from .definitions import *
 from .event_series_analysis import calculate_u_w
 from .in_out import write_yaml, read_yaml
-from .parameter_formulations import folded_log_formulation, hyperbolic_formulation
+from .parameter_formulations import folded_log_formulation, hyperbolic_formulation, hyperbolic_formulation_chatgpt_opt
 
 
 class IdfParameters:
@@ -180,6 +180,10 @@ class IdfParameters:
                                                                               b_start=b_start,
                                                                               param_mean=param_mean,
                                                                               duration_mean=duration_mean)
+                    # params[PARAM.A], params[PARAM.B] = hyperbolic_formulation_chatgpt_opt(dur, values_series, a_start=a_start,
+                    #                                                                       b_start=b_start,
+                    #                                                                       param_mean=param_mean,
+                    #                                                                       duration_mean=duration_mean)
 
                 # ----------------------------
                 elif approach == APPROACH.LIN:

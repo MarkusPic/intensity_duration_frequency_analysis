@@ -1,4 +1,5 @@
 import numpy as np
+from scipy.optimize import curve_fit
 
 from .definitions import APPROACH
 
@@ -42,23 +43,35 @@ def folded_log_formulation(duration, param, case, param_mean=None, duration_mean
     return float(a), float(b)
 
 
-def hyperbolic_formulation(duration, param, a_start=20.0, b_start=15.0, param_mean=None, duration_mean=None):
+def hyperbolic_formulation(duration: np.array, param: np.array, a_start=20.0, b_start=15.0, param_mean=None, duration_mean=None):
     """
+    Computes the hyperbolic formulation using the given parameters.
 
     Args:
-        duration:
-        param:
-        a_start:
-        b_start:
-        param_mean:
-        duration_mean:
+        duration (np.array): Array of durations.
+        param (np.array): Array of parameters.
+        a_start (float): Initial value for 'a' parameter.
+        b_start (float): Initial value for 'b' parameter.
+        param_mean (float, optional): Mean value of parameters. Defaults to None.
+        duration_mean (float, optional): Mean value of durations. Defaults to None.
 
     Returns:
-
+        tuple[float, float]: Computed value of 'a' and 'b'.
     """
 
-    # ------------------------------------------------------------------------------------------------------------------
     def get_param(dur, par, a_, b_):
+        """
+        Computes 'a' and 'b' parameters based on given durations and parameters.
+
+        Args:
+            dur (np.array): Array of durations.
+            par (np.array): Array of parameters.
+            a_ (float): Current value of 'a' parameter.
+            b_ (float): Current value of 'b' parameter.
+
+        Returns:
+            tuple[float, float]: Computed value of 'a' and 'b'.
+        """
         i = -a_ / (dur + b_)
         if param_mean:
             i_mean = - param_mean / duration_mean
@@ -90,3 +103,19 @@ def hyperbolic_formulation(duration, param, a_start=20.0, b_start=15.0, param_me
 
         iteration_steps += 1
     return float(a), float(b)
+
+
+def hyperbolic_function(D, a, b):
+    return a * D / (D + b)
+
+
+def hyperbolic_formulation_chatgpt_opt(duration: np.array, param: np.array, a_start=20.0, b_start=15.0, param_mean=None, duration_mean=None):
+    # TODO: param_mean and duration_mean for parameter - balance
+
+    # Perform the curve fitting
+    initial_guess = [a_start, b_start]  # initial guess for a and b
+    fit_params, _ = curve_fit(hyperbolic_function, duration, param, p0=initial_guess)
+
+    # Extract the optimized parameter values
+    a_fit, b_fit = fit_params
+    return float(a_fit), float(b_fit)
