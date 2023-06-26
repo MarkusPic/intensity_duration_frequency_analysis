@@ -25,6 +25,8 @@ idf.set_series(series)
 # auto-save the calculated parameter so save time for a later use
 idf.auto_save_parameters(path.join(output_directory, 'idf_parameters_new.yaml'))
 
+idf.model_rain_euler.get_series(return_period=.5, duration=60)
+
 exit()
 
 idf.result_figure(color=False)
