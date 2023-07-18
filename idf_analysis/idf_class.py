@@ -19,8 +19,7 @@ from .idf_backend import IdfParameters
 from .little_helpers import minutes_readable, height2rate, delta2min, rate2height, frame_looper, event_caption
 from .definitions import *
 from .in_out import import_series
-from .sww_utils import (remove_timezone, guess_freq, rain_events, agg_events, event_duration, resample_rain_series,
-                        rain_bar_plot, IdfError, )
+from .sww_utils import guess_freq, rain_events, agg_events, event_duration, resample_rain_series, rain_bar_plot, IdfError
 from .plot_helpers import idf_bar_axes
 from .synthetic_rainseries import _BlockRain, _EulerRain
 
@@ -95,8 +94,8 @@ class IntensityDurationFrequencyAnalyse:
         if not isinstance(series.index, pd.DatetimeIndex):
             raise IdfError('The series has to have a DatetimeIndex.')
 
-        if series.index.tz is not None:
-            series = remove_timezone(series)
+        # if series.index.tz is not None:
+        #     series = remove_timezone(series)
 
         self._freq = guess_freq(series.index)
         freq_minutes = delta2min(self._freq)
@@ -597,6 +596,8 @@ class IntensityDurationFrequencyAnalyse:
             datetime_max = np.where(np.isnan(datetime_max), events[COL.START].values, datetime_max)
             # alternative:
             # [xv if c else yv for c, xv, yv in zip(np.isnan(datetime_max), events[COL.START].values, datetime_max)]
+            if return_periods_frame.index.tz is not None:
+                datetime_max = pd.DatetimeIndex(datetime_max).tz_localize('utc').tz_convert(return_periods_frame.index.tz)
             events[COL.MAX_PERIOD] = max_periods[datetime_max].values
             events[COL.MAX_PERIOD_DURATION] = max_periods_duration[datetime_max].values
 

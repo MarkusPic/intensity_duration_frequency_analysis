@@ -109,7 +109,7 @@ class _EulerRain(_AbstractModelRain):
         Get a pandas.Series of the model euler rain with the passed minutes as integer-index.
 
         Args:
-            return_period (int): Return period in years.
+            return_period (int or float): Return period in years.
             duration (int): Duration step in minutes.
             interval (int): Series intervall in minutes.
             kind (int): Either type I (1) or type II (2)

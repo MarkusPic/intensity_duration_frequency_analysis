@@ -5,66 +5,15 @@ __license__ = "MIT"
 __version__ = "1.0.0"
 __maintainer__ = "David Camhy, Markus Pichler"
 
-from datetime import tzinfo
-
 import numpy as np
 import pandas as pd
-import pytz
 from pandas.tseries.frequencies import to_offset
 
 from .definitions import COL
 
 
-class TimezoneError(Exception):
-    """Some Error With a Timezone"""
-
-
 class IdfError(Exception):
     """Some Error Within this Package"""
-
-
-def check_tz(timezone):
-    """
-    check the give timezone
-
-    :param timezone:
-    :type timezone: tzinfo | str
-    :return:
-    :rtype: tzinfo
-    """
-    if isinstance(timezone, str):
-        try:
-            return pytz.timezone(timezone)
-        except:
-            raise TimezoneError('"{}" is not a timezone or unknown'.format(timezone))
-    # else:
-    #     return timezone
-    elif isinstance(timezone, tzinfo):
-        return timezone
-    else:
-        raise TimezoneError('unknown timezone format: "{}"'.format(type(timezone)))
-
-
-def remove_timezone(data):
-    """
-    convert the timezone to wintertime and then remove the timezone from the dataframe index, to not get in conflict
-    with the plot functions
-
-    Args:
-        data (pandas.DataFrame | pandas.Series): data with datetimeindex 
-
-    Returns:
-        pandas.DataFrame | pandas.Series: data with datetimeindex without timezone
-    """
-    no_tz = data.copy()
-    index = no_tz.index
-    native_timezone = pytz.timezone('Etc/GMT-1')
-    if index.tz is None:
-        raise TimezoneError("Dataframe must have a timezone information")
-    timezone = check_tz(native_timezone)
-    idx = index.tz_convert(check_tz(timezone))
-    no_tz.index = idx.tz_localize(None)
-    return no_tz
 
 
 ########################################################################################################################
@@ -208,14 +157,14 @@ def event_duration(events):
 ########################################################################################################################
 def rain_bar_plot(rain, ax=None, color='#1E88E5', reverse=False, step='post', joinstyle='miter', capstyle='butt'):
     """
-    make a standard precipitation/rain plot
+    Make a standard precipitation/rain plot.
 
     Args:
         rain (pandas.Series):
         ax (matplotlib.axes.Axes):
         color (str):
         reverse (bool):
-        drawstyle (str):  'steps-mid' 'steps-post' steps-pre'
+        step (str):  'mid' 'post' pre'
 
     Returns:
         matplotlib.axes.Axes: rain plot
