@@ -89,8 +89,8 @@ def rain_events(series, ignore_rain_below=0.01, min_gap=pd.Timedelta(hours=4)):
     bool_start.iloc[0] = True
 
     events = pd.DataFrame.from_dict({
-        COL.START: temp[bool_start].values,
-        COL.END: temp[bool_end].values,
+        COL.START: temp[bool_start].to_list(),
+        COL.END: temp[bool_end].to_list(),
     })
     return events
 
