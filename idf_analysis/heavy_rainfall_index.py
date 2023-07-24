@@ -589,7 +589,7 @@ class HeavyRainfallIndexAnalyse(IntensityDurationFrequencyAnalyse):
         return fig, self.event_plot_caption(event, self.method)
 
     def event_dataframe(self, event: dict) -> pandas.DataFrame:
-        sri_table_event = pd.DataFrame(index=self.duration_steps)
+        sri_table_event = pd.DataFrame(index=self.duration_steps_for_output)
 
         # self.method = self.METHODS.KRUEGER_PFISTER
         # sri_table_event[self.METHODS.KRUEGER_PFISTER] = self.get_event_sri_max(event[COL.START], event[COL.END]).astype(int)

@@ -16,7 +16,8 @@ import pandas as pd
 
 from .arg_parser import heavy_rain_parser
 from .idf_backend import IdfParameters
-from .little_helpers import minutes_readable, height2rate, delta2min, rate2height, frame_looper, event_caption
+from .little_helpers import minutes_readable, height2rate, delta2min, rate2height, frame_looper, event_caption, \
+    event_caption_ger
 from .definitions import *
 from .in_out import import_series
 from .sww_utils import guess_freq, rain_events, agg_events, event_duration, resample_rain_series, rain_bar_plot, IdfError
@@ -69,6 +70,8 @@ class IntensityDurationFrequencyAnalyse:
         self._return_periods_frame = None
         self._rain_events = None
         self._rainfall_sum_frame = None
+
+        self._duration_steps_for_output = None
 
     # __________________________________________________________________________________________________________________
     @property
@@ -128,6 +131,33 @@ class IntensityDurationFrequencyAnalyse:
         if not isinstance(durations, (list, np.ndarray)):
             raise IdfError('Duration steps have to be {} got "{}"'.format((list, np.ndarray), type(durations)))
         self.parameters.durations = durations
+
+    @property
+    def duration_steps_for_output(self):
+        """
+        get duration steps (in minutes) for the parameter calculation and basic evaluations
+
+        Returns:
+            list | numpy.ndarray: duration steps in minutes
+        """
+        # if not self.parameters:
+        #     raise IdfError('No Series defined for IDF-Analysis!')
+
+        if self._duration_steps_for_output is None:
+            self._duration_steps_for_output = self.duration_steps.copy()
+
+        return self._duration_steps_for_output
+
+    @duration_steps_for_output.setter
+    def duration_steps_for_output(self, durations):
+        """
+        set duration steps (in minutes) for the parameter calculation and basic evaluations
+        Args:
+            durations (list | numpy.ndarray): duration steps in minutes
+        """
+        if not isinstance(durations, (list, np.ndarray)):
+            raise IdfError('Duration steps have to be {} got "{}"'.format((list, np.ndarray), type(durations)))
+        self._duration_steps_for_output = durations
 
     # __________________________________________________________________________________________________________________
     @property
@@ -277,7 +307,7 @@ class IntensityDurationFrequencyAnalyse:
             pandas.DataFrame: idf table
         """
         if durations is None:
-            durations = self.duration_steps
+            durations = self.duration_steps_for_output
 
         if return_periods is None:
             return_periods = [1, 2, 3, 5, 10, 20, 25, 30, 50, 75, 100]
@@ -452,7 +482,7 @@ class IntensityDurationFrequencyAnalyse:
             pandas.DataFrame: Rain sum depending on the duration per datetime-index.
         """
         if durations is None:
-            durations = self.duration_steps
+            durations = self.duration_steps_for_output
 
         if series is None:
             if self._rainfall_sum_frame is not None:
@@ -620,9 +650,6 @@ class IntensityDurationFrequencyAnalyse:
         from matplotlib.backends.backend_pdf import PdfPages
         from tqdm.auto import tqdm
 
-        if durations is None:
-            durations = self.parameters.durations
-
         events = self.rain_events
         self.add_max_return_periods_to_events(events)
 
@@ -635,7 +662,7 @@ class IntensityDurationFrequencyAnalyse:
         pdf = PdfPages(filename)
 
         for _, event in tqdm(main_events.items()):
-            fig, caption = self.event_plot(event, durations=durations, min_return_period=min_return_period,
+            fig, caption = self.event_plot(event, min_return_period=min_return_period,
                                            unit=unit, column_name=column_name)
 
             # -------------------------------------
@@ -649,7 +676,7 @@ class IntensityDurationFrequencyAnalyse:
 
         pdf.close()
 
-    def event_plot(self, event, durations=None, unit='mm', column_name='Precipitation', min_return_period=1.):
+    def event_plot(self, event, durations=None, unit='mm', column_name='Precipitation', min_return_period=1., german_caption=False, max_duration=None):
         import matplotlib.pyplot as plt
         if isinstance(event, pd.Series):
             event = event.to_dict()
@@ -670,10 +697,13 @@ class IntensityDurationFrequencyAnalyse:
             rain_ax = fig.add_subplot(111)
 
         else:
-            if durations is not None:
-                max_dur = max(durations)
+            if max_duration is None:
+                if durations is not None:
+                    max_dur = max(durations)
+                else:
+                    max_dur = max(self.duration_steps_for_output)
             else:
-                max_dur = max(self.duration_steps)
+                max_dur = max_duration
 
             return_periods_frame_extended = self.get_return_periods_frame(
                 self.series[event[COL.START] - pd.Timedelta(minutes=max_dur):
@@ -691,7 +721,7 @@ class IntensityDurationFrequencyAnalyse:
         rain_ax.set_ylabel('{} in {}/{}min'.format(column_name, unit, minutes if minutes != 1 else ''))
         rain_ax.set_xlim(ts.index[0], ts.index[-1])
 
-        return fig, event_caption(event, unit)
+        return fig, (event_caption_ger(event) if german_caption else event_caption(event, unit))
 
     ####################################################################################################################
     def event_return_period_report(self, filename, min_return_period=1):
