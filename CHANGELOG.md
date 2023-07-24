@@ -2,6 +2,21 @@
 
 
 
+## v0.1.17 (2023-07-24)
+
+### Fix
+
+* fix: added duration steps parameter for outputs ([`6d2c2d4`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/6d2c2d4820761d0266357b7d5ed07a66ffbee7cb))
+
+* fix: added german event plot caption ([`282a8e4`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/282a8e43737685c04b7798afb772d589579d9146))
+
+### Unknown
+
+* added points to example plot ([`8578219`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/85782194d149c9b8f75ac3df55b08b9178788ebf))
+
+* enable analysis for index with timezone ([`ed5b90e`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/ed5b90e5956ce59871c8a107f33fd3b0f91beef3))
+
+
 ## v0.1.16 (2023-07-18)
 
 ### Fix
