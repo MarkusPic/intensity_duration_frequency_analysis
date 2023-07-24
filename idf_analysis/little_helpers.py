@@ -140,6 +140,34 @@ def event_caption(event, unit='mm'):
     return caption
 
 
+def event_caption_ger(event, unit='mm'):
+    caption = 'Regenereignis\n'
+    if (COL.START in event) and (COL.END in event):
+        caption += f'zwischen {event[COL.START]:%Y-%m-%d %H:%M} und '
+        if f'{event[COL.START]:%Y-%m-%d}' == f'{event[COL.END]:%Y-%m-%d}':
+            caption += f'{event[COL.END]:%H:%M}\n'
+        elif f'{event[COL.START]:%Y-%m-}' == f'{event[COL.END]:%Y-%m-}':
+            caption += f'{event[COL.END]:%d %H:%M}\n'
+        else:
+            caption += f'{event[COL.END]:%Y-%m-%d %H:%M}\n'
+
+    if COL.LP in event:
+        caption += f'mit einer Regensumme von {event[COL.LP]:0.1f} {unit}\n'
+
+    if COL.DUR in event:
+        caption += f' und einer Dauer von {timedelta_readable(event[COL.DUR])}'
+
+    caption += '.\n'
+
+    if COL.MAX_PERIOD in event:
+        caption += f' Die maximale Wiederkehrperiode war {return_period_formatter(event[COL.MAX_PERIOD])} a\n'
+
+        if COL.MAX_PERIOD_DURATION in event:
+            caption += f' bei einer Dauerstufe von {minutes_readable(event[COL.MAX_PERIOD_DURATION])}.'
+
+    return caption
+
+
 def return_period_formatter(t):
     if t < 1:
         return '< 1'
