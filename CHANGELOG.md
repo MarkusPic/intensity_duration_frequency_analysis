@@ -2,42 +2,29 @@
 
 
 
-## v0.1.19 (2023-07-27)
+## v0.1.16 (2023-07-27)
 
 ### Fix
+
+* fix: publishing to pypi ([`4927caa`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/4927caad9028252a42f34d89f87f7c50f5e24448))
+
+* fix: publishing to pypi ([`ab98300`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/ab983007c59e1397d598570409a89fd0c612d855))
 
 * fix: gihub actions ([`8d227af`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/8d227afd15fa2aade11c69af0a6c09f730fb6ffc))
 
-
-## v0.1.18 (2023-07-27)
-
-### Fix
-
 * fix: github CI release fix ([`d39dd08`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/d39dd08d30c3eee5f76e8f0d91600989ec6d2fd0))
-
-
-## v0.1.17 (2023-07-24)
-
-### Fix
 
 * fix: added duration steps parameter for outputs ([`6d2c2d4`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/6d2c2d4820761d0266357b7d5ed07a66ffbee7cb))
 
 * fix: added german event plot caption ([`282a8e4`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/282a8e43737685c04b7798afb772d589579d9146))
+
+* fix: added ability to use an index with a timezone ([`c5f396e`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/c5f396eb35d20ada67442879dbb59f3daf368487))
 
 ### Unknown
 
 * added points to example plot ([`8578219`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/85782194d149c9b8f75ac3df55b08b9178788ebf))
 
 * enable analysis for index with timezone ([`ed5b90e`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/ed5b90e5956ce59871c8a107f33fd3b0f91beef3))
-
-
-## v0.1.16 (2023-07-18)
-
-### Fix
-
-* fix: added ability to use an index with a timezone ([`c5f396e`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/c5f396eb35d20ada67442879dbb59f3daf368487))
-
-### Unknown
 
 * minor changes in example ([`c11ff4a`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/c11ff4a99eeb83caeb024e4a4ffd8b2a72a47dcf))
 
