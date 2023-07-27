@@ -11,6 +11,9 @@ jobs:
   release:
     runs-on: ubuntu-latest
 
+    permissions:
+      id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
+
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -26,6 +29,9 @@ jobs:
 #          github_token: ${{ secrets.GH_TOKEN }}
 #          repository_username: __token__
 #          repository_password: ${{ secrets.PyPI_TOKEN }}
+      - name: build package
+        run: |
+          python -m build
       # ---
       # This action uses Python Semantic Release v8
       - name: Python Semantic Release
@@ -39,8 +45,8 @@ jobs:
         # NOTE: DO NOT wrap the conditional in ${{ }} as it will always evaluate to true.
         # See https://github.com/actions/runner/issues/1173
         if: steps.release.outputs.released == 'true'
-        with:
-          password: ${{ secrets.PyPI_TOKEN }}
+#        with:
+#          password: ${{ secrets.PyPI_TOKEN }}
 
       - name: Publish package distributions to GitHub Releases
         uses: python-semantic-release/upload-to-gh-release@main
