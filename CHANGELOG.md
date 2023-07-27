@@ -2,6 +2,13 @@
 
 
 
+## v0.1.19 (2023-07-27)
+
+### Fix
+
+* fix: gihub actions ([`8d227af`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/8d227afd15fa2aade11c69af0a6c09f730fb6ffc))
+
+
 ## v0.1.18 (2023-07-27)
 
 ### Fix
