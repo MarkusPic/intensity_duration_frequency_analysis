@@ -6,6 +6,8 @@
 
 ### Fix
 
+* fix: retry github ci ([`5cf5b73`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/5cf5b734b3eda35f56f3ec3bbd301b4f9c08b1b9))
+
 * fix: retry github ci ([`796982a`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/796982adaeab9627f6ac6dbf0179f1f4c08100c6))
 
 * fix: publishing to pypi ([`4927caa`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/4927caad9028252a42f34d89f87f7c50f5e24448))
@@ -23,6 +25,8 @@
 * fix: added ability to use an index with a timezone ([`c5f396e`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/c5f396eb35d20ada67442879dbb59f3daf368487))
 
 ### Unknown
+
+* Merge remote-tracking branch &#39;origin/main&#39; ([`6c8d141`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/6c8d141f111abacd05c2a40a3cf33a498e93d587))
 
 * added points to example plot ([`8578219`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/85782194d149c9b8f75ac3df55b08b9178788ebf))
 
