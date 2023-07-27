@@ -2,6 +2,13 @@
 
 
 
+## v0.1.18 (2023-07-27)
+
+### Fix
+
+* fix: github CI release fix ([`d39dd08`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/d39dd08d30c3eee5f76e8f0d91600989ec6d2fd0))
+
+
 ## v0.1.17 (2023-07-24)
 
 ### Fix
