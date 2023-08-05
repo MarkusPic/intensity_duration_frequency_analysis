@@ -9,12 +9,12 @@ from collections import OrderedDict
 
 import pandas as pd
 import numpy as np
-import os
+from pathlib import Path
 
 from .definitions import *
 from .event_series_analysis import calculate_u_w
 from .in_out import write_yaml, read_yaml
-from .parameter_formulations import folded_log_formulation, hyperbolic_formulation, hyperbolic_formulation_chatgpt_opt
+from .parameter_formulation_class import FORMULATION_REGISTER, _Formulation, register_formulations_to_yaml
 
 
 class IdfParameters:
@@ -26,22 +26,20 @@ class IdfParameters:
 
         self.parameters_series = {}  # parameters u and w (distribution function) from the event series analysis
         self.parameters_final = {}  # parameters of the distribution function after the regression
+        # {lower duration bound in minutes: {parameter u or w: {'function': function-name}}}
 
-        self.get_approaches(worksheet)
+        self.set_parameter_approaches_from_worksheet(worksheet)
 
-    # -------------------------------------------------------------
     def __bool__(self):
         return bool(self.parameters_series)
 
-    # -------------------------------------------------------------
     def calc_from_series(self, series):
         u_w = calculate_u_w(series, self.durations, self.series_kind)
         for p in PARAM.U_AND_W:
             self.parameters_series[p] = np.array([d[p] for d in u_w.values()])
         self._calc_params()
-        self._balance_parameter_change()
 
-    def reverse_engineering(self, idf_table):
+    def reverse_engineering(self, idf_table, linear_interpolation=False):
         durations = idf_table.index.values
         u = idf_table[1].values
         w_dat = idf_table.sub(u, axis=0)
@@ -61,10 +59,14 @@ class IdfParameters:
         self.durations = durations
         self.parameters_series[PARAM.U] = np.array(u)
         self.parameters_series[PARAM.W] = np.array(w)
-        self._calc_params()
-        self._balance_parameter_change()
 
-    # -------------------------------------------------------------
+        if linear_interpolation:
+            self.clear_parameter_approaches()
+            self.add_parameter_approach(0, 'linear', 'linear')
+            self._calc_params()
+        else:
+            self._calc_params()
+
     @property
     def durations(self):
         return np.array(self._durations)
@@ -99,12 +101,10 @@ class IdfParameters:
         for param in PARAM.U_AND_W:
             if param in self.parameters_series:
                 self.parameters_series[param] = self.parameters_series[param][bool_array]
-        # self.parameters_series[PARAM.W] = self.parameters_series[PARAM.W][bool_array]
 
-    # -------------------------------------------------------------
-    def get_approaches(self, worksheet):
+    def set_parameter_approaches_from_worksheet(self, worksheet):
         """
-        Approaches depending on the duration and the parameter.
+        Set approaches depending on the duration and the parameter.
 
         Args:
             worksheet (str): worksheet name for the analysis:
@@ -115,11 +115,16 @@ class IdfParameters:
         Returns:
             list[dict]: table of approaches depending on the duration and the parameter
         """
-        self.parameters_final = read_yaml(os.path.join(os.path.dirname(__file__), 'approaches', worksheet + '.yaml'))
+        self.parameters_final = read_yaml(Path(__file__).parent / 'approaches' / (worksheet + '.yaml'))
 
-    # def _dur_upper_bound(self, dur_min):
-    #     lower_bounds = list(self.parameters_final.keys())
-    #     return lower_bounds[lower_bounds.index(dur_min) + 1]
+    def add_parameter_approach(self, duration_bound, approach_u, approach_w):
+        self.parameters_final[duration_bound] = {
+            PARAM.U: {PARAM.FUNCTION: approach_u},
+            PARAM.W: {PARAM.FUNCTION: approach_w},
+        }
+
+    def clear_parameter_approaches(self):
+        self.parameters_final = {}
 
     def _iter_params(self):
         lower_bounds = list(self.parameters_final.keys())
@@ -150,10 +155,7 @@ class IdfParameters:
             dur = self.durations[param_part]
 
             for p in PARAM.U_AND_W:  # u or w
-                params = params_dur[p]
                 values_series = self.parameters_series[p][param_part]
-
-                approach = params[PARAM.FUNCTION]
 
                 if params_mean:
                     param_mean = params_mean[p]
@@ -161,53 +163,32 @@ class IdfParameters:
                     param_mean = None
 
                 # ----------------------------
-                if approach in [APPROACH.LOG1, APPROACH.LOG2]:
-                    params[PARAM.A], params[PARAM.B] = folded_log_formulation(dur, values_series, case=approach,
-                                                                              param_mean=param_mean,
-                                                                              duration_mean=duration_mean)
+                if not isinstance(params_dur[p], _Formulation):
+                    approach = params_dur[p][PARAM.FUNCTION]
+                    if approach not in FORMULATION_REGISTER:
+                        raise NotImplementedError(f'{approach=}')
 
-                # ----------------------------
-                elif approach == APPROACH.HYP:
-                    a_start = 20.0
-                    if PARAM.A in params and not np.isnan(params[PARAM.A]):
-                        a_start = params[PARAM.A]
+                    params_dur[p] = _Formulation.from_dict(params_dur[p])  # init object
 
-                    b_start = 15.0
-                    if PARAM.B in params and not np.isnan(params[PARAM.B]):
-                        b_start = params[PARAM.B]
+                if params_dur[p].a is None or params_dur[p].b is None or param_mean is not None:
+                    params_dur[p].fit(dur, values_series, param_mean=param_mean, duration_mean=duration_mean)
 
-                    params[PARAM.A], params[PARAM.B] = hyperbolic_formulation(dur, values_series, a_start=a_start,
-                                                                              b_start=b_start,
-                                                                              param_mean=param_mean,
-                                                                              duration_mean=duration_mean)
-                    # params[PARAM.A], params[PARAM.B] = hyperbolic_formulation_chatgpt_opt(dur, values_series, a_start=a_start,
-                    #                                                                       b_start=b_start,
-                    #                                                                       param_mean=param_mean,
-                    #                                                                       duration_mean=duration_mean)
+        # ----------------------------
+        # balance_parameter_change
+        if params_mean is None:
+            print('_balance_parameter_change')
+            # the balance between the different duration ranges acc. to DWA-A 531 chap. 5.2.4
+            duration_step = list(self.parameters_final.keys())[1]
+            durations = np.array([duration_step - 0.001, duration_step + 0.001])
 
-                # ----------------------------
-                elif approach == APPROACH.LIN:
-                    pass
+            # if the interim results end here
 
-                # ----------------------------
-                else:
-                    raise NotImplementedError
+            if any(durations < self.durations.min()) or \
+                    any(durations > self.durations.max()):
+                return
 
-                # ----------------------------
-
-    def _balance_parameter_change(self):
-        # the balance between the different duration ranges acc. to DWA-A 531 chap. 5.2.4
-        duration_step = list(self.parameters_final.keys())[1]
-        durations = np.array([duration_step - 0.001, duration_step + 0.001])
-
-        # if the interim results end here
-
-        if any(durations < self.durations.min()) or \
-                any(durations > self.durations.max()):
-            return
-
-        u, w = self.get_u_w(durations)
-        self._calc_params(params_mean=dict(u=np.mean(u), w=np.mean(w)), duration_mean=duration_step)
+            u, w = self.get_u_w(durations)
+            self._calc_params(params_mean={PARAM.U: np.mean(u), PARAM.W: np.mean(w)}, duration_mean=duration_step)
 
     def measured_points(self, return_periods, max_duration=None):
         """
@@ -229,7 +210,7 @@ class IdfParameters:
             interim_results = interim_results.loc[:max_duration].copy()
 
         return pd.Series(index=interim_results.index,
-                         data=interim_results['u'] + interim_results['w'] * np.log(return_periods))
+                         data=interim_results[PARAM.U] + interim_results[PARAM.W] * np.log(return_periods))
 
     def get_duration_section(self, duration, param):
         for lower, upper in self._iter_params():
@@ -246,28 +227,12 @@ class IdfParameters:
         Returns:
             (float, float): u, w
         """
-        param = self.get_duration_section(duration, p)
+        param = self.get_duration_section(duration, p)  # type: _Formulation
 
         if param is None:
             return np.NaN
 
-        elif param[PARAM.FUNCTION] == APPROACH.LOG1:
-            a = param[PARAM.A]
-            b = param[PARAM.B]
-            return a + b * np.log(duration)
-
-        elif param[PARAM.FUNCTION] == APPROACH.LOG2:
-            a = param[PARAM.A]
-            b = param[PARAM.B]
-            return np.exp(a) * np.power(duration, b)
-
-        elif param[PARAM.FUNCTION] == APPROACH.HYP:
-            a = param[PARAM.A]
-            b = param[PARAM.B]
-            return a * duration / (duration + b)
-
-        elif param[PARAM.FUNCTION] == APPROACH.LIN:
-            return np.interp(duration, self.durations, self.parameters_series[p])
+        return param.get_param(duration)
 
     def get_array_param(self, p, duration):
         """
@@ -306,6 +271,8 @@ class IdfParameters:
         return p
 
     def to_yaml(self, filename):
+        register_formulations_to_yaml()
+
         def to_basic(a):
             return list([round(float(i), 4) for i in a])
         data = OrderedDict({
@@ -326,6 +293,7 @@ class IdfParameters:
         # list to numpy.array
         p.parameters_series = {p: np.array(l) for p, l in data[PARAM.PARAMS_SERIES].items()}
         p.parameters_final = data[PARAM.PARAMS_FINAL]
+        p._calc_params()
         return p
 
     @classmethod

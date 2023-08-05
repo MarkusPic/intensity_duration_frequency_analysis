@@ -1,5 +1,4 @@
 import numpy as np
-from scipy.optimize import curve_fit
 
 from .definitions import APPROACH
 
@@ -111,7 +110,7 @@ def hyperbolic_function(D, a, b):
 
 def hyperbolic_formulation_chatgpt_opt(duration: np.array, param: np.array, a_start=20.0, b_start=15.0, param_mean=None, duration_mean=None):
     # TODO: param_mean and duration_mean for parameter - balance
-
+    from scipy.optimize import curve_fit
     # Perform the curve fitting
     initial_guess = [a_start, b_start]  # initial guess for a and b
     fit_params, _ = curve_fit(hyperbolic_function, duration, param, p0=initial_guess)

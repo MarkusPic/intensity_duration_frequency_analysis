@@ -8,7 +8,7 @@ __license__ = "MIT"
 import warnings
 from os import path, mkdir
 from webbrowser import open as show_file
-
+import matplotlib.pyplot as plt
 from scipy.optimize import newton
 
 import numpy as np
@@ -371,11 +371,10 @@ class IntensityDurationFrequencyAnalyse:
         ax.set_ylabel('Rainfall h$\\mathsf{_N}$ in mm')
         ax.set_title('IDF curves')
 
-        fig = ax.get_figure()
+        fig = ax.get_figure()  # type: plt.Figure
 
         cm_to_inch = 2.54
         fig.set_size_inches(h=21 / cm_to_inch, w=29.7 / cm_to_inch)  # (11.69, 8.27)
-        fig.tight_layout()
         return fig, ax
 
     ####################################################################################################################

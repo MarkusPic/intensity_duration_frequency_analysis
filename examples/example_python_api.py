@@ -11,7 +11,8 @@ output_directory = Path('ehyd_112086_idf_data')
 idf = IntensityDurationFrequencyAnalyse(series_kind=SERIES.PARTIAL, worksheet=METHOD.KOSTRA, extended_durations=True)
 
 # reading the pandas series of the precipitation (data from ehyd.gv.at - ID=112086)
-series = pd.read_parquet('ehyd_112086.parquet')['precipitation']
+series = pd.read_parquet('ehyd_112086.parquet').squeeze()
+series.name = 'precipitation'
 
 # to reproduce this data run:
 # from ehyd_tools.in_out import get_ehyd_data
@@ -24,7 +25,7 @@ idf.set_series(series)
 # idf.write_parameters(path.join(output_directory, 'idf_parameters.yaml'))
 # exit()
 # auto-save the calculated parameter so save time for a later use
-idf.auto_save_parameters(output_directory / 'idf_parameters_new.yaml')
+idf.auto_save_parameters(output_directory / 'idf_parameters_new2.yaml')
 
 idf.model_rain_euler.get_series(return_period=.5, duration=60)
 
@@ -36,7 +37,7 @@ idf.model_rain_euler.get_series(return_period=.5, duration=60)
 # plotting the IDF curves
 fig, ax = idf.result_figure(color=True)
 fig.set_size_inches(12, 8)
-fig.tight_layout()
+fig.set_layout_engine('constrained')
 fig.savefig(output_directory / 'idf_curves_plot_color.png', dpi=200)
 plt.close(fig)
 
@@ -44,7 +45,7 @@ plt.close(fig)
 # plotting the idf curves in black and white
 fig, ax = idf.result_figure(color=False, add_interim=True)
 fig.set_size_inches(12, 8)
-fig.tight_layout()
+fig.set_layout_engine('constrained')
 fig.savefig(output_directory / 'idf_curves_plot.png', dpi=200)
 plt.close(fig)
 
