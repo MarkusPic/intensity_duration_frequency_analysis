@@ -30,10 +30,6 @@ jobs:
 #          github_token: ${{ secrets.GH_TOKEN }}
 #          repository_username: __token__
 #          repository_password: ${{ secrets.PyPI_TOKEN }}
-      - name: build package
-        run: |
-          pip install -q build
-          python -m build
       # ---
       # This action uses Python Semantic Release v8
       - name: Python Semantic Release
@@ -43,6 +39,11 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           git_committer_name: MarkusPic
           git_committer_email: markus.pichler@tugraz.at
+
+      - name: build package
+        run: |
+          pip install -q build
+          python -m build
 
       - name: Publish package distributions to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
