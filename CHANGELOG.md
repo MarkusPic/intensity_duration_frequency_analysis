@@ -1,20 +1,54 @@
 # CHANGELOG
 
+
+
+## v0.2.0 (2023-08-05)
+
+### Feature
+
+* feat: added ability to use custom functions for parameter formulation. default implementations are linear, log-normal, double-log-normal and hyperbolic. ([`f16f674`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/f16f674eff74dc4fa4c78836684fb66bb3b28f87))
+
+### Unknown
+
+* fix github ci ([`5fb4bbf`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/5fb4bbfe8fa5f28eca42e04336012db7d6c33823))
+
+
 ## v0.1.16 (2023-07-27)
 
 ### Fix
 
-* update github ci ([`3ab440a`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/3ab440a0a7f326f45694661ce217c35d9f575ef6), [`5cf5b73`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/5cf5b734b3eda35f56f3ec3bbd301b4f9c08b1b9), [`796982a`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/796982adaeab9627f6ac6dbf0179f1f4c08100c6), [`4927caa`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/4927caad9028252a42f34d89f87f7c50f5e24448), [`ab98300`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/ab983007c59e1397d598570409a89fd0c612d855), [`8d227af`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/8d227afd15fa2aade11c69af0a6c09f730fb6ffc), [`d39dd08`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/d39dd08d30c3eee5f76e8f0d91600989ec6d2fd0))
+* fix: retry github ci ([`3ab440a`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/3ab440a0a7f326f45694661ce217c35d9f575ef6))
 
-* added duration steps parameter for outputs ([`6d2c2d4`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/6d2c2d4820761d0266357b7d5ed07a66ffbee7cb))
+* fix: retry github ci ([`5cf5b73`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/5cf5b734b3eda35f56f3ec3bbd301b4f9c08b1b9))
 
-* added german event plot caption ([`282a8e4`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/282a8e43737685c04b7798afb772d589579d9146))
+* fix: retry github ci ([`796982a`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/796982adaeab9627f6ac6dbf0179f1f4c08100c6))
 
-* added ability to use an index with a timezone ([`c5f396e`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/c5f396eb35d20ada67442879dbb59f3daf368487), [`ed5b90e`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/ed5b90e5956ce59871c8a107f33fd3b0f91beef3))
+* fix: publishing to pypi ([`4927caa`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/4927caad9028252a42f34d89f87f7c50f5e24448))
 
-## Documentation
+* fix: publishing to pypi ([`ab98300`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/ab983007c59e1397d598570409a89fd0c612d855))
 
-* added points to example plot ([`8578219`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/85782194d149c9b8f75ac3df55b08b9178788ebf), [`c11ff4a`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/c11ff4a99eeb83caeb024e4a4ffd8b2a72a47dcf))
+* fix: gihub actions ([`8d227af`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/8d227afd15fa2aade11c69af0a6c09f730fb6ffc))
+
+* fix: github CI release fix ([`d39dd08`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/d39dd08d30c3eee5f76e8f0d91600989ec6d2fd0))
+
+* fix: added duration steps parameter for outputs ([`6d2c2d4`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/6d2c2d4820761d0266357b7d5ed07a66ffbee7cb))
+
+* fix: added german event plot caption ([`282a8e4`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/282a8e43737685c04b7798afb772d589579d9146))
+
+* fix: added ability to use an index with a timezone ([`c5f396e`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/c5f396eb35d20ada67442879dbb59f3daf368487))
+
+### Unknown
+
+* Merge remote-tracking branch &#39;origin/main&#39; ([`6c8d141`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/6c8d141f111abacd05c2a40a3cf33a498e93d587))
+
+* added points to example plot ([`8578219`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/85782194d149c9b8f75ac3df55b08b9178788ebf))
+
+* enable analysis for index with timezone ([`ed5b90e`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/ed5b90e5956ce59871c8a107f33fd3b0f91beef3))
+
+* minor changes in example ([`c11ff4a`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/c11ff4a99eeb83caeb024e4a4ffd8b2a72a47dcf))
+
+* start attempt to rewrite parameter formulation ([`55a3990`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/55a39904f4ad8c725610b1958b9746f0ff9cff19))
+
 
 ## v0.1.15 (2023-04-13)
 
