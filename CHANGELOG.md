@@ -2,6 +2,13 @@
 
 
 
+## v0.2.0 (2023-08-05)
+
+### Feature
+
+* feat: added ability to use custom functions for parameter formulation. default implementations are linear, log-normal, double-log-normal and hyperbolic. ([`f16f674`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/f16f674eff74dc4fa4c78836684fb66bb3b28f87))
+
+
 ## v0.1.16 (2023-07-27)
 
 ### Fix
