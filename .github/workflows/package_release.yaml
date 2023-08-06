@@ -17,7 +17,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
           token: ${{ secrets.GH_TOKEN }}
@@ -34,7 +34,7 @@ jobs:
       # This action uses Python Semantic Release v8
       - name: Python Semantic Release
         id: release
-        uses: python-semantic-release/python-semantic-release@v8.0.0
+        uses: python-semantic-release/python-semantic-release@v8
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           git_committer_name: MarkusPic
@@ -58,5 +58,3 @@ jobs:
         if: steps.release.outputs.released == 'true'
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          git_committer_name: MarkusPic
-          git_committer_email: markus.pichler@tugraz.at
