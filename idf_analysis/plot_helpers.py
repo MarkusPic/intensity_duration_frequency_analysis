@@ -95,5 +95,8 @@ def idf_bar_axes(ax, idf_table, return_period_colors=RETURN_PERIOD_COLORS):
     from matplotlib.ticker import NullFormatter
     ax.xaxis.set_major_formatter(NullFormatter())
     # ax.axhline(0, color='k')
-    ax.axhline(duration_size / 2, color='k')
+    # ax.axhline(duration_size / 2, color='k')
+    # TODO
+    # (k)urzzeitige Summationen, d. h. der Dauerstufen von 5 Minuten bis 2 Stunden
+    # (m)ittelfristige Summationen, d. h. der Dauerstufen von 3 Stunden bis 3 Tagen.
     return ax

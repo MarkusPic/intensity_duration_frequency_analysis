@@ -48,7 +48,7 @@ event = idf.rain_events.loc[125]
 
 
 fig, caption = idf.event_plot(event, durations=idf.duration_steps[:11])
-fig.tight_layout()
+# fig.tight_layout()
 fig.show()
 
 fig, caption = idf.event_plot(event)

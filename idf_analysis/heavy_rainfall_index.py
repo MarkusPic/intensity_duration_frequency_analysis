@@ -377,7 +377,7 @@ class HeavyRainfallIndexAnalyse(IntensityDurationFrequencyAnalyse):
 
         # cm_to_inch = 2.54
         # fig.set_size_inches(h=11 / cm_to_inch, w=25 / cm_to_inch)  # (11.69, 8.27)
-        fig.tight_layout()
+        # fig.tight_layout()
         return fig, ax
 
     ####################################################################################################################

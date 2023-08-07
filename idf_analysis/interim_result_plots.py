@@ -66,7 +66,7 @@ def return_period_scatter(idf: IntensityDurationFrequencyAnalyse, filename='all_
     # -----------------
     # DIN A4
     fig.set_size_inches(w=7, h=5)
-    fig.tight_layout()
+    # fig.tight_layout()
     fig.savefig(filename)
     plt.close(fig)
 
@@ -136,7 +136,7 @@ def result_plot_v2(idf: IntensityDurationFrequencyAnalyse, filename, min_duratio
 
     cm_to_inch = 2.54
     fig.set_size_inches(h=21 / cm_to_inch, w=29.7 / cm_to_inch)  # (11.69, 8.27)
-    fig.tight_layout()
+    # fig.tight_layout()
     fig.savefig(filename, dpi=260)
     plt.close(fig)
     if show:

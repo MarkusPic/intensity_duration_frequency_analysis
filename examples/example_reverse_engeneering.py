@@ -29,7 +29,7 @@ for location, grid_point_number in {'graz': 5214, 'poellau': 4683}.items():
 
     ax = idf_table.loc[:max_duration, [1, 2, 5, 10, 50, 100]].plot(ax=ax, marker='x', lw=0)
     # ax.set_xlim(0, 720)
-    fig.tight_layout()
+    # fig.tight_layout()
     fig.show()
     fig.savefig(path.join(f'idf_reverse_curves_plot_color_{location}.png'), dpi=200)
 

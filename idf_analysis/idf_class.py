@@ -669,7 +669,7 @@ class IntensityDurationFrequencyAnalyse:
 
             # DIN A4
             fig.set_size_inches(w=8.27, h=11.69)
-            fig.tight_layout()
+            # fig.tight_layout()
             pdf.savefig(fig)
             plt.close(fig)
 
@@ -682,10 +682,12 @@ class IntensityDurationFrequencyAnalyse:
 
         plot_range = slice(event[COL.START] - pd.Timedelta(self._freq), event[COL.END] + pd.Timedelta(self._freq))
 
+        return_periods_frame = self.return_periods_frame[plot_range]
         if COL.MAX_PERIOD not in event:
-            return_periods_frame = self.return_periods_frame[plot_range]
             event[COL.MAX_PERIOD] = return_periods_frame.max().max()
             event[COL.MAX_PERIOD_DURATION] = return_periods_frame.max().idxmax()
+
+        sum_frame_event = self.rainfall_sum_frame[plot_range]
 
         ts = self.series[plot_range].resample(self._freq).sum().fillna(0).copy()
 
@@ -741,7 +743,7 @@ class IntensityDurationFrequencyAnalyse:
             # -------------------------------------
             # DIN A4
             fig.set_size_inches(h=11.69 / 2, w=8.27)
-            fig.tight_layout()
+            # fig.tight_layout()
             pdf.savefig(fig)
             plt.close(fig)
 
