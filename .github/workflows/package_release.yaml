@@ -22,6 +22,11 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GH_TOKEN }}
 
+      - name: pip install python-build package
+        run: |
+          pip install -q build
+#          python -m build
+
       # ---
       # This action uses Python Semantic Release v7
 #      - name: Python Semantic Release
@@ -40,11 +45,6 @@ jobs:
           git_committer_name: MarkusPic
           git_committer_email: markus.pichler@tugraz.at
 
-      - name: build package
-        run: |
-          pip install -q build
-          python -m build
-
       - name: Publish package distributions to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         # NOTE: DO NOT wrap the conditional in ${{ }} as it will always evaluate to true.
@@ -53,8 +53,9 @@ jobs:
 #        with:
 #          password: ${{ secrets.PyPI_TOKEN }}
 
-      - name: Publish package distributions to GitHub Releases
-        uses: python-semantic-release/upload-to-gh-release@main
-        if: steps.release.outputs.released == 'true'
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+#      - name: Publish package distributions to GitHub Releases
+#        uses: python-semantic-release/upload-to-gh-release@main
+#        if: steps.release.outputs.released == 'true'
+#        if:
+#        with:
+#          github_token: ${{ secrets.GITHUB_TOKEN }}
