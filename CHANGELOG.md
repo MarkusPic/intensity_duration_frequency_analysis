@@ -2,6 +2,23 @@
 
 
 
+## v0.2.1 (2023-08-07)
+
+### Ci
+
+* ci: fix minor and outdated commands ([`7bf5dc2`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/7bf5dc2b6c1662e139558fd3d4e0c55777d98b66))
+
+* ci: fix minor and outdated commands ([`5a4e905`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/5a4e9050bbe8231561e5a8d42e2c3f866400c682))
+
+### Fix
+
+* fix: don&#39;t balance parameters for single formulation ([`9525fa6`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/9525fa6df7852451b69904d6eace1a9fa638272f))
+
+### Style
+
+* style: remove tight layout calls ([`6f0e0b2`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/6f0e0b222d85a2ee855a777e5d6aef088b4ab2f0))
+
+
 ## v0.2.0 (2023-08-05)
 
 ### Feature
