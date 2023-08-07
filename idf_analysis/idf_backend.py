@@ -175,7 +175,8 @@ class IdfParameters:
 
         # ----------------------------
         # balance_parameter_change
-        if params_mean is None:
+        # TODO only between Not linear ranges
+        if params_mean is None and (len(self.parameters_final) > 1):
             print('_balance_parameter_change')
             # the balance between the different duration ranges acc. to DWA-A 531 chap. 5.2.4
             duration_step = list(self.parameters_final.keys())[1]
