@@ -143,6 +143,7 @@ class HeavyRainfallIndexAnalyse(IntensityDurationFrequencyAnalyse):
 
     class METHODS:
         SCHMITT = 'Schmitt'
+        SCHMITT2015 = 'Schmitt_2015'  # ortsunabhängig
         KRUEGER_PFISTER = 'KruegerPfister'
         MUDERSBACH = 'Mudersbach'
 
@@ -225,6 +226,26 @@ class HeavyRainfallIndexAnalyse(IntensityDurationFrequencyAnalyse):
                 if tn < 0.5:
                     return 0
             return np.clip(np.ceil(sri), 0, 12)
+
+        elif self.method == self.METHODS.SCHMITT2015:
+            # TODO: additional_files.schmitt_ortsunabhaengig_2015.ods
+            if duration == 15:
+                if height_of_rainfall < 10:
+                    return 0
+            elif duration == 60:
+                if height_of_rainfall < 15:
+                    return 0
+            elif duration == 120:
+                if height_of_rainfall < 20:
+                    return 0
+            elif duration == 240:
+                if height_of_rainfall < 20:
+                    return 0
+            elif duration == 360:
+                if height_of_rainfall < 25:
+                    return 0
+            else:
+                return np.NaN
 
         else:
             raise NotImplementedError(f'Method {self.method} not implemented!')
