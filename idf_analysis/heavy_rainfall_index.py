@@ -294,7 +294,7 @@ class HeavyRainfallIndexAnalyse(IntensityDurationFrequencyAnalyse):
             # sri_table.loc[:12] = self.depth_of_rainfall(sri_table.index.values, 100)
             sri_table[rp_table < 1] = np.NaN
             sri_table = sri_table.astype(float).round(2)
-            sri_table = sri_table.fillna(method='ffill', axis=1, limit=None)
+            sri_table = sri_table.ffill(axis=1, limit=None)  # .fillna(method='ffill', axis=1, limit=None)
 
         elif self.method == self.METHODS.KRUEGER_PFISTER:
             # duration_adjustment_factor = idf_table.div(idf_table.loc[24 * 60])

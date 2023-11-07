@@ -38,7 +38,7 @@ def guess_freq(date_time_index, default=pd.Timedelta(minutes=1)):
         if pd.notnull(freq):
             return to_offset(freq)
 
-        delta_series = date_time_index.to_series().diff(periods=1).fillna(method='backfill')
+        delta_series = date_time_index.to_series().diff(periods=1).bfill()  # .fillna(method='backfill')
         counts = delta_series.value_counts()
         counts.drop(pd.Timedelta(minutes=0), errors='ignore')
 
