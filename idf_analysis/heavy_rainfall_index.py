@@ -531,8 +531,8 @@ class HeavyRainfallIndexAnalyse(IntensityDurationFrequencyAnalyse):
         ax.set_ylim(0, duration_size)
         ax.set_xticklabels([])
         ax.xaxis.set_major_formatter(NullFormatter())
-        ax.axhline(0, color='k')
-        ax.axhline(duration_size / 2, color='k')
+        ax.axhline(0, color='black')
+        ax.axhline(duration_size / 2, color='black')
         return ax
 
     @staticmethod

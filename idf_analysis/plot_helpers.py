@@ -100,9 +100,9 @@ def idf_bar_axes(ax, idf_table, return_period_colors=RETURN_PERIOD_COLORS):
     duration_steps_middle_to_long = duration_steps[duration_steps > 2*60]
     if duration_steps_middle_to_long.size:
         # (k)urzzeitige Summationen, d. h. der Dauerstufen von 5 Minuten bis 2 Stunden
-        ax.axhline(duration_steps.tolist().index(duration_steps_middle_to_long[0]), color='k')
+        ax.axhline(duration_steps.tolist().index(duration_steps_middle_to_long[0]), color='black')
         duration_steps_long = duration_steps_middle_to_long[duration_steps_middle_to_long > 3*60*24]
         if duration_steps_long.size:
             # (m)ittelfristige Summationen, d. h. der Dauerstufen von 3 Stunden bis 3 Tagen.
-            ax.axhline(duration_steps.tolist().index(duration_steps_long[0]), color='k')
+            ax.axhline(duration_steps.tolist().index(duration_steps_long[0]), color='black')
     return ax
