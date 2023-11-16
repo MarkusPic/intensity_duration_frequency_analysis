@@ -52,7 +52,6 @@ fig, caption = idf.event_plot(event, durations=idf.duration_steps[:11])
 fig.show()
 
 fig, caption = idf.event_plot(event)
-fig.tight_layout()
 fig.show()
 
 rpf = idf.return_periods_frame[event[COL.START]:event[COL.END]]
