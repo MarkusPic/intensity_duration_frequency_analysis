@@ -90,6 +90,7 @@ def partial_series(rolling_sum_values, measurement_period):
 
 
 def _lin_regress2(x, y):
+    # based on math - custom function
     sample_size = len(x)
     x_mean = np.mean(x)
     y_mean = np.mean(y)
@@ -102,6 +103,7 @@ def _lin_regress2(x, y):
 
 
 def _lin_regress(x, y):
+    # using scipy
     res = linregress(x, y)
     return {PARAM.U: res.intercept, PARAM.W: res.slope}
 
@@ -128,7 +130,7 @@ def _improve_factor(interval):
                      list(improve_factor.values()))
 
 
-def calculate_u_w(file_input, duration_steps, series_kind):
+def iter_event_series(file_input, duration_steps):
     """
     Statistical analysis for each duration step.
 
@@ -136,34 +138,19 @@ def calculate_u_w(file_input, duration_steps, series_kind):
 
     Save the parameters of the distribution function as interim results.
 
-    acc. to DWA-A 531 chap. 4.4: use the annual series only for measurement periods over 20 years
-
-
     Args:
         file_input (pandas.Series): precipitation data
         duration_steps (list[int] | numpy.ndarray): in minutes
-        series_kind (str): 'annual' or 'partial'
 
-    Returns:
-        dict[int, dict]: with key=durations and values=dict(u, w)
+    Yields:
+        series: max rainfall intensity per event for each duration step
     """
     ts = file_input.copy()
-    # -------------------------------
-    # measuring time in years
-    measurement_start, measurement_end = ts.index[[0, -1]]
-    measurement_period = (measurement_end - measurement_start) / year_delta(years=1)
-    if round(measurement_period, 1) < 10:
-        warnings.warn("The measurement period is too short. The results may be inaccurate! "
-                      "It is recommended to use at least ten years. "
-                      "(-> Currently {}a used)".format(measurement_period))
 
     # -------------------------------
     base_frequency = guess_freq(ts.index)  # DateOffset/Timedelta
 
     # ------------------------------------------------------------------------------------------------------------------
-    interim_results = {}
-
-    # -------------------------------
     # acc. to DWA-A 531 chap. 4.2:
     # The values must be independent of each other for the statistical evaluations.
     # estimated four hours acc. (Schilling, 1984)
@@ -202,11 +189,47 @@ def calculate_u_w(file_input, duration_steps, series_kind):
 
         roll_sum = ts.rolling(duration).sum()
 
+        year_index = events[COL.START].dt.year.values
+
         # events[COL.rolling_sum_valuesAX_OVERLAPPING_SUM] = agg_events(events, roll_sum, 'max') * improve
-        rolling_sum_values = agg_events(events, roll_sum, 'max') * improve
+        yield agg_events(events, roll_sum, 'max') * improve, duration_integer, year_index
+
+
+def calculate_u_w(file_input, duration_steps, series_kind):
+    """
+    Statistical analysis for each duration step.
+
+    acc. to DWA-A 531 chap. 5.1
+
+    Save the parameters of the distribution function as interim results.
+
+    acc. to DWA-A 531 chap. 4.4: use the annual series only for measurement periods over 20 years
+
+
+    Args:
+        file_input (pandas.Series): precipitation data
+        duration_steps (list[int] | numpy.ndarray): in minutes
+        series_kind (str): 'annual' or 'partial'
+
+    Returns:
+        dict[int, dict]: with key=durations and values=dict(u, w)
+    """
+    # -------------------------------
+    # measuring time in years
+    measurement_start, measurement_end = file_input.index[[0, -1]]
+    measurement_period = (measurement_end - measurement_start) / year_delta(years=1)
+    if round(measurement_period, 1) < 10:
+        warnings.warn("The measurement period is too short. The results may be inaccurate! "
+                      "It is recommended to use at least ten years. "
+                      "(-> Currently {}a used)".format(measurement_period))
+
+    # -------------------------------
+    interim_results = {}
+
+    for rolling_sum_values, duration_integer, year_index in iter_event_series(file_input, duration_steps):
 
         if series_kind == SERIES.ANNUAL:
-            interim_results[duration_integer] = annual_series(rolling_sum_values, events[COL.START].dt.year.values)
+            interim_results[duration_integer] = annual_series(rolling_sum_values, year_index)
         elif series_kind == SERIES.PARTIAL:
             interim_results[duration_integer] = partial_series(rolling_sum_values, measurement_period)
         else:

@@ -12,7 +12,7 @@ import numpy as np
 from pathlib import Path
 
 from .definitions import *
-from .event_series_analysis import calculate_u_w
+from .event_series_analysis import calculate_u_w, iter_event_series
 from .in_out import write_yaml, read_yaml
 from .parameter_formulation_class import FORMULATION_REGISTER, _Formulation, register_formulations_to_yaml
 
@@ -38,6 +38,13 @@ class IdfParameters:
         for p in PARAM.U_AND_W:
             self.parameters_series[p] = np.array([d[p] for d in u_w.values()])
         self._calc_params()
+
+    # def get_event_max_series(self, series):  # TODO
+    #     interim_results = {}
+    #
+    #     for rolling_sum_values, duration_integer, _ in iter_event_series(series, self.durations):
+    #         interim_results[duration_integer] = rolling_sum_values
+    #     return interim_results
 
     def reverse_engineering(self, idf_table, linear_interpolation=False):
         durations = idf_table.index.values

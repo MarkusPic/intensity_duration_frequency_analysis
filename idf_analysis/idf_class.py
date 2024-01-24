@@ -326,7 +326,7 @@ class IntensityDurationFrequencyAnalyse:
 
     ####################################################################################################################
     def result_figure(self, min_duration=5.0, max_duration=720.0, logx=False, return_periods=None, color=True, ax=None,
-                      linestyle=None, add_interim=False):
+                      linestyle=None, add_interim=False, alpha=1):
         """
         Create a plot with the idf-curves with duration on the x-axis and rainfall depth on the y-axis.
 
@@ -340,6 +340,7 @@ class IntensityDurationFrequencyAnalyse:
             ax (plt.Axes): Axes to plot on. Default = create new one.
             linestyle (str): Line-style for the plotted lines.
             add_interim (bool): Add interim results from the series analysis as scatter points.
+            alpha (float): Alpha of the idf-lines in the plot.
 
         Returns:
             (plt.Figure, plt.Axes): figure and axes of the plot.
@@ -352,7 +353,7 @@ class IntensityDurationFrequencyAnalyse:
         table = self.result_table(durations=duration_steps, return_periods=return_periods)
         if color:
             table.columns.name = 'T$\\mathsf{_N}$ in a'
-        ax = table.plot(color=(None if color else 'black'), logx=logx, legend=color, ax=ax, ls=linestyle)
+        ax = table.plot(color=(None if color else 'black'), logx=logx, legend=color, ax=ax, ls=linestyle, alpha=alpha)
 
         for _, return_time in enumerate(return_periods):
             if add_interim:
@@ -632,6 +633,21 @@ class IntensityDurationFrequencyAnalyse:
             events[COL.MAX_PERIOD] = max_periods[datetime_max].values
 
             events[COL.MAX_PERIOD_DURATION] = return_periods_frame.loc[datetime_max].idxmax(axis=1, skipna=True).values
+
+    def add_max_intensities_to_events(self, events):
+        """
+        Add the maximum intensities for all duration steps to the events table.
+
+        Args:
+            events (pandas.DataFrame): events table
+
+        Returns:
+            pandas.DataFrame: events table including the columns with the maximum intensities
+        """
+        sum_frame = self.rainfall_sum_frame
+        for duration in self.duration_steps:
+            events[f'max_sum_{duration:0.0f}'] = agg_events(events, sum_frame[duration], 'max').round(2)
+        return events
 
     ####################################################################################################################
     def event_report(self, filename, min_event_rain_sum=25, min_return_period=0.5, durations=None):
