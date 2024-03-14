@@ -1,11 +1,30 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
 authors:
-- family-names: "Pichler"
-  given-names: "Markus"
-  orcid: "https://orcid.org/0000-0002-8101-2163 "
-
-title: "idf_analysis: Intensity duration frequency analysis"
-version: 0.1.12
-date-released: 2022-05-28
+  - family-names: Pichler
+    given-names: Markus
+    orcid: https://orcid.org/0000-0002-8101-2163
+    affiliation: Graz University of Technology
+title: "idf_analysis: Intensity duration frequency analysis with python based on KOSTRA"
+version: 0.2.4
+doi: 10.5281/zenodo.10559991
+date-released: 2024-01-24
 url: "https://github.com/MarkusPic/intensity_duration_frequency_analysis"
+license: MIT
+identifiers:
+  - description: This is the collection of archived snapshots of all versions of idf_analysis python package
+    type: doi
+    value: "10.5281/zenodo.10559991"
+  - description: This is the archived snapshot of version 0.2.4 of idf_analysis python package
+    type: doi
+    value: "10.5281/zenodo.10559992"
+keywords:
+ - kostra
+ - precipitation
+ - dwa-a-531
+ - Hydrology
+ - python
+ - statistics
+ - "extreme value analysis"
+ - "Extreme value theory"
+abstract: "heavy rain as a function of the duration and the return period acc. to DWA-A 531 (2012) This program reads the measurement data of the rainfall and calculates the distribution of the rainfall as a function of the return period and the duration for duration steps up to 12 hours (and more) and return period in a range of '0.5a <= T_n <= 100a'"
