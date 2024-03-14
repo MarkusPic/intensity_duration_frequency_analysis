@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Intensity Duration Frequency Analyse - EXTENDED &#8212; Intensity Duration Frequency Analyse 0.2.4 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../_static/nature.css?v=601dbdee" />
+    <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css" />
+    <script src="../_static/documentation_options.js?v=6ffd866b"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Intensity Duration Frequency Analyse 0.2.4 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Intensity Duration Frequency Analyse - EXTENDED</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">idf_analysis.idf_class</span> <span class="kn">import</span> <span class="n">IntensityDurationFrequencyAnalyse</span>
+<span class="kn">from</span> <span class="nn">idf_analysis.definitions</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">path</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;bmh&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<section id="Intensity-Duration-Frequency-Analyse---EXTENDED">
+<h1>Intensity Duration Frequency Analyse - EXTENDED<a class="headerlink" href="#Intensity-Duration-Frequency-Analyse---EXTENDED" title="Link to this heading">¶</a></h1>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="c1"># sub-folder for the results</span>
+<span class="n">output_directory</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;ehyd_112086_idf_data&#39;</span><span class="p">)</span>
+
+<span class="c1"># initialize of the analysis class</span>
+<span class="n">idf</span> <span class="o">=</span> <span class="n">IntensityDurationFrequencyAnalyse</span><span class="p">(</span><span class="n">series_kind</span><span class="o">=</span><span class="n">SERIES</span><span class="o">.</span><span class="n">PARTIAL</span><span class="p">,</span> <span class="n">worksheet</span><span class="o">=</span><span class="n">METHOD</span><span class="o">.</span><span class="n">KOSTRA</span><span class="p">,</span> <span class="n">extended_durations</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># reading the pandas series of the precipitation (data from ehyd.gv.at - ID=112086)</span>
+<span class="n">series</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="s1">&#39;ehyd_112086.parquet&#39;</span><span class="p">)[</span><span class="s1">&#39;precipitation&#39;</span><span class="p">]</span>
+
+<span class="c1"># setting the series for the analysis</span>
+<span class="n">idf</span><span class="o">.</span><span class="n">set_series</span><span class="p">(</span><span class="n">series</span><span class="p">)</span>
+
+<span class="c1"># auto-save the calculated parameter so save time for a later use</span>
+<span class="n">idf</span><span class="o">.</span><span class="n">auto_save_parameters</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_directory</span><span class="p">,</span> <span class="s1">&#39;idf_parameters.yaml&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">events</span> <span class="o">=</span> <span class="n">idf</span><span class="o">.</span><span class="n">rain_events</span>
+<span class="s2">&quot;Columns: &quot;</span><span class="p">,</span> <span class="n">events</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span>  <span class="s2">&quot;| Number of events: &quot;</span><span class="p">,</span> <span class="n">events</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">size</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(&#39;Columns: &#39;,
+ Index([&#39;start&#39;, &#39;end&#39;, &#39;duration&#39;, &#39;rain_sum&#39;, &#39;last_event&#39;], dtype=&#39;object&#39;),
+ &#39;| Number of events: &#39;,
+ 1356)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="c1"># reduce number of event by limiting the minimum sum of rainfall</span>
+<span class="n">events</span> <span class="o">=</span> <span class="n">events</span><span class="p">[</span><span class="n">events</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">LP</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="s2">&quot;Columns: &quot;</span><span class="p">,</span> <span class="n">events</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span>  <span class="s2">&quot;| Number of events: &quot;</span><span class="p">,</span> <span class="n">events</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">size</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(&#39;Columns: &#39;,
+ Index([&#39;start&#39;, &#39;end&#39;, &#39;duration&#39;, &#39;rain_sum&#39;, &#39;last_event&#39;], dtype=&#39;object&#39;),
+ &#39;| Number of events: &#39;,
+ 252)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="c1"># add the maximum return period to the events and at which duration this period occurs</span>
+<span class="n">idf</span><span class="o">.</span><span class="n">add_max_return_periods_to_events</span><span class="p">(</span><span class="n">events</span><span class="p">)</span>
+<span class="s2">&quot;Columns: &quot;</span><span class="p">,</span> <span class="n">events</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span>  <span class="s2">&quot;| Number of events: &quot;</span><span class="p">,</span> <span class="n">events</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">size</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(&#39;Columns: &#39;,
+ Index([&#39;start&#39;, &#39;end&#39;, &#39;duration&#39;, &#39;rain_sum&#39;, &#39;last_event&#39;,
+        &#39;max_return_period&#39;, &#39;max_return_period_duration&#39;],
+       dtype=&#39;object&#39;),
+ &#39;| Number of events: &#39;,
+ 252)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="c1"># reduce number of event by limiting the minimum return period of an event</span>
+<span class="n">events</span> <span class="o">=</span> <span class="n">events</span><span class="p">[</span><span class="n">events</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">MAX_PERIOD</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="s2">&quot;Columns: &quot;</span><span class="p">,</span> <span class="n">events</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span>  <span class="s2">&quot;| Number of events: &quot;</span><span class="p">,</span> <span class="n">events</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">size</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(&#39;Columns: &#39;,
+ Index([&#39;start&#39;, &#39;end&#39;, &#39;duration&#39;, &#39;rain_sum&#39;, &#39;last_event&#39;,
+        &#39;max_return_period&#39;, &#39;max_return_period_duration&#39;],
+       dtype=&#39;object&#39;),
+ &#39;| Number of events: &#39;,
+ 19)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">events</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>start</th>
+      <th>end</th>
+      <th>duration</th>
+      <th>rain_sum</th>
+      <th>last_event</th>
+      <th>max_return_period</th>
+      <th>max_return_period_duration</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>105</th>
+      <td>2008-06-23 19:50:00</td>
+      <td>2008-06-23 23:23:00</td>
+      <td>0 days 03:33:00</td>
+      <td>34.9</td>
+      <td>2 days 21:52:00</td>
+      <td>5.363788</td>
+      <td>15.0</td>
+    </tr>
+    <tr>
+      <th>125</th>
+      <td>2008-07-17 14:14:00</td>
+      <td>2008-07-18 06:27:00</td>
+      <td>0 days 16:13:00</td>
+      <td>74.6</td>
+      <td>0 days 04:09:00</td>
+      <td>6.457449</td>
+      <td>120.0</td>
+    </tr>
+    <tr>
+      <th>127</th>
+      <td>2008-07-20 17:43:00</td>
+      <td>2008-07-21 03:55:00</td>
+      <td>0 days 10:12:00</td>
+      <td>27.7</td>
+      <td>2 days 02:48:00</td>
+      <td>2.831013</td>
+      <td>5760.0</td>
+    </tr>
+    <tr>
+      <th>277</th>
+      <td>2009-07-18 08:55:00</td>
+      <td>2009-07-18 13:19:00</td>
+      <td>0 days 04:24:00</td>
+      <td>58.0</td>
+      <td>2 days 01:56:00</td>
+      <td>3.422038</td>
+      <td>240.0</td>
+    </tr>
+    <tr>
+      <th>286</th>
+      <td>2009-08-21 19:49:00</td>
+      <td>2009-08-21 20:29:00</td>
+      <td>0 days 00:40:00</td>
+      <td>34.2</td>
+      <td>4 days 03:04:00</td>
+      <td>3.930161</td>
+      <td>20.0</td>
+    </tr>
+    <tr>
+      <th>289</th>
+      <td>2009-08-28 23:41:00</td>
+      <td>2009-08-29 00:42:00</td>
+      <td>0 days 01:01:00</td>
+      <td>49.3</td>
+      <td>1 days 03:44:00</td>
+      <td>20.299093</td>
+      <td>20.0</td>
+    </tr>
+    <tr>
+      <th>291</th>
+      <td>2009-09-04 00:31:00</td>
+      <td>2009-09-04 18:18:00</td>
+      <td>0 days 17:47:00</td>
+      <td>69.0</td>
+      <td>5 days 11:06:00</td>
+      <td>2.605659</td>
+      <td>1080.0</td>
+    </tr>
+    <tr>
+      <th>566</th>
+      <td>2011-08-03 19:52:00</td>
+      <td>2011-08-04 07:45:00</td>
+      <td>0 days 11:53:00</td>
+      <td>54.7</td>
+      <td>1 days 23:09:00</td>
+      <td>12.962866</td>
+      <td>20.0</td>
+    </tr>
+    <tr>
+      <th>684</th>
+      <td>2012-07-14 16:54:00</td>
+      <td>2012-07-15 13:07:00</td>
+      <td>0 days 20:13:00</td>
+      <td>59.8</td>
+      <td>1 days 01:15:00</td>
+      <td>3.720531</td>
+      <td>8640.0</td>
+    </tr>
+    <tr>
+      <th>797</th>
+      <td>2013-05-05 20:46:00</td>
+      <td>2013-05-07 12:41:00</td>
+      <td>1 days 15:55:00</td>
+      <td>119.6</td>
+      <td>0 days 17:29:00</td>
+      <td>30.584981</td>
+      <td>2880.0</td>
+    </tr>
+    <tr>
+      <th>844</th>
+      <td>2013-08-27 17:09:00</td>
+      <td>2013-08-27 23:48:00</td>
+      <td>0 days 06:39:00</td>
+      <td>43.3</td>
+      <td>0 days 13:56:00</td>
+      <td>2.452099</td>
+      <td>5.0</td>
+    </tr>
+    <tr>
+      <th>845</th>
+      <td>2013-08-28 11:41:00</td>
+      <td>2013-08-28 16:22:00</td>
+      <td>0 days 04:41:00</td>
+      <td>28.5</td>
+      <td>0 days 11:53:00</td>
+      <td>3.543837</td>
+      <td>2880.0</td>
+    </tr>
+    <tr>
+      <th>947</th>
+      <td>2014-05-11 10:20:00</td>
+      <td>2014-05-11 23:18:00</td>
+      <td>0 days 12:58:00</td>
+      <td>55.7</td>
+      <td>0 days 13:15:00</td>
+      <td>2.082195</td>
+      <td>2880.0</td>
+    </tr>
+    <tr>
+      <th>948</th>
+      <td>2014-05-12 17:22:00</td>
+      <td>2014-05-13 17:27:00</td>
+      <td>1 days 00:05:00</td>
+      <td>20.6</td>
+      <td>0 days 18:04:00</td>
+      <td>2.798822</td>
+      <td>4320.0</td>
+    </tr>
+    <tr>
+      <th>1137</th>
+      <td>2015-07-08 11:50:00</td>
+      <td>2015-07-09 00:26:00</td>
+      <td>0 days 12:36:00</td>
+      <td>77.8</td>
+      <td>8 days 13:52:00</td>
+      <td>6.054031</td>
+      <td>720.0</td>
+    </tr>
+    <tr>
+      <th>1261</th>
+      <td>2016-06-05 11:03:00</td>
+      <td>2016-06-05 14:57:00</td>
+      <td>0 days 03:54:00</td>
+      <td>40.4</td>
+      <td>0 days 19:55:00</td>
+      <td>6.537112</td>
+      <td>5.0</td>
+    </tr>
+    <tr>
+      <th>1294</th>
+      <td>2016-07-21 22:28:00</td>
+      <td>2016-07-21 23:21:00</td>
+      <td>0 days 00:53:00</td>
+      <td>37.2</td>
+      <td>5 days 00:03:00</td>
+      <td>2.426623</td>
+      <td>30.0</td>
+    </tr>
+    <tr>
+      <th>1298</th>
+      <td>2016-07-25 10:18:00</td>
+      <td>2016-07-25 15:48:00</td>
+      <td>0 days 05:30:00</td>
+      <td>33.8</td>
+      <td>0 days 19:00:00</td>
+      <td>3.400347</td>
+      <td>5760.0</td>
+    </tr>
+    <tr>
+      <th>1300</th>
+      <td>2016-07-27 15:25:00</td>
+      <td>2016-07-27 20:25:00</td>
+      <td>0 days 05:00:00</td>
+      <td>12.2</td>
+      <td>1 days 01:04:00</td>
+      <td>4.663787</td>
+      <td>8640.0</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="c1"># lets pick one event</span>
+<span class="n">event</span> <span class="o">=</span> <span class="n">events</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">125</span><span class="p">]</span>
+<span class="n">event</span>
+<br/><br/></pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+start                         2008-07-17 14:14:00
+end                           2008-07-18 06:27:00
+duration                          0 days 16:13:00
+rain_sum                                     74.6
+last_event                        0 days 04:09:00
+max_return_period                        6.457449
+max_return_period_duration                  120.0
+Name: 125, dtype: object
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">caption</span> <span class="o">=</span> <span class="n">idf</span><span class="o">.</span><span class="n">event_plot</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<br/></pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+
+
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/examples_example_python_api_extended_9_1.png" src="../_images/examples_example_python_api_extended_9_1.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="c1"># you can also reduce the displayed duration steps</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">caption</span> <span class="o">=</span> <span class="n">idf</span><span class="o">.</span><span class="n">event_plot</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">durations</span><span class="o">=</span><span class="n">idf</span><span class="o">.</span><span class="n">duration_steps</span><span class="p">[:</span><span class="mi">11</span><span class="p">])</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/examples_example_python_api_extended_10_0.png" src="../_images/examples_example_python_api_extended_10_0.png" />
+</div>
+</div>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/examples/example_python_api_extended.ipynb.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Intensity Duration Frequency Analyse 0.2.4 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Intensity Duration Frequency Analyse - EXTENDED</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2024, Pichler.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    </div>
+  </body>
+</html>
