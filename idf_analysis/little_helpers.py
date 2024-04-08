@@ -22,7 +22,7 @@ def delta2min(time_delta):
         float: the timedelta in minutes
     """
     if isinstance(time_delta, pd.DateOffset):
-        time_delta = time_delta.delta
+        time_delta = pd.Timedelta(time_delta)
     return int(time_delta.total_seconds() / 60)
 
 
