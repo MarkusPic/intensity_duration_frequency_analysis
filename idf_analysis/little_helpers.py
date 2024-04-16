@@ -179,7 +179,7 @@ def return_period_formatter(t):
         return f'{t:0.1f}'
 
 
-def timedelta_components_plus(td, min_freq='T'):
+def timedelta_components_plus(td, min_freq='min'):
     """Schaltjahre nicht miteinbezogen"""
     l = []
 
@@ -210,12 +210,12 @@ def timedelta_components_readable(l, short=False, sep=', '):
     return s
 
 
-def timedelta_readable(td, min_freq='T', short=False, sep=', '):
+def timedelta_readable(td, min_freq='min', short=False, sep=', '):
     """Schaltjahre nicht miteinbezogen"""
     return timedelta_components_readable(timedelta_components_plus(td, min_freq), short=short, sep=sep)
 
 
-def timedelta_readable2(d1, d2, min_freq='T', short=False, sep=', '):
+def timedelta_readable2(d1, d2, min_freq='min', short=False, sep=', '):
     td = d2 - d1
 
     years = None

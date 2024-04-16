@@ -20,7 +20,7 @@ from idf_analysis.idf_class import IntensityDurationFrequencyAnalyse
 idf = IntensityDurationFrequencyAnalyse(series_kind=SERIES.PARTIAL, worksheet=METHOD.KOSTRA, extended_durations=True)
 
 # generate random rain values
-date_time = pd.date_range(start='2000-01-10 06:00', end='2010-01-10 06:00', freq='T')
+date_time = pd.date_range(start='2000-01-10 06:00', end='2010-01-10 06:00', freq='min')
 np.random.seed(1)
 data = np.random.rand(date_time.size, 1)[:,0]
 data = pd.Series(data=data, name='precipitation', index=date_time)
