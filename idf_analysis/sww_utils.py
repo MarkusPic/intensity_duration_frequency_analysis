@@ -211,8 +211,8 @@ def resample_rain_series(series):
         if dur < duration_limit:
             break
 
-    if freq.delta > pd.Timedelta(minutes=minutes):
+    if pd.Timedelta(freq) > pd.Timedelta(minutes=minutes):
         return series, int(freq / pd.Timedelta(minutes=1))
 
     # print('resample_rain_series: ', dur, duration_limit, minutes)
-    return series.resample('{}T'.format(minutes)).sum(), minutes
+    return series.resample('{}min'.format(minutes)).sum(), minutes
