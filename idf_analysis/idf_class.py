@@ -739,7 +739,8 @@ class IntensityDurationFrequencyAnalyse:
         ts_sum, minutes = resample_rain_series(ts)
         rain_ax = rain_bar_plot(ts_sum, rain_ax)
         rain_ax.set_ylabel('{} in {}/{}min'.format(column_name, unit, minutes if minutes != 1 else ''))
-        rain_ax.set_xlim(ts.index[0], ts.index[-1])
+        if ts.index.size > 1:
+            rain_ax.set_xlim(ts.index[0], ts.index[-1])
 
         return fig, (event_caption_ger(event) if german_caption else event_caption(event, unit))
 
