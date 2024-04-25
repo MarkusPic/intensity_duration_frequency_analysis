@@ -81,6 +81,34 @@ in the [`requirements.txt`](https://github.com/MarkusPic/intensity_duration_freq
 
 The documentation of the python-API can be found [here](https://markuspic.github.io/intensity_duration_frequency_analysis/api.html).
 
+One basic usage could be:
+
+```python
+import pandas as pd
+from idf_analysis import IntensityDurationFrequencyAnalyse
+from idf_analysis.definitions import *
+
+# initialize of the analysis class
+idf = IntensityDurationFrequencyAnalyse(series_kind=SERIES.PARTIAL, worksheet=METHOD.KOSTRA, extended_durations=True)
+
+series = pd.Series(index=pd.DatetimeIndex(...), data=...)
+
+# setting the series for the analysis
+idf.set_series(series)
+# auto-save the calculated parameter so save time for a later use, as the parameters doesn't have to be calculated again.
+idf.auto_save_parameters('idf_parameters.yaml')
+```
+
+If you only want to analyse an already existing IDF-table
+
+```python
+import pandas as pd
+from idf_analysis import IntensityDurationFrequencyAnalyse
+
+idf_table = pd.DataFrame(...)  # index='Duration Steps', columns='Return Periods'
+idf = IntensityDurationFrequencyAnalyse.from_idf_table(idf_table)
+```
+
 ## Commandline tool
 
 The following commands show the usage for Linux/Unix systems.

@@ -16,8 +16,7 @@ for location, grid_point_number in {'graz': 5214, 'poellau': 4683}.items():
     idf_table = get_max_calculation_method(df)
     idf_table = df.xs('ÖKOSTRA', axis=0, level=INDICES.CALCULATION_METHOD, drop_level=True).copy()
 
-    idf_reverse = IntensityDurationFrequencyAnalyse(series_kind=SERIES.PARTIAL, worksheet=METHOD.KOSTRA, extended_durations=True)
-    idf_reverse._parameter.reverse_engineering(idf_table)
+    idf_reverse = IntensityDurationFrequencyAnalyse.from_idf_table(idf_table)
 
     output_directory = path.join(f'design_rain_ehyd_{grid_point_number}')
     idf_reverse.auto_save_parameters(path.join(output_directory, 'idf_parameters.yaml'))
