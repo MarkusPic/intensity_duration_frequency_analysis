@@ -105,7 +105,10 @@ If you only want to analyse an already existing IDF-table
 import pandas as pd
 from idf_analysis import IntensityDurationFrequencyAnalyse
 
-idf_table = pd.DataFrame(...)  # index='Duration Steps', columns='Return Periods'
+idf_table = pd.DataFrame(...)
+# index: Duration Steps in minutes as int or float
+# columns: Return Periods in years as int or float
+# values: rainfall height in mm
 idf = IntensityDurationFrequencyAnalyse.from_idf_table(idf_table)
 ```
 
