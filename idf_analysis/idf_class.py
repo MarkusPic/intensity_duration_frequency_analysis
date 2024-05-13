@@ -294,14 +294,15 @@ class IntensityDurationFrequencyAnalyse:
         return newton(lambda d: self.depth_of_rainfall(d, return_period) - height_of_rainfall, x0=1)
 
     # __________________________________________________________________________________________________________________
-    def result_table(self, durations=None, return_periods=None, add_names=False):
+    def result_table(self, durations=None, return_periods=None, add_names=False, add_unit=True):
         """
         Get an idf-table of rainfall depth with return periods as columns and durations as rows.
 
         Args:
             durations (list | numpy.ndarray): list of durations in minutes for the table
             return_periods (list): list of return periods in years for the table
-            add_names (bool): weather to use expressive names as index-&column-label
+            add_names (bool): weather to use expressive names as index- & column-label
+            add_unit (bool): weather to add units to index- & column-label
 
         Returns:
             pandas.DataFrame: idf table
@@ -319,9 +320,10 @@ class IntensityDurationFrequencyAnalyse:
         result_table = pd.DataFrame(result_table, index=durations)
 
         if add_names:
-            result_table.index.name = 'duration (min)'
+            result_table.index.name = 'duration' + (' (min)' if add_unit else '')
             result_table.columns = pd.MultiIndex.from_tuples([(rp, round(1 / rp, 3)) for rp in result_table.columns])
-            result_table.columns.names = ['return period (a)', 'frequency (1/a)']
+            result_table.columns.names = ['return period' + (' (a)' if add_unit else ''),
+                                          'frequency' + (' (1/a)' if add_unit else '')]
         return result_table
 
     ####################################################################################################################
@@ -647,6 +649,21 @@ class IntensityDurationFrequencyAnalyse:
         sum_frame = self.rainfall_sum_frame
         for duration in self.duration_steps:
             events[f'max_sum_{duration:0.0f}'] = agg_events(events, sum_frame[duration], 'max').round(2)
+        return events
+
+    def add_max_return_periods_pre_duration_to_events(self, events):
+        """
+        Add the maximum return periods for all duration steps to the events table.
+
+        Args:
+            events (pandas.DataFrame): events table
+
+        Returns:
+            pandas.DataFrame: events table including the columns with the maximum return periods
+        """
+        return_periods_frame = self.return_periods_frame
+        for duration in self.duration_steps:
+            events[f'max_return_period_{duration:0.0f}'] = agg_events(events, return_periods_frame[duration], 'max').round(2)
         return events
 
     ####################################################################################################################
