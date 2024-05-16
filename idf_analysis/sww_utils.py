@@ -169,6 +169,9 @@ def rain_bar_plot(rain, ax=None, color='#1E88E5', reverse=False, step='post', jo
     Returns:
         matplotlib.axes.Axes: rain plot
     """
+    if rain.size == 1:
+        freq_step = pd.Timedelta(rain.index.freq)
+        rain = rain.reindex(pd.date_range(rain.index[0]-freq_step, periods=3, freq=rain.index.freq))
     ax = rain.plot(ax=ax, drawstyle=f'steps-{step}', color=color, solid_capstyle=capstyle, solid_joinstyle=joinstyle,
                    lw=0)
     ax.fill_between(rain.index, rain.values, 0, step=step, zorder=1000, color=color, capstyle=capstyle,
