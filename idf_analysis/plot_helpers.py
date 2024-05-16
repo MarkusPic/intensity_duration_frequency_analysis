@@ -58,7 +58,10 @@ def idf_bar_axes(ax, idf_table, return_period_colors=RETURN_PERIOD_COLORS):
 
     # for the relative start time
     freq = guess_freq(idf_table.index)
-    start_period = idf_table.index[0].to_period(freq).ordinal
+    start_dt = idf_table.index[0]
+    if start_dt.tzinfo is not None:
+        start_dt = start_dt.tz_localize(None)
+    start_period = start_dt.to_period(freq).ordinal
 
     # idf_table.index = idf_table.index - idf_table.index[0]
 
