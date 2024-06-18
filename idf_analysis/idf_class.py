@@ -533,6 +533,8 @@ class IntensityDurationFrequencyAnalyse:
 
         Default: The time-series and the duration-steps of the analysis.
 
+        Is NaN if rainfall sum is smaller than 0.1 mm.
+
         Args:
             series (pandas.Series, Optional): rainfall time-series
             durations (list, Optional): Durations in minutes which are of interest (default: pre-defined durations)
@@ -551,6 +553,8 @@ class IntensityDurationFrequencyAnalyse:
     def return_periods_frame(self):
         """
         Get the return periods over the whole time-series for the default duration steps.
+
+        Is NaN if rainfall sum is smaller than 0.1 mm.
 
         Returns:
             pandas.DataFrame: data-frame of return periods where the columns are the duration steps
