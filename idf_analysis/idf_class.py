@@ -103,7 +103,7 @@ class IntensityDurationFrequencyAnalyse:
         self._freq = guess_freq(series.index)
         freq_minutes = delta2min(self._freq)
         self._parameter.filter_durations(freq_minutes)
-        self.series = series.replace(0, np.NaN).dropna()
+        self.series = series.replace(0, np.nan).dropna()
         self._return_periods_frame = None
         self._rain_events = None
         self._rainfall_sum_frame = None
@@ -409,7 +409,7 @@ class IntensityDurationFrequencyAnalyse:
             print('Found existing interim-results in "{}" and using them for calculations.'.format(parameters_fn))
         else:
             print('Start reading the time-series {} for the analysis.'.format(user.input))
-            ts = import_series(user.input).replace(0, np.NaN).dropna()
+            ts = import_series(user.input).replace(0, np.nan).dropna()
             # --------------------------------------------------
             idf.set_series(ts)
             print('Finished reading.')
@@ -495,7 +495,7 @@ class IntensityDurationFrequencyAnalyse:
             freq = guess_freq(series.index)
             ts = series.copy()
             ts = ts.asfreq(freq).fillna(0)
-            # ts = series.replace(0, np.NaN).dropna()
+            # ts = series.replace(0, np.nan).dropna()
 
         df = pd.DataFrame(index=ts.index)
         # df = {}
@@ -794,7 +794,7 @@ class IntensityDurationFrequencyAnalyse:
         import matplotlib.pyplot as plt
         period_line = self.return_periods_frame[event[COL.START]:event[COL.END]].max()
 
-        # period_line[period_line < 0.75] = np.NaN
+        # period_line[period_line < 0.75] = np.nan
         period_line = period_line.dropna()
 
         ax = period_line.plot()  # type: plt.Axes

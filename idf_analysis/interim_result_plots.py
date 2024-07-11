@@ -30,7 +30,7 @@ def return_period_scatter(idf: IntensityDurationFrequencyAnalyse, filename='all_
         # save true
         idf_table = idf.return_periods_frame[start:end]
         idf_table = idf_table.rename(minutes_readable, axis=0)
-        # idf_table[idf_table < min_return_period] = np.NaN
+        # idf_table[idf_table < min_return_period] = np.nan
 
         tn = idf_table.loc[start:end]
         tn_short = tn[dur_short].max().max()

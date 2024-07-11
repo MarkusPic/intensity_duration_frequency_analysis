@@ -245,7 +245,7 @@ class HeavyRainfallIndexAnalyse(IntensityDurationFrequencyAnalyse):
                 if height_of_rainfall < 25:
                     return 0
             else:
-                return np.NaN
+                return np.nan
 
         else:
             raise NotImplementedError(f'Method {self.method} not implemented!')
@@ -290,9 +290,9 @@ class HeavyRainfallIndexAnalyse(IntensityDurationFrequencyAnalyse):
                 sri_table.loc[dur] = self.depth_of_rainfall(dur, rp_table.loc[dur])
 
             # extrapolation vermutlich nicht sehr seriös
-            sri_table[rp_table >= 100] = np.NaN
+            sri_table[rp_table >= 100] = np.nan
             # sri_table.loc[:12] = self.depth_of_rainfall(sri_table.index.values, 100)
-            sri_table[rp_table < 1] = np.NaN
+            sri_table[rp_table < 1] = np.nan
             sri_table = sri_table.astype(float).round(2)
             sri_table = sri_table.ffill(axis=1, limit=None)  # .fillna(method='ffill', axis=1, limit=None)
 

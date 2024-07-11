@@ -238,7 +238,7 @@ class IdfParameters:
         param = self.get_duration_section(duration, p)  # type: _Formulation
 
         if param is None:
-            return np.NaN
+            return np.nan
 
         return param.get_param(duration)
 
