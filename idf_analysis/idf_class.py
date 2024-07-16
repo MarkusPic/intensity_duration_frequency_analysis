@@ -640,35 +640,45 @@ class IntensityDurationFrequencyAnalyse:
 
             events[COL.MAX_PERIOD_DURATION] = return_periods_frame.loc[datetime_max].idxmax(axis=1, skipna=True).values
 
-    def add_max_intensities_to_events(self, events):
+    def get_max_event_intensities_frame(self, events):
+        sum_frame = self.rainfall_sum_frame
+        di = {}
+        for duration in self.duration_steps:
+            di[duration] = agg_events(events, sum_frame[duration], 'max').round(2)
+        return pd.DataFrame(di, index=events.index)
+
+    def add_max_intensities_to_events(self, events, column_format='max_sum_{:0.0f}'):
         """
         Add the maximum intensities for all duration steps to the events table.
 
         Args:
             events (pandas.DataFrame): events table
+            column_format (str): format of the column names.
 
         Returns:
             pandas.DataFrame: events table including the columns with the maximum intensities
         """
-        sum_frame = self.rainfall_sum_frame
-        for duration in self.duration_steps:
-            events[f'max_sum_{duration:0.0f}'] = agg_events(events, sum_frame[duration], 'max').round(2)
-        return events
+        return pd.concat([events, self.get_max_event_intensities_frame(events).rename(columns=column_format.format)], axis=1)
 
-    def add_max_return_periods_pre_duration_to_events(self, events):
+    def get_max_return_periods_per_durations_frame(self, events):
+        return_periods_frame = self.return_periods_frame
+        di = {}
+        for duration in self.duration_steps:
+            di[duration] = agg_events(events, return_periods_frame[duration], 'max').round(2)
+        return pd.DataFrame(di, index=events.index)
+
+    def add_max_return_periods_per_duration_to_events(self, events, column_format='max_return_period_{:0.0f}'):
         """
         Add the maximum return periods for all duration steps to the events table.
 
         Args:
             events (pandas.DataFrame): events table
+            column_format (str): format of the column names.
 
         Returns:
             pandas.DataFrame: events table including the columns with the maximum return periods
         """
-        return_periods_frame = self.return_periods_frame
-        for duration in self.duration_steps:
-            events[f'max_return_period_{duration:0.0f}'] = agg_events(events, return_periods_frame[duration], 'max').round(2)
-        return events
+        return pd.concat([events, self.get_max_return_periods_per_durations_frame(events).rename(columns=column_format.format)], axis=1)
 
     ####################################################################################################################
     def event_report(self, filename, min_event_rain_sum=25, min_return_period=0.5, durations=None):
