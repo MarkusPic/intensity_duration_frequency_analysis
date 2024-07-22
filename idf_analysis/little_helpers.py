@@ -5,6 +5,8 @@ __email__ = "markus.pichler@tugraz.at"
 __version__ = "0.1"
 __license__ = "MIT"
 
+import datetime
+
 import pandas as pd
 from pandas import Timedelta
 
@@ -182,6 +184,9 @@ def return_period_formatter(t):
 def timedelta_components_plus(td, min_freq='min'):
     """Schaltjahre nicht miteinbezogen"""
     l = []
+
+    if isinstance(td, datetime.timedelta):
+        td = pd.to_timedelta(td)
 
     # years, weeks
     days_year = 365
