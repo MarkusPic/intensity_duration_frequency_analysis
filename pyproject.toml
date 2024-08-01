@@ -41,7 +41,7 @@ docs = ["sphinx", "nbsphinx", "recommonmark", "pydata_sphinx_theme", "ipython==8
 
 [project.urls]
 Documentation = "https://markuspic.github.io/intensity_duration_frequency_analysis/"
-Changelog = "https://github.com/MarkusPic/intensity_duration_frequency_analysis/-/blob/master/CHANGELOG.md"
+Changelog = "https://github.com/MarkusPic/intensity_duration_frequency_analysis/blob/main/CHANGELOG.md"
 homepage = "https://github.com/MarkusPic/intensity_duration_frequency_analysis"
 
 [project.scripts]
