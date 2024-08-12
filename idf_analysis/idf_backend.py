@@ -96,9 +96,11 @@ class IdfParameters:
 
     def filter_durations(self, freq_minutes):
         self.limit_duration(lowest=freq_minutes)
+        self.limit_durations_from_freq(freq_minutes)
 
     def limit_duration(self, lowest=None, highest=None):
-        bool_array = self.durations == False
+        # bool_array = self.durations == False
+        bool_array = np.array([False]*self.durations.size)
         if lowest is not None:
             bool_array |= self.durations >= lowest
         if highest is not None:
@@ -108,6 +110,12 @@ class IdfParameters:
         for param in PARAM.U_AND_W:
             if param in self.parameters_series:
                 self.parameters_series[param] = self.parameters_series[param][bool_array]
+
+    def limit_durations_from_freq(self, freq_minutes):
+        # only multiple of freq
+        # Aus DWA-M 531 Abschnitt 2:
+        # > Da Niederschlagsmesser Tageswerte liefern, sind hier nur Auswertungen für Regendauern möglich, die ein Vielfaches von 24 h betragen.
+        self.durations = self.durations[(self.durations % freq_minutes) == 0]
 
     def set_parameter_approaches_from_worksheet(self, worksheet):
         """
@@ -151,7 +159,7 @@ class IdfParameters:
         for dur_lower_bound, dur_upper_bound in self._iter_params():
             param_part = (self.durations >= dur_lower_bound) & (self.durations <= dur_upper_bound)
 
-            if param_part.sum() == 1:
+            if param_part.sum() <= 1:
                 del self.parameters_final[dur_lower_bound]
                 # Only one duration step in this duration range.
                 # Only one value available in the series for this regression.
