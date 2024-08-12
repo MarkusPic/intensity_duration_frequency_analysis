@@ -124,7 +124,8 @@ class IntensityDurationFrequencyAnalyse:
     @duration_steps.setter
     def duration_steps(self, durations):
         """
-        set duration steps (in minutes) for the parameter calculation and basic evaluations
+        Set duration steps (in minutes) for the parameter calculation and basic evaluations.
+
         Args:
             durations (list | numpy.ndarray): duration steps in minutes
         """
@@ -151,7 +152,8 @@ class IntensityDurationFrequencyAnalyse:
     @duration_steps_for_output.setter
     def duration_steps_for_output(self, durations):
         """
-        set duration steps (in minutes) for the parameter calculation and basic evaluations
+        Set duration steps (in minutes) for the parameter calculation and basic evaluations.
+
         Args:
             durations (list | numpy.ndarray): duration steps in minutes
         """
@@ -240,8 +242,9 @@ class IntensityDurationFrequencyAnalyse:
     # __________________________________________________________________________________________________________________
     def rain_flow_rate(self, duration, return_period):
         """
-        convert the height of rainfall to the specific rain flow rate in [l/(s*ha)]
-        if 2 array-like parameters are give, a element-wise calculation will be made.
+        Convert the height of rainfall to the specific rain flow rate in [l/(s*ha)].
+
+        if 2 array-like parameters are give, an element-wise calculation will be made.
         So the length of the array must be the same.
 
         Args:
