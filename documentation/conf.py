@@ -55,7 +55,10 @@ extensions = [
     'sphinx.ext.extlinks',
     'sphinx.ext.napoleon',  # numpy/google docstrings
     'nbsphinx',  # jupyter notebook
-    'recommonmark'  # markdown
+    # 'recommonmark',  # markdown old
+    'myst_parser',  # markdown new
+    'sphinx.ext.duration',
+    'sphinx_codeautolink',  # automatic links from code to documentation # https://sphinx-codeautolink.readthedocs.io/en/latest/index.html
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -108,7 +111,7 @@ html_theme = 'nature'
 # further.  For a list of options available for each theme, see the
 # documentation.
 #
-# html_theme_options = {}
+html_theme_options = {'sidebarwidth': 350}
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
