@@ -207,8 +207,22 @@ def timedelta_components_plus(td, min_freq='min'):
 
 
 def timedelta_components_readable(l, short=False, sep=', '):
-    s = sep.join(
-        ['{}{}{}'.format(v, '' if short else ' ', c[0] if short else (c if v > 1 else c[:-1])) for v, c in l if v > 0])
+    result = []
+    for value, label_component in l:
+        if value > 0:
+            if short:
+                unit_sep = ''
+                unit = label_component[0]
+            else:
+                unit_sep = ' '
+                unit = label_component
+                if value > 1:
+                    unit = label_component[:-1]
+
+            result.append(f'{value}{unit_sep}{unit}')
+
+    s = sep.join(result)
+
     if not short:
         # replace last "," with "and"
         s = ' and '.join(s.rsplit(sep, 1))
