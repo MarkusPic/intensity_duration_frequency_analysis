@@ -597,8 +597,7 @@ class IntensityDurationFrequencyAnalyse:
             pandas.DataFrame: data-frame of events with start-, end-time and duration
         """
         if self._rain_events is None:
-            events = rain_events(self.series)
-            events[COL.DUR] = event_duration(events)
+            events = rain_events(self.series, min_gap=max(pd.Timedelta(hours=4), self._freq))
             events[COL.DUR] = event_duration(events) + pd.Timedelta(self._freq)
             events[COL.LP] = agg_events(events, self.series, 'sum').round(1)
             events[COL.LAST] = events[COL.START] - events[COL.END].shift()
