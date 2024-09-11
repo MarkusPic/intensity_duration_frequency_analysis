@@ -299,6 +299,19 @@ class IdfParameters:
         })
         write_yaml(data, filename)
 
+    def pprint(self):
+        from pprint import pprint
+
+        def to_basic(a):
+            return list([round(float(i), 4) for i in a])
+
+        pprint({
+            PARAM.SERIES: self.series_kind,
+            PARAM.DUR: to_basic(self.durations),
+            PARAM.PARAMS_SERIES: {p: to_basic(l) for p, l in self.parameters_series.items()},
+            PARAM.PARAMS_FINAL: self.parameters_final
+        })
+
     @classmethod
     def from_yaml(cls, filename):
         data = read_yaml(filename)
