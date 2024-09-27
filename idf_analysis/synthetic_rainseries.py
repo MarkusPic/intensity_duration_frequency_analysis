@@ -103,16 +103,18 @@ class _EulerRain(_AbstractModelRain):
             return 0
         elif kind == 2:
             return 1 / 3
+        elif kind == 3:
+            return 2 / 5
 
     def get_series(self, return_period, duration, interval=5, kind=2, **kwargs):
         """
-        Get a pandas.Series of the model euler rain with the passed minutes as integer-index.
+        Get a pandas.Series of the model rain event acc. to Euler with the passed minutes as integer-index.
 
         Args:
             return_period (int or float): Return period in years.
-            duration (int): Duration step in minutes.
+            duration (int): Duration of the rain event in minutes.
             interval (int): Series intervall in minutes.
-            kind (int): Either type I (1) or type II (2)
+            kind (int): Either type I (1) or type II (2) or type III (3). If number smaller than 1 one can choose a custom peak at the given fraction of the event.
             **kwargs: Other key word arguments for subclasses.
 
         Returns:
@@ -128,7 +130,7 @@ class _EulerRain(_AbstractModelRain):
         height_diff = height.diff()
         height_diff.iloc[0] = height.iloc[0]
 
-        max_index = floor(round((self._get_occurrence_highest_intensity(kind) * duration) / interval, 3)) * interval
+        max_index = floor(round(((self._get_occurrence_highest_intensity(kind) if kind >= 1 else kind) * duration) / interval, 3)) * interval
 
         # sort differences and reset index
         r = height_diff.sort_values(ascending=False)
