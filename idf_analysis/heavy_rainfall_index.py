@@ -518,7 +518,7 @@ class HeavyRainfallIndexAnalyse(IntensityDurationFrequencyAnalyse):
                 if tab.empty:
                     continue
 
-                if 1:
+                if _ := 1:
                     durations = (event_duration(tab) / min_duration).tolist()
                     rel_starts = ((tab[COL.START] - sri_frame.index[0]) / min_duration + start_period).tolist()
                     bar_x = list(zip(rel_starts, durations))
