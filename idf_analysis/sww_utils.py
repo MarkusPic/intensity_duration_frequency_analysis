@@ -1,9 +1,7 @@
 __author__ = "David Camhy, Markus Pichler"
-__copyright__ = "Copyright 2018, University of Technology Graz"
 __credits__ = ["David Camhy", "Markus Pichler"]
 __license__ = "MIT"
-__version__ = "1.0.0"
-__maintainer__ = "David Camhy, Markus Pichler"
+__maintainer__ = "Markus Pichler"
 
 import numpy as np
 import pandas as pd
@@ -218,4 +216,4 @@ def resample_rain_series(series):
         return series, int(freq / pd.Timedelta(minutes=1))
 
     # print('resample_rain_series: ', dur, duration_limit, minutes)
-    return series.resample('{}min'.format(minutes)).sum(), minutes
+    return series.resample(f'{minutes}min').sum(), minutes

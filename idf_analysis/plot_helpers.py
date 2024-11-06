@@ -1,10 +1,3 @@
-__author__ = "Markus Pichler"
-__credits__ = ["Markus Pichler"]
-__maintainer__ = "Markus Pichler"
-__email__ = "markus.pichler@tugraz.at"
-__version__ = "0.1"
-__license__ = "MIT"
-
 import pandas as pd
 
 from .definitions import COL
@@ -41,7 +34,7 @@ def idf_bar_axes(ax, idf_table, return_period_colors=RETURN_PERIOD_COLORS):
     # legend
     from matplotlib.lines import Line2D
     custom_lines = [Line2D([0], [0], color=c, lw=4) for c in color_return_period]
-    names = ['{}a'.format(t) for t in return_periods]
+    names = [f'{t}a' for t in return_periods]
     ax.legend(custom_lines, names, bbox_to_anchor=(0., 1.02, 1., .102), loc=3, ncol=len(color_return_period),
               mode="expand", borderaxespad=0., title='return periods')
 

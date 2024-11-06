@@ -1,10 +1,3 @@
-__author__ = "Markus Pichler"
-__credits__ = ["Markus Pichler"]
-__maintainer__ = "Markus Pichler"
-__email__ = "markus.pichler@tugraz.at"
-__version__ = "0.1"
-__license__ = "MIT"
-
 import argparse
 
 from .definitions import SERIES, METHOD
@@ -19,11 +12,11 @@ class Borders(object):
     def __str__(self):
         s = ''
         if self.min_ is not None:
-            s += '>= {} {unit}'.format(self.min_, unit=self.unit)
+            s += f'>= {self.min_} {self.unit}'
         if self.min_ is not None and self.max_ is not None:
             s += ' and '
         if self.max_ is not None:
-            s += '<= {} {unit}'.format(self.max_, unit=self.unit)
+            s += f'<= {self.max_} {self.unit}'
         return s
 
     def __contains__(self, item):

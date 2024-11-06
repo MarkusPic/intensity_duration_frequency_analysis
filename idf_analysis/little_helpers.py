@@ -1,10 +1,3 @@
-__author__ = "Markus Pichler"
-__credits__ = ["Markus Pichler"]
-__maintainer__ = "Markus Pichler"
-__email__ = "markus.pichler@tugraz.at"
-__version__ = "0.1"
-__license__ = "MIT"
-
 import datetime
 
 import pandas as pd
@@ -39,7 +32,7 @@ def minutes_readable(minutes):
         str: duration as a string
     """
     if minutes <= 60:
-        return '{:0.0f} min'.format(minutes)
+        return f'{minutes:0.0f} min'
     elif 60 < minutes < 60 * 24:
         minutes /= 60
         if minutes % 1:
