@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "idf-analysis"
-description = "heavy rain as a function of the duration and the return period acc. to DWA-A 531 (2012)"
+description = "heavy rainfall intensity as a function of duration and return period acc. to DWA-A 531 (2012)"
 readme = "README.md"
 authors = [
     { name = "Markus Pichler", email = "markus.pichler@tugraz.at" }
@@ -32,7 +32,8 @@ dependencies = [
     "pytz",
     "scipy",
     "PyYAML>=5",
-    "pyarrow"
+    "pyarrow",
+    "sympy"
 ]
 dynamic = ["version"]
 

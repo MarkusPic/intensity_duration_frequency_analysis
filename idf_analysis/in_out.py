@@ -1,10 +1,3 @@
-__author__ = "Markus Pichler"
-__credits__ = ["Markus Pichler"]
-__maintainer__ = "Markus Pichler"
-__email__ = "markus.pichler@tugraz.at"
-__version__ = "0.1"
-__license__ = "MIT"
-
 import pandas as pd
 import yaml
 from collections import OrderedDict
@@ -58,8 +51,8 @@ def _dict_constructor(loader, node):
     return OrderedDict(loader.construct_pairs(node))
 
 
-yaml.add_representer(OrderedDict, _dict_representer)
-yaml.add_constructor(_mapping_tag, _dict_constructor)
+# yaml.add_representer(OrderedDict, _dict_representer)
+# yaml.add_constructor(_mapping_tag, _dict_constructor)
 
 
 def write_yaml(data, fn):

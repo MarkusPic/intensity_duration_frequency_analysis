@@ -5,7 +5,7 @@ __email__ = "markus.pichler@tugraz.at"
 __version__ = '0.2.9'
 __license__ = "MIT"
 
-from .idf_class import IntensityDurationFrequencyAnalyse, SERIES, METHOD
+from .idf_class import IntensityDurationFrequencyAnalyse, SERIES, METHOD, APPROACH
 
 """
 Heavy rain as a function of the duration and the return period acc. to DWA-A 531 (2012)

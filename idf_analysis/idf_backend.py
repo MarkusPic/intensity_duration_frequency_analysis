@@ -1,24 +1,25 @@
-__author__ = "Markus Pichler"
-__credits__ = ["Markus Pichler"]
-__maintainer__ = "Markus Pichler"
-__email__ = "markus.pichler@tugraz.at"
-__version__ = "0.1"
-__license__ = "MIT"
-
-from collections import OrderedDict
-
-import pandas as pd
-import numpy as np
+import math
+import warnings
+from typing import Literal
 from pathlib import Path
 
-from .definitions import *
-from .event_series_analysis import calculate_u_w, iter_event_series
+import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
+
+from scipy.stats import linregress, rankdata
+
+from .definitions import SERIES, METHOD, PARAM, COL, APPROACH
 from .in_out import write_yaml, read_yaml
-from .parameter_formulation_class import FORMULATION_REGISTER, _Formulation, register_formulations_to_yaml
+from .little_helpers import duration_steps_readable, minutes_readable
+from .parameter_formulas import FORMULA_REGISTER, _Formula, register_formulas_to_yaml, LinearFormula
+from .sww_utils import year_delta, guess_freq, rain_events, agg_events
 
 
 class IdfParameters:
-    def __init__(self, series_kind=SERIES.PARTIAL, worksheet=METHOD.KOSTRA, extended_durations=False):
+    def __init__(self, series_kind: str or Literal['partial', 'annual'] = SERIES.PARTIAL,
+                 worksheet: str or Literal['KOSTRA', 'convective_vs_advective', 'ATV-A_121'] = METHOD.KOSTRA,
+                 extended_durations=False):
         self.series_kind = series_kind
 
         self._durations = None
@@ -28,23 +29,20 @@ class IdfParameters:
         self.parameters_final = {}  # parameters of the distribution function after the regression
         # {lower duration bound in minutes: {parameter u or w: {'function': function-name}}}
 
-        self.set_parameter_approaches_from_worksheet(worksheet)
+        if worksheet is not None:
+            self.set_parameter_approaches_from_worksheet(worksheet)
 
-    def __bool__(self):
-        return bool(self.parameters_series)
+        self._interims = None  # type: ExtremeValueParameters
 
     def calc_from_series(self, series):
-        u_w = calculate_u_w(series, self.durations, self.series_kind)
-        for p in PARAM.U_AND_W:
-            self.parameters_series[p] = np.array([d[p] for d in u_w.values()])
-        self._calc_params()
+        self._interims = ExtremeValueParameters(series, self.durations)
 
-    # def get_event_max_series(self, series):  # TODO
-    #     interim_results = {}
-    #
-    #     for rolling_sum_values, duration_integer, _ in iter_event_series(series, self.durations):
-    #         interim_results[duration_integer] = rolling_sum_values
-    #     return interim_results
+        self._interims.evaluate(self.series_kind)
+
+        self.parameters_series[PARAM.U] = np.array(self._interims.u)
+        self.parameters_series[PARAM.W] = np.array(self._interims.w)
+
+        self._calc_params()
 
     def reverse_engineering(self, idf_table, linear_interpolation=False):
         durations = idf_table.index.values
@@ -57,12 +55,7 @@ class IdfParameters:
             log_tn_i = np.log(dat.index.values)
             w.append(sum(dat.values * log_tn_i) / sum(log_tn_i ** 2))
 
-        # -------
-        # ax = dat.plot(logx=True)
-        # fig = ax.get_figure()
-        # fig.show()
-        # print(results.summary())
-
+        # ---
         self.durations = durations
         self.parameters_series[PARAM.U] = np.array(u)
         self.parameters_series[PARAM.W] = np.array(w)
@@ -70,7 +63,7 @@ class IdfParameters:
         if linear_interpolation:
             self.clear_parameter_approaches()
             self.add_parameter_approach(0, 'linear', 'linear')
-            self._calc_params()
+            self._calc_params()  # from u,w to a_u, a_w, ...
         else:
             self._calc_params()
 
@@ -131,6 +124,8 @@ class IdfParameters:
             list[dict]: table of approaches depending on the duration and the parameter
         """
         self.parameters_final = read_yaml(Path(__file__).parent / 'approaches' / (worksheet + '.yaml'))
+        if self.parameters_series:
+            self._calc_params()
 
     def add_parameter_approach(self, duration_bound, approach_u, approach_w):
         self.parameters_final[duration_bound] = {
@@ -142,73 +137,90 @@ class IdfParameters:
         self.parameters_final = {}
 
     def _iter_params(self):
+        # parameters_final has the lower bound duration step as a key
+        # making a zip with lower bound duration step and upper bound duration step
+        # last upper bound duration step is infinity
         lower_bounds = list(self.parameters_final.keys())
         return zip(lower_bounds, lower_bounds[1:] + [np.inf])
 
-    def _calc_params(self, params_mean=None, duration_mean=None):
+    def _calc_params(self):
         """
-        Calculate parameters a_u, a_w, b_u and b_w and add it to the dict
-
-        Args:
-            params_mean (dict[float]):
-            duration_mean (float):
-
-        Returns:
-            list[dict]: parameters
+        Calculate parameters a_u, a_w, b_u and b_w and add it to the dict.
         """
         for dur_lower_bound, dur_upper_bound in self._iter_params():
+
+            # bool array for this duration range
             param_part = (self.durations >= dur_lower_bound) & (self.durations <= dur_upper_bound)
 
             if param_part.sum() <= 1:
-                del self.parameters_final[dur_lower_bound]
                 # Only one duration step in this duration range.
                 # Only one value available in the series for this regression.
+                del self.parameters_final[dur_lower_bound]
                 continue
 
-            params_dur = self.parameters_final[dur_lower_bound]
+            # {'u': {'function': ...}, 'w': {'function': ...}}
+            params_dur = self.parameters_final[dur_lower_bound]  # type: dict[str, (_Formula or dict)]
 
+            # selected duration steps for the duration range
             dur = self.durations[param_part]
 
             for p in PARAM.U_AND_W:  # u or w
+                # array of parameter values u|w
                 values_series = self.parameters_series[p][param_part]
 
-                if params_mean:
-                    param_mean = params_mean[p]
-                else:
-                    param_mean = None
-
-                # ----------------------------
-                if not isinstance(params_dur[p], _Formulation):
+                # ---
+                # convert dict with approach-string to Formula-object
+                if not isinstance(params_dur[p], _Formula):
                     approach = params_dur[p][PARAM.FUNCTION]
-                    if approach not in FORMULATION_REGISTER:
+                    if approach not in FORMULA_REGISTER:
+                        # if approach is not defined in code - raise Error
                         raise NotImplementedError(f'{approach=}')
 
-                    params_dur[p] = _Formulation.from_dict(params_dur[p])  # init object
+                    params_dur[p] = _Formula.from_dict(params_dur[p])  # init object
 
-                if params_dur[p].a is None or params_dur[p].b is None or param_mean is not None:
-                    params_dur[p].fit(dur, values_series, param_mean=param_mean, duration_mean=duration_mean)
+                if not params_dur[p].is_fitted:
+                    # if fit was not already run
+                    params_dur[p].fit(dur, values_series)
 
-        # ----------------------------
-        # balance_parameter_change
-        # TODO only between Not linear ranges
-        if params_mean is None and (len(self.parameters_final) > 1):
-            print('_balance_parameter_change')
-            # the balance between the different duration ranges acc. to DWA-A 531 chap. 5.2.4
-            duration_step = list(self.parameters_final.keys())[1]
-            durations = np.array([duration_step - 0.001, duration_step + 0.001])
+        # ---
+        self._balance_parameter_change()
 
-            # if the interim results end here
+    def _balance_parameter_change(self):
+        last = {PARAM.U: None, PARAM.W: None}
+        for dur_lower_bound, dur_upper_bound in self._iter_params():
+            duration_change = dur_upper_bound
 
-            if any(durations < self.durations.min()) or \
-                    any(durations > self.durations.max()):
-                return
+            for p in PARAM.U_AND_W:  # u or w
+                formula_this = self.parameters_final[dur_lower_bound][p]  # type: _Formula
 
-            u, w = self.get_u_w(durations)
-            self._calc_params(params_mean={PARAM.U: np.mean(u), PARAM.W: np.mean(w)}, duration_mean=duration_step)
+                if dur_upper_bound not in self.parameters_final:
+                    # last range
+                    if last[p] is None:  # last was linear OR only one formula
+                        continue
+                    formula_this.fit(formula_this.durations, formula_this.values, *last[p])
+                    continue
+
+                formula_next = self.parameters_final[dur_upper_bound][p]  # type: _Formula
+
+                if isinstance(formula_next, LinearFormula) and isinstance(formula_this, LinearFormula):
+                    last[p] = None
+                    continue
+                elif isinstance(formula_next, LinearFormula):
+                    value_mean = formula_this.get_param(duration_change)
+                elif isinstance(formula_this, LinearFormula):
+                    value_mean = formula_next.get_param(duration_change)
+                else:
+                    value_mean = (formula_this.get_param(duration_change) + formula_next.get_param(duration_change))/2
+
+                if last[p] is None:
+                    formula_this.fit(formula_this.durations, formula_this.values, duration_change, value_mean)
+                else:
+                    formula_this.fit(formula_this.durations, formula_this.values, [last[p][0], duration_change], [last[p][1], value_mean])
+                last[p] = (duration_change, value_mean)
 
     def measured_points(self, return_periods, max_duration=None):
         """
-        get the calculation results of the rainfall with u and w without the estimation of the formulation
+        Get the calculation results of the rainfall with u and w without the estimation of the formula.
 
         Args:
             return_periods (float | np.array | list | pd.Series): return period in [a]
@@ -228,6 +240,30 @@ class IdfParameters:
         return pd.Series(index=interim_results.index,
                          data=interim_results[PARAM.U] + interim_results[PARAM.W] * np.log(return_periods))
 
+    def interim_plot_parameters(self):
+        dur = self.durations
+        fig, axes = plt.subplots(2, sharex=True)
+        for ax, label in zip(axes, PARAM.U_AND_W):
+            y = self.parameters_series[label]
+            ax.plot(dur, y, lw=0, marker='.')
+
+            for lower, upper in self._iter_params():
+                dur_ = dur[(dur >= lower) & (dur <= upper)]
+                y_pred = self.parameters_final[lower][label].get_param(dur_)
+                # y_pred = self.get_array_param(label, dur)
+                ax.plot(dur_, y_pred, lw=1, label=f'${self.parameters_final[lower][label].latex_formula}$')
+
+            ax.grid(ls=':', lw=0.5)
+
+            ax.legend(title='Formula')
+            for d in self.parameters_final:
+                ax.axvline(d, color='black', lw=0.7, ls='--')
+            ax.set_xscale('log', base=math.e)
+            ax.set_xticks(dur)
+            ax.set_xticklabels(duration_steps_readable(dur), rotation=90)
+            ax.set_title(f'Parameter: {label}')
+        return fig
+
     def get_duration_section(self, duration, param):
         for lower, upper in self._iter_params():
             if lower <= duration <= upper:
@@ -243,7 +279,7 @@ class IdfParameters:
         Returns:
             (float, float): u, w
         """
-        param = self.get_duration_section(duration, p)  # type: _Formulation
+        param = self.get_duration_section(duration, p)  # type: _Formula
 
         if param is None:
             return np.nan
@@ -279,24 +315,17 @@ class IdfParameters:
 
         return (func(p, duration) for p in PARAM.U_AND_W)
 
-    @classmethod
-    def from_interim_results_file(cls, interim_results_fn, worksheet=METHOD.KOSTRA):
-        """DEPRECIATED: for compatibility reasons. To use the old file and convert it to the new parameters file"""
-        interim_results = pd.read_csv(interim_results_fn, index_col=0, header=0)
-        p = cls(worksheet, interim_results)
-        return p
-
     def to_yaml(self, filename):
-        register_formulations_to_yaml()
+        register_formulas_to_yaml()
 
         def to_basic(a):
             return list([round(float(i), 4) for i in a])
-        data = OrderedDict({
+        data = {
             PARAM.SERIES: self.series_kind,
             PARAM.DUR: to_basic(self.durations),
             PARAM.PARAMS_SERIES: {p: to_basic(l) for p, l in self.parameters_series.items()},
             PARAM.PARAMS_FINAL: self.parameters_final
-        })
+        }
         write_yaml(data, filename)
 
     def pprint(self):
@@ -313,45 +342,230 @@ class IdfParameters:
         })
 
     @classmethod
-    def from_yaml(cls, filename):
+    def from_yaml(cls, filename, worksheet=None):
         data = read_yaml(filename)
-        if isinstance(data, list):
-            return cls.from_yaml_depreciated(filename)
         p = cls(series_kind=data[PARAM.SERIES])
         p.durations = data[PARAM.DUR]
         # list to numpy.array
         p.parameters_series = {p: np.array(l) for p, l in data[PARAM.PARAMS_SERIES].items()}
-        p.parameters_final = data[PARAM.PARAMS_FINAL]
+        if PARAM.PARAMS_FINAL in data:
+            p.parameters_final = data[PARAM.PARAMS_FINAL]
+        else:
+            p.set_parameter_approaches_from_worksheet(worksheet)
+
         p._calc_params()
         return p
 
-    @classmethod
-    def from_yaml_depreciated(cls, filename, series_kind=SERIES.PARTIAL):
-        data = read_yaml(filename)
-        p = cls(series_kind=series_kind)
-        p.durations = []
-        p.parameters_series = {PARAM.U: [], PARAM.W: []}
-        p.parameters_final = {}
-        for part in data:
-            start_dur = float(part['von'])
-            start_idx = 0
-            if start_dur in part[COL.DUR]:
-                start_idx = 1
-            p._durations += part[COL.DUR][start_idx:]
-            part_params = {}
 
-            for u_or_w in PARAM.U_AND_W:
-                part_params[u_or_w] = {PARAM.FUNCTION: part[u_or_w]}
-                if part[u_or_w] != APPROACH.LIN:
-                    part_params[u_or_w][PARAM.A] = part[f'{PARAM.A}_{u_or_w}']
-                    part_params[u_or_w][PARAM.B] = part[f'{PARAM.B}_{u_or_w}']
+class ExtremeValueParameters:
+    def __init__(self, series, duration_steps):
+        self.series = series
+        self.duration_steps = duration_steps
 
-                p.parameters_series[u_or_w] += part[PARAM.VALUES(u_or_w)][start_idx:]
+        self.base_frequency = guess_freq(self.series.index)  # DateOffset/Timedelta
+        self.base_delta = pd.Timedelta(self.base_frequency)
 
-            p.parameters_final[start_dur] = part_params
+        # measuring time in years
+        measurement_start, measurement_end = self.series.index[[0, -1]]
+        self.measurement_period = (measurement_end - measurement_start) / year_delta(years=1)
+        if round(self.measurement_period, 1) < 10:
+            warnings.warn("The measurement period is too short. The results may be inaccurate! "
+                          "It is recommended to use at least ten years. "
+                          f"(-> Currently {self.measurement_period}a used)")
 
-        p.parameters_series = {param: np.array(l) for param, l in p.parameters_series.items()}
-        if '.yaml' in filename:
-            os.rename(filename, filename.replace('.yaml', '_OLD.yaml'))
-            p.to_yaml(filename)
-        return p
+        # acc. to DWA-A 531 chap. 4.2:
+        # The values must be independent of each other for the statistical evaluations.
+        # estimated four hours acc. (Schilling, 1984)
+        # for larger durations - use the duration as minimal gap
+        self.min_event_gap = pd.Timedelta(hours=4)
+
+        # Use only the (2-3 multiplied with the number of measuring years) of the biggest
+        # values in the database (-> acc. to ATV-A 121 chap. 4.3; DWA-A 531 chap. 4.4).
+        # As a requirement for the extreme value distribution.
+        self.threshold_sample_size = int(math.floor(self.measurement_period * math.e))
+
+        self._data = {}
+        self.u = []
+        self.w = []
+        self._intensities = {}
+
+    @staticmethod
+    def _improve_factor(interval):
+        """
+        correction factor acc. to DWA-A 531 chap. 4.3
+
+        Args:
+            interval (float): length of the interval: number of observations per duration
+
+        Returns:
+            float: correction factor
+        """
+        improve_factor = {1: 1.14,
+                          2: 1.07,
+                          3: 1.04,
+                          4: 1.03,
+                          5: 1.00,
+                          6: 1.00}
+
+        return np.interp(interval,
+                         list(improve_factor.keys()),
+                         list(improve_factor.values()))
+
+    @staticmethod
+    def _plotting_formula(k, l, m):
+        """
+        plotting function acc. to DWA-A 531 chap. 5.1.3 for the partial series
+
+        Args:
+            k (float or np.ndarray): running index
+            l (float or np.ndarray): sample size
+            m (float or np.ndarray): measurement period
+
+        Returns:
+            float: estimated empirical return period
+        """
+        return (l + 0.2) * m / ((k - 0.4) * l)
+
+    def evaluate(self, series_kind: str or Literal['partial', 'annual'] = SERIES.PARTIAL):
+        """
+        Statistical analysis for each duration step.
+
+        acc. to DWA-A 531 chap. 5.1
+
+        Save the parameters of the distribution function as interim results.
+
+        Args:
+            series_kind (str): which kind of series should be used to evaluate the extreme values.
+        """
+        try:
+            from tqdm.auto import tqdm
+            pbar = tqdm(self.duration_steps, desc='Calculating Parameters u and w')
+        except ModuleNotFoundError:
+            pbar = self.duration_steps
+
+        for duration_integer in pbar:
+            pbar.set_description(f'Calculating Parameters u and w for duration {duration_integer:0.0f}')
+
+            if series_kind == SERIES.ANNUAL:
+                x, y = self.annual_series(duration_integer)
+            elif series_kind == SERIES.PARTIAL:
+                x, y = self.partial_series(duration_integer)
+            else:
+                raise NotImplementedError(f"Unknown series kind {series_kind}")
+
+            res = linregress(x, y)
+            self.u.append(res.intercept)
+            self.w.append(res.slope)
+
+            self._data[duration_integer] = {'x': x, 'y': y, 'u': res.intercept, 'w': res.slope, 'series_kind': series_kind}
+
+    def get_intensities(self, duration_integer: int):
+        if duration_integer not in self._intensities:
+            duration = pd.Timedelta(minutes=duration_integer)
+
+            if duration < self.base_delta:
+                return
+
+            if duration < self.min_event_gap:
+                min_gap = self.min_event_gap
+            else:
+                min_gap = duration
+
+            events = rain_events(self.series, min_gap=min_gap)
+
+            # Correction factor acc. to DWA-A 531 chap. 4.3
+            improve = self._improve_factor(duration / self.base_delta)
+
+            roll_sum = self.series.rolling(duration).sum()
+
+            events['i'] = agg_events(events, roll_sum, 'max') * improve
+            events['ix'] = agg_events(events, roll_sum, 'idxmax')
+            self._intensities[duration_integer] = events.set_index('ix')['i']
+        return self._intensities[duration_integer]
+
+    def annual_series(self, duration_integer: int):
+        """
+        Create an annual series of the maximum overlapping sum per year and calculate the "u" and "w" parameters.
+
+        acc. to DWA-A 531 chap. 5.1.5
+
+        Gumbel distribution | https://en.wikipedia.org/wiki/Gumbel_distribution
+
+        Args:
+            duration_integer (int): Duration step in minutes.
+
+        Returns:
+            dict[str, float]: Parameter u and w from the annual series for a specific duration step as a tuple.
+        """
+        annually_series = self.get_intensities(duration_integer).resample('YE').max().sort_values(ascending=False).values
+        x = -np.log(np.log((annually_series.size + 0.2) / (annually_series.size - rankdata(annually_series)[::-1] + 0.6)))
+        return x, annually_series
+
+    def partial_series(self, duration_integer: int):
+        """
+        Create a partial series of the largest overlapping sums and calculate the "u" and "w" parameters.
+
+        acc. to DWA-A 531 chap. 5.1.4
+
+        Exponential distribution | https://en.wikipedia.org/wiki/Exponential_distribution
+
+        Args:
+            duration_integer (int): Duration step in minutes.
+
+        Returns:
+            dict[str, float]: parameter u and w from the partial series for a specific duration step as a tuple
+        """
+        partially_series = self.get_intensities(duration_integer).sort_values(ascending=False).values
+
+        if partially_series.size < self.threshold_sample_size:
+            warnings.warn('Fewer events in series than recommended for extreme value analysis. Use the results with mindfulness.')
+        else:
+            partially_series = partially_series[:self.threshold_sample_size]
+
+        x = np.log(self._plotting_formula(rankdata(partially_series)[::-1], partially_series.size, self.measurement_period))
+
+        return x, partially_series
+
+    def plot_series(self, ncols=3):
+        n_plots = len(self.duration_steps)
+        n_cols = min(ncols, n_plots)
+        n_rows = math.ceil(n_plots / n_cols)
+
+        fig, axes = plt.subplots(nrows=n_rows, ncols=n_cols)
+        fig.suptitle(f'Interim Results of {self._data[self.duration_steps[0]]["series_kind"]}-series Plot')
+
+        if n_plots == 1:
+            axes = np.array([axes])
+        axes = axes.flatten()
+
+        for ax, duration_integer in zip(axes, self.duration_steps):
+            data = self._data[duration_integer]
+            x = data['x']  # probability
+            y = data['y']  # intensity
+
+            line = data['u'] + x * data['w']
+
+            ax.axhline(data["u"], lw=0.7, color='black')
+            ax.axvline(0, lw=0.7, color='black')
+
+            ax.plot(x, line, label='Fitted model', color='C1', linewidth=2)
+            ax.scatter(x, y, s=30, label='Observed data', color='C2', alpha=0.7)
+
+            dur_plot = minutes_readable(duration_integer)
+
+            ax.set_ylabel(f'Intensity (mm/{dur_plot})')
+            ax.set_xlabel(r'$ln(T_n) = ln(\frac{L + 0.2}{k-0.4}*\frac{M}{L})$')
+            ax.set_title(f'Duration: {dur_plot}\nu={data["u"]:0.2f}, w={data["w"]:0.2f}')
+
+            ax2 = ax.twiny()
+            xlim = ax.get_xlim()
+            ax2.set_xlim(math.exp(xlim[0]), math.exp(xlim[1]))
+
+            ax.legend()
+            ax.grid(linestyle='--', alpha=0.7)
+
+        # Hide empty subplots
+        for ax in axes[n_plots:]:
+            ax.set_visible(False)
+
+        return fig
