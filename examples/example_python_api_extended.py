@@ -18,7 +18,7 @@ idf.set_series(series)
 
 # auto-save the calculated parameter so save time for a later use
 idf.auto_save_parameters(output_directory / 'idf_parameters_new.yaml')
-exit()
+
 # --------
 # idf.write_return_periods_frame(path.join(output_directory, 'idf_return_periods_frame.parq'))
 # exit()
