@@ -6,17 +6,19 @@ __version__ = "0.1"
 __license__ = "MIT"
 
 
+import matplotlib.colors as mcolors
 import matplotlib.pyplot as plt
+import matplotlib.ticker as mticker
 import numpy as np
-import pandas
 import pandas as pd
-from matplotlib.colors import ListedColormap, Normalize
-from matplotlib.ticker import NullFormatter
 
-from .idf_class import IntensityDurationFrequencyAnalyse
 from .definitions import COL
+from .idf_class import IntensityDurationFrequencyAnalyse
 from .little_helpers import duration_steps_readable, minutes_readable, frame_looper, event_caption
-from .sww_utils import guess_freq, rain_events, event_duration, resample_rain_series, rain_bar_plot, agg_events
+from .sww_utils import guess_freq, rain_events, event_duration, resample_rain_series, rain_bar_plot
+
+# from matplotlib.colors import ListedColormap, Normalize
+# from matplotlib.ticker import NullFormatter
 
 COL.MAX_SRI = 'max_SRI_{}'
 COL.MAX_SRI_DURATION = 'max_SRI_duration_{}'
@@ -155,7 +157,7 @@ class HeavyRainfallIndexAnalyse(IntensityDurationFrequencyAnalyse):
 
     @classmethod
     def color_map_index(cls, idx):
-        return ListedColormap([(1, 1, 1)] + list(cls.indices_color.values()))(Normalize(vmin=0, vmax=12)(idx))
+        return mcolors.ListedColormap([(1, 1, 1)] + list(cls.indices_color.values()))(mcolors.Normalize(vmin=0, vmax=12)(idx))
 
     def __init__(self, *args, method=METHODS.SCHMITT, **kwargs):
         IntensityDurationFrequencyAnalyse.__init__(self, *args, **kwargs)
@@ -530,7 +532,7 @@ class HeavyRainfallIndexAnalyse(IntensityDurationFrequencyAnalyse):
 
         ax.set_ylim(0, duration_size)
         ax.set_xticklabels([])
-        ax.xaxis.set_major_formatter(NullFormatter())
+        ax.xaxis.set_major_formatter(mticker.NullFormatter())
         ax.axhline(0, color='black')
         ax.axhline(duration_size / 2, color='black')
         return ax
@@ -609,7 +611,7 @@ class HeavyRainfallIndexAnalyse(IntensityDurationFrequencyAnalyse):
 
         return fig, self.event_plot_caption(event, self.method)
 
-    def event_dataframe(self, event: dict) -> pandas.DataFrame:
+    def event_dataframe(self, event: dict) -> pd.DataFrame:
         sri_table_event = pd.DataFrame(index=self.duration_steps_for_output)
 
         # self.method = self.METHODS.KRUEGER_PFISTER

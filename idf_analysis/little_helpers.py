@@ -1,7 +1,6 @@
 import datetime
 
 import pandas as pd
-from pandas import Timedelta
 
 from .definitions import COL
 
@@ -231,7 +230,7 @@ def timedelta_readable2(d1, d2, min_freq='min', short=False, sep=', '):
     td = d2 - d1
 
     years = None
-    if td > Timedelta(days=365):
+    if td > pd.Timedelta(days=365):
         d2_new = d2.replace(year=d1.year)
 
         if d2_new < d1:

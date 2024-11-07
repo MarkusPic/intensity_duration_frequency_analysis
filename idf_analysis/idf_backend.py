@@ -1,15 +1,14 @@
 import math
 import warnings
-from typing import Literal
 from pathlib import Path
+from typing import Literal
 
 import matplotlib.pyplot as plt
-import pandas as pd
 import numpy as np
+import pandas as pd
+import scipy.stats as sps
 
-from scipy.stats import linregress, rankdata
-
-from .definitions import SERIES, METHOD, PARAM, COL, APPROACH
+from .definitions import SERIES, METHOD, PARAM
 from .in_out import write_yaml, read_yaml
 from .little_helpers import duration_steps_readable, minutes_readable
 from .parameter_formulas import FORMULA_REGISTER, _Formula, register_formulas_to_yaml, LinearFormula
@@ -453,7 +452,7 @@ class ExtremeValueParameters:
             else:
                 raise NotImplementedError(f"Unknown series kind {series_kind}")
 
-            res = linregress(x, y)
+            res = sps.linregress(x, y)
             self.u.append(res.intercept)
             self.w.append(res.slope)
 
@@ -498,7 +497,7 @@ class ExtremeValueParameters:
             dict[str, float]: Parameter u and w from the annual series for a specific duration step as a tuple.
         """
         annually_series = self.get_intensities(duration_integer).resample('YE').max().sort_values(ascending=False).values
-        x = -np.log(np.log((annually_series.size + 0.2) / (annually_series.size - rankdata(annually_series)[::-1] + 0.6)))
+        x = -np.log(np.log((annually_series.size + 0.2) / (annually_series.size - sps.rankdata(annually_series)[::-1] + 0.6)))
         return x, annually_series
 
     def partial_series(self, duration_integer: int):
@@ -522,7 +521,7 @@ class ExtremeValueParameters:
         else:
             partially_series = partially_series[:self.threshold_sample_size]
 
-        x = np.log(self._plotting_formula(rankdata(partially_series)[::-1], partially_series.size, self.measurement_period))
+        x = np.log(self._plotting_formula(sps.rankdata(partially_series)[::-1], partially_series.size, self.measurement_period))
 
         return x, partially_series
 

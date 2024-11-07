@@ -1,21 +1,21 @@
 import math
 import warnings
-from os import path, mkdir
+from pathlib import Path
 from webbrowser import open as show_file
-import matplotlib.pyplot as plt
-from scipy.optimize import newton
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from scipy.optimize import newton
 
 from .arg_parser import heavy_rain_parser
+from .definitions import *
 from .idf_backend import IdfParameters
+from .in_out import import_series
 from .little_helpers import minutes_readable, height2rate, delta2min, rate2height, frame_looper, event_caption, \
     event_caption_ger, duration_steps_readable
-from .definitions import *
-from .in_out import import_series
-from .sww_utils import guess_freq, rain_events, agg_events, event_duration, resample_rain_series, rain_bar_plot, IdfError
 from .plot_helpers import idf_bar_axes
+from .sww_utils import guess_freq, rain_events, agg_events, event_duration, resample_rain_series, rain_bar_plot, IdfError
 from .synthetic_rainseries import _BlockRain, _EulerRain
 
 
@@ -187,15 +187,15 @@ class IntensityDurationFrequencyAnalyse:
         """
         self._parameters = IdfParameters.from_yaml(filename, worksheet)
 
-    def auto_save_parameters(self, filename):
+    def auto_save_parameters(self, filename: str or Path):
         """Auto-save the parameters as a yaml-file to save computation time."""
-        if path.isfile(filename):
+        if isinstance(filename, str):
+            filename = Path(filename)
+        if filename.is_file():
             self.read_parameters(filename)
         else:
-            from os import makedirs
-            parent = path.dirname(filename)
-            if parent and not path.isdir(parent):
-                makedirs(parent)
+            if not filename.parent.is_dir():
+                filename.parent.mkdir(parents=True)
             self.write_parameters(filename)
 
     # __________________________________________________________________________________________________________________
@@ -403,24 +403,25 @@ class IntensityDurationFrequencyAnalyse:
         # --------------------------------------------------
         # use the same directory as the input file and make as subdir with the name of the input_file + "_idf_data"
         out = '{label}_idf_data'.format(label='.'.join(user.input.split('.')[:-1]))
+        out = Path(out)
 
-        if not path.isdir(out):
-            mkdir(out)
+        if not out.is_dir():
+            out.mkdir()
             action = 'Creating'
         else:
             action = 'Using'
 
         print(f'{action} the subfolder "{out}" for the interim- and final-results.')
 
-        fn_pattern = path.join(out, 'idf_{}')
+        prefix = 'idf_'
 
         # --------------------------------------------------
         idf = cls(series_kind=user.series_kind, worksheet=user.worksheet, extended_durations=True)
 
         # --------------------------------------------------
-        parameters_fn = fn_pattern.format('parameters.yaml')
+        parameters_fn = out / f'{prefix}parameters.yaml'
 
-        if path.isfile(parameters_fn):
+        if parameters_fn.is_file():
             print(f'Found existing interim-results in "{parameters_fn}" and using them for calculations.')
         else:
             print(f'Start reading the time-series {user.input} for the analysis.')
@@ -466,19 +467,18 @@ class IntensityDurationFrequencyAnalyse:
 
         # --------------------------------------------------
         if user.plot:
-            import matplotlib.pyplot as plt
             fig, ax = idf.curve_figure()
-            plot_fn = fn_pattern.format('curves_plot.png')
+            plot_fn = out / f'{prefix}curves_plot.png'
             fig.savefig(plot_fn, dpi=260)
             plt.close(fig)
-            show_file(plot_fn)
+            show_file(str(plot_fn))
             print(f'Created the IDF-curves-plot and saved the file as "{plot_fn}".')
 
         # --------------------------------------------------
         if user.export_table:
             table = idf.result_table(add_names=True)
             print(table.round(2).to_string())
-            table_fn = fn_pattern.format('table.csv')
+            table_fn = out / f'{prefix}table.csv'
             table.to_csv(table_fn, sep=';', decimal=',', float_format='%0.2f')
             print(f'Created the IDF-curves-plot and saved the file as "{table_fn}".')
 
@@ -588,9 +588,11 @@ class IntensityDurationFrequencyAnalyse:
         df.columns = df.columns.to_series().astype(int)
         self._return_periods_frame = df
 
-    def auto_save_return_periods_frame(self, filename):
+    def auto_save_return_periods_frame(self, filename: Path or str):
         """auto-save the return-periods dataframe as a parquet-file to save computation time."""
-        if path.isfile(filename):
+        if isinstance(filename, str):
+            filename = Path(filename)
+        if filename.is_file():
             self.read_return_periods_frame(filename)
         else:
             self.write_return_periods_frame(filename)
@@ -629,9 +631,11 @@ class IntensityDurationFrequencyAnalyse:
         events[COL.LAST] = pd.to_timedelta(events[COL.LAST])
         self._rain_events = events
 
-    def auto_save_rain_events(self, filename, sep=';', decimal='.'):
+    def auto_save_rain_events(self, filename: Path or str, sep=';', decimal='.'):
         """auto-save the rain-events dataframe as a csv-file to save computation time."""
-        if path.isfile(filename):
+        if isinstance(filename, str):
+            filename = Path(filename)
+        if filename.is_file():
             self.read_rain_events(filename, sep=sep, decimal=decimal)
         else:
             self.write_rain_events(filename, sep=sep, decimal=decimal)

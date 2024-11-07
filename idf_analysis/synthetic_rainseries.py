@@ -1,12 +1,12 @@
 import warnings
+import math
+import abc
 
 import numpy as np
 import pandas as pd
-from math import floor
-from abc import ABC, abstractmethod
 
 
-class _AbstractModelRain(ABC):
+class _AbstractModelRain(abc.ABC):
     def __init__(self, idf=None):
         """
         Abstract class for a model rain.
@@ -22,7 +22,7 @@ class _AbstractModelRain(ABC):
     def _get_idf_value(self, duration, return_period):
         return self.idf.depth_of_rainfall(duration, return_period)
 
-    @abstractmethod
+    @abc.abstractmethod
     def get_series(self, return_period, duration, interval=5, **kwargs):
         """
         Get a pandas.Series of the model rain with the passed minutes as integer-index.
@@ -130,7 +130,7 @@ class _EulerRain(_AbstractModelRain):
         height_diff = height.diff()
         height_diff.iloc[0] = height.iloc[0]
 
-        max_index = floor(round(((self._get_occurrence_highest_intensity(kind) if kind >= 1 else kind) * duration) / interval, 3)) * interval
+        max_index = math.floor(round(((self._get_occurrence_highest_intensity(kind) if kind >= 1 else kind) * duration) / interval, 3)) * interval
 
         # sort differences and reset index
         r = height_diff.sort_values(ascending=False)

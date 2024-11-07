@@ -3,7 +3,7 @@ import argparse
 from .definitions import SERIES, METHOD
 
 
-class Borders(object):
+class Borders:
     def __init__(self, min_=None, max_=None, unit=''):
         self.min_ = min_
         self.max_ = max_

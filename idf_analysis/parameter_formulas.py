@@ -3,9 +3,8 @@ import inspect
 import warnings
 
 import numpy as np
+import scipy.optimize as spo
 import yaml
-
-from scipy.optimize import curve_fit, OptimizeWarning
 
 from .definitions import APPROACH, PARAM
 
@@ -290,7 +289,7 @@ class AutoFormula2Params(_Formula2Params, abc.ABC):
         super().fit(durations, values, values_fixed, durations_fixed)
 
         if values_fixed is None:
-            fit = curve_fit(self.formula, durations, values)
+            fit = spo.curve_fit(self.formula, durations, values)
             self.a, self.b = fit[0]
         else:
             import sympy as sp
@@ -303,7 +302,7 @@ class AutoFormula2Params(_Formula2Params, abc.ABC):
             # Convert symbolic function to a numerical function for curve fitting
             f_fixed_func = sp.lambdify((D, b), self.formula(D, fa, b), 'numpy')
 
-            fit = curve_fit(f_fixed_func, durations, values, p0=self.b)
+            fit = spo.curve_fit(f_fixed_func, durations, values, p0=self.b)
             self.b = fit[0][0]
             self.a = float(fa.subs(b, self.b))
 
@@ -396,15 +395,15 @@ class AutoFormulaNParams(_FormulaNParams, abc.ABC):
         super().fit(durations, values, values_fixed, durations_fixed)
 
         if values_fixed is None:
-            fit = curve_fit(self.formula, durations, values)
+            fit = spo.curve_fit(self.formula, durations, values)
             self.params = list(fit[0])
         else:
             import sympy as sp
             D, *params_sy = self.get_sympy_variables
 
             if isinstance(durations_fixed, list) and (len(durations_fixed) == self.n_params):
-                with warnings.catch_warnings(action="ignore", category=OptimizeWarning):
-                    fit = curve_fit(self.formula, durations_fixed, values_fixed)
+                with warnings.catch_warnings(action="ignore", category=spo.OptimizeWarning):
+                    fit = spo.curve_fit(self.formula, durations_fixed, values_fixed)
                 self.params = list(fit[0])
                 return
 
@@ -418,7 +417,7 @@ class AutoFormulaNParams(_FormulaNParams, abc.ABC):
                 # Convert symbolic function to a numerical function for curve fitting
                 f_fixed_func = sp.lambdify((D, *params_rest_sy), self.formula_sy(D, fi, *params_rest_sy), 'numpy')
 
-                fit = curve_fit(f_fixed_func, durations, values, p0=self.params[i])
+                fit = spo.curve_fit(f_fixed_func, durations, values, p0=self.params[i])
                 params_rest = list(fit[0])
                 params_i = float(fi.subs(list(zip(params_rest_sy, params_rest))))
 
