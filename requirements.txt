@@ -1,9 +1,6 @@
-numpy>=1.14
 pandas
-matplotlib>=3
-tzlocal
-pytz
-tqdm
+matplotlib
+tqdm>=4.67
 scipy
 PyYAML>=5
 pyarrow

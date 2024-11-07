@@ -24,12 +24,9 @@ classifiers = [
     "Intended Audience :: Science/Research",
 ]
 dependencies = [
-    "numpy>=1.14",
     "pandas",
     "tqdm",
-    "matplotlib>=3",
-    "tzlocal",
-    "pytz",
+    "matplotlib",
     "scipy",
     "PyYAML>=5",
     "pyarrow",
