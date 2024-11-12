@@ -1,7 +1,7 @@
 pandas
 matplotlib
-tqdm>=4.67
+tqdm>=4.67  # optional
 scipy
 PyYAML>=5
-pyarrow
 sympy
+# optional: You need to install `pyarrow` or `fastparquet` to read and write parquet files.

@@ -29,7 +29,6 @@ dependencies = [
     "matplotlib",
     "scipy",
     "PyYAML>=5",
-    "pyarrow",
     "sympy"
 ]
 dynamic = ["version"]

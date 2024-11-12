@@ -33,6 +33,7 @@ def import_series(filename, series_label='precipitation', index_label='datetime'
 
         return ts
     elif filename.endswith('parquet'):
+        # You need to install `pyarrow` or `fastparquet` to read and write parquet files.
         return pd.read_parquet(filename, columns=[series_label])[series_label].rename_axis(index_label, axis='index')
     elif filename.endswith('pkl'):
         return pd.read_pickle(filename).rename(series_label).rename_axis(index_label, axis='index')
