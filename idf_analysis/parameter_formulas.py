@@ -422,7 +422,9 @@ class AutoFormulaNParams(_FormulaNParams, abc.ABC):
                 params_i = float(fi.subs(list(zip(params_rest_sy, params_rest))))
 
                 params = list(params_rest[:i]) + [params_i] + list(params_rest[i:])
-                from statsmodels.tools.eval_measures import rmse
+
+                def rmse(x1, x2):
+                    return np.sqrt(np.mean((x1 - x2) ** 2))
 
                 variants.append([params, rmse(self.formula(durations, *params), values)])
 
