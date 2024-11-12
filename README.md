@@ -77,6 +77,47 @@ Python is pre-installed on most operating systems (as you probably knew).
 Packages required for this program will be installed with pip during the installation process and can be seen 
 in the [`requirements.txt`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/blob/master/requirements.txt) file.
 
+
+```mermaid
+flowchart TD
+    contourpy["contourpy<br>1.3.1"]
+    cycler["cycler<br>0.12.1"]
+    fonttools["fonttools<br>4.54.1"]
+    kiwisolver["kiwisolver<br>1.4.7"]
+    matplotlib["matplotlib<br>3.9.2"]
+    mpmath["mpmath<br>1.3.0"]
+    numpy["numpy<br>2.1.3"]
+    packaging["packaging<br>24.2"]
+    pandas["pandas<br>2.2.3"]
+    pillow["pillow<br>11.0.0"]
+    pyparsing["pyparsing<br>3.2.0"]
+    python-dateutil["python-dateutil<br>2.9.0.post0"]
+    pytz["pytz<br>2024.2"]
+    pyyaml["PyYAML<br>6.0.2"]
+    scipy["scipy<br>1.14.1"]
+    six["six<br>1.16.0"]
+    sympy["sympy<br>1.13.3"]
+    tqdm["tqdm<br>4.67.0"]
+    tzdata["tzdata<br>2024.2"]
+    contourpy -- "&ge;1.23" --> numpy
+    matplotlib -- "&ge;0.10" --> cycler
+    matplotlib -- "&ge;1.0.1" --> contourpy
+    matplotlib -- "&ge;1.23" --> numpy
+    matplotlib -- "&ge;1.3.1" --> kiwisolver
+    matplotlib -- "&ge;2.3.1" --> pyparsing
+    matplotlib -- "&ge;2.7" --> python-dateutil
+    matplotlib -- "&ge;20.0" --> packaging
+    matplotlib -- "&ge;4.22.0" --> fonttools
+    matplotlib -- "&ge;8" --> pillow
+    pandas -- "&ge;1.26.0" --> numpy
+    pandas -- "&ge;2.8.2" --> python-dateutil
+    pandas -- "&ge;2020.1" --> pytz
+    pandas -- "&ge;2022.7" --> tzdata
+    python-dateutil -- "&ge;1.5" --> six
+    scipy -- "&ge;1.23.5,&lt;2.3" --> numpy
+    sympy -- "&ge;1.1.0,&lt;1.4" --> mpmath
+```
+
 ## Usage
 
 The documentation of the python-API can be found [here](https://markuspic.github.io/intensity_duration_frequency_analysis/api.html).
