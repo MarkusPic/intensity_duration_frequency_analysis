@@ -10,7 +10,7 @@ import scipy.stats as sps
 
 from .definitions import SERIES, METHOD, PARAM
 from .in_out import write_yaml, read_yaml
-from .little_helpers import duration_steps_readable, minutes_readable
+from .little_helpers import duration_steps_readable, minutes_readable, get_progress_bar
 from .parameter_formulas import FORMULA_REGISTER, _Formula, register_formulas_to_yaml, LinearFormula
 from .sww_utils import year_delta, guess_freq, rain_events, agg_events
 
@@ -436,14 +436,12 @@ class ExtremeValueParameters:
         Args:
             series_kind (str): which kind of series should be used to evaluate the extreme values.
         """
-        try:
-            from tqdm.auto import tqdm
-            pbar = tqdm(self.duration_steps, desc='Calculating Parameters u and w')
-        except ModuleNotFoundError:
-            pbar = self.duration_steps
+        pbar = get_progress_bar(self.duration_steps, desc='Calculating Parameters u and w')
 
         for duration_integer in pbar:
-            pbar.set_description(f'Calculating Parameters u and w for duration {duration_integer:0.0f}')
+            try:
+                pbar.set_description(f'Calculating Parameters u and w for duration {duration_integer:0.0f}')
+            except: ...
 
             if series_kind == SERIES.ANNUAL:
                 x, y = self.annual_series(duration_integer)

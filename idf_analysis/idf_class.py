@@ -1,19 +1,20 @@
 import math
 import warnings
 from pathlib import Path
-from webbrowser import open as show_file
+import webbrowser
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from scipy.optimize import newton
+import scipy.optimize as spo
+from matplotlib.backends.backend_pdf import PdfPages
 
 from .arg_parser import heavy_rain_parser
 from .definitions import *
 from .idf_backend import IdfParameters
 from .in_out import import_series
 from .little_helpers import minutes_readable, height2rate, delta2min, rate2height, frame_looper, event_caption, \
-    event_caption_ger, duration_steps_readable
+    event_caption_ger, duration_steps_readable, get_progress_bar
 from .plot_helpers import idf_bar_axes
 from .sww_utils import guess_freq, rain_events, agg_events, event_duration, resample_rain_series, rain_bar_plot, IdfError
 from .synthetic_rainseries import _BlockRain, _EulerRain
@@ -280,7 +281,7 @@ class IntensityDurationFrequencyAnalyse:
         Returns:
             float: duration in minutes
         """
-        return newton(lambda d: self.depth_of_rainfall(d, return_period) - height_of_rainfall, x0=1)
+        return spo.newton(lambda d: self.depth_of_rainfall(d, return_period) - height_of_rainfall, x0=1)
 
     # __________________________________________________________________________________________________________________
     def result_table(self, durations=None, return_periods=None, add_names=False, add_unit=True, as_intensity=False):
@@ -471,7 +472,7 @@ class IntensityDurationFrequencyAnalyse:
             plot_fn = out / f'{prefix}curves_plot.png'
             fig.savefig(plot_fn, dpi=260)
             plt.close(fig)
-            show_file(str(plot_fn))
+            webbrowser.open(str(plot_fn))
             print(f'Created the IDF-curves-plot and saved the file as "{plot_fn}".')
 
         # --------------------------------------------------
@@ -712,10 +713,6 @@ class IntensityDurationFrequencyAnalyse:
             durations (list[int]): analysed durations
                         (default: [5, 10, 15, 20, 30, 45, 60, 90, 120, 180, 240, 360, 540, 720, 1080, 1440, 2880, 4320])
         """
-        import matplotlib.pyplot as plt
-        from matplotlib.backends.backend_pdf import PdfPages
-        from tqdm.auto import tqdm
-
         events = self.rain_events
         self.add_max_return_periods_to_events(events)
 
@@ -727,7 +724,7 @@ class IntensityDurationFrequencyAnalyse:
 
         pdf = PdfPages(filename)
 
-        for _, event in tqdm(main_events.items()):
+        for _, event in get_progress_bar(main_events.items()):
             fig, caption = self.event_plot(event, min_return_period=min_return_period,
                                            unit=unit, column_name=column_name)
 
@@ -743,7 +740,6 @@ class IntensityDurationFrequencyAnalyse:
         pdf.close()
 
     def event_plot(self, event, durations=None, unit='mm', column_name='Precipitation', min_return_period=1., german_caption=False, max_duration=None):
-        import matplotlib.pyplot as plt
         if isinstance(event, pd.Series):
             event = event.to_dict()
 
@@ -794,10 +790,6 @@ class IntensityDurationFrequencyAnalyse:
 
     ####################################################################################################################
     def event_return_period_report(self, filename, min_return_period=1):
-        import matplotlib.pyplot as plt
-        from matplotlib.backends.backend_pdf import PdfPages
-        from tqdm.auto import tqdm
-
         events = self.rain_events
         self.add_max_return_periods_to_events(events)
 
@@ -805,7 +797,7 @@ class IntensityDurationFrequencyAnalyse:
 
         pdf = PdfPages(filename)
 
-        for _, event in tqdm(main_events.to_dict(orient='index').items()):
+        for _, event in get_progress_bar(main_events.to_dict(orient='index').items()):
             fig, ax = self.return_period_event_figure(event)
 
             # -------------------------------------
@@ -818,7 +810,6 @@ class IntensityDurationFrequencyAnalyse:
         pdf.close()
 
     def return_period_event_figure(self, event):
-        import matplotlib.pyplot as plt
         period_line = self.return_periods_frame[event[COL.START]:event[COL.END]].max()
 
         # period_line[period_line < 0.75] = np.nan

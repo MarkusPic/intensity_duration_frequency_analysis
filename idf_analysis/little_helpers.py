@@ -95,13 +95,17 @@ def rate2height(rain_flow_rate, duration):
     return rain_flow_rate * duration / (1000 / 6)
 
 
+def get_progress_bar(iterator, desc=None):
+    try:
+        from tqdm.auto import tqdm
+        return tqdm(iterator, desc=desc)
+    except ModuleNotFoundError:
+        return iterator
+
+
 def frame_looper(size, columns, label='return periods'):
     if size > 30000:  # if > 3 weeks, use a progressbar
-        try:
-            from tqdm.auto import tqdm
-            return tqdm(columns, desc=f'calculating {label} data-frame')
-        except ModuleNotFoundError:
-            return columns
+        return get_progress_bar(columns, desc=f'calculating {label} data-frame')
     else:
         return columns
 
