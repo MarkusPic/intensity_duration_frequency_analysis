@@ -44,6 +44,8 @@ Read the docs [here 📖](https://markuspic.github.io/intensity_duration_frequen
 
 Pichler, M. (2024). idf_analysis: Intensity duration frequency analysis with python based on KOSTRA (v0.2.4). Zenodo. https://doi.org/10.5281/zenodo.10559992
 
+JOSS paper is on the way ...
+
 ## Installation
 
 This package is written in Python3. (use a version > 3.5)
@@ -120,7 +122,7 @@ flowchart TD
 
 ## Usage
 
-The documentation of the python-API can be found [here](https://markuspic.github.io/intensity_duration_frequency_analysis/api.html).
+The documentation of the python-package can be found [here](https://markuspic.github.io/intensity_duration_frequency_analysis/api.html).
 
 One basic usage could be:
 
@@ -166,7 +168,7 @@ To start the script use following commands in the terminal/Prompt
 
 ```
 usage: __main__.py [-h] -i INPUT
-                   [-ws {ATV-A_121,DWA-A_531,DWA-A_531_advektiv}]
+                   [-ws {ATV-A_121,KOSTRA,convective_vs_advective}]
                    [-kind {partial,annual}] [-t {>= 0.5 a and <= 100 a}]
                    [-d {>= 5 min and <= 8640 min}] [-r {>= 0 L/s*ha}]
                    [-h_N {>= 0 mm}] [--r_720_1] [--plot] [--export_table]
@@ -181,7 +183,7 @@ optional arguments:
   -h, --help            show this help message and exit
   -i INPUT, --input INPUT
                         input file with the rain time-series (csv or parquet)
-  -ws {ATV-A_121,DWA-A_531,DWA-A_531_advektiv}, --worksheet {ATV-A_121,DWA-A_531,DWA-A_531_advektiv}
+  -ws {ATV-A_121,KOSTRA,convective_vs_advective}, --worksheet {ATV-A_121,KOSTRA,convective_vs_advective}
                         From which worksheet the recommendations for
                         calculating the parameters should be taken.
   -kind {partial,annual}, --series_kind {partial,annual}
@@ -214,9 +216,11 @@ optional arguments:
 
 ## Example
 
-[Example Jupyter notebook for the commandline](examples/example_commandline.ipynb)
+In these examples you can see the usage in a reproducible way. This examples uses open data provided from the Austrian government. You can also find a link to the script used to download this data.
 
-[Example Jupyter notebook for the python api](examples/example_python_api.ipynb)
+[Example Jupyter notebook for the commandline](examples/example_commandline.ipynb) (or in the [docs](https://markuspic.github.io/intensity_duration_frequency_analysis/examples/example_python_api.html))
+
+[Example Jupyter notebook for the python api](examples/example_python_api.ipynb) (or in the [docs](https://markuspic.github.io/intensity_duration_frequency_analysis/examples/example_python_api.html))
 
 [Example python skript](examples/example_python_api.py)
 
