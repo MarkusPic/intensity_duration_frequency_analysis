@@ -4,7 +4,7 @@
 # Intensity duration frequency analysis (based on KOSTRA)
 
 
-[![license](https://img.shields.io/github/license/markuspic/intensity_duration_frequency_analysis.svg?style=flat)](https://github.com/MarkusPic/intensity_duration_frequency_analysis/blob/master/LICENSE)
+[![license](https://img.shields.io/github/license/markuspic/intensity_duration_frequency_analysis.svg?style=flat)](https://github.com/MarkusPic/intensity_duration_frequency_analysis/blob/main/LICENSE)
 [![PyPI](https://img.shields.io/pypi/v/idf-analysis.svg)](https://pypi.python.org/pypi/idf-analysis)
 [![DOI](https://zenodo.org/badge/142560436.svg)](https://zenodo.org/doi/10.5281/zenodo.10559991)
 
@@ -77,7 +77,7 @@ Python is pre-installed on most operating systems (as you probably knew).
 ### Dependencies
 
 Packages required for this program will be installed with pip during the installation process and can be seen 
-in the [`requirements.txt`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/blob/master/requirements.txt) file.
+in the [`requirements.txt`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/blob/main/requirements.txt) file.
 
 
 ```mermaid
@@ -222,20 +222,20 @@ In these examples you can see the usage in a reproducible way. This examples use
 
 [Example Jupyter notebook for the python api](examples/example_python_api.ipynb) (or in the [docs](https://markuspic.github.io/intensity_duration_frequency_analysis/examples/example_python_api.html))
 
-[Example python skript](examples/example_python_api.py)
+[Example python skript](https://github.com/MarkusPic/intensity_duration_frequency_analysis/blob/main/examples/example_python_api.py)
 
 
 ### Example Files
 
-[Interim Results of the idf analysis](examples/ehyd_112086_idf_data/idf_parameters.yaml)
+[Interim Results of the idf analysis](https://github.com/MarkusPic/intensity_duration_frequency_analysis/blob/main/examples/ehyd_112086_idf_data/idf_parameters.yaml)
 
 ### Example Plot
 
-![IDF-Curves-Plot](examples/ehyd_112086_idf_data/idf_curves_plot.png)
+![IDF-Curves-Plot](https://raw.githubusercontent.com/MarkusPic/intensity_duration_frequency_analysis/refs/heads/main/examples/ehyd_112086_idf_data/idf_curves_plot.png)
 
 ### Example IDF table
 
-[IDF-Table](examples/ehyd_112086_idf_data/idf_table_UNIX.csv)
+[IDF-Table](https://github.com/MarkusPic/intensity_duration_frequency_analysis/blob/main/examples/ehyd_112086_idf_data/idf_table_UNIX.csv)
 
 
 | return period in a<br>duration in min |     1 |      2 |      3 |      5 |     10 |     20 |     25 |     30 |     50 |     75 |    100 |
