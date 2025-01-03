@@ -7,7 +7,7 @@
 [![license](https://img.shields.io/github/license/markuspic/intensity_duration_frequency_analysis.svg?style=flat)](https://github.com/MarkusPic/intensity_duration_frequency_analysis/blob/main/LICENSE)
 [![PyPI](https://img.shields.io/pypi/v/idf-analysis)](https://pypi.python.org/pypi/idf-analysis)
 [![DOI](https://zenodo.org/badge/142560436.svg)](https://zenodo.org/doi/10.5281/zenodo.10559991)
-[![Buymeacoffee](https://badgen.net/badge/icon/buymeacoffee?icon=buymeacoffee&label=donate)](https://https://www.buymeacoffee.com/)
+[![Buymeacoffee](https://badgen.net/badge/icon/buymeacoffee?icon=buymeacoffee&label=donate)](https://www.buymeacoffee.com/MarkusP)
 
 [![PyPI - Downloads](https://img.shields.io/pypi/dd/idf-analysis)](https://pypi.python.org/pypi/idf-analysis)
 [![PyPI - Downloads](https://img.shields.io/pypi/dw/idf-analysis)](https://pypi.python.org/pypi/idf-analysis)

@@ -40,6 +40,7 @@ docs = ["sphinx", "nbsphinx", "recommonmark", "myst-parser", "pydata_sphinx_them
 Documentation = "https://markuspic.github.io/intensity_duration_frequency_analysis/"
 Changelog = "https://github.com/MarkusPic/intensity_duration_frequency_analysis/blob/main/CHANGELOG.md"
 homepage = "https://github.com/MarkusPic/intensity_duration_frequency_analysis"
+funding = "https://www.buymeacoffee.com/MarkusP"
 
 [project.scripts]
 idf_analysis = "idf_analysis._console_script:command_line_tool"
