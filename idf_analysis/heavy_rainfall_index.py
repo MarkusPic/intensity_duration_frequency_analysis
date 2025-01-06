@@ -583,3 +583,62 @@ class HeavyRainfallIndexAnalyse(IntensityDurationFrequencyAnalyse):
         sri_table_event[COL.MAX_PERIOD] = self.return_periods_frame[event[COL.START]:event[COL.END]].max()
 
         return sri_table_event.rename(minutes_readable)
+
+    def event_sri_table_plot(self, event):
+        df = self.event_dataframe(event)
+
+        fig, axes = plt.subplots(ncols=3, sharey=True, width_ratios=[2,5,5])
+        # ---
+        ax_sri = axes[0]
+        im = ax_sri.imshow(df[[self.METHODS.SCHMITT]].values, cmap=mcolors.ListedColormap([(1, 1, 1)] + list(self.indices_color.values())), vmin=0, vmax=12, extent=(0, 2.5, df.index.size-0.5, -0.5))
+
+        for i, y in enumerate(df[self.METHODS.SCHMITT].values):
+            ax_sri.text(1.25, i, y if y > 0 else '-', ha='center', va='center')
+
+        ax_sri.set_title(self.method, fontsize=10, fontweight='bold')
+        ax_sri.set_ylabel('Duration steps')
+        ax_sri.spines['left'].set_visible(False)
+
+        for y in range(0, df.index.size):
+            ax_sri.axhline(y-.5, color='white', lw=3)
+        # ---
+        ax_rain_sum = axes[1]
+        bars = ax_rain_sum.barh(df.index, df[COL.MAX_OVERLAPPING_SUM], align='center', height=0.6, color='#1E88E5')
+        labels = ax_rain_sum.bar_label(bars, df[COL.MAX_OVERLAPPING_SUM].round(1),
+                                       padding=5, color='black', transform=ax_rain_sum.transAxes)
+
+        _set_xlim(ax_rain_sum, bars, labels)
+
+        ax_rain_sum.set_title('max. rain sum (mm)', fontsize=10, fontweight='bold')
+
+        # ---
+        ax_return_period = axes[2]
+
+        rp_colors = RETURN_PERIOD_COLORS.copy()
+        rp_list = [0] + list(rp_colors)+ [np.inf]
+        rp_colors[0] = 'black'
+        for rp in rp_list:
+            if rp == np.inf: continue
+            c = rp_colors[rp]
+            s = df[COL.MAX_PERIOD]
+            si = s[(s >= rp) & (s < rp_list[rp_list.index(rp)+1])].copy()
+            bars = ax_return_period.barh(si.index, si.clip(upper=150), align='center', height=0.6, color=c, edgecolor='black', lw=0.2)
+            if bars:
+                labels = ax_return_period.bar_label(bars, si.map(lambda x: '< 1' if x < 1 else f'{x:0.1f}' if x < 150 else '> 150' if x < 150 else '>> 150'),
+                                           padding=5, color='black', transform=ax_return_period.transAxes)
+
+                # _set_xlim(ax_return_period, bars, labels)
+                ax_return_period.set_xlim(0, 200)
+
+        ax_return_period.set_title('max. return period (a)', fontsize=10, fontweight='bold')
+
+        for ax in axes:
+            ax.set_facecolor((0,0,0,0))
+            # ax.set_frame_on(False)
+            ax.tick_params(axis='y', which='major', length=0)
+            ax.spines['bottom'].set_visible(False)
+            ax.spines['right'].set_visible(False)
+            ax.set_xticks([])
+            ax.grid(False)
+            # ax.spines['top'].set_visible(True)
+        return fig, axes
