@@ -6,6 +6,7 @@ __version__ = '0.3.0'
 __license__ = "MIT"
 
 from .idf_class import IntensityDurationFrequencyAnalyse, SERIES, METHOD, APPROACH
+from .heavy_rainfall_index import HeavyRainfallIndexAnalyse
 
 """
 Heavy rain as a function of the duration and the return period acc. to DWA-A 531 (2012)
