@@ -16,42 +16,46 @@ RETURN_PERIOD_COLORS = {
 }
 
 
-def idf_bar_axes(ax, idf_table, return_period_colors=RETURN_PERIOD_COLORS):
+def _bar_axes(ax, table, colors_dict, legend_kwags, category_formatter=None):
     """
     create
 
     Args:
         ax (matplotlib.pyplot.Axes):
-        idf_table (pandas.DataFrame):
-        return_period_colors (dict): color of each return period {return period: color}
+        table (pandas.DataFrame):
+        colors_dict (dict): color of each return period {return period: color}
 
     Returns:
         matplotlib.pyplot.Axes:
     """
-    return_periods = list(return_period_colors.keys())
-    color_return_period = list(return_period_colors.values())
+    categories = list(colors_dict.keys())
+    colors = list(colors_dict.values())
 
     # legend
     from matplotlib.lines import Line2D
-    custom_lines = [Line2D([0], [0], color=c, lw=4) for c in color_return_period]
-    names = [f'{t}a' for t in return_periods]
-    ax.legend(custom_lines, names, bbox_to_anchor=(0., 1.02, 1., .102), loc=3, ncol=len(color_return_period),
-              mode="expand", borderaxespad=0., title='return periods')
+    custom_lines = [Line2D([0], [0], color=c, lw=4) for c in colors]
 
-    duration_size = len(idf_table.columns)
+    if category_formatter is None:
+        category_formatter = str
+    names = [category_formatter(t) for t in categories]
+    ax.legend(custom_lines, names, bbox_to_anchor=(0., 1.02, 1., .102), loc=3, ncol=len(colors),
+              mode="expand", borderaxespad=0., **legend_kwags)
+
+    duration_steps = table.columns.values
+    duration_size = len(duration_steps)
     # labels for the y axis
     durations_index = range(duration_size)
     dh = 1
     ax.set_yticks([i + dh/2 for i in durations_index], minor=True)
     ax.set_yticks(list(durations_index), minor=False)
 
-    ax.set_yticklabels(duration_steps_readable(idf_table.columns), minor=True)
+    ax.set_yticklabels(duration_steps_readable(duration_steps), minor=True)
     ax.set_yticklabels([''] * duration_size, minor=False)
     ax.set_ylabel('duration of the design rainfall')
 
     # for the relative start time
-    freq = guess_freq(idf_table.index)
-    start_dt = idf_table.index[0]
+    freq = guess_freq(table.index)
+    start_dt = table.index[0]
     if start_dt.tzinfo is not None:
         start_dt = start_dt.tz_localize(None)
     start_period = start_dt.to_period(freq).ordinal
@@ -60,22 +64,20 @@ def idf_bar_axes(ax, idf_table, return_period_colors=RETURN_PERIOD_COLORS):
 
     min_duration = pd.Timedelta(minutes=1)
 
-    for hi, d in enumerate(idf_table.columns):
-        tn = idf_table[d]
+    for hi, d in enumerate(duration_steps):
+        tn = table[d]
 
-        for t in return_periods:
-            c = return_period_colors[t]
+        for t in categories:
+            c = colors_dict[t]
             # not really a rain event, but the results are the same
-            # tab2 = rain_events(tn, ignore_rain_below=t, min_gap=pd.Timedelta(minutes=d))
             tab = rain_events(tn, ignore_rain_below=t, min_gap=freq)
-            # if tab.size != tab2.size:
-            #     print()
+
             if tab.empty:
                 continue
 
             if _ := 1:
                 durations = ((event_duration(tab) + freq) / min_duration).tolist()
-                rel_starts = ((tab[COL.START] - idf_table.index[0]) / min_duration + start_period).tolist()
+                rel_starts = ((tab[COL.START] - table.index[0]) / min_duration + start_period).tolist()
                 bar_x = list(zip(rel_starts, durations))
             else:
                 tab[COL.DUR] = event_duration(tab) / min_duration
@@ -92,7 +94,6 @@ def idf_bar_axes(ax, idf_table, return_period_colors=RETURN_PERIOD_COLORS):
     ax.xaxis.set_major_formatter(NullFormatter())
 
     # ---
-    duration_steps = idf_table.columns.values
     duration_steps_middle_to_long = duration_steps[duration_steps > 2*60]
     if duration_steps_middle_to_long.size:
         # (k)urzzeitige Summationen, d. h. der Dauerstufen von 5 Minuten bis 2 Stunden
@@ -102,3 +103,42 @@ def idf_bar_axes(ax, idf_table, return_period_colors=RETURN_PERIOD_COLORS):
             # (m)ittelfristige Summationen, d. h. der Dauerstufen von 3 Stunden bis 3 Tagen.
             ax.axhline(duration_steps.tolist().index(duration_steps_long[0]), color='black')
     return ax
+
+
+
+def idf_bar_axes(ax, idf_table, return_period_colors=RETURN_PERIOD_COLORS):
+    """
+    create a return period bar axes for the event plot
+
+    Args:
+        ax (matplotlib.pyplot.Axes):
+        idf_table (pandas.DataFrame):
+        return_period_colors (dict): color of each return period {return period: color}
+
+    Returns:
+        matplotlib.pyplot.Axes:
+    """
+    return _bar_axes(ax, idf_table, return_period_colors,
+                     legend_kwags=dict(title='return periods'),
+                     category_formatter='{}a'.format)
+
+
+def _set_xlim(ax, bars, labels):
+    fig = ax.get_figure()
+    # Use the Transform to include both bar and label extents
+    renderer = fig.canvas.get_renderer()
+
+    # Calculate the data limits based on bars and labels
+    max_data = max(bar.get_width() for bar in bars)
+    max_label_extent = max(
+        label.get_window_extent(renderer=renderer).transformed(ax.transData.inverted()).x1
+        for label in labels
+    )
+    # print([
+    #     label.get_window_extent(renderer=renderer).transformed(ax.transData.inverted()).x1
+    #     for label in labels
+    # ])
+    # print(labels[0])
+    # Update x-axis limits to fit both bars and labels
+    # print(max_data, max_label_extent)
+    ax.set_xlim(0, max(max_data, max_label_extent))

@@ -15,6 +15,7 @@ import pandas as pd
 from .definitions import COL
 from .idf_class import IntensityDurationFrequencyAnalyse
 from .little_helpers import duration_steps_readable, minutes_readable, frame_looper, event_caption
+from .plot_helpers import _bar_axes, RETURN_PERIOD_COLORS, _set_xlim
 from .sww_utils import guess_freq, rain_events, event_duration, resample_rain_series, rain_bar_plot
 
 # from matplotlib.colors import ListedColormap, Normalize
@@ -180,20 +181,20 @@ class HeavyRainfallIndexAnalyse(IntensityDurationFrequencyAnalyse):
             int | float | list | numpy.ndarray | pandas.Series: heavy rain index
         """
         tn = self.get_return_period(height_of_rainfall, duration)
+        # ----
 
         if self.method == self.METHODS.MUDERSBACH:
             if isinstance(tn, (pd.Series, np.ndarray)):
                 sri = np.round(1.5 * np.log(tn) + 0.4 * np.log(duration), 0)
                 sri[tn <= 1] = 1
                 sri[tn >= 100] = 12
-                return sri
             else:
                 if tn <= 1:
-                    return 1
+                    sri = 1
                 elif tn >= 100:
-                    return 12
+                    sri = 12
                 else:
-                    return np.round(1.5 * np.log(tn) + 0.4 * np.log(duration), 0)
+                    sri = np.round(1.5 * np.log(tn) + 0.4 * np.log(duration), 0)
 
         elif self.method == self.METHODS.SCHMITT:
             if isinstance(tn, (pd.Series, np.ndarray)):
@@ -226,31 +227,38 @@ class HeavyRainfallIndexAnalyse(IntensityDurationFrequencyAnalyse):
                 sri[tn < 0.5] = 0
             else:
                 if tn < 0.5:
-                    return 0
-            return np.clip(np.ceil(sri), 0, 12)
+                    sri = 0
+            sri = np.clip(np.ceil(sri), 0, 12)
 
         elif self.method == self.METHODS.SCHMITT2015:
             # TODO: additional_files.schmitt_ortsunabhaengig_2015.ods
             if duration == 15:
                 if height_of_rainfall < 10:
-                    return 0
+                    sri = 0
             elif duration == 60:
                 if height_of_rainfall < 15:
-                    return 0
+                    sri = 0
             elif duration == 120:
                 if height_of_rainfall < 20:
-                    return 0
+                    sri = 0
             elif duration == 240:
                 if height_of_rainfall < 20:
-                    return 0
+                    sri = 0
             elif duration == 360:
                 if height_of_rainfall < 25:
-                    return 0
+                    sri = 0
             else:
-                return np.nan
+                sri = np.nan
 
         else:
             raise NotImplementedError(f'Method {self.method} not implemented!')
+
+        if isinstance(tn, (pd.Series, np.ndarray)):
+            sri[tn <= 0.3] = 0
+        else:
+            if tn < 0.3:
+                sri = 0
+
         return sri
 
     # __________________________________________________________________________________________________________________
@@ -470,72 +478,20 @@ class HeavyRainfallIndexAnalyse(IntensityDurationFrequencyAnalyse):
             sri[dur] = self.get_sri(h, dur)
         return pd.Series(sri, name=self.method)
 
-    def sri_bar_axes(self, ax, sri_frame, durations=None):
-        """ create a bar axes for the sri event plot
+    def sri_bar_axes(self, ax, sri_frame):
+        """
+        create a bar axes for the sri event plot
 
         Args:
             ax (matplotlib.pyplot.Axes):
-            sri_frame (pandas.DataFrame): index=DatetimeIndex and columns=SRI
-            durations (list):
+            sri_frame (pandas.DataFrame): index=DatetimeIndex and data=SRI, columns=duration steps
 
         Returns:
             matplotlib.pyplot.Axes:
         """
-        if durations is None:
-            durations = [5, 10, 15, 20, 30, 45, 60, 90, 120, 180, 240, 360, 540, 720, 1080, 1440, 2880, 4320]
+        return _bar_axes(ax, sri_frame, self.indices_color,
+                         legend_kwags=dict(title='Starkregenindex', handlelength=0.7))
 
-        # legend
-        from matplotlib.lines import Line2D
-        custom_lines = [Line2D([0], [0], color=self.indices_color[i], lw=4) for i in self.indices]
-        names = [str(i) for i in self.indices]
-        ax.legend(custom_lines, names, bbox_to_anchor=(0., 1.02, 1., .102), loc=3, ncol=len(self.indices),
-                  mode="expand", borderaxespad=0., title='StarkRegenIndex', handlelength=0.7)
-
-        duration_size = len(durations)
-        # labels for the y axis
-        durations_index = range(duration_size)
-        dh = 1
-        ax.set_yticks([i + dh / 2 for i in durations_index], minor=True)
-        ax.set_yticks(list(durations_index), minor=False)
-
-        ax.set_yticklabels(duration_steps_readable(durations), minor=True)
-        ax.set_yticklabels([''] * duration_size, minor=False)
-        ax.set_ylabel('duration of the design rainfall')
-
-        # for the relative start time
-        freq = guess_freq(sri_frame.index)
-        start_period = sri_frame.index[0].to_period(freq).ordinal
-
-        # idf_table.index = idf_table.index - idf_table.index[0]
-
-        min_duration = pd.Timedelta(minutes=1)
-
-        for hi, d in enumerate(sri_frame.columns):
-            sri = sri_frame[d]
-
-            for i in self.indices:
-                # not really a rain event, but the results are the same
-                tab = rain_events(sri, ignore_rain_below=i, min_gap=freq)
-
-                if tab.empty:
-                    continue
-
-                if _ := 1:
-                    durations = (event_duration(tab) / min_duration).tolist()
-                    rel_starts = ((tab[COL.START] - sri_frame.index[0]) / min_duration + start_period).tolist()
-                    bar_x = list(zip(rel_starts, durations))
-                else:
-                    tab[COL.DUR] = event_duration(tab) / min_duration
-                    bar_x = [(r[COL.START] / min_duration + start_period, r[COL.DUR]) for _, r in tab.iterrows()]
-
-                ax.broken_barh(bar_x, (hi, dh), facecolors=self.indices_color[i])
-
-        ax.set_ylim(0, duration_size)
-        ax.set_xticklabels([])
-        ax.xaxis.set_major_formatter(mticker.NullFormatter())
-        ax.axhline(0, color='black')
-        ax.axhline(duration_size / 2, color='black')
-        return ax
 
     @staticmethod
     def event_plot_caption(event, method, unit='mm'):
@@ -600,7 +556,7 @@ class HeavyRainfallIndexAnalyse(IntensityDurationFrequencyAnalyse):
         fig = plt.figure()
 
         sri_bar_ax = fig.add_subplot(211)
-        sri_bar_ax = self.sri_bar_axes(sri_bar_ax, sri_frame_extended, durations)
+        sri_bar_ax = self.sri_bar_axes(sri_bar_ax, sri_frame_extended)
         rain_ax = fig.add_subplot(212, sharex=sri_bar_ax)
 
         # -------------------------------------
