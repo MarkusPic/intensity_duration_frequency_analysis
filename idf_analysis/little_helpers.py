@@ -139,21 +139,36 @@ def event_caption(event, unit='mm'):
 
 
 def event_caption_ger(event, unit='mm'):
-    caption = 'Regenereignis\n'
+    caption = 'Regenereignis'
     if (COL.START in event) and (COL.END in event):
-        caption += f'zwischen {event[COL.START]:%Y-%m-%d %H:%M} und '
-        if f'{event[COL.START]:%Y-%m-%d}' == f'{event[COL.END]:%Y-%m-%d}':
-            caption += f'{event[COL.END]:%H:%M}\n'
-        elif f'{event[COL.START]:%Y-%m-}' == f'{event[COL.END]:%Y-%m-}':
-            caption += f'{event[COL.END]:%d %H:%M}\n'
+
+        # caption += f'zwischen {event[COL.START]:%Y-%m-%d %H:%M} und '
+        # if f'{event[COL.START]:%Y-%m-%d}' == f'{event[COL.END]:%Y-%m-%d}':
+        #     caption += f'{event[COL.END]:%H:%M}\n'
+        # elif f'{event[COL.START]:%Y-%m-}' == f'{event[COL.END]:%Y-%m-}':
+        #     caption += f'{event[COL.END]:%d %H:%M}\n'
+        # else:
+        #     caption += f'{event[COL.END]:%Y-%m-%d %H:%M}\n'
+
+        start = event[COL.START]
+        ende = event[COL.END]
+        if start.date() == ende.date():
+            # Beide Zeitpunkte sind am selben Tag
+            caption += f"am {start.strftime('%d.%m.%Y')} von {start.strftime('%H:%M')} bis {ende.strftime('%H:%M')}\n"
+        elif start.year == ende.year:
+            # Beide Zeitpunkte im selben Jahr
+            caption += f"von {start.strftime('%d.%m.')} {start.strftime('%H:%M')} bis {ende.strftime('%d.%m.')} {ende.strftime('%H:%M')}\n"
         else:
-            caption += f'{event[COL.END]:%Y-%m-%d %H:%M}\n'
+            # Unterschiedliche Jahre
+            caption += f"von {start.strftime('%d.%m.%Y')} {start.strftime('%H:%M')} bis {ende.strftime('%d.%m.%Y')} {ende.strftime('%H:%M')}\n"
+
+    # Beispiel:
 
     if COL.LP in event:
         caption += f'mit einer Regensumme von {event[COL.LP]:0.1f} {unit}\n'
 
     if COL.DUR in event:
-        caption += f' und einer Dauer von {timedelta_readable(event[COL.DUR])}'
+        caption += f' und einer Dauer von {timedelta_readable(event[COL.DUR]).replace("hours", "Stunden").replace("hour", "Stunde").replace("minutes", "Minuten").replace("minute", "Minute")}'
 
     caption += '.\n'
 
@@ -212,7 +227,7 @@ def timedelta_components_readable(l, short=False, sep=', '):
             else:
                 unit_sep = ' '
                 unit = label_component
-                if value > 1:
+                if value == 1:
                     unit = label_component[:-1]
 
             result.append(f'{value}{unit_sep}{unit}')
