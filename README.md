@@ -8,11 +8,16 @@
 [![PyPI](https://img.shields.io/pypi/v/idf-analysis)](https://pypi.python.org/pypi/idf-analysis)
 [![DOI](https://zenodo.org/badge/142560436.svg)](https://zenodo.org/doi/10.5281/zenodo.10559991)
 [![Buymeacoffee](https://badgen.net/badge/icon/buymeacoffee?icon=buymeacoffee&label=donate)](https://www.buymeacoffee.com/MarkusP)
+[![contributing](https://img.shields.io/badge/Contributing-red?style=flat)](https://github.com/MarkusPic/intensity_duration_frequency_analysis/blob/main/CONTRIBUTING.md)
+[![docs](https://img.shields.io/badge/Documentation-purple?style=flat&logo=readthedocs)](https://github.com/MarkusPic/intensity_duration_frequency_analysis/blob/main/CONTRIBUTING.md)
+[![code-of-conduct](https://img.shields.io/badge/Code_of_Conduct-grey?style=flat)](https://github.com/MarkusPic/intensity_duration_frequency_analysis/blob/main/CODE_OF_CONDUCT.md)
 
 [![PyPI - Downloads](https://img.shields.io/pypi/dd/idf-analysis)](https://pypi.python.org/pypi/idf-analysis)
 [![PyPI - Downloads](https://img.shields.io/pypi/dw/idf-analysis)](https://pypi.python.org/pypi/idf-analysis)
 [![PyPI - Downloads](https://img.shields.io/pypi/dm/idf-analysis)](https://pypi.python.org/pypi/idf-analysis)
 
+![Tests](https://github.com/MarkusPic/intensity_duration_frequency_analysis/actions/workflows/tests.yml/badge.svg)
+[![Coverage](https://codecov.io/gh/MarkusPic/intensity_duration_frequency_analysis/branch/main/graph/badge.svg)](https://codecov.io/gh/MarkusPic/intensity_duration_frequency_analysis)
 
 Heavy rainfall intensity as a function of duration and return period acc. to [DWA-A 531 (2012)](http://www.dwa.de/dwa/shop/shop.nsf/Produktanzeige?openform&produktid=P-DWAA-8XMUY2).
 This program reads the measurement data of the rainfall
@@ -135,7 +140,7 @@ from idf_analysis.definitions import *
 # initialize of the analysis class
 idf = IntensityDurationFrequencyAnalyse(series_kind=SERIES.PARTIAL, worksheet=METHOD.KOSTRA, extended_durations=True)
 
-series = pd.Series(index=pd.DatetimeIndex(...), data=...)
+series = pd.Series(index=pd.DatetimeIndex(...), data=...)  # this is just a placeholder
 
 # setting the series for the analysis
 idf.set_series(series)
@@ -149,7 +154,7 @@ If you only want to analyse an already existing IDF-table
 import pandas as pd
 from idf_analysis import IntensityDurationFrequencyAnalyse
 
-idf_table = pd.DataFrame(...)
+idf_table = pd.DataFrame(...)  # this is just a placeholder
 # index: Duration Steps in minutes as int or float
 # columns: Return Periods in years as int or float
 # values: rainfall height in mm
@@ -263,20 +268,35 @@ In these examples you can see the usage in a reproducible way. This examples use
 |                                  7200 | 83.53 | 101.38 | 111.82 | 124.98 | 142.83 | 160.68 | 166.43 | 171.12 | 184.28 | 194.72 | 202.13 |
 |                                  8640 | 85.38 | 104.95 | 116.40 | 130.82 | 150.38 | 169.95 | 176.25 | 181.40 | 195.82 | 207.27 | 215.39 |
 
+## Contributing and Support
+
+If you're interested in contributing or need help, check out the [CONTRIBUTING.md](https://github.com/MarkusPic/intensity_duration_frequency_analysis/blob/main/CONTRIBUTING.md) file for guidelines.
+
+
+## Testing
+
+The code is written in pure python so no compiling is needed.
+
+Most of the code is (or at least will be) automatically tested using the test suite in the [./tests](./tests) folder. To run the tests, use:
+
+```sh
+pytest tests
+```
+
 ## Background
 
 Pseudocode for the parameter calculation.
 
 ```
 For every duration step
-    calculating event sums
+    calculating maximum rainfall intensity for each event for the corresponding duration step
     
     if using annual event series:  # only recommeded for measurements longer than 20 year
-        converting every max event sum per year to a series
+        converting max event rainfall intensities per year to a series
         calculating parameters u and w using the gumbel distribution
         
     elif using partial event series:
-        converting the n (approximatly 2.72 x measurement duration in years) biggest event sums to a series
+        converting the n (approximatly 2.72 x measurement duration in years) biggest event rainfall intensities to a series
         calculating parameters u and w using the exponential distribution
     
 Splitting IDF curve formulation in to several duration ranges
