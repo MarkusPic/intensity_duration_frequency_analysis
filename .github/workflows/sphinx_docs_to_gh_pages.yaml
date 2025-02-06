@@ -52,6 +52,7 @@ jobs:
         run: |
             cp ./examples ./documentation/examples -r
             cp ./README.md ./documentation/README.md
+            cp ./CONTRIBUTING.md ./documentation/CONTRIBUTING.md
             sed -i 's|(examples|(https://markuspic.github.io/intensity_duration_frequency_analysis/examples|' ./documentation/README.md
             sed -i 's|.ipynb||' ./documentation/README.md
 
