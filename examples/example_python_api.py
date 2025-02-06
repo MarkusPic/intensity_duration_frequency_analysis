@@ -13,7 +13,6 @@ output_directory = Path('ehyd_112086_idf_data')
 idf = HeavyRainfallIndexAnalyse(series_kind=SERIES.PARTIAL, worksheet=METHOD.KOSTRA, extended_durations=True)
 
 # reading the pandas series of the precipitation (data from ehyd.gv.at - ID=112086)
-# You need to install `pyarrow` or `fastparquet` to read and write parquet files.
 series = pd.read_parquet('ehyd_112086.parquet').squeeze()
 series.name = 'precipitation'
 
@@ -66,9 +65,9 @@ if _ := 0:  # this is just an on/off switch, to only run certain parts of the co
     plt.close(fig)
 
 # --------
+fig_size = (8, 5)
 # plotting the IDF curves
 if _ := 0:  # this is just an on/off switch, to only run certain parts of the code.
-    fig_size = (8, 5)
     fig, ax = idf.curve_figure(color=True, logx=True, duration_steps_ticks=True)
     fig.set_size_inches(*fig_size)
     fig.savefig(output_directory / 'idf_curves_plot_color_logx.png')
@@ -109,7 +108,7 @@ if _ := 0:  # this is just an on/off switch, to only run certain parts of the co
 
 # --------
 # save the values of the idf curve as csv file
-if _ := 1:  # this is just an on/off switch, to only run certain parts of the code.
+if _ := 0:  # this is just an on/off switch, to only run certain parts of the code.
     idf.result_table(add_names=False).to_csv(output_directory / 'idf_table_UNIX.csv',
                                              sep=',', decimal='.', float_format='%0.2f')
 
@@ -119,10 +118,11 @@ if _ := 0:  # this is just an on/off switch, to only run certain parts of the co
 
 # --------
 # plotting the IDF curves for JOSS paper
-if _ := 0:  # this is just an on/off switch, to only run certain parts of the code.
+if _ := 1:  # this is just an on/off switch, to only run certain parts of the code.
     fig, ax = idf.curve_figure(color=True, logx=True, max_duration=60 * 24 * 6, duration_steps_ticks=True, add_interim=False)
     ax.grid(ls=':', lw=0.5)
     fig.set_size_inches(*fig_size)
     ax.set_title('')
-    fig.savefig(output_directory.resolve().parent.parent / 'joss-paper' / 'idf_curves_plot.pdf')
+    # fig.savefig(output_directory.resolve().parent.parent / 'joss-paper' / 'idf_curves_plot.pdf')
+    fig.savefig(output_directory.resolve().parent.parent / 'joss-paper' / 'idf_curves_plot.png')
     plt.close(fig)
