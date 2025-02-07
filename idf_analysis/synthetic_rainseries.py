@@ -84,7 +84,10 @@ class _BlockRain(_AbstractModelRain):
         height = self._get_idf_value(duration, return_period)
         intensity = height / len(index)
         r = pd.Series(index=index, data=intensity)
-        r = r.append(pd.Series({0: 0})).sort_index()
+        r = pd.concat([
+            pd.Series({0: 0}),
+            r
+        ])
         return r
 
 
@@ -135,7 +138,6 @@ class _EulerRain(_AbstractModelRain):
         r.loc[:max_index] = r.loc[max_index::-1].values
 
         # add Zero value at first position (for SWMM ?)
-        # r = r.append(pd.Series({0: 0})).sort_index()
         r = pd.Series(data=[0] + r.tolist(), index=[0] + r.index.values.tolist())
 
         return r
