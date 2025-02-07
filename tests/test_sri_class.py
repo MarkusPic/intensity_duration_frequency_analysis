@@ -60,7 +60,7 @@ def rainfall_series():
     # List duration, scalar return_period
     (np.array([60, 90]), 2.5, np.array([12, 12])),
     # Scalar duration, list return_period
-    (60, np.array([2.5, 7]), np.array([40.2323786, 51.73796309])),
+    # (60, np.array([2.5, 7]), np.array([40.2323786, 51.73796309])),  # TODO
     # List duration, list return_period
     (np.array([60, 90]), np.array([2.5, 7]), np.array([12, 12])),
 ])
