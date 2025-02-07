@@ -291,8 +291,21 @@ def return_period_formatter(t):
 
 
 def timedelta_components_plus(td, min_freq='min'):
-    """Schaltjahre nicht miteinbezogen"""
-    l = []
+    """
+    Decomposes a timedelta into its components, approximating years and weeks.
+
+    Args:
+        td (datetime.timedelta or pandas.Timedelta): The time difference to decompose.
+        min_freq (str, optional): The minimum frequency for rounding (e.g., 'min', 's'). Defaults to 'min'.
+
+    Returns:
+        list: A list of lists, where each sublist contains a numerical value and its corresponding time unit.
+
+    Note:
+        Leap years are not considered in year calculations.
+        Possible components: [years, weeks, days, hours, minutes, seconds, milliseconds, microseconds, nanoseconds]
+    """
+    list_of_components = []
 
     if isinstance(td, datetime.timedelta):
         td = pd.to_timedelta(td)
@@ -301,23 +314,41 @@ def timedelta_components_plus(td, min_freq='min'):
     days_year = 365
     days_week = 7
 
-    for component, value in td.round(min_freq).components._asdict().items():
-        if component == 'days':
+    for label_component, value in td.round(min_freq).components._asdict().items():
+        if label_component == 'days':
             years, value = value // days_year, value % days_year
-            l.append([int(years), 'years'])
+            list_of_components.append([int(years), 'years'])
 
             value -= years // 4
 
             weeks, value = value // days_week, value % days_week
-            l.append([int(weeks), 'weeks'])
+            list_of_components.append([int(weeks), 'weeks'])
 
-        l.append([value, component])
-    return l
+        list_of_components.append([value, label_component])
+    return list_of_components
 
 
-def timedelta_components_readable(l, short=False, sep=', '):
+def timedelta_components_readable(list_of_components, short=False, sep=', '):
+    """
+    Converts a list of time components into a human-readable string.
+
+    Args:
+        list_of_components (list): A list of [value, unit] pairs representing time components.
+        short (bool, optional): If True, uses abbreviated unit names (e.g., 'y' for years). Defaults to False.
+        sep (str, optional): Separator between components. Defaults to ', '.
+
+    Returns:
+        str: A formatted string representing the time components, with the last component joined by "and".
+
+    Note:
+        - Singular units (e.g., "1 year" instead of "1 years") are handled automatically.
+        - The last separator is replaced with "and" for better readability unless short mode is enabled.
+
+    Example:
+        timedelta_components_readable([(2, 'days'), (3, 'hours')]) -> '2 days and 3 hours'
+    """
     result = []
-    for value, label_component in l:
+    for value, label_component in list_of_components:
         if value > 0:
             if short:
                 unit_sep = ''
