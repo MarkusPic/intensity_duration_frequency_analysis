@@ -10,14 +10,15 @@
 [![Buymeacoffee](https://badgen.net/badge/icon/buymeacoffee?icon=buymeacoffee&label=donate)](https://www.buymeacoffee.com/MarkusP)
 [![status](https://joss.theoj.org/papers/e50c1f87eff69a0d0a0de3b0910026d1/status.svg)](https://joss.theoj.org/papers/e50c1f87eff69a0d0a0de3b0910026d1)
 [![contributing](https://img.shields.io/badge/Contributing-red?style=flat)](https://github.com/MarkusPic/intensity_duration_frequency_analysis/blob/main/CONTRIBUTING.md)
-[![docs](https://img.shields.io/badge/Documentation-purple?style=flat&logo=readthedocs)](https://github.com/MarkusPic/intensity_duration_frequency_analysis/blob/main/CONTRIBUTING.md)
+[![docs](https://img.shields.io/badge/Documentation-purple?style=flat&logo=readthedocs)](https://markuspic.github.io/intensity_duration_frequency_analysis/)
 [![code-of-conduct](https://img.shields.io/badge/Code_of_Conduct-grey?style=flat)](https://github.com/MarkusPic/intensity_duration_frequency_analysis/blob/main/CODE_OF_CONDUCT.md)
 
 [![PyPI - Downloads](https://img.shields.io/pypi/dd/idf-analysis)](https://pypi.python.org/pypi/idf-analysis)
 [![PyPI - Downloads](https://img.shields.io/pypi/dw/idf-analysis)](https://pypi.python.org/pypi/idf-analysis)
 [![PyPI - Downloads](https://img.shields.io/pypi/dm/idf-analysis)](https://pypi.python.org/pypi/idf-analysis)
 
-![Tests](https://github.com/MarkusPic/intensity_duration_frequency_analysis/actions/workflows/tests.yml/badge.svg)
+![Tests](https://github.com/MarkusPic/intensity_duration_frequency_analysis/actions/workflows/tests.yaml/badge.svg)
+![Tests](https://github.com/MarkusPic/intensity_duration_frequency_analysis/actions/workflows/sphinx_docs_to_gh_pages.yaml/badge.svg)
 [![Coverage](https://codecov.io/gh/MarkusPic/intensity_duration_frequency_analysis/branch/main/graph/badge.svg)](https://codecov.io/gh/MarkusPic/intensity_duration_frequency_analysis)
 
 Heavy rainfall intensity as a function of duration and return period acc. to [DWA-A 531 (2012)](http://www.dwa.de/dwa/shop/shop.nsf/Produktanzeige?openform&produktid=P-DWAA-8XMUY2).
