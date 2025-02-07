@@ -14,7 +14,7 @@ from .definitions import *
 from .idf_backend import IdfParameters
 from .in_out import import_series
 from .little_helpers import (minutes_readable, height2rate, delta2min, rate2height, frame_looper, event_caption,
-                             event_caption_ger, duration_steps_readable, get_progress_bar)
+                             duration_steps_readable, get_progress_bar)
 from .plot_helpers import idf_bar_axes
 from .sww_utils import (guess_freq, rain_events, agg_events, event_duration, resample_rain_series, rain_bar_plot,
                         IdfError)
@@ -682,7 +682,7 @@ class IntensityDurationFrequencyAnalyse:
         if ts.index.size > 1:
             rain_ax.set_xlim(ts.index[0], ts.index[-1])
 
-        return fig, (event_caption_ger(event) if german_caption else event_caption(event, self._unit))
+        return fig, event_caption(event, self._unit, lang='de' if german_caption else 'en')
 
     def curve_figure(self, min_duration=None, max_duration=None, logx=False, return_periods=None, color=True, ax=None,
                      add_interim=False, duration_steps_ticks=False, add_range_limits=False, **kwargs):
