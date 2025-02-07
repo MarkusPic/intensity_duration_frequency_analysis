@@ -161,12 +161,12 @@ class HeavyRainfallIndexAnalyse(IntensityDurationFrequencyAnalyse):
         return mcolors.ListedColormap([(1, 1, 1)] + list(cls.indices_color.values()))(mcolors.Normalize(vmin=0, vmax=12)(idx))
 
     def __init__(self, *args, method=METHODS.SCHMITT, **kwargs):
-        IntensityDurationFrequencyAnalyse.__init__(self, *args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.method = method
         self._sri_frame = None
 
-    def set_series(self, series):
-        IntensityDurationFrequencyAnalyse.set_series(self, series)
+    def set_series(self, series, unit='mm'):
+        super().set_series(series, unit)
         self._sri_frame = None
 
     def get_sri(self, height_of_rainfall, duration):
@@ -200,13 +200,13 @@ class HeavyRainfallIndexAnalyse(IntensityDurationFrequencyAnalyse):
             if isinstance(tn, (pd.Series, np.ndarray)):
                 breaks = [-np.inf] + list(SCHMITT.SRI_TN.keys()) + [np.inf]
                 d = dict(zip(range(11), SCHMITT.SRI_TN.values()))
-                sri = pd.cut(tn, breaks, labels=False).replace(d)
+                sri = pd.Series(pd.cut(tn, breaks, labels=False)).replace(d)
 
                 over_100 = tn > 100
                 hn_100 = self.depth_of_rainfall(duration, 100)
                 breaks2 = [1] + [f[0] for f in SCHMITT.MULTI_FACTOR.values()][1:] + [np.inf]
                 d2 = dict(zip(range(len(breaks2) - 1), range(8, 13)))
-                sri.loc[over_100] = pd.cut(height_of_rainfall.loc[over_100] / hn_100, breaks2, labels=False).replace(d2)
+                sri.loc[over_100] = pd.cut(pd.Series(height_of_rainfall).loc[over_100] / hn_100, breaks2, labels=False).replace(d2)
 
             else:
                 if tn >= 100:
