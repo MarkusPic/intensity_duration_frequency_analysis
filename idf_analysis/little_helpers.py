@@ -69,6 +69,7 @@ def duration_steps_readable(durations):
 def height2rate(height_of_rainfall, duration):
     """
     calculate the specific rain flow rate in [l/(s*ha)]
+
     if 2 array-like parameters are give, an element-wise calculation will be made.
     So the length of the array must be the same.
 
@@ -85,6 +86,7 @@ def height2rate(height_of_rainfall, duration):
 def rate2height(rain_flow_rate, duration):
     """
     convert the rain flow rate to the height of rainfall in [mm]
+
     if 2 array-like parameters are give, an element-wise calculation will be made.
     So the length of the array must be the same.
 
@@ -113,7 +115,7 @@ def frame_looper(size, columns, label='return periods'):
         return columns
 
 
-def event_caption(event, unit='mm'):
+def event_caption_eng(event, unit='mm'):
     """
     Generates a human-readable caption for a rain event.
 
@@ -150,31 +152,7 @@ def event_caption(event, unit='mm'):
              The maximum return period was 10 years
              at a duration of 30 minutes."
     """
-    caption = 'rain event\n'
-    if (COL.START in event) and (COL.END in event):
-        caption += f'between {event[COL.START]:%Y-%m-%d %H:%M} and '
-        if f'{event[COL.START]:%Y-%m-%d}' == f'{event[COL.END]:%Y-%m-%d}':
-            caption += f'{event[COL.END]:%H:%M}\n'
-        elif f'{event[COL.START]:%Y-%m-}' == f'{event[COL.END]:%Y-%m-}':
-            caption += f'{event[COL.END]:%d %H:%M}\n'
-        else:
-            caption += f'{event[COL.END]:%Y-%m-%d %H:%M}\n'
-
-    if COL.LP in event:
-        caption += f'with a total sum of {event[COL.LP]:0.1f} {unit}\n'
-
-    if COL.DUR in event:
-        caption += f' and a duration of {timedelta_readable(event[COL.DUR])}'
-
-    caption += '.\n'
-
-    if COL.MAX_PERIOD in event:
-        caption += f' The maximum return period was {return_period_formatter(event[COL.MAX_PERIOD])} a\n'
-
-        if COL.MAX_PERIOD_DURATION in event:
-            caption += f' at a duration of {minutes_readable(event[COL.MAX_PERIOD_DURATION])}.'
-
-    return caption
+    return event_caption(event, unit=unit, lang='en')
 
 
 def event_caption_ger(event, unit='mm'):
@@ -214,44 +192,115 @@ def event_caption_ger(event, unit='mm'):
              Die maximale Wiederkehrperiode war 10 a
              bei einer Dauerstufe von 30 minutes."
     """
-    caption = 'Regenereignis'
+    return event_caption(event, unit=unit, lang='de')
+
+
+def event_caption(event, unit='mm', lang='en'):
+    """
+    Generates a human-readable caption for a rain event in English or German.
+
+    Args:
+        event (dict or pandas.Series): A dictionary or Series containing event details. Expected keys include:
+            - COL.START: Start time of the event.
+            - COL.END: End time of the event.
+            - COL.LP: Total rainfall sum (optional).
+            - COL.DUR: Duration of the event (optional).
+            - COL.MAX_PERIOD: Maximum return period (optional).
+            - COL.MAX_PERIOD_DURATION: Duration of the maximum return period in minutes (optional).
+        unit (str, optional): Unit for rainfall (default: 'mm').
+        lang (str, optional): Language ('en' for English, 'de' for German, default: 'en').
+
+    Returns:
+        str: A formatted string describing the rain event.
+
+    Example:
+        Given an event with:
+            - COL.START = pd.Timestamp('2023-01-01 12:00')
+            - COL.END = pd.Timestamp('2023-01-01 14:00')
+            - COL.LP = 15.5
+            - COL.DUR = pd.Timedelta(hours=2)
+            - COL.MAX_PERIOD = 10
+            - COL.MAX_PERIOD_DURATION = 30
+
+        The german output might look like:
+            "Regenereignis
+             von 01.01.2023 12:00 bis 14:00
+             mit einer Regensumme von 15.5 mm
+             und einer Dauer von 2 Stunden.
+             Die maximale Wiederkehrperiode war 10 a
+             bei einer Dauerstufe von 30 minutes."
+
+        The english output might look like:
+            "rain event
+             between 2023-01-01 12:00 and 14:00
+             with a total sum of 15.5 mm
+             and a duration of 2 hours.
+             The maximum return period was 10 years
+             at a duration of 30 minutes."
+    """
+    captions = {
+        'en': {
+            'event': 'rain event',
+            'with_total': 'with a total sum of',
+            'and_duration': 'and a duration of',
+            'max_period': 'The maximum return period was',
+            'at_duration': 'at a duration of',
+            'years': 'years'
+        },
+        'de': {
+            'event': 'Regenereignis',
+            'with_total': 'mit einer Regensumme von',
+            'and_duration': 'und einer Dauer von',
+            'max_period': 'Die maximale Wiederkehrperiode war',
+            'at_duration': 'bei einer Dauerstufe von',
+            'years': 'a'
+        }
+    }
+
+    cap = captions.get(lang, captions['en'])
+    caption = f"{cap['event']}\n"
+
     if (COL.START in event) and (COL.END in event):
-
-        # caption += f'zwischen {event[COL.START]:%Y-%m-%d %H:%M} und '
-        # if f'{event[COL.START]:%Y-%m-%d}' == f'{event[COL.END]:%Y-%m-%d}':
-        #     caption += f'{event[COL.END]:%H:%M}\n'
-        # elif f'{event[COL.START]:%Y-%m-}' == f'{event[COL.END]:%Y-%m-}':
-        #     caption += f'{event[COL.END]:%d %H:%M}\n'
-        # else:
-        #     caption += f'{event[COL.END]:%Y-%m-%d %H:%M}\n'
-
         start = event[COL.START]
-        ende = event[COL.END]
-        if start.date() == ende.date():
-            # Beide Zeitpunkte sind am selben Tag
-            caption += f"am {start.strftime('%d.%m.%Y')} von {start.strftime('%H:%M')} bis {ende.strftime('%H:%M')}\n"
-        elif start.year == ende.year:
-            # Beide Zeitpunkte im selben Jahr
-            caption += f"von {start.strftime('%d.%m.')} {start.strftime('%H:%M')} bis {ende.strftime('%d.%m.')} {ende.strftime('%H:%M')}\n"
-        else:
-            # Unterschiedliche Jahre
-            caption += f"von {start.strftime('%d.%m.%Y')} {start.strftime('%H:%M')} bis {ende.strftime('%d.%m.%Y')} {ende.strftime('%H:%M')}\n"
+        end = event[COL.END]
 
-    # Beispiel:
+        if lang == 'de':
+            if start.date() == end.date():
+                # Beide Zeitpunkte sind am selben Tag
+                caption += f"am {start.strftime('%d.%m.%Y von %H:%M')} bis {end.strftime('%H:%M')}\n"
+            elif start.year == end.year:
+                # Beide Zeitpunkte im selben Jahr
+                if start.month == end.month:
+                    # Beide Zeitpunkte im selben Jahr und Monat
+                    caption += f"von {start.strftime('%d.%m.%Y %H:%M')} bis {end.strftime('%d. %H:%M')}\n"
+                else:
+                    caption += f"von {start.strftime('%d.%m.%Y %H:%M')} bis {end.strftime('%d.%m. %H:%M')}\n"
+            else:
+                # Unterschiedliche Jahre
+                caption += f"von {start.strftime('%d.%m.%Y %H:%M')} bis {end.strftime('%d.%m.%Y %H:%M')}\n"
+        else:
+            caption += f'between {start:%Y-%m-%d %H:%M} and '
+            if f'{start:%Y-%m-%d}' == f'{end:%Y-%m-%d}':
+                # same day
+                caption += f'{end:%H:%M}\n'
+            elif f'{start:%Y-%m-}' == f'{end:%Y-%m-}':
+                # same month
+                caption += f'{end:%d %H:%M}\n'
+            else:
+                # different month
+                caption += f'{end:%Y-%m-%d %H:%M}\n'
 
     if COL.LP in event:
-        caption += f'mit einer Regensumme von {event[COL.LP]:0.1f} {unit}\n'
+        caption += f"{cap['with_total']} {event[COL.LP]:0.1f} {unit}\n"
 
     if COL.DUR in event:
-        caption += f' und einer Dauer von {timedelta_readable(event[COL.DUR]).replace("hours", "Stunden").replace("hour", "Stunde").replace("minutes", "Minuten").replace("minute", "Minute")}'
-
-    caption += '.\n'
+        caption += f"{cap['and_duration']} {timedelta_readable(event[COL.DUR], lang=lang)}.\n"
 
     if COL.MAX_PERIOD in event:
-        caption += f' Die maximale Wiederkehrperiode war {return_period_formatter(event[COL.MAX_PERIOD])} a\n'
+        caption += f"{cap['max_period']} {return_period_formatter(event[COL.MAX_PERIOD])} {cap['years']}\n"
 
         if COL.MAX_PERIOD_DURATION in event:
-            caption += f' bei einer Dauerstufe von {minutes_readable(event[COL.MAX_PERIOD_DURATION])}.'
+            caption += f"{cap['at_duration']} {minutes_readable(event[COL.MAX_PERIOD_DURATION])}."
 
     return caption
 
@@ -331,7 +380,30 @@ def timedelta_components_plus(td, min_freq='min'):
     return list_of_components
 
 
-def timedelta_components_readable(list_of_components, short=False, sep=', '):
+# Dictionary with English time units as keys and their German translations as values
+time_units = {
+    "years": "Jahre",
+    "year": "Jahr",
+    "weeks": "Wochen",
+    "week": "Woche",
+    "days": "Tage",
+    "day": "Tag",
+    "hours": "Stunden",
+    "hour": "Stunde",
+    "minutes": "Minuten",
+    "minute": "Minute",
+    "seconds": "Sekunden",
+    "second": "Sekunde",
+    "milliseconds": "Millisekunden",
+    "millisecond": "Millisekunde",
+    "microseconds": "Mikrosekunden",
+    "microsecond": "Mikrosekunde",
+    "nanoseconds": "Nanosekunden",
+    "nanosecond": "Nanosekunde"
+}
+
+
+def timedelta_components_readable(list_of_components, short=False, sep=', ', lang='en'):
     """
     Converts a list of time components into a human-readable string.
 
@@ -339,6 +411,7 @@ def timedelta_components_readable(list_of_components, short=False, sep=', '):
         list_of_components (list): A list of [value, unit] pairs representing time components.
         short (bool, optional): If True, uses abbreviated unit names (e.g., 'y' for years). Defaults to False.
         sep (str, optional): Separator between components. Defaults to ', '.
+        lang (str, optional): Language ('en' for English, 'de' for German, default: 'en').
 
     Returns:
         str: A formatted string representing the time components, with the last component joined by "and".
@@ -351,6 +424,7 @@ def timedelta_components_readable(list_of_components, short=False, sep=', '):
         timedelta_components_readable([(2, 'days'), (3, 'hours')]) -> '2 days and 3 hours'
     """
     result = []
+
     for value, label_component in list_of_components:
         if value > 0:
             if short:
@@ -361,7 +435,8 @@ def timedelta_components_readable(list_of_components, short=False, sep=', '):
                 unit = label_component
                 if value == 1:
                     unit = label_component[:-1]
-
+            if lang == 'de':
+                unit = time_units.get(unit, unit)
             result.append(f'{value}{unit_sep}{unit}')
 
     s = sep.join(result)
@@ -372,7 +447,7 @@ def timedelta_components_readable(list_of_components, short=False, sep=', '):
     return s
 
 
-def timedelta_readable(td, min_freq='min', short=False, sep=', '):
+def timedelta_readable(td, min_freq='min', short=False, sep=', ', lang='en'):
     """
     Converts a timedelta into a human-readable string.
 
@@ -381,6 +456,7 @@ def timedelta_readable(td, min_freq='min', short=False, sep=', '):
         min_freq (str, optional): The minimum frequency for rounding (e.g., 'min', 's'). Defaults to 'min'.
         short (bool, optional): Whether to use abbreviated unit names (e.g., 'h' for hours). Defaults to False.
         sep (str, optional): Separator used between components in the output string. Defaults to ', '.
+        lang (str, optional): Language ('en' for English, 'de' for German, default: 'en').
 
     Returns:
         str: A formatted string representing the time duration.
@@ -391,10 +467,10 @@ def timedelta_readable(td, min_freq='min', short=False, sep=', '):
     Example:
         timedelta_readable(pd.Timedelta(days=400, hours=5)) -> '1 year, 5 weeks and 5 hours'
     """
-    return timedelta_components_readable(timedelta_components_plus(td, min_freq), short=short, sep=sep)
+    return timedelta_components_readable(timedelta_components_plus(td, min_freq), short=short, sep=sep, lang=lang)
 
 
-def timedelta_readable2(d1, d2, min_freq='min', short=False, sep=', '):
+def timedelta_readable2(d1, d2, min_freq='min', short=False, sep=', ', lang='en'):
     """
     Computes the difference between two dates and returns a human-readable string.
 
@@ -404,6 +480,7 @@ def timedelta_readable2(d1, d2, min_freq='min', short=False, sep=', '):
         min_freq (str, optional): The minimum frequency for rounding (e.g., 'min', 's'). Defaults to 'min'.
         short (bool, optional): Whether to use abbreviated unit names (e.g., 'h' for hours). Defaults to False.
         sep (str, optional): Separator used between components in the output string. Defaults to ', '.
+        lang (str, optional): Language ('en' for English, 'de' for German, default: 'en').
 
     Returns:
         str: A formatted string representing the time difference.
@@ -434,4 +511,4 @@ def timedelta_readable2(d1, d2, min_freq='min', short=False, sep=', '):
     if years is not None:
         l[0][0] = years
 
-    return timedelta_components_readable(l, short=short, sep=sep)
+    return timedelta_components_readable(l, short=short, sep=sep, lang=lang)
