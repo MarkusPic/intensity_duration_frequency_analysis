@@ -46,6 +46,7 @@ def sample_rain_events():
     (pd.date_range(start='2023-01-01', periods=10, freq='h'), 'h'),  # Hourly frequency
     (pd.date_range(start='2023-01-01', periods=10, freq='d'), 'd'),  # Daily frequency
     (pd.date_range(start='2023-01-01', periods=3, freq='min'), pd.Timedelta(minutes=1)),  # Small index
+    (pd.date_range(start='2023-01-01', periods=20, freq='min').append(pd.date_range(start='2023-01-02', periods=15, freq='2min')), pd.Timedelta(minutes=1)),  # Small index
 ])
 def test_guess_freq(index, expected_freq):
     result = guess_freq(index)
@@ -128,5 +129,13 @@ def test_resample_rain_series(series, expected_freq):
 def test_rain_bar_plot(sample_rain_series):
     import matplotlib.pyplot as plt
     ax = rain_bar_plot(sample_rain_series)
+    assert ax is not None
+    plt.close()
+
+    ax = rain_bar_plot(sample_rain_series, reverse=True)
+    assert ax is not None
+    plt.close()
+
+    ax = rain_bar_plot(sample_rain_series.iloc[:1], reverse=True)
     assert ax is not None
     plt.close()

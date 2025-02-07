@@ -7,7 +7,7 @@ from idf_analysis.definitions import COL
 from idf_analysis.little_helpers import (
     delta2min, minutes_readable, duration_steps_readable,
     height2rate, rate2height, timedelta_readable, timedelta_readable2, return_period_formatter,
-    event_caption)
+    event_caption, get_progress_bar)
 
 
 # Parameterized test for delta2min
@@ -24,7 +24,9 @@ def test_delta2min(input_value, expected):
 # Parameterized test for minutes_readable
 @pytest.mark.parametrize("input_value, expected", [
     (30, "30 min"),
+    (30.4, "30 min"),
     (120, "2 h"),
+    (125, "2.1 h"),
     (1440, "1 d"),
     (1500, "1.0 d"),
     (2880, "2 d"),
@@ -112,6 +114,7 @@ def test_timedelta_readable(td, min_freq, short, sep, lang, expected):
         (pd.Timestamp('2020-01-01 00:00:00'), pd.Timestamp('2020-01-01 00:00:30'), 's', True, ', ', "30s"),
         (pd.Timestamp('2020-01-01'), pd.Timestamp('2022-03-01'), 'min', False, ', ', "2 years, 8 weeks and 4 days"),
         (pd.Timestamp('2020-02-29'), pd.Timestamp('2024-02-29'), 'min', False, ', ', "4 years"),
+        (pd.Timestamp('2020-02-26'), pd.Timestamp('2024-02-20'), 'min', False, ', ', "3 years, 51 weeks and 3 days"),
     ]
 )
 def test_timedelta_readable2(d1, d2, min_freq, short, sep, expected):
@@ -252,6 +255,37 @@ def test_return_period_formatter(input_value, expected_output):
             "mit einer Regensumme von 15.5 mm\n"
             "und einer Dauer von 2 Stunden.\n"
     ),
+    # Test case 6: English, different day, same month, same year
+    (
+            {
+                COL.START: pd.Timestamp('2023-01-01 12:00'),
+                COL.END: pd.Timestamp('2023-01-10 14:00'),
+            },
+            'mm',
+            'en',
+            "rain event\n"
+            "between 2023-01-01 12:00 and 10 14:00\n"
+    ),
+    (
+            {
+                COL.START: pd.Timestamp('2023-01-01 12:00'),
+                COL.END: pd.Timestamp('2023-01-10 14:00'),
+            },
+            'mm',
+            'de',
+            "Regenereignis\n"
+            "von 01.01.2023 12:00 bis 10. 14:00\n"
+    ),
+    (
+            {
+                COL.START: pd.Timestamp('2023-01-01 12:00'),
+                COL.END: pd.Timestamp('2023-02-10 14:00'),
+            },
+            'mm',
+            'de',
+            "Regenereignis\n"
+            "von 01.01.2023 12:00 bis 10.02. 14:00\n"
+    ),
 ])
 def test_event_caption(event, unit, lang, expected_output):
     """
@@ -265,3 +299,11 @@ def test_event_caption(event, unit, lang, expected_output):
     """
     result = event_caption(event, unit=unit, lang=lang)
     assert result.strip() == expected_output.strip(), f"Expected:\n{expected_output}\n\nGot:\n{result}"
+
+
+def test_get_progress_bar():
+    li = list(range(5))
+    pbar = get_progress_bar(li, desc='test')
+    assert pbar.desc == 'test'
+    assert pbar.total == 5
+    assert list(pbar) == li
