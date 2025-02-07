@@ -18,9 +18,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install -r requirements.txt
-          pip install pytest pytest-cov pyarrow
-          pip install -e .
+          pip install -e ".[testing]"
 
       - name: Run tests with coverage
         run: pytest --cov=idf_analysis --cov-report=term-missing --cov-report=xml --cov-branch
