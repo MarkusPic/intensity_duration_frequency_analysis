@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from idf_analysis import IntensityDurationFrequencyAnalyse
+from idf_analysis import HeavyRainfallIndexAnalyse
 from idf_analysis.definitions import SERIES, METHOD
 from idf_analysis.parameter_formulas import LinearFormula
 
@@ -16,8 +16,8 @@ PTH_EXAMPLES = Path(__file__).parent.parent / "examples"
 @pytest.fixture
 def idf():
     """Fixture to initialize an IDF analysis instance and read parameters from a YAML file."""
-    idf = IntensityDurationFrequencyAnalyse(series_kind=SERIES.PARTIAL, worksheet=METHOD.KOSTRA,
-                                            extended_durations=False)
+    idf = HeavyRainfallIndexAnalyse(series_kind=SERIES.PARTIAL, worksheet=METHOD.KOSTRA, extended_durations=False,
+                                    method=HeavyRainfallIndexAnalyse.METHODS.SCHMITT)
     idf.read_parameters(PTH_EXAMPLES / 'ehyd_112086_idf_data/idf_parameters.yaml')
     return idf
 
@@ -27,7 +27,7 @@ def idf_r():
     """Fixture to initialize an IDF analysis instance and read parameters from a idf table file."""
     idf_table = pd.read_csv(PTH_EXAMPLES / 'ehyd_112086_idf_data/idf_table_UNIX.csv', header=[0, 1], index_col=0)
     idf_table.columns = idf_table.columns.get_level_values(0).astype(int)
-    idf = IntensityDurationFrequencyAnalyse.from_idf_table(idf_table, linear_interpolation=True)
+    idf = HeavyRainfallIndexAnalyse.from_idf_table(idf_table, linear_interpolation=True)
     return idf
 
 
@@ -53,102 +53,31 @@ def rainfall_series():
     return rainfall
 
 
-@pytest.mark.parametrize("years, duration, expected", [
-    (2, 60,
-     [0, 3.144903, 3.144903, 3.144903, 3.144903, 3.144903, 3.144903, 3.144903, 3.144903, 3.144903, 3.144903, 3.144903,
-      3.144903]),
-])
-def test_model_rain_block(idf, years, duration, expected):
-    result = idf.model_rain_block.get_series(years, duration)
-    np.testing.assert_allclose(result.values, expected, atol=1e-5)
-    expected_index = pd.Index(list(range(0, duration + 5, 5)))
-    pd.testing.assert_index_equal(result.index, expected_index)
-
-
-@pytest.mark.parametrize("years, duration, kind, expected", [
-    (2, 60, 1, [0., 10.991037, 6.477299, 4.494913, 3.346922, 2.616501, 2.120819, 1.767846, 1.506858, 1.307946, 1.15251, 1.028474, 0.927712]),
-    (2, 60, 2, [0, 3.346922, 4.494913, 6.477299, 10.991037, 2.616501, 2.120819, 1.767846, 1.506858, 1.307946, 1.152510, 1.028474, 0.927712]),
-    (2, 75, 2, [0., 2.616501, 3.346922, 4.494913, 6.477299, 10.991037, 2.120819, 1.767846, 1.506858, 1.307946, 1.15251, 1.028474, 0.927712, 0.522366, 0.490181, 0.46208]),
-    (2, 75, 3, [0., 2.120819, 2.616501, 3.346922, 4.494913, 6.477299, 10.991037, 1.767846, 1.506858, 1.307946, 1.15251, 1.028474, 0.927712, 0.522366, 0.490181, 0.46208]),
-])
-def test_model_rain_euler(idf, years, duration, kind, expected):
-    result = idf.model_rain_euler.get_series(years, duration, kind=kind)
-    np.testing.assert_allclose(result.values, expected, atol=1e-5)
-    expected_index = pd.Index(list(range(0, duration + 5, 5)))
-    pd.testing.assert_index_equal(result.index, expected_index)
-
-
-@pytest.mark.parametrize("years, duration, kind, expected", [
-    (2, 60, 1, [0., 10.991037, 6.477299, 4.494913, 3.346922, 2.616501, 2.120819, 1.767846, 1.506858, 1.307946, 1.15251, 1.028474, 0.927712]),
-    (2, 60, 2, [0, 3.346922, 4.494913, 6.477299, 10.991037, 2.616501, 2.120819, 1.767846, 1.506858, 1.307946, 1.152510, 1.028474, 0.927712]),
-    (2, 75, 2, [0., 2.616501, 3.346922, 4.494913, 6.477299, 10.991037, 2.120819, 1.767846, 1.506858, 1.307946, 1.15251, 1.028474, 0.927712, 0.522366, 0.490181, 0.46208]),
-    (2, 75, 3, [0., 2.120819, 2.616501, 3.346922, 4.494913, 6.477299, 10.991037, 1.767846, 1.506858, 1.307946, 1.15251, 1.028474, 0.927712, 0.522366, 0.490181, 0.46208]),
-])
-def test_model_rain_euler_time_series(idf, years, duration, kind, expected):
-    start_time = pd.Timestamp("2024-01-01 00:00:00")
-    result = idf.model_rain_euler.get_time_series(years, duration, kind=kind, start_time=start_time)
-    np.testing.assert_allclose(result.values, expected, atol=1e-5)
-    expected_index = pd.date_range(start_time, periods=len(expected), freq='5min')
-    pd.testing.assert_index_equal(result.index, expected_index)
-
-
-@pytest.mark.parametrize("durations, return_periods, expected_output", [
+@pytest.mark.parametrize("height_of_rainfall, durations, expected_output", [
     # Scalar duration, scalar return_period
-    (60, 2.5, np.float64(40.23237859882099)),
-    (90, 7, np.float64(55.214945543684564)),
+    (60, 2.5, 12),
+    (30, 7., 8),
     # List duration, scalar return_period
-    ([60, 90], 2.5, np.array([40.2323786, 43.08954944])),
+    (np.array([60, 90]), 2.5, np.array([12, 12])),
     # Scalar duration, list return_period
-    (60, [2.5, 7], np.array([40.2323786, 51.73796309])),
+    (60, np.array([2.5, 7]), np.array([40.2323786, 51.73796309])),
     # List duration, list return_period
-    ([60, 90], [2.5, 7], np.array([40.2323786, 55.21494554])),
+    (np.array([60, 90]), np.array([2.5, 7]), np.array([12, 12])),
 ])
-def test_depth_of_rainfall(idf, durations, return_periods, expected_output):
-    result = idf.depth_of_rainfall(durations, return_periods)
-    if isinstance(expected_output, np.float64):
-        assert np.isclose(result, expected_output, atol=1e-5)
+def test_get_sri1(idf, height_of_rainfall, durations, expected_output):
+    result = idf.get_sri(height_of_rainfall, durations)
+    if isinstance(expected_output, (np.float64, float, int, np.int64)):
+        assert np.isclose(result, expected_output, atol=1e-5), f'{result} != {expected_output}'
     else:
         np.testing.assert_allclose(result, expected_output, rtol=1e-6)
-
-
-@pytest.mark.parametrize("durations, return_periods, expected_output", [
-    # Scalar duration, scalar return_period
-    (60, 2.5, np.float64(111.7566072189472)),
-    (90, 7, np.float64(102.24989915497142)),
-    # List duration, scalar return_period
-    ([60, 90], 2.5, np.array([111.756607, 79.795462])),
-    # Scalar duration, list return_period
-    (60, [2.5, 7], np.array([111.756607, 143.716564])),
-    # List duration, list return_period
-    ([60, 90], [2.5, 7], np.array([111.7566072189472, 102.24989915497142])),
-])
-def test_rain_flow_rate(idf, durations, return_periods, expected_output):
-    result = idf.rain_flow_rate(durations, return_periods)
-    if isinstance(expected_output, np.float64):
-        assert np.isclose(result, expected_output, atol=1e-5)
-    else:
-        np.testing.assert_allclose(result, expected_output, rtol=1e-6)
-
-
-def test_r_720_1(idf):
-    result = idf.r_720_1()
-    assert np.isclose(result, 10.930828357761888, atol=1e-5)
 
 
 @pytest.mark.parametrize("rain, duration, expected", [
-    (25, 60, np.float64(0.6396497481486912)),
-    (90, 90, np.float64(134.24391355762145)),
+    (25, 60, 1),
+    (90, 90, 8),
 ])
-def test_get_return_period(idf, rain, duration, expected):
-    result = idf.get_return_period(rain, duration)
-    assert np.isclose(result, expected, atol=1e-5)
-
-
-@pytest.mark.parametrize("intensity, return_period, expected", [
-    (20, 1, np.float64(17.846942148162146)),
-])
-def test_get_duration(idf, intensity, return_period, expected):
-    result = idf.get_duration(intensity, return_period)
+def test_get_sri(idf, rain, duration, expected):
+    result = idf.get_sri(rain, duration)
     assert np.isclose(result, expected, atol=1e-5)
 
 
@@ -157,25 +86,26 @@ def test_set_series(idf, rainfall_series):
     assert idf._freq == pd.Timedelta(minutes=5)
 
 
-def test_result_table(idf):
+def test_result_sri_table(idf):
     # Call the result_table method
-    result = idf.result_table()
+    result = idf.result_sri_table()
 
     # Check that the result is a pandas DataFrame
     assert isinstance(result, pd.DataFrame), "Result should be a pandas DataFrame"
 
     # Check the shape of the DataFrame (expected rows and columns)
-    expected_shape = (21, 11)  # 21 rows, 11 columns based on the sample data
+    expected_shape = (21, 12)  # 21 rows, 12 columns based on the sample data
     assert result.shape == expected_shape, f"Expected shape {expected_shape}, but got {result.shape}"
 
     # Check that the first few values match the expected ones (you can adjust this based on the actual data)
     expected_sample = [
-        [9.015008, 10.991037, 12.146939, 13.603204, 15.579233, 17.555262, 18.191401, 18.711164, 20.167429, 21.323332,
-         22.143458],
-        [14.575791, 17.468336, 19.160366, 21.292072, 24.184616, 27.077161, 28.008353, 28.769191, 30.900897, 32.592928,
-         33.793442],
-        [18.348454, 21.963249, 24.077769, 26.741748, 30.356544, 33.971339, 35.135043, 36.085858, 38.749838, 40.864358,
-         42.364633],
+        [10.991037, 13.603204, 15.579233, 18.191401, 18.711164, 21.323332,
+         22.143458, 30.779406, 35.208098, 48.494173, 61.558813, 62.001682],
+        [17.468336, 21.292072, 24.184616, 28.008353, 28.769191, 32.592928,
+         33.793442, 46.972885, 53.731573, 74.007638, 93.945769, 94.621638],
+        [21.963249, 26.741748, 30.356544, 35.135043, 36.085858,
+         40.864358, 42.364633, 58.88684, 67.359767, 92.778547,
+         117.77368, 118.620973],
     ]
 
     for i, expected_row in enumerate(expected_sample):
@@ -360,6 +290,6 @@ def test_idf_r(idf_r):
 
 def test_result_sri_figure(idf):
     import matplotlib.pyplot as plt
-    ax = idf.result_figure()
+    ax = idf.result_sri_figure()
     assert ax is not None
     plt.close()
