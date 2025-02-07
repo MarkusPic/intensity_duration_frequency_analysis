@@ -222,7 +222,7 @@ class IdfParameters:
         Get the calculation results of the rainfall with u and w without the estimation of the formula.
 
         Args:
-            return_periods (float | np.array | list | pd.Series): return period in [a]
+            return_periods (float | np.ndarray | list | pd.Series): return period in [a]
             max_duration (float): max duration in [min]
 
         Returns:
