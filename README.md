@@ -17,9 +17,10 @@
 [![PyPI - Downloads](https://img.shields.io/pypi/dw/idf-analysis)](https://pypi.python.org/pypi/idf-analysis)
 [![PyPI - Downloads](https://img.shields.io/pypi/dm/idf-analysis)](https://pypi.python.org/pypi/idf-analysis)
 
-![Tests](https://github.com/MarkusPic/intensity_duration_frequency_analysis/actions/workflows/tests.yaml/badge.svg)
-![Tests](https://github.com/MarkusPic/intensity_duration_frequency_analysis/actions/workflows/sphinx_docs_to_gh_pages.yaml/badge.svg)
+[![Tests](https://github.com/MarkusPic/intensity_duration_frequency_analysis/actions/workflows/tests.yaml/badge.svg)](https://github.com/MarkusPic/intensity_duration_frequency_analysis/actions/workflows/tests.yaml)
+[![documentation build](https://github.com/MarkusPic/intensity_duration_frequency_analysis/actions/workflows/sphinx_docs_to_gh_pages.yaml/badge.svg)](https://github.com/MarkusPic/intensity_duration_frequency_analysis/actions/workflows/sphinx_docs_to_gh_pages.yaml)
 [![Coverage](https://codecov.io/gh/MarkusPic/intensity_duration_frequency_analysis/branch/main/graph/badge.svg)](https://codecov.io/gh/MarkusPic/intensity_duration_frequency_analysis)
+
 
 Heavy rainfall intensity as a function of duration and return period acc. to [DWA-A 531 (2012)](http://www.dwa.de/dwa/shop/shop.nsf/Produktanzeige?openform&produktid=P-DWAA-8XMUY2).
 This program reads the measurement data of the rainfall
