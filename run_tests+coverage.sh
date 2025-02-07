@@ -1,0 +1,1 @@
+/Users/markus/PycharmProjects/.venv/bin/python -m pytest --cov=idf_analysis --cov-report=term-missing --cov-report=xml --cov-branch ./tests -v

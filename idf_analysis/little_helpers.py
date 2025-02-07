@@ -33,24 +33,22 @@ def minutes_readable(minutes):
     Returns:
         str: duration as a string
     """
-    if minutes <= 60:
+    one_hour = 60
+    one_day = one_hour * 24
+    if minutes <= one_hour:
         return f'{minutes:0.0f} min'
-    elif 60 < minutes < 60 * 24:
-        minutes /= 60
-        if minutes % 1:
-            fmt = '{:0.1f} h'
+    elif one_hour < minutes < one_day:
+        hours = minutes / one_hour
+        if hours % 1:  # has decimals
+            return f'{hours:0.1f} h'
         else:
-            fmt = '{:0.0f} h'
-        return fmt.format(minutes)
-    elif 60 * 24 <= minutes:
-        minutes /= 60 * 24
-        if minutes % 1:
-            fmt = '{:0.1f} d'
+            return f'{hours:0.0f} h'
+    else:  # 60 * 24 <= minutes
+        days = minutes / one_day
+        if days % 1:  # has decimals
+            return f'{days:0.1f} d'
         else:
-            fmt = '{:0.0f} d'
-        return fmt.format(minutes)
-    else:
-        return str(minutes)
+            return f'{days:0.0f} d'
 
 
 def duration_steps_readable(durations):
