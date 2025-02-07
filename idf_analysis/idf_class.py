@@ -349,7 +349,7 @@ class IntensityDurationFrequencyAnalyse:
 
         if series is None:
             if self._rainfall_sum_frame is not None:
-                return self._rainfall_sum_frame
+                return self._rainfall_sum_frame[durations]
             ts = self.series.copy()
             freq = self._freq
         else:
