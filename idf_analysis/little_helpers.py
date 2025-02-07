@@ -16,7 +16,10 @@ def delta2min(time_delta):
         float: the timedelta in minutes
     """
     if isinstance(time_delta, pd.DateOffset):
-        time_delta = pd.Timedelta(time_delta)
+        try:
+            time_delta = pd.Timedelta(time_delta)
+        except ValueError:
+            time_delta = time_delta._pd_timedelta
     return int(time_delta.total_seconds() / 60)
 
 
