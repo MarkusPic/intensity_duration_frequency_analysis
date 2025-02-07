@@ -20,6 +20,7 @@ jobs:
         run: |
           pip install -r requirements.txt
           pip install pytest pytest-cov
+          pip install -e .
 
       - name: Run tests with coverage
         run: pytest --cov=intensity_duration_frequency_analysis --cov-report=term-missing --cov-report=xml
