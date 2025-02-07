@@ -24,6 +24,8 @@ def _bar_axes(ax, table, colors_dict, legend_kwags, category_formatter=None):
         ax (matplotlib.pyplot.Axes):
         table (pandas.DataFrame):
         colors_dict (dict): color of each return period {return period: color}
+        legend_kwags (dict):
+        category_formatter (function):
 
     Returns:
         matplotlib.pyplot.Axes:
@@ -124,6 +126,17 @@ def idf_bar_axes(ax, idf_table, return_period_colors=RETURN_PERIOD_COLORS):
 
 
 def _set_xlim(ax, bars, labels):
+    """
+    Adjust the x-axis limits of a Matplotlib axis to ensure that both bars and labels fit within the plot.
+
+    Args:
+        ax (matplotlib.axes.Axes): The axis object whose x-limits need to be set.
+        bars (list of matplotlib.patches.Rectangle): A list of bar objects representing the plotted bars.
+        labels (list of matplotlib.text.Text): A list of text label objects associated with the bars.
+
+    The function determines the maximum x-coordinate required to fit both the bars and their labels
+    and updates the x-axis limits accordingly.
+    """
     fig = ax.get_figure()
     # Use the Transform to include both bar and label extents
     renderer = fig.canvas.get_renderer()

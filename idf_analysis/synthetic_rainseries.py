@@ -5,6 +5,8 @@ import abc
 import numpy as np
 import pandas as pd
 
+"""design rainfall event based on IDF values."""
+
 
 class _AbstractModelRain(abc.ABC):
     def __init__(self, idf=None):

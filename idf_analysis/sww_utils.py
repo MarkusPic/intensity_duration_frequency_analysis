@@ -188,12 +188,33 @@ def rain_bar_plot(rain, ax=None, color='#1E88E5', reverse=False, step='post', jo
 ########################################################################################################################
 def resample_rain_series(series):
     """
+    Resamples a rain time-series to an appropriate frequency based on the duration of the series.
+
+    The function determines the optimal resampling frequency (in minutes) by comparing the total duration
+    of the series against predefined thresholds. If the original frequency is already finer than the
+    calculated optimal frequency, the series is returned unchanged. Otherwise, the series is resampled
+    to the new frequency by summing the values within each interval.
 
     Args:
-        series (pandas.Series):
+        series (pandas.Series): A time-series of rain data, indexed by a pandas.DatetimeIndex.
+                                The series should contain numeric values representing rain amounts.
 
     Returns:
-        tuple[pandas.Series, int]: the resampled series AND the final frequency in minutes
+        tuple[pandas.Series, int]: A tuple containing:
+            - The resampled time-series (if resampling was applied) or the original series (if no resampling was needed).
+            - The final frequency of the series in minutes (e.g., 5 for 5-minute intervals).
+
+    Notes:
+        - The resampling thresholds are defined as follows:
+            - Duration < 5 hours: 1-minute frequency.
+            - Duration < 12 hours: 2-minute frequency.
+            - Duration < 1 day: 5-minute frequency.
+            - Duration < 2 days: 10-minute frequency.
+            - Duration < 3 days: 15-minute frequency.
+            - Duration < 4 days: 20-minute frequency.
+        - If the original frequency of the series is finer than the calculated optimal frequency,
+          the series is returned unchanged, and the original frequency is converted to minutes.
+        - Resampling is performed using the sum of values within each interval to preserve the total rain amount.
     """
     resample_minutes = (
         (pd.Timedelta(hours=5), 1),

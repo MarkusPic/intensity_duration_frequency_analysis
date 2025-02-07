@@ -111,6 +111,42 @@ def frame_looper(size, columns, label='return periods'):
 
 
 def event_caption(event, unit='mm'):
+    """
+    Generates a human-readable caption for a rain event.
+
+    The caption includes details such as the event's start and end times, total rainfall, duration,
+    and maximum return period (if available). The output is formatted for readability.
+
+    Args:
+        event (dict or pandas.Series): A dictionary or Series containing event details. Expected keys include:
+            - COL.START: Start time of the event.
+            - COL.END: End time of the event.
+            - COL.LP: Total rainfall sum (optional).
+            - COL.DUR: Duration of the event (optional).
+            - COL.MAX_PERIOD: Maximum return period (optional).
+            - COL.MAX_PERIOD_DURATION: Duration of the maximum return period (optional).
+        unit (str, optional): Unit for rainfall (default: 'mm').
+
+    Returns:
+        str: A formatted string describing the rain event.
+
+    Example:
+        Given an event with:
+            - COL.START = pd.Timestamp('2023-01-01 12:00')
+            - COL.END = pd.Timestamp('2023-01-01 14:00')
+            - COL.LP = 15.5
+            - COL.DUR = pd.Timedelta(hours=2)
+            - COL.MAX_PERIOD = 10
+            - COL.MAX_PERIOD_DURATION = pd.Timedelta(minutes=30)
+
+        The output might look like:
+            "rain event
+             between 2023-01-01 12:00 and 14:00
+             with a total sum of 15.5 mm
+             and a duration of 2 hours.
+             The maximum return period was 10 years
+             at a duration of 30 minutes."
+    """
     caption = 'rain event\n'
     if (COL.START in event) and (COL.END in event):
         caption += f'between {event[COL.START]:%Y-%m-%d %H:%M} and '
@@ -139,6 +175,42 @@ def event_caption(event, unit='mm'):
 
 
 def event_caption_ger(event, unit='mm'):
+    """
+    Generates a human-readable caption for a rain event in german.
+
+    The caption includes details such as the event's start and end times, total rainfall, duration,
+    and maximum return period (if available). The output is formatted for readability.
+
+    Args:
+        event (dict or pandas.Series): A dictionary or Series containing event details. Expected keys include:
+            - COL.START: Start time of the event.
+            - COL.END: End time of the event.
+            - COL.LP: Total rainfall sum (optional).
+            - COL.DUR: Duration of the event (optional).
+            - COL.MAX_PERIOD: Maximum return period (optional).
+            - COL.MAX_PERIOD_DURATION: Duration of the maximum return period (optional).
+        unit (str, optional): Unit for rainfall (default: 'mm').
+
+    Returns:
+        str: A formatted string describing the rain event.
+
+    Example:
+        Given an event with:
+            - COL.START = pd.Timestamp('2023-01-01 12:00')
+            - COL.END = pd.Timestamp('2023-01-01 14:00')
+            - COL.LP = 15.5
+            - COL.DUR = pd.Timedelta(hours=2)
+            - COL.MAX_PERIOD = 10
+            - COL.MAX_PERIOD_DURATION = pd.Timedelta(minutes=30)
+
+        The output might look like:
+            "Regenereignis
+             von 01.01.2023 12:00 bis 14:00
+             mit einer Regensumme von 15.5 mm
+             und einer Dauer von 2 Stunden.
+             Die maximale Wiederkehrperiode war 10 a
+             bei einer Dauerstufe von 30 minutes."
+    """
     caption = 'Regenereignis'
     if (COL.START in event) and (COL.END in event):
 
@@ -182,6 +254,32 @@ def event_caption_ger(event, unit='mm'):
 
 
 def return_period_formatter(t):
+    """
+    Formats a return period value into a human-readable string.
+
+    The function categorizes the return period value into specific ranges and returns a formatted string
+    based on the range. This is useful for displaying return periods in a clear and concise manner.
+
+    Args:
+        t (float): The return period value to format.
+
+    Returns:
+        str: A formatted string representing the return period. The formatting rules are:
+             - If t < 1: Returns "< 1".
+             - If t > 200: Returns "$\\gg$ 100" (indicating much greater than 100).
+             - If t > 100: Returns "> 100".
+             - Otherwise: Returns the value formatted to one decimal place (e.g., "50.0").
+
+    Example:
+        >>> return_period_formatter(0.5)
+        '< 1'
+        >>> return_period_formatter(150)
+        '> 100'
+        >>> return_period_formatter(250)
+        '$\\gg$ 100'
+        >>> return_period_formatter(50.123)
+        '50.1'
+    """
     if t < 1:
         return '< 1'
     elif t > 200:
@@ -241,11 +339,49 @@ def timedelta_components_readable(l, short=False, sep=', '):
 
 
 def timedelta_readable(td, min_freq='min', short=False, sep=', '):
-    """Schaltjahre nicht miteinbezogen"""
+    """
+    Converts a timedelta into a human-readable string.
+
+    Args:
+        td (datetime.timedelta or pandas.Timedelta): The time difference to format.
+        min_freq (str, optional): The minimum frequency for rounding (e.g., 'min', 's'). Defaults to 'min'.
+        short (bool, optional): Whether to use abbreviated unit names (e.g., 'h' for hours). Defaults to False.
+        sep (str, optional): Separator used between components in the output string. Defaults to ', '.
+
+    Returns:
+        str: A formatted string representing the time duration.
+
+    Note:
+        Leap years are not considered in year calculations.
+
+    Example:
+        timedelta_readable(pd.Timedelta(days=400, hours=5)) -> '1 year, 5 weeks and 5 hours'
+    """
     return timedelta_components_readable(timedelta_components_plus(td, min_freq), short=short, sep=sep)
 
 
 def timedelta_readable2(d1, d2, min_freq='min', short=False, sep=', '):
+    """
+    Computes the difference between two dates and returns a human-readable string.
+
+    Args:
+        d1 (datetime-like): The start date.
+        d2 (datetime-like): The end date.
+        min_freq (str, optional): The minimum frequency for rounding (e.g., 'min', 's'). Defaults to 'min'.
+        short (bool, optional): Whether to use abbreviated unit names (e.g., 'h' for hours). Defaults to False.
+        sep (str, optional): Separator used between components in the output string. Defaults to ', '.
+
+    Returns:
+        str: A formatted string representing the time difference.
+
+    Note:
+        - Approximates the number of years by adjusting for the closest full year.
+        - Leap years are not considered in year calculations.
+
+    Example:
+        timedelta_readable2(pd.Timestamp('2020-01-01'), pd.Timestamp('2023-06-15'))
+        -> '3 years, 5 months and 14 days'
+    """
     td = d2 - d1
 
     years = None
