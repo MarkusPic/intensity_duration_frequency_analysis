@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -9,19 +10,22 @@ from idf_analysis.definitions import SERIES, METHOD
 from idf_analysis.parameter_formulas import LinearFormula
 
 
+PTH_EXAMPLES = Path(__file__).parent.parent / "examples"
+
+
 @pytest.fixture
 def idf():
     """Fixture to initialize an IDF analysis instance and read parameters from a YAML file."""
     idf = IntensityDurationFrequencyAnalyse(series_kind=SERIES.PARTIAL, worksheet=METHOD.KOSTRA,
                                             extended_durations=False)
-    idf.read_parameters('../examples/ehyd_112086_idf_data/idf_parameters.yaml')
+    idf.read_parameters(PTH_EXAMPLES / 'ehyd_112086_idf_data/idf_parameters.yaml')
     return idf
 
 
 @pytest.fixture
 def idf_r():
     """Fixture to initialize an IDF analysis instance and read parameters from a idf table file."""
-    idf_table = pd.read_csv('../examples/ehyd_112086_idf_data/idf_table_UNIX.csv', header=[0, 1], index_col=0)
+    idf_table = pd.read_csv(PTH_EXAMPLES / 'ehyd_112086_idf_data/idf_table_UNIX.csv', header=[0, 1], index_col=0)
     idf_table.columns = idf_table.columns.get_level_values(0).astype(int)
     idf = IntensityDurationFrequencyAnalyse.from_idf_table(idf_table, linear_interpolation=True)
     return idf

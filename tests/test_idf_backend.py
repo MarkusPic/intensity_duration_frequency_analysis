@@ -1,8 +1,13 @@
+from pathlib import Path
+
 import pytest
 import numpy as np
 from idf_analysis.idf_backend import IdfParameters
 from idf_analysis.definitions import SERIES, METHOD, PARAM, APPROACH
 from idf_analysis.parameter_formulas import HyperbolicAuto, DoubleLogNormAuto, LinearFormula
+
+
+PTH_EXAMPLES = Path(__file__).parent.parent / "examples"
 
 
 @pytest.mark.parametrize("extended, expected_durations", [
@@ -60,7 +65,7 @@ def test_get_duration_section(duration, param, expected):
 @pytest.fixture
 def idf_params_from_yaml():
     """Fixture to load IdfParameters from a YAML file."""
-    return IdfParameters.from_yaml('../examples/ehyd_112086_idf_data/idf_parameters.yaml')
+    return IdfParameters.from_yaml(PTH_EXAMPLES / 'ehyd_112086_idf_data/idf_parameters.yaml')
 
 
 def test_load_from_yaml(idf_params_from_yaml):
