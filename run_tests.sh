@@ -1,0 +1,1 @@
+/Users/markus/PycharmProjects/.venv/bin/python -m pytest ./tests -v
