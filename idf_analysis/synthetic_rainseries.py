@@ -67,10 +67,6 @@ class _BlockRain(_AbstractModelRain):
     """
     Synthetic model block rain.
     """
-
-    def __init__(self, idf=None):
-        _AbstractModelRain.__init__(self, idf)
-
     def get_series(self, return_period, duration, interval=5, **kwargs):
         """
         Get a pandas.Series of the model block rain with the passed minutes as integer-index.
@@ -96,9 +92,6 @@ class _EulerRain(_AbstractModelRain):
     """
     Synthetic model Euler rain.
     """
-    def __init__(self, idf=None):
-        _AbstractModelRain.__init__(self, idf)
-
     @staticmethod
     def _get_occurrence_highest_intensity(kind=2):
         if kind == 1:
