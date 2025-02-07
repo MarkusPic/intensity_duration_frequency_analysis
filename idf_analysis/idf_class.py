@@ -656,7 +656,10 @@ class IntensityDurationFrequencyAnalyse:
                 datetime_max = pd.DatetimeIndex(datetime_max).tz_localize('utc').tz_convert(return_periods_frame.index.tz)
             events[COL.MAX_PERIOD] = max_periods[datetime_max].values
 
-            events[COL.MAX_PERIOD_DURATION] = return_periods_frame.loc[datetime_max].idxmax(axis=1, skipna=True).values
+            _select_tn_frame = return_periods_frame.loc[datetime_max].copy()
+            _select_tn_frame.loc[:, 0] = 0
+            events[COL.MAX_PERIOD_DURATION] = _select_tn_frame.idxmax(axis=1, skipna=True).values
+            events[COL.MAX_PERIOD_DURATION] = events[COL.MAX_PERIOD_DURATION].replace(0, np.nan)
 
     def get_max_event_intensities_frame(self, events):
         sum_frame = self.rainfall_sum_frame
