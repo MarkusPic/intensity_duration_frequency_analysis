@@ -415,9 +415,11 @@ def timedelta_readable2(d1, d2, min_freq='min', short=False, sep=', ', lang='en'
 
     years = None
     if td > pd.Timedelta(days=365):
+        # date of d2 but year of d1
         d2_new = d2.replace(year=d1.year)
 
         if d2_new < d1:
+            # if day of d2 is earlier in the year ad day of d1
             d2_new = d2_new.replace(year=d1.year + 1)
 
         years = d2.year - d2_new.year
