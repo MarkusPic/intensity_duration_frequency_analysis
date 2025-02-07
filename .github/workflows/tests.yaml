@@ -23,9 +23,13 @@ jobs:
           pip install -e .
 
       - name: Run tests with coverage
-        run: pytest --cov=intensity_duration_frequency_analysis --cov-report=term-missing --cov-report=xml
+        run: pytest --cov=idf_analysis --cov-report=term-missing --cov-report=xml --cov-branch
+
+      - name: Verify coverage report exists
+        run: ls -l coverage.xml || { echo "coverage.xml not found!"; exit 1; }
 
       - name: Upload coverage report
         uses: codecov/codecov-action@v3
         with:
-          files: ./coverage.xml
+          file: ./coverage.xml
+          fail_ci_if_error: true
