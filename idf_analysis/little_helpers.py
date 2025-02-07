@@ -66,7 +66,7 @@ def duration_steps_readable(durations):
 def height2rate(height_of_rainfall, duration):
     """
     calculate the specific rain flow rate in [l/(s*ha)]
-    if 2 array-like parameters are give, a element-wise calculation will be made.
+    if 2 array-like parameters are give, an element-wise calculation will be made.
     So the length of the array must be the same.
 
     Args:
@@ -82,7 +82,7 @@ def height2rate(height_of_rainfall, duration):
 def rate2height(rain_flow_rate, duration):
     """
     convert the rain flow rate to the height of rainfall in [mm]
-    if 2 array-like parameters are give, a element-wise calculation will be made.
+    if 2 array-like parameters are give, an element-wise calculation will be made.
     So the length of the array must be the same.
 
     Args:
