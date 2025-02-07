@@ -13,10 +13,11 @@ from .arg_parser import heavy_rain_parser
 from .definitions import *
 from .idf_backend import IdfParameters
 from .in_out import import_series
-from .little_helpers import minutes_readable, height2rate, delta2min, rate2height, frame_looper, event_caption, \
-    event_caption_ger, duration_steps_readable, get_progress_bar
+from .little_helpers import (minutes_readable, height2rate, delta2min, rate2height, frame_looper, event_caption,
+                             event_caption_ger, duration_steps_readable, get_progress_bar)
 from .plot_helpers import idf_bar_axes
-from .sww_utils import guess_freq, rain_events, agg_events, event_duration, resample_rain_series, rain_bar_plot, IdfError
+from .sww_utils import (guess_freq, rain_events, agg_events, event_duration, resample_rain_series, rain_bar_plot,
+                        IdfError)
 from .synthetic_rainseries import _BlockRain, _EulerRain
 
 
@@ -38,7 +39,8 @@ class IntensityDurationFrequencyAnalyse:
         _rainfall_sum_frame (pandas.DataFrame): with rain sums of all given durations
 
     """
-    def __init__(self, series_kind=SERIES.PARTIAL, worksheet=METHOD.KOSTRA, extended_durations=False):
+
+    def __init__(self, series_kind=SERIES.PARTIAL, worksheet=METHOD.KOSTRA, extended_durations=False, unit='mm'):
         """
         Heavy rainfall intensity as a function of duration and return period acc. to DWA-A 531 (2012).
 
@@ -51,6 +53,7 @@ class IntensityDurationFrequencyAnalyse:
             series_kind (str): ['partial', 'annual']
             worksheet (str): ['DWA-A_531', 'ATV-A_121', 'DWA-A_531_advektiv']
             extended_durations (bool): add [720, 1080, 1440, 2880, 4320, 5760, 7200, 8640] minutes to the calculation
+            unit (str, optional): Unit for rainfall (default: 'mm').
         """
         self._series = None
         self._freq = None
@@ -58,6 +61,8 @@ class IntensityDurationFrequencyAnalyse:
         #  how to calculate the idf curves
         self._parameters = IdfParameters(series_kind=series_kind, worksheet=worksheet,
                                          extended_durations=extended_durations)
+
+        self._unit = unit
 
         self._return_periods_frame = None
         self._rain_events = None
@@ -76,12 +81,13 @@ class IntensityDurationFrequencyAnalyse:
     def series(self, series: pd.Series):
         self._series = series
 
-    def set_series(self, series):
+    def set_series(self, series, unit='mm'):
         """
         set the series for the analysis
 
         Args:
             series (pandas.Series): precipitation time-series
+            unit (str, optional): Unit for rainfall (default: 'mm').
         """
         if not isinstance(series, pd.Series):
             raise IdfError('The series has to be a pandas Series.')
@@ -99,6 +105,7 @@ class IntensityDurationFrequencyAnalyse:
         self._return_periods_frame = None
         self._rain_events = None
         self._rainfall_sum_frame = None
+        self._unit = unit
 
     # __________________________________________________________________________________________________________________
     @property
@@ -184,7 +191,8 @@ class IntensityDurationFrequencyAnalyse:
         Extract interim results from parameters.
 
         Args:
-            filename (str, Path): filename of the parameters yaml-file
+            filename (str, Path): filename of the parameters yaml-file.
+            worksheet (str): ['DWA-A_531', 'ATV-A_121', 'DWA-A_531_advektiv']
         """
         self._parameters = IdfParameters.from_yaml(filename, worksheet)
 
@@ -202,14 +210,14 @@ class IntensityDurationFrequencyAnalyse:
     # __________________________________________________________________________________________________________________
     def depth_of_rainfall(self, duration, return_period):
         """
-        calculate the height of the rainfall h in L/m² = mm
+        calculate the height of the rainfall h in L/m² = mm (respectively the unit of the series)
 
         Args:
             duration (int | float | list | numpy.ndarray | pandas.Series): duration: in minutes
             return_period (float): in years
 
         Returns:
-            int | float | list | numpy.ndarray | pandas.Series: height of the rainfall h in L/m² = mm
+            int | float | list | numpy.ndarray | pandas.Series: height of the rainfall h in L/m² = mm (respectively the unit of the series)
         """
         if self.parameters.series_kind == SERIES.ANNUAL:
             if return_period < 5:
@@ -241,6 +249,9 @@ class IntensityDurationFrequencyAnalyse:
         Returns:
                 int | float | list | numpy.ndarray | pandas.Series: specific rain flow rate in [l/(s*ha)]
         """
+        known_units = {'mm', 'l/m²', 'l/m2'}
+        if self._unit.lower() not in known_units:
+            raise NotImplementedError(f'rain_flow_rate function not implemented for unit={self._unit} ({known_units=})')
         height_of_rainfall = self.depth_of_rainfall(duration=duration, return_period=return_period)
         return height2rate(height_of_rainfall=height_of_rainfall, duration=duration)
 
@@ -320,170 +331,6 @@ class IntensityDurationFrequencyAnalyse:
         return result_table
 
     ####################################################################################################################
-    def curve_figure(self, min_duration=None, max_duration=None, logx=False, return_periods=None, color=True, ax=None,
-                     add_interim=False, duration_steps_ticks=False, add_range_limits=False, **kwargs):
-        """
-        Create a plot with the idf-curves with duration on the x-axis and rainfall depth on the y-axis.
-
-        Args:
-            min_duration (float): Shortest duration on the plot.
-            max_duration (float): Longest duration on the plot.
-            logx (bool): Use a logarithmic scale on the x-axis.
-            return_periods (list[int] | Optional): List of return periods to plot. Default = [1, 2, 5, 10, 50, 100]
-            color (bool): Use color and a legend to differentiate between the return periods (default).
-                Otherwise, annotation text and black lines.
-            ax (plt.Axes): Axes to plot on. Default = create new one.
-            add_interim (bool): Add interim results from the series analysis as scatter points.
-            duration_steps_ticks (bool): set the duration steps as ticks on the x-axis.
-            add_range_limits (bool): make vertical lines at each change of the duration range for the parameter formula.
-
-        Returns:
-            (plt.Figure, plt.Axes): figure and axes of the plot.
-        """
-
-        duration_steps = self.parameters.durations
-        if min_duration is not None:
-            duration_steps = duration_steps[duration_steps >= min_duration]
-        if max_duration is not None:
-            duration_steps = duration_steps[duration_steps <= max_duration]
-
-        # duration_steps = np.arange(min_duration, max_duration + 1, 1)
-
-        if return_periods is None:
-            return_periods = [1, 2, 5, 10, 50, 100]
-
-        table = self.result_table(durations=duration_steps, return_periods=return_periods)
-        if color:
-            table.columns.name = 'T$\\mathsf{_N}$ in a'
-        ax = table.plot(color=(None if color else 'black'), legend=color, ax=ax, **kwargs)
-
-        if logx:
-            # ax.set_xscale('log', base=10)
-            ax.set_xscale('log', base=math.e)
-            if duration_steps_ticks:
-                ax.set_xticks(self.duration_steps)
-                ax.set_xticklabels(duration_steps_readable(self.duration_steps), rotation=90)
-
-        for _, return_time in enumerate(return_periods):
-            if add_interim:
-                p = self.parameters.measured_points(return_time, max_duration=duration_steps.max())
-                # p = measured_points(self, return_time, max_duration=max_duration)
-                ax.plot(p, 'k' + 'x')
-
-            if not color:
-                x, y = list(table[return_time].tail(1).items())[0]
-                ax.text(x, y, ' {} a'.format(return_time), verticalalignment='center', horizontalalignment='left',
-                        # bbox=dict(facecolor='white', alpha=1.0, lw=1)
-                        )
-
-        if add_range_limits:
-            for dur in self.parameters.parameters_final:
-                if (dur < duration_steps.max()) and (dur > duration_steps.min()):
-                    ax.axvline(dur, color='k', lw=0.7, ls='--')
-
-        ax.tick_params(axis='both', which='both', direction='out')
-        if duration_steps_ticks:
-            ax.set_xlabel('Duration D')
-        else:
-            ax.set_xlabel('Duration D in min')
-        ax.set_ylabel('Rainfall h$\\mathsf{_N}$ in mm')
-        ax.set_title('IDF curves')
-        ax.grid(ls=':', lw=0.5)
-
-        return ax.get_figure(), ax
-
-    ####################################################################################################################
-    # alias
-    result_figure = curve_figure
-
-    ####################################################################################################################
-    @classmethod
-    def command_line_tool(cls):
-        user = heavy_rain_parser()
-
-        # --------------------------------------------------
-        # use the same directory as the input file and make as subdir with the name of the input_file + "_idf_data"
-        out = '{label}_idf_data'.format(label='.'.join(user.input.split('.')[:-1]))
-        out = Path(out)
-
-        if not out.is_dir():
-            out.mkdir()
-            action = 'Creating'
-        else:
-            action = 'Using'
-
-        print(f'{action} the subfolder "{out}" for the interim- and final-results.')
-
-        prefix = 'idf_'
-
-        # --------------------------------------------------
-        idf = cls(series_kind=user.series_kind, worksheet=user.worksheet, extended_durations=True)
-
-        # --------------------------------------------------
-        parameters_fn = out / f'{prefix}parameters.yaml'
-
-        if parameters_fn.is_file():
-            print(f'Found existing interim-results in "{parameters_fn}" and using them for calculations.')
-        else:
-            print(f'Start reading the time-series {user.input} for the analysis.')
-            ts = import_series(user.input).replace(0, np.nan).dropna()
-            # --------------------------------------------------
-            idf.set_series(ts)
-            print('Finished reading.')
-
-        # --------------------------------------------------
-        idf.auto_save_parameters(parameters_fn)
-
-        # --------------------------------------------------
-        h = user.height_of_rainfall
-        r = user.flow_rate_of_rainfall
-        d = user.duration
-        t = user.return_period
-
-        if r is not None:
-            if h is None and d is not None:
-                h = rate2height(rain_flow_rate=r, duration=d)
-
-            elif d is None and h is not None:
-                d = h / r * 1000 / 6
-
-        if user.r_720_1:
-            d = 720
-            t = 1
-
-        if any((h, d, t)):
-            if all((d, t)):
-                pass
-
-            elif all((d, h)):
-                t = idf.get_return_period(h, d)
-                print(f'The return period is {t:0.1f} years.')
-
-            elif all((h, t)):
-                d = idf.get_duration(h, t)
-                print(f'The duration is {d:0.1f} minutes.')
-
-            print(f'Resultierende Regenhöhe h_N(T_n={t:0.1f}a, D={d:0.1f}min) = {idf.depth_of_rainfall(d, t):0.2f} mm')
-            print(f'Resultierende Regenspende r_N(T_n={t:0.1f}a, D={d:0.1f}min) = {idf.rain_flow_rate(d, t):0.2f} L/(s*ha)')
-
-        # --------------------------------------------------
-        if user.plot:
-            fig, ax = idf.curve_figure()
-            plot_fn = out / f'{prefix}curves_plot.png'
-            fig.savefig(plot_fn, dpi=260)
-            plt.close(fig)
-            webbrowser.open(str(plot_fn))
-            print(f'Created the IDF-curves-plot and saved the file as "{plot_fn}".')
-
-        # --------------------------------------------------
-        if user.export_table:
-            table = idf.result_table(add_names=True)
-            print(table.round(2).to_string())
-            table_fn = out / f'{prefix}table.csv'
-            table.to_csv(table_fn, sep=';', decimal=',', float_format='%0.2f')
-            print(f'Created the IDF-curves-plot and saved the file as "{table_fn}".')
-
-    ####################################################################################################################
     def get_rainfall_sum_frame(self, series=None, durations=None):
         """
         Get a rainfall sum frame for any series with the duration steps as columns.
@@ -526,7 +373,7 @@ class IntensityDurationFrequencyAnalyse:
         # printable_names (bool): if durations should be as readable in dataframe, else in minutes
         # df = df.rename(minutes_readable, axis=0)
 
-        return df#.round(2)
+        return df  # .round(2)
 
     @property
     def rainfall_sum_frame(self):
@@ -540,7 +387,6 @@ class IntensityDurationFrequencyAnalyse:
             self._rainfall_sum_frame = self.get_rainfall_sum_frame()
         return self._rainfall_sum_frame
 
-    ####################################################################################################################
     def get_return_periods_frame(self, series=None, durations=None):
         """
         Get the return periods for any time-series with the duration steps as columns.
@@ -561,7 +407,7 @@ class IntensityDurationFrequencyAnalyse:
         # df = {}
         for d in frame_looper(sums.index.size, columns=sums.columns, label='return_periods'):
             df[d] = self.get_return_period(height_of_rainfall=sums[d][sums[d] >= 0.1], duration=d)
-        return df#.fillna(0)#.round(2)
+        return df  # .fillna(0)#.round(2)
 
     @property
     def return_periods_frame(self):
@@ -653,7 +499,8 @@ class IntensityDurationFrequencyAnalyse:
             # alternative:
             # [xv if c else yv for c, xv, yv in zip(np.isnan(datetime_max), events[COL.START].values, datetime_max)]
             if return_periods_frame.index.tz is not None:
-                datetime_max = pd.DatetimeIndex(datetime_max).tz_localize('utc').tz_convert(return_periods_frame.index.tz)
+                datetime_max = pd.DatetimeIndex(datetime_max).tz_localize('utc').tz_convert(
+                    return_periods_frame.index.tz)
             events[COL.MAX_PERIOD] = max_periods[datetime_max].values
 
             _select_tn_frame = return_periods_frame.loc[datetime_max].copy()
@@ -679,7 +526,8 @@ class IntensityDurationFrequencyAnalyse:
         Returns:
             pandas.DataFrame: events table including the columns with the maximum intensities
         """
-        return pd.concat([events, self.get_max_event_intensities_frame(events).rename(columns=column_format.format)], axis=1)
+        return pd.concat([events, self.get_max_event_intensities_frame(events).rename(columns=column_format.format)],
+                         axis=1)
 
     def get_max_return_periods_per_durations_frame(self, events):
         return_periods_frame = self.return_periods_frame
@@ -699,9 +547,53 @@ class IntensityDurationFrequencyAnalyse:
         Returns:
             pandas.DataFrame: events table including the columns with the maximum return periods
         """
-        return pd.concat([events, self.get_max_return_periods_per_durations_frame(events).rename(columns=column_format.format)], axis=1)
+        return pd.concat(
+            [events, self.get_max_return_periods_per_durations_frame(events).rename(columns=column_format.format)],
+            axis=1)
 
     ####################################################################################################################
+    @classmethod
+    def from_idf_table(cls, idf_table, worksheet=METHOD.KOSTRA, linear_interpolation=True):
+        """
+        Create an IDF-analysis-object based on an idf-tabel (i.e. from a given KOSTRA table)
+
+        Args:
+            idf_table (pandas.DataFrame): idf-table with index=Durations and columns=return Period and values=Rainheight
+            worksheet (str | optional): name of the worksheet to use. default: 'KOSTRA'
+            linear_interpolation (bool): only use linear interpolation between parameters.
+
+        Returns:
+            IntensityDurationFrequencyAnalyse: idf-object
+        """
+        idf = cls(worksheet=worksheet)
+        idf._parameters.reverse_engineering(idf_table, linear_interpolation=linear_interpolation)
+        idf.parameters.series_kind = 'from IDF table'
+        return idf
+
+    ####################################################################################################################
+    # ############################################### DESIGN RAINFALL ##################################################
+    @property
+    def model_rain_block(self):
+        """
+        Create a model block rain class.
+
+        Returns:
+            _BlockRain: Synthetic model block rain.
+        """
+        return _BlockRain(self)
+
+    @property
+    def model_rain_euler(self):
+        """
+        Create a model Euler rain class.
+
+        Returns:
+            _EulerRain: Synthetic model Euler rain.
+        """
+        return _EulerRain(self)
+
+    ####################################################################################################################
+    # ############################################### PLOTS ############################################################
     def event_report(self, filename, min_event_rain_sum=25, min_return_period=0.5, durations=None):
         """
         create pdf file with the biggest rain events
@@ -719,17 +611,17 @@ class IntensityDurationFrequencyAnalyse:
         events = self.rain_events
         self.add_max_return_periods_to_events(events)
 
-        main_events = events[(events[COL.LP] > min_event_rain_sum) & (events[COL.MAX_PERIOD] > min_return_period)].sort_values(by=COL.MAX_PERIOD, ascending=False).to_dict(
+        main_events = events[
+            (events[COL.LP] > min_event_rain_sum) & (events[COL.MAX_PERIOD] > min_return_period)].sort_values(
+            by=COL.MAX_PERIOD, ascending=False).to_dict(
             orient='index')
 
-        unit = 'mm'
         column_name = 'Precipitation'
 
         pdf = PdfPages(filename)
 
         for _, event in get_progress_bar(main_events.items()):
-            fig, caption = self.event_plot(event, min_return_period=min_return_period,
-                                           unit=unit, column_name=column_name)
+            fig, caption = self.event_plot(event, min_return_period=min_return_period, column_name=column_name)
 
             # -------------------------------------
             fig.get_axes()[0].set_title(caption + '\n\n\n')
@@ -742,7 +634,8 @@ class IntensityDurationFrequencyAnalyse:
 
         pdf.close()
 
-    def event_plot(self, event, durations=None, unit='mm', column_name='Precipitation', min_return_period=1., german_caption=False, max_duration=None):
+    def event_plot(self, event, durations=None, column_name='Precipitation', min_return_period=1., german_caption=False,
+                   max_duration=None):
         if isinstance(event, pd.Series):
             event = event.to_dict()
 
@@ -785,18 +678,93 @@ class IntensityDurationFrequencyAnalyse:
         # -------------------------------------
         ts_sum, minutes = resample_rain_series(ts)
         rain_ax = rain_bar_plot(ts_sum, rain_ax)
-        rain_ax.set_ylabel(f'{column_name} in {unit}/{minutes if minutes != 1 else ""}min')
+        rain_ax.set_ylabel(f'{column_name} in {self._unit}/{minutes if minutes != 1 else ""}min')
         if ts.index.size > 1:
             rain_ax.set_xlim(ts.index[0], ts.index[-1])
 
-        return fig, (event_caption_ger(event) if german_caption else event_caption(event, unit))
+        return fig, (event_caption_ger(event) if german_caption else event_caption(event, self._unit))
 
-    ####################################################################################################################
+    def curve_figure(self, min_duration=None, max_duration=None, logx=False, return_periods=None, color=True, ax=None,
+                     add_interim=False, duration_steps_ticks=False, add_range_limits=False, **kwargs):
+        """
+        Create a plot with the idf-curves with duration on the x-axis and rainfall depth on the y-axis.
+
+        Args:
+            min_duration (float): Shortest duration on the plot.
+            max_duration (float): Longest duration on the plot.
+            logx (bool): Use a logarithmic scale on the x-axis.
+            return_periods (list[int] | Optional): List of return periods to plot. Default = [1, 2, 5, 10, 50, 100]
+            color (bool): Use color and a legend to differentiate between the return periods (default).
+                Otherwise, annotation text and black lines.
+            ax (plt.Axes): Axes to plot on. Default = create new one.
+            add_interim (bool): Add interim results from the series analysis as scatter points.
+            duration_steps_ticks (bool): set the duration steps as ticks on the x-axis.
+            add_range_limits (bool): make vertical lines at each change of the duration range for the parameter formula.
+
+        Returns:
+            (plt.Figure, plt.Axes): figure and axes of the plot.
+        """
+
+        duration_steps = self.parameters.durations
+        if min_duration is not None:
+            duration_steps = duration_steps[duration_steps >= min_duration]
+        if max_duration is not None:
+            duration_steps = duration_steps[duration_steps <= max_duration]
+
+        # duration_steps = np.arange(min_duration, max_duration + 1, 1)
+
+        if return_periods is None:
+            return_periods = [1, 2, 5, 10, 50, 100]
+
+        table = self.result_table(durations=duration_steps, return_periods=return_periods)
+        if color:
+            table.columns.name = 'T$\\mathsf{_N}$ in a'
+        ax = table.plot(color=(None if color else 'black'), legend=color, ax=ax, **kwargs)
+
+        if logx:
+            # ax.set_xscale('log', base=10)
+            ax.set_xscale('log', base=math.e)
+            if duration_steps_ticks:
+                ax.set_xticks(self.duration_steps)
+                ax.set_xticklabels(duration_steps_readable(self.duration_steps), rotation=90)
+
+        for _, return_time in enumerate(return_periods):
+            if add_interim:
+                p = self.parameters.measured_points(return_time, max_duration=duration_steps.max())
+                # p = measured_points(self, return_time, max_duration=max_duration)
+                ax.plot(p, 'k' + 'x')
+
+            if not color:
+                x, y = list(table[return_time].tail(1).items())[0]
+                ax.text(x, y, ' {} a'.format(return_time), verticalalignment='center', horizontalalignment='left',
+                        # bbox=dict(facecolor='white', alpha=1.0, lw=1)
+                        )
+
+        if add_range_limits:
+            for dur in self.parameters.parameters_final:
+                if (dur < duration_steps.max()) and (dur > duration_steps.min()):
+                    ax.axvline(dur, color='k', lw=0.7, ls='--')
+
+        ax.tick_params(axis='both', which='both', direction='out')
+        if duration_steps_ticks:
+            ax.set_xlabel('Duration D')
+        else:
+            ax.set_xlabel('Duration D in min')
+        ax.set_ylabel('Rainfall h$\\mathsf{_N}$ in mm')
+        ax.set_title('IDF curves')
+        ax.grid(ls=':', lw=0.5)
+
+        return ax.get_figure(), ax
+
+    # alias
+    result_figure = curve_figure
+
     def event_return_period_report(self, filename, min_return_period=1):
         events = self.rain_events
         self.add_max_return_periods_to_events(events)
 
-        main_events = events[events[COL.MAX_PERIOD] > min_return_period].sort_values(by=COL.MAX_PERIOD, ascending=False)
+        main_events = events[events[COL.MAX_PERIOD] > min_return_period].sort_values(by=COL.MAX_PERIOD,
+                                                                                     ascending=False)
 
         pdf = PdfPages(filename)
 
@@ -820,12 +788,11 @@ class IntensityDurationFrequencyAnalyse:
 
         ax = period_line.plot()  # type: plt.Axes
 
-        ax.set_title('rain event\n'
-                     f'between {event[COL.START]:%Y-%m-%d %H:%M} and {event[COL.END]:%Y-%m-%d %H:%M}\n'
-                     f'with a total sum of {event[COL.LP]:0.1f} mm\n'
-                     f'and a duration of {event[COL.END] - event[COL.START]}\n'
-                     f'The maximum return period was {period_line.max():0.2f}a\n'
-                     f'at a duration of {period_line.idxmax()}.')
+        event_ = event.copy()
+        event_[COL.MAX_PERIOD] = period_line.max()
+        event_[COL.MAX_PERIOD_DURATION] = period_line.idxmax()
+
+        ax.set_title(event_caption(event_, unit=self._unit, lang='en'))
         # ax.set_xscale('log')
         # ax.set_yscale('log')
         # print(ax.get_ylim())
@@ -836,43 +803,6 @@ class IntensityDurationFrequencyAnalyse:
         ax.set_xlabel('duration steps')
         ax.set_ylabel('return period in years')
         return ax.get_figure(), ax
-
-    @classmethod
-    def from_idf_table(cls, idf_table, worksheet=METHOD.KOSTRA, linear_interpolation=True):
-        """
-        Create an IDF-analysis-object based on an idf-tabel (i.e. from a given KOSTRA table)
-
-        Args:
-            idf_table (pandas.DataFrame): idf-table with index=Durations and columns=return Period and values=Rainheight
-            worksheet (str | optional): name of the worksheet to use.  default: 'KOSTRA'
-
-        Returns:
-            IntensityDurationFrequencyAnalyse: idf-object
-        """
-        idf = cls(worksheet=worksheet)
-        idf._parameters.reverse_engineering(idf_table, linear_interpolation=linear_interpolation)
-        idf.parameters.series_kind = 'from IDF table'
-        return idf
-
-    @property
-    def model_rain_block(self):
-        """
-        Create a model block rain class.
-
-        Returns:
-            _BlockRain: Synthetic model block rain.
-        """
-        return _BlockRain(self)
-
-    @property
-    def model_rain_euler(self):
-        """
-        Create a model Euler rain class.
-
-        Returns:
-            _EulerRain: Synthetic model Euler rain.
-        """
-        return _EulerRain(self)
 
     def return_period_scatter(self, min_event_sum=25, durations=None):
         if durations is None:
@@ -925,3 +855,92 @@ class IntensityDurationFrequencyAnalyse:
         l1 = ax.legend(custom_lines, ['< 60 min', '> 60 min'], loc='best', title='max Duration')
         ax.add_artist(l1)
         return fig, ax
+
+    ####################################################################################################################
+    # ############################################### CL TOOL ##########################################################
+    @classmethod
+    def command_line_tool(cls):
+        user = heavy_rain_parser()
+
+        # --------------------------------------------------
+        # use the same directory as the input file and make as subdir with the name of the input_file + "_idf_data"
+        out = '{label}_idf_data'.format(label='.'.join(user.input.split('.')[:-1]))
+        out = Path(out)
+
+        if not out.is_dir():
+            out.mkdir()
+            action = 'Creating'
+        else:
+            action = 'Using'
+
+        print(f'{action} the subfolder "{out}" for the interim- and final-results.')
+
+        prefix = 'idf_'
+
+        # --------------------------------------------------
+        idf = cls(series_kind=user.series_kind, worksheet=user.worksheet, extended_durations=True)
+
+        # --------------------------------------------------
+        parameters_fn = out / f'{prefix}parameters.yaml'
+
+        if parameters_fn.is_file():
+            print(f'Found existing interim-results in "{parameters_fn}" and using them for calculations.')
+        else:
+            print(f'Start reading the time-series {user.input} for the analysis.')
+            ts = import_series(user.input).replace(0, np.nan).dropna()
+            # --------------------------------------------------
+            idf.set_series(ts)
+            print('Finished reading.')
+
+        # --------------------------------------------------
+        idf.auto_save_parameters(parameters_fn)
+
+        # --------------------------------------------------
+        h = user.height_of_rainfall
+        r = user.flow_rate_of_rainfall
+        d = user.duration
+        t = user.return_period
+
+        if r is not None:
+            if h is None and d is not None:
+                h = rate2height(rain_flow_rate=r, duration=d)
+
+            elif d is None and h is not None:
+                d = h / r * 1000 / 6
+
+        if user.r_720_1:
+            d = 720
+            t = 1
+
+        if any((h, d, t)):
+            if all((d, t)):
+                pass
+
+            elif all((d, h)):
+                t = idf.get_return_period(h, d)
+                print(f'The return period is {t:0.1f} years.')
+
+            elif all((h, t)):
+                d = idf.get_duration(h, t)
+                print(f'The duration is {d:0.1f} minutes.')
+
+            print(f'Resultierende Regenhöhe h_N(T_n={t:0.1f}a, D={d:0.1f}min) = {idf.depth_of_rainfall(d, t):0.2f} mm')
+            print(
+                f'Resultierende Regenspende r_N(T_n={t:0.1f}a, D={d:0.1f}min) = {idf.rain_flow_rate(d, t):0.2f} L/(s*ha)')
+
+        # --------------------------------------------------
+        if user.plot:
+            fig, ax = idf.curve_figure()
+            plot_fn = out / f'{prefix}curves_plot.png'
+            fig.savefig(plot_fn, dpi=260)
+            plt.close(fig)
+            webbrowser.open(str(plot_fn))
+            print(f'Created the IDF-curves-plot and saved the file as "{plot_fn}".')
+
+        # --------------------------------------------------
+        if user.export_table:
+            table = idf.result_table(add_names=True)
+            print(table.round(2).to_string())
+            table_fn = out / f'{prefix}table.csv'
+            table.to_csv(table_fn, sep=';', decimal=',', float_format='%0.2f')
+            print(f'Created the IDF-curves-plot and saved the file as "{table_fn}".')
