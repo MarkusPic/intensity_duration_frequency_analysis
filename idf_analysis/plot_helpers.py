@@ -72,7 +72,7 @@ def _bar_axes(ax, table, colors_dict, legend_kwags, category_formatter=None):
         for t in categories:
             c = colors_dict[t]
             # not really a rain event, but the results are the same
-            tab = rain_events(tn, ignore_rain_below=t, min_gap=freq)
+            tab = rain_events(tn, ignore_rain_below=t, min_gap=pd.Timedelta(freq))
 
             if tab.empty:
                 continue
@@ -107,10 +107,9 @@ def _bar_axes(ax, table, colors_dict, legend_kwags, category_formatter=None):
     return ax
 
 
-
-def idf_bar_axes(ax, idf_table, return_period_colors=RETURN_PERIOD_COLORS):
+def idf_bar_axes(ax, idf_table, return_period_colors=None):
     """
-    create a return period bar axes for the event plot
+    Create a return period bar axes for the event plot.
 
     Args:
         ax (matplotlib.pyplot.Axes):
@@ -120,6 +119,8 @@ def idf_bar_axes(ax, idf_table, return_period_colors=RETURN_PERIOD_COLORS):
     Returns:
         matplotlib.pyplot.Axes:
     """
+    if return_period_colors is None:
+        return_period_colors = RETURN_PERIOD_COLORS.copy()
     return _bar_axes(ax, idf_table, return_period_colors,
                      legend_kwags=dict(title='return periods'),
                      category_formatter='{}a'.format)
