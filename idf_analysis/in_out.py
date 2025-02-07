@@ -1,22 +1,25 @@
-from collections import OrderedDict
+from pathlib import Path
 
 import pandas as pd
-import yaml
+import yaml  # pip install PyYAML
 
 
 def import_series(filename, series_label='precipitation', index_label='datetime', csv_reader_args=None):
     """
+    Import series data from csv, parquet of pickle file.
 
     Args:
-        filename:
-        series_label:
-        index_label:
-        csv_reader_args: for example: sep="," or "." and decimal=";" or ","
+        filename (str or pathlib.Path):
+        series_label (str): name of series in file.
+        index_label (str): prefered index name. (just used for plotting)
+        csv_reader_args (dict): for example: sep="," or "." and decimal=";" or ","
 
     Returns:
         pandas.Series: precipitation series
     """
-    if filename.endswith('csv'):
+    if isinstance(filename, str):
+        filename = Path(filename)
+    if filename.suffix == '.csv':
         if csv_reader_args is None:
             csv_reader_args = dict(sep=';', decimal=',')
         try:
@@ -24,42 +27,48 @@ def import_series(filename, series_label='precipitation', index_label='datetime'
             ts.index = pd.to_datetime(ts.index)
             ts.index.name = index_label
             ts.name = series_label
-        except:
+        except Exception as e:
+            print(e)
             raise UserWarning('ERROR | '
                               'Something is wrong with your csv format. The file should only include two columns. '
                               'First column is the date and time index (prefered format is "YYYY-MM-DD HH:MM:SS") '
                               'and second column the precipitation values in mm. '
-                              'As a separator use "{sep}" and as decimal sign use "{decimal}".'.format(**csv_reader_args))
+                              'As a separator use "{sep}" and as decimal sign use "{decimal}".'.format(
+                **csv_reader_args))
 
         return ts
-    elif filename.endswith('parquet'):
+    elif filename.suffix == 'parquet':
         # You need to install `pyarrow` or `fastparquet` to read and write parquet files.
-        return pd.read_parquet(filename, columns=[series_label])[series_label].rename_axis(index_label, axis='index')
-    elif filename.endswith('pkl'):
-        return pd.read_pickle(filename).rename(series_label).rename_axis(index_label, axis='index')
+        return pd.read_parquet(filename, columns=[series_label])[series_label].rename_axis(index=index_label)
+    elif filename.suffix == 'pkl':
+        return pd.read_pickle(filename).rename(series_label).rename_axis(index=index_label)
     else:
         raise NotImplementedError('Sorry, but only csv, parquet and pickle files are implemented. '
                                   'Maybe there will be more options soon.')
 
-# ------------------------------------------------------------------------------
+
 _mapping_tag = yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG
 
 
-def _dict_representer(dumper, data):
-    return dumper.represent_dict(data.items())
+def write_yaml(data, filename):
+    """
+    Write dict to yaml file.
 
-
-def _dict_constructor(loader, node):
-    return OrderedDict(loader.construct_pairs(node))
-
-
-# yaml.add_representer(OrderedDict, _dict_representer)
-# yaml.add_constructor(_mapping_tag, _dict_constructor)
-
-
-def write_yaml(data, fn):
-    yaml.dump(data, open(fn, 'w'), default_flow_style=None, width=200)
+    Args:
+        data (dict): dict to write
+        filename (str or pathlib.Path): path to yaml file.
+    """
+    yaml.dump(data, open(filename, 'w'), default_flow_style=None, width=200)
 
 
 def read_yaml(filename):
+    """
+    Read yaml file.
+
+    Args:
+        filename (str or pathlib.Path): path to yaml file.
+
+    Returns:
+        dict: dict to read
+    """
     return yaml.load(open(filename, 'r'), Loader=yaml.FullLoader)
