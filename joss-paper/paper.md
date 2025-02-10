@@ -15,7 +15,7 @@ affiliations:
  - name: Institute of Urban Water Management and Landscape Water Engineering, Graz University of Technology, Graz, Austria
    index: 1
    ror: 00d7xrm67
-date: 6 November 2024
+date: 10 February 2025
 bibliography: paper.bib
 ---
 
@@ -31,26 +31,32 @@ An intensity-duration-frequency (IDF) curve is a mathematical function (see \aut
 
 The package follows the guidance recommendations in @dwa:2012.
 
-![Example IDF curves for the city of Graz.\label{fig:idf_curves}](idf_curves_plot.pdf)
+![Example IDF curves for the city of Graz. For each return period T_N (in the legend) a corresponding rainfall depth in mm (y axis) depending on the duration (x axis) is shown. \label{fig:idf_curves}](idf_curves_plot.pdf)
+
 
 # Statement of need
 
-To assess the characteristics of rainfall and its implications for water management, local station analyses are essential for evaluating data series, recent trends, and identifying unique local features.
+`idf-analysis` is a Python package designed to analyze local changes in rainfall behavior and assess variations in return periods of specific rainfall events. It processes time-series rainfall measurements to derive parameters for intensity-duration-frequency (IDF) curves, enabling estimations of return periods for events of different durations. Additionally, the package allows for comparisons of rainfall behavior across different locations or time periods, making it useful for studying climate change effects.
 
-`idf-analysis` is an advanced Python package designed to process rainfall measurement time series and derive the necessary parameters for IDF curves. This enables reliable estimations of return periods for specific rainfall events. Additionally, it facilitates comparative studies of rainfall behavior across different stations or time periods, which is particularly valuable for assessing potential impacts of climate change.
+The analysis begins by identifying independent rainfall events within the dataset. For each event, the maximum intensity is determined across a wide range of durations. When working with long-term datasets (ideally exceeding 50 years, but at least 20 years), an annual series analysis is performed using the Gumbel distribution, where only the maximum intensity per year is considered. For medium-length datasets (preferably over 20 years, but at least 10 years), a partial series is constructed by selecting the largest intensities based on an exponential distribution. The number of selected events is determined as 2.7 times the recording duration in years (e.g., for a 10-year dataset, the 27 highest intensities are analyzed).
 
-The analysis begins by splitting the rainfall data into independent rainfall events. The intensity for various durations is calculated, and the maximum intensity of each event is extracted. For lengthy time series, an annual series analysis is conducted using the Gumbel distribution, focusing on the maximum intensity per year. For medium-length time series, a partial series analysis employs the exponential distribution, using the largest $2.7$ times the number of measurement years’ events.
+The derived parameters for the extreme value distribution are categorized into short-, medium-, and long-term duration ranges. Within each range, the parameters are fitted using a function dependent on duration. The formulation follows the plotting approach proposed by @cunnane:1978, with currently implemented options including one-folded logarithmic, two-folded logarithmic, and hyperbolic models, though additional formulations can be incorporated.
 
-Parameters from the extreme value distribution are categorized into short-, medium-, and long-term duration ranges. These parameters are then fitted into functions that vary with duration. The package currently supports one-folded logarithmic, two-folded logarithmic, and hyperbolic formulations, with the flexibility for future extensions.
+The general equation for calculating rainfall depth as a function of duration and return period is given by:
 
-The general equation for calculating rainfall depth based on duration and return period is:
 \begin{equation}\label{eq:idf}
-h(D,T_n) = u(D) + w(D) * ln(T_n)
+h(D,T_n) = u(D) + w(D) \cdot \ln(T_n)
 \end{equation}
 
-where $h$ represents the rainfall depth, $u(D)$ and $w(D)$ are duration-dependent parameters, and $T_n$ is the return period. The formulation of $u$ and $w$ may further depend on the duration range being considered.
+where $h$ is the rainfall depth, $u(D)$ and $w(D)$ are duration ($D$)-dependent parameters, and $T_n$ represents the return period. The parameter formulations can also vary based on duration range (short-, medium-, or long-term).
 
-To support this analysis, several tools have been developed by various researchers. @gutzmann:2024 introduced the wetterdienst Python package for downloading and analyzing weather data, including precipitation for IDF curve generation. @Schardong:2020 developed a web-based tool for estimating IDF curves for both gauged and ungauged sites, and @Lanciotti:2022 provided a comprehensive review of existing formulations and data types. In contrast, @Mendez:2024 presented a similar code that relies solely on hourly data and applies a single formulation across all durations.
+When first published on GitHub in 2018, no other tool existed that could derive IDF curves directly from observed rainfall data. This package was developed to standardize the workflow and eliminate the need for individual, custom implementations.
+
+@mendez:2024 introduced a similar tool but with limitations: it only supports hourly data and applies a single formulation across all durations, which can lead to inaccuracies in IDF curve representation. The `idf-analysis` package overcomes these constraints by offering more flexibility in duration-specific parameterization.
+
+In the broader context of hydrological analysis, the `wetterdienst` Python package (@gutzmann:2024) provides access to weather data, including precipitation records that can be used as input for IDF analysis. This makes it a valuable preparatory tool for IDF curve estimation.
+
+The significance of IDF curve estimation is well recognized in the scientific community. @schardong:2020 developed a web-based tool for estimating IDF curves at both gauged and ungauged locations, while @lanciotti:2022 reviewed various methodologies and data sources used for IDF curve development. However, as neither study mentioned an existing standardized tool for deriving IDF curves from observed data, it is likely that researchers rely on custom scripts. The `idf-analysis` package provides a structured, efficient alternative, reducing workload and ensuring consistency in IDF curve estimation.
 
 # Acknowledgements
 
