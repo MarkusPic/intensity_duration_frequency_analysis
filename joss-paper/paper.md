@@ -31,7 +31,7 @@ An intensity-duration-frequency (IDF) curve is a mathematical function (see \aut
 
 The package follows the guidance recommendations in @dwa:2012.
 
-![Example IDF curves for the city of Graz. For each return period T_N (in the legend) a corresponding rainfall depth in mm (y axis) depending on the duration (x axis) is shown. \label{fig:idf_curves}](idf_curves_plot.pdf)
+![Example IDF curves for the city of Graz. For each return period T$_N$ (in the legend) a corresponding rainfall depth in mm (y axis) depending on the duration (x axis) is shown. \label{fig:idf_curves}](idf_curves_plot.pdf)
 
 
 # Statement of need
