@@ -51,8 +51,6 @@ Read the docs [here 📖](https://markuspic.github.io/intensity_duration_frequen
 
 Pichler, M. (2025). idf-analysis: Heavy rainfall intensity as a function of duration and return period. Journal of Open Source Software, 10(106), 7607. https://doi.org/10.21105/joss.07607
 
-JOSS paper is on the way ...
-
 ## Installation
 
 This package is written in Python3. (use a version > 3.5)
