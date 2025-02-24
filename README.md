@@ -20,7 +20,7 @@
 [![PyPI - Downloads](https://img.shields.io/pypi/dw/idf-analysis)](https://pypi.python.org/pypi/idf-analysis)
 [![PyPI - Downloads](https://img.shields.io/pypi/dm/idf-analysis)](https://pypi.python.org/pypi/idf-analysis)
 
-Heavy rainfall intensity as a function of duration and return period acc. to [DWA-A 531 (2012)](http://www.dwa.de/dwa/shop/shop.nsf/Produktanzeige?openform&produktid=P-DWAA-8XMUY2).
+Heavy rainfall intensity as a function of duration and return period acc. to [DWA-A 531 (2012)](https://shop.dwa.de/DWA-A-531-Starkregen-in-Abhaengigkeit-von-Wiederkehrzeit-und-Dauer-September-2012-Stand-korrigierte-Fassung-Mai-2017/A-531-Hauptprodukt-12-main).
 This program reads the measurement data of the rainfall
 and calculates the distribution of the design rainfall as a function of the return period and the duration
 for duration steps up to 12 hours (and more) and return period in a range of '0.5a &le; T_n &le; 100a'.
