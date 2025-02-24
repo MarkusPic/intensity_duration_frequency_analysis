@@ -49,7 +49,7 @@ Read the docs [here 📖](https://markuspic.github.io/intensity_duration_frequen
 
 ## Please cite as
 
-Pichler, M. (2024). idf_analysis: Intensity duration frequency analysis with python based on KOSTRA (v0.2.4). Zenodo. https://doi.org/10.5281/zenodo.10559992
+Pichler, M. (2025). idf-analysis: Heavy rainfall intensity as a function of duration and return period. Journal of Open Source Software, 10(106), 7607. https://doi.org/10.21105/joss.07607
 
 JOSS paper is on the way ...
 
