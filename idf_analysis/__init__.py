@@ -2,7 +2,7 @@ __author__ = "Markus Pichler"
 __credits__ = ["Markus Pichler"]
 __maintainer__ = "Markus Pichler"
 __email__ = "markus.pichler@tugraz.at"
-__version__ = '0.3.1'
+__version__ = '0.4.0'
 __license__ = "MIT"
 
 from .idf_class import IntensityDurationFrequencyAnalyse, SERIES, METHOD, APPROACH
