@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 import numpy as np
-from idf_analysis.idf_backend import IdfParameters
+from idf_analysis.idf_backend_2012 import IdfParameters
 from idf_analysis.definitions import SERIES, METHOD, PARAM, APPROACH
 from idf_analysis.parameter_formulas import HyperbolicAuto, DoubleLogNormAuto, LinearFormula
 
