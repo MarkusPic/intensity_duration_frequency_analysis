@@ -1,7 +1,7 @@
 from pathlib import Path
 
 import pandas as pd
-from matplotlib import pyplot as plt
+import matplotlib.pyplot as plt
 
 from idf_analysis import IntensityDurationFrequencyAnalyse
 from idf_analysis.definitions import *

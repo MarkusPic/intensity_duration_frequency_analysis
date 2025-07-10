@@ -1,5 +1,4 @@
 import math
-import warnings
 from pathlib import Path
 from typing import Literal
 
@@ -9,20 +8,19 @@ import pandas as pd
 import scipy.stats as sps
 
 from .definitions import SERIES, METHOD, PARAM
-from .in_out import write_yaml, read_yaml
-from .little_helpers import duration_steps_readable, minutes_readable, get_progress_bar
-from .parameter_formulas import FORMULA_REGISTER, _Formula, register_formulas_to_yaml, LinearFormula
-from .sww_utils import year_delta, guess_freq, rain_events, agg_events
+from .extrem_value_series import ExtremValueSeries
+from .idf_backend_abstract import IdfParametersABC
+from .in_out import read_yaml
+from .intensity_evaluation import IntensitiesExtractor
+from .little_helpers import duration_steps_readable, minutes_readable
+from .parameter_formulas import FORMULA_REGISTER, _Formula, LinearFormula
 
 
-class IdfParameters:
+class IdfParameters(IdfParametersABC):
     def __init__(self, series_kind: str or Literal['partial', 'annual'] = SERIES.PARTIAL,
                  worksheet: str or Literal['KOSTRA', 'convective_vs_advective', 'ATV-A_121'] = METHOD.KOSTRA,
                  extended_durations=False):
-        self.series_kind = series_kind
-
-        self._durations = None
-        self._set_default_durations(extended_durations)
+        super().__init__(series_kind, worksheet, extended_durations)
 
         self.parameters_series = {}  # parameters u and w (distribution function) from the event series analysis
         self.parameters_final = {}  # parameters of the distribution function after the regression
@@ -31,17 +29,28 @@ class IdfParameters:
         if worksheet is not None:
             self.set_parameter_approaches_from_worksheet(worksheet)
 
-        self._interims = None  # type: ExtremeValueParameters
+        self._extrem_value_series = None  # type: ExtremValueSeries
+
+    def calculation_done(self):
+        return self.parameters_series
 
     def calc_from_series(self, series):
-        self._interims = ExtremeValueParameters(series, self.durations)
+        self._intensity_extractor = IntensitiesExtractor(series, self.durations)
+        self._extrem_value_series = ExtremValueSeries.from_intensity_extractor(self._intensity_extractor)
 
-        self._interims.evaluate(self.series_kind)
+        self.parameters_series[PARAM.U] = []
+        self.parameters_series[PARAM.W] = []
+        for duration_integer, data in self._extrem_value_series.iter_duration_steps(self.series_kind):
+            data  # type: dict # keys [x, y, series_kind]
 
-        self.parameters_series[PARAM.U] = np.array(self._interims.u)
-        self.parameters_series[PARAM.W] = np.array(self._interims.w)
+            res = sps.linregress(data['x'], data['y'])
+            self.parameters_series[PARAM.U].append(res.intercept)
+            self.parameters_series[PARAM.W].append(res.slope)
 
-        self._calc_params()
+        self.parameters_series[PARAM.U] = np.array(self.parameters_series[PARAM.U])
+        self.parameters_series[PARAM.W] = np.array(self.parameters_series[PARAM.W])
+
+        self._calc_params()  # sets self.parameters_final
 
     def reverse_engineering(self, idf_table, linear_interpolation=False):
         durations = idf_table.index.values
@@ -66,48 +75,11 @@ class IdfParameters:
         else:
             self._calc_params()
 
-    @property
-    def durations(self):
-        return np.array(self._durations)
-
-    @durations.setter
-    def durations(self, durations):
-        self._durations = list(durations)
-
-    def _set_default_durations(self, extended_durations=False):
-        # Suggestion from ATV-A 121 (ATV-DVWK-Regelwerk 2/2001)
-
-        # sampling points of the duration steps in minutes
-        duration_steps = [5, 10, 15, 20, 30, 45, 60, 90]
-        # self._duration_steps += [i * 60 for i in [3, 4.5, 6, 7.5, 10, 12, 18]]  # duration steps in hours
-        duration_steps += [i * 60 for i in [2, 3, 4, 6, 9, 12, 18]]  # duration steps in hours
-        if extended_durations:
-            duration_steps += [i * 60 * 24 for i in [1, 2, 3, 4, 5, 6]]  # duration steps in days
-
-        self.durations = duration_steps
-
-    def filter_durations(self, freq_minutes):
-        self.limit_duration(lowest=freq_minutes)
-        self.limit_durations_from_freq(freq_minutes)
-
     def limit_duration(self, lowest=None, highest=None):
-        # bool_array = self.durations == False
-        bool_array = np.array([False]*self.durations.size)
-        if lowest is not None:
-            bool_array |= self.durations >= lowest
-        if highest is not None:
-            bool_array |= self.durations <= highest
-
-        self.durations = self.durations[bool_array]
+        bool_array = super().limit_duration(lowest, highest)
         for param in PARAM.U_AND_W:
             if param in self.parameters_series:
                 self.parameters_series[param] = self.parameters_series[param][bool_array]
-
-    def limit_durations_from_freq(self, freq_minutes):
-        # only multiple of freq
-        # Aus DWA-M 531 Abschnitt 2:
-        # > Da Niederschlagsmesser Tageswerte liefern, sind hier nur Auswertungen für Regendauern möglich, die ein Vielfaches von 24 h betragen.
-        self.durations = self.durations[(self.durations % freq_minutes) == 0]
 
     def set_parameter_approaches_from_worksheet(self, worksheet):
         """
@@ -209,12 +181,13 @@ class IdfParameters:
                 elif isinstance(formula_this, LinearFormula):
                     value_mean = formula_next.get_param(duration_change)
                 else:
-                    value_mean = (formula_this.get_param(duration_change) + formula_next.get_param(duration_change))/2
+                    value_mean = (formula_this.get_param(duration_change) + formula_next.get_param(duration_change)) / 2
 
                 if last[p] is None:
                     formula_this.fit(formula_this.durations, formula_this.values, duration_change, value_mean)
                 else:
-                    formula_this.fit(formula_this.durations, formula_this.values, [last[p][0], duration_change], [last[p][1], value_mean])
+                    formula_this.fit(formula_this.durations, formula_this.values, [last[p][0], duration_change],
+                                     [last[p][1], value_mean])
                 last[p] = (duration_change, value_mean)
 
     def measured_points(self, return_periods, max_duration=None):
@@ -314,31 +287,56 @@ class IdfParameters:
 
         return (func(p, duration) for p in PARAM.U_AND_W)
 
-    def to_yaml(self, filename):
-        register_formulas_to_yaml()
+    def get_depth_of_rainfall(self, duration, return_period):
+        """
+        calculate the height of the rainfall h in L/m² = mm (respectively the unit of the series)
 
+        Args:
+            duration (int | float | list | numpy.ndarray | pandas.Series): duration: in minutes
+            return_period (float): in years
+
+        Returns:
+            int | float | list | numpy.ndarray | pandas.Series: height of the rainfall h in L/m² = mm (respectively the unit of the series)
+        """
+        if self.series_kind == SERIES.ANNUAL:
+            if return_period < 5:
+                print('WARNING: Using an annual series and a return period < 5 a will result in faulty values!')
+
+            if return_period <= 10:
+                return_period = np.exp(1.0 / return_period) / (np.exp(1.0 / return_period) - 1.0)
+
+            log_tn = -np.log(np.log(return_period / (return_period - 1.0)))
+
+        else:
+            log_tn = np.log(return_period)
+
+        u, w = self.get_u_w(duration)
+        return u + w * log_tn
+
+    def get_return_period(self, height_of_rainfall, duration):
+        """
+        calculate the return period, when the height of rainfall and the duration are given
+
+        Args:
+            height_of_rainfall (float): in [mm]
+            duration (int | float | list | numpy.ndarray | pandas.Series): in minutes
+
+        Returns:
+            int | float | list | numpy.ndarray | pandas.Series: return period in years
+        """
+        u, w = self.get_u_w(duration)
+        return np.exp((height_of_rainfall - u) / w)
+
+    def to_dict(self):
         def to_basic(a):
             return list([round(float(i), 4) for i in a])
-        data = {
+
+        return {
             PARAM.SERIES: self.series_kind,
             PARAM.DUR: to_basic(self.durations),
             PARAM.PARAMS_SERIES: {p: to_basic(l) for p, l in self.parameters_series.items()},
             PARAM.PARAMS_FINAL: self.parameters_final
         }
-        write_yaml(data, filename)
-
-    def pprint(self):
-        from pprint import pprint
-
-        def to_basic(a):
-            return list([round(float(i), 4) for i in a])
-
-        pprint({
-            PARAM.SERIES: self.series_kind,
-            PARAM.DUR: to_basic(self.durations),
-            PARAM.PARAMS_SERIES: {p: to_basic(l) for p, l in self.parameters_series.items()},
-            PARAM.PARAMS_FINAL: self.parameters_final
-        })
 
     @classmethod
     def from_yaml(cls, filename, worksheet=None):
@@ -355,194 +353,31 @@ class IdfParameters:
         p._calc_params()
         return p
 
-
-class ExtremeValueParameters:
-    def __init__(self, series, duration_steps):
-        self.series = series
-        self.duration_steps = duration_steps
-
-        self.base_frequency = guess_freq(self.series.index)  # DateOffset/Timedelta
-        self.base_delta = pd.Timedelta(self.base_frequency)
-
-        # measuring time in years
-        measurement_start, measurement_end = self.series.index[[0, -1]]
-        self.measurement_period = (measurement_end - measurement_start) / year_delta(years=1)
-        if round(self.measurement_period, 1) < 10:
-            warnings.warn("The measurement period is too short. The results may be inaccurate! "
-                          "It is recommended to use at least ten years. "
-                          f"(-> Currently {self.measurement_period}a used)")
-
-        # acc. to DWA-A 531 chap. 4.2:
-        # The values must be independent of each other for the statistical evaluations.
-        # estimated four hours acc. (Schilling, 1984)
-        # for larger durations - use the duration as minimal gap
-        self.min_event_gap = pd.Timedelta(hours=4)
-
-        # Use only the (2-3 multiplied with the number of measuring years) of the biggest
-        # values in the database (-> acc. to ATV-A 121 chap. 4.3; DWA-A 531 chap. 4.4).
-        # As a requirement for the extreme value distribution.
-        self.threshold_sample_size = int(math.floor(self.measurement_period * math.e))
-
-        self._data = {}
-        self.u = []
-        self.w = []
-        self._intensities = {}
-
-    @staticmethod
-    def _improve_factor(interval):
-        """
-        correction factor acc. to DWA-A 531 chap. 4.3
-
-        Args:
-            interval (float): length of the interval: number of observations per duration
-
-        Returns:
-            float: correction factor
-        """
-        improve_factor = {1: 1.14,
-                          2: 1.07,
-                          3: 1.04,
-                          4: 1.03,
-                          5: 1.00,
-                          6: 1.00}
-
-        return np.interp(interval,
-                         list(improve_factor.keys()),
-                         list(improve_factor.values()))
-
-    @staticmethod
-    def _plotting_formula(k, l, m):
-        """
-        plotting function acc. to DWA-A 531 chap. 5.1.3 for the partial series
-
-        Args:
-            k (float or np.ndarray): running index
-            l (float or np.ndarray): sample size
-            m (float or np.ndarray): measurement period
-
-        Returns:
-            float: estimated empirical return period
-        """
-        return (l + 0.2) * m / ((k - 0.4) * l)
-
-    def evaluate(self, series_kind: str or Literal['partial', 'annual'] = SERIES.PARTIAL):
-        """
-        Statistical analysis for each duration step.
-
-        acc. to DWA-A 531 chap. 5.1
-
-        Save the parameters of the distribution function as interim results.
-
-        Args:
-            series_kind (str): which kind of series should be used to evaluate the extreme values.
-        """
-        pbar = get_progress_bar(self.duration_steps, desc='Calculating Parameters u and w')
-
-        for duration_integer in pbar:
-            try:
-                pbar.set_description(f'Calculating Parameters u and w for duration {duration_integer:0.0f}')
-            except: ...
-
-            if series_kind == SERIES.ANNUAL:
-                x, y = self.annual_series(duration_integer)
-            elif series_kind == SERIES.PARTIAL:
-                x, y = self.partial_series(duration_integer)
-            else:
-                raise NotImplementedError(f"Unknown series kind {series_kind}")
-
-            res = sps.linregress(x, y)
-            self.u.append(res.intercept)
-            self.w.append(res.slope)
-
-            self._data[duration_integer] = {'x': x, 'y': y, 'u': res.intercept, 'w': res.slope, 'series_kind': series_kind}
-
-    def get_intensities(self, duration_integer: int):
-        if duration_integer not in self._intensities:
-            duration = pd.Timedelta(minutes=duration_integer)
-
-            if duration < self.base_delta:
-                return
-
-            if duration < self.min_event_gap:
-                min_gap = self.min_event_gap
-            else:
-                min_gap = duration
-
-            events = rain_events(self.series, min_gap=min_gap)
-
-            # Correction factor acc. to DWA-A 531 chap. 4.3
-            improve = self._improve_factor(duration / self.base_delta)
-
-            roll_sum = self.series.rolling(duration).sum()
-
-            events['i'] = agg_events(events, roll_sum, 'max') * improve
-            events['ix'] = agg_events(events, roll_sum, 'idxmax')
-            self._intensities[duration_integer] = events.set_index('ix')['i']
-        return self._intensities[duration_integer]
-
-    def annual_series(self, duration_integer: int):
-        """
-        Create an annual series of the maximum overlapping sum per year and calculate the "u" and "w" parameters.
-
-        acc. to DWA-A 531 chap. 5.1.5
-
-        Gumbel distribution | https://en.wikipedia.org/wiki/Gumbel_distribution
-
-        Args:
-            duration_integer (int): Duration step in minutes.
-
-        Returns:
-            dict[str, float]: Parameter u and w from the annual series for a specific duration step as a tuple.
-        """
-        annually_series = self.get_intensities(duration_integer).resample('YE').max().sort_values(ascending=False).values
-        x = -np.log(np.log((annually_series.size + 0.2) / (annually_series.size - sps.rankdata(annually_series)[::-1] + 0.6)))
-        return x, annually_series
-
-    def partial_series(self, duration_integer: int):
-        """
-        Create a partial series of the largest overlapping sums and calculate the "u" and "w" parameters.
-
-        acc. to DWA-A 531 chap. 5.1.4
-
-        Exponential distribution | https://en.wikipedia.org/wiki/Exponential_distribution
-
-        Args:
-            duration_integer (int): Duration step in minutes.
-
-        Returns:
-            dict[str, float]: parameter u and w from the partial series for a specific duration step as a tuple
-        """
-        partially_series = self.get_intensities(duration_integer).sort_values(ascending=False).values
-
-        if partially_series.size < self.threshold_sample_size:
-            warnings.warn('Fewer events in series than recommended for extreme value analysis. Use the results with mindfulness.')
-        else:
-            partially_series = partially_series[:self.threshold_sample_size]
-
-        x = np.log(self._plotting_formula(sps.rankdata(partially_series)[::-1], partially_series.size, self.measurement_period))
-
-        return x, partially_series
-
-    def plot_series(self, ncols=3):
-        n_plots = len(self.duration_steps)
+    def interim_plot_series(self, ncols=3):
+        n_plots = len(self.durations)
         n_cols = min(ncols, n_plots)
         n_rows = math.ceil(n_plots / n_cols)
 
         fig, axes = plt.subplots(nrows=n_rows, ncols=n_cols)
-        fig.suptitle(f'Interim Results of {self._data[self.duration_steps[0]]["series_kind"]}-series Plot')
+        fig.suptitle(f'Interim Results of {self.series_kind}-series Plot')
 
         if n_plots == 1:
             axes = np.array([axes])
         axes = axes.flatten()
 
-        for ax, duration_integer in zip(axes, self.duration_steps):
-            data = self._data[duration_integer]
+        for ax, duration_integer in zip(axes, self.durations):
+            data = self._extrem_value_series.data[duration_integer]
             x = data['x']  # probability
             y = data['y']  # intensity
 
-            line = data['u'] + x * data['w']
+            i_dur = list(self.durations).index(duration_integer)
 
-            ax.axhline(data["u"], lw=0.7, color='black')
+            u = self.parameters_series[PARAM.U][i_dur]
+            w = self.parameters_series[PARAM.W][i_dur]
+
+            line = u + x * w
+
+            ax.axhline(u, lw=0.7, color='black')
             ax.axvline(0, lw=0.7, color='black')
 
             ax.plot(x, line, label='Fitted model', color='C1', linewidth=2)
@@ -552,7 +387,7 @@ class ExtremeValueParameters:
 
             ax.set_ylabel(f'Intensity (mm/{dur_plot})')
             ax.set_xlabel(r'$ln(T_n) = ln(\frac{L + 0.2}{k-0.4}*\frac{M}{L})$')
-            ax.set_title(f'Duration: {dur_plot}\nu={data["u"]:0.2f}, w={data["w"]:0.2f}')
+            ax.set_title(f'Duration: {dur_plot}\nu={u:0.2f}, w={w:0.2f}')
 
             ax2 = ax.twiny()
             xlim = ax.get_xlim()

@@ -113,7 +113,7 @@ def frame_looper(size, columns, label='return periods'):
         return columns
 
 
-def event_caption(event, unit='mm', lang='en'):
+def event_caption(event, unit='mm', lang='en', detailed_short_return_period=False):
     """
     Generates a human-readable caption for a rain event in English or German.
 
@@ -127,6 +127,7 @@ def event_caption(event, unit='mm', lang='en'):
             - COL.MAX_PERIOD_DURATION: Duration of the maximum return period in minutes (optional).
         unit (str, optional): Unit for rainfall (default: 'mm').
         lang (str, optional): Language ('en' for English, 'de' for German, default: 'en').
+        detailed_short_return_period (bool): Whether a return period of < 1 should be formatted as 1/n.
 
     Returns:
         str: A formatted string describing the rain event.
@@ -156,7 +157,7 @@ def event_caption(event, unit='mm', lang='en'):
              The maximum return period was 10 years
              at a duration of 30 minutes."
     """
-    captions = {
+    di_caption_strings = {
         'en': {
             'event': 'rain event',
             'with_total': 'with a total sum of',
@@ -175,7 +176,7 @@ def event_caption(event, unit='mm', lang='en'):
         }
     }
 
-    cap = captions.get(lang, captions['en'])
+    cap = di_caption_strings.get(lang, di_caption_strings['en'])
     caption = f"{cap['event']}\n"
 
     if (COL.START in event) and (COL.END in event):
@@ -215,7 +216,9 @@ def event_caption(event, unit='mm', lang='en'):
         caption += f"{cap['and_duration']} {timedelta_readable(event[COL.DUR], lang=lang)}.\n"
 
     if COL.MAX_PERIOD in event:
-        caption += f"{cap['max_period']} {return_period_formatter(event[COL.MAX_PERIOD])} {cap['years']}\n"
+        caption += (f"{cap['max_period']} "
+                    f"{return_period_formatter(event[COL.MAX_PERIOD], smaller_detail=detailed_short_return_period)} "
+                    f"{cap['years']}\n")
 
         if COL.MAX_PERIOD_DURATION in event:
             caption += f"{cap['at_duration']} {minutes_readable(event[COL.MAX_PERIOD_DURATION])}."
@@ -223,7 +226,7 @@ def event_caption(event, unit='mm', lang='en'):
     return caption
 
 
-def return_period_formatter(t):
+def return_period_formatter(t, smaller_detail=False):
     """
     Formats a return period value into a human-readable string.
 
@@ -232,6 +235,7 @@ def return_period_formatter(t):
 
     Args:
         t (float): The return period value to format.
+        smaller_detail (bool): Whether a return period of < 1 should be formatted as 1/n.
 
     Returns:
         str: A formatted string representing the return period. The formatting rules are:
@@ -249,9 +253,18 @@ def return_period_formatter(t):
         '$\\gg$ 100'
         >>> return_period_formatter(50.123)
         '50.1'
+        >>> return_period_formatter(0.5, smaller_detail=True)
+        '1/2'
     """
     if t < 1:
-        return '< 1'
+        if smaller_detail:
+            n = int(round(1/t, 0))
+            if n == 1:
+                return '< 1'
+            else:
+                return f'1/{n}'
+        else:
+            return '< 1'
     elif t > 200:
         return '$\\gg$ 100'
     elif t > 100:

@@ -8,5 +8,6 @@ Examples | Tutorial
 
    examples/example_commandline
    examples/example_python_api
+   examples/example_python_api_2025
    examples/example_heavy_rainfall_index
    examples/example_python_api_extended

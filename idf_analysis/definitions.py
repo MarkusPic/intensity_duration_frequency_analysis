@@ -1,5 +1,5 @@
 class METHOD:
-    # DWA = 'DWA-A_531'  # (2012)
+    # DWA_2012 = 'DWA_A_531_2012'
     KOSTRA = 'KOSTRA'
     CONVECTIVE_ADVECTIVE = 'convective_vs_advective'
 
@@ -7,10 +7,12 @@ class METHOD:
 
     DWA_adv = CONVECTIVE_ADVECTIVE
 
-    # ÖKOSTRA ohne Dauerstufenausgleich nach Hammer (1993) "Eine optimierte Starkniederschalgsauswertung"
+    # ÖKOSTRA ohne Dauerstufenausgleich nach Hammer (1993) "Eine optimierte Starkniederschlagsauswertung"
     OWUNDA = 'OWUNDA'
 
-    OPTIONS = [KOSTRA, CONVECTIVE_ADVECTIVE, ATV]
+    DWA_2025 = 'DWA_A_531_2025'
+
+    OPTIONS = [KOSTRA, CONVECTIVE_ADVECTIVE, ATV, DWA_2025]
 
 
 class SERIES:
@@ -47,6 +49,8 @@ class PARAM:
     A = 'a'
     B = 'b'
     FUNCTION = 'function'
+
+    INTENSITIES = 'intensities'
 
     # parameters of the distribution function of the regression
     # parameters_final

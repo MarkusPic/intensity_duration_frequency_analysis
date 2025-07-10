@@ -11,7 +11,8 @@ from matplotlib.backends.backend_pdf import PdfPages
 
 from .arg_parser import heavy_rain_parser
 from .definitions import *
-from .idf_backend import IdfParameters
+from .idf_backend_2012 import IdfParameters
+from .idf_backend_2025 import IdfParametersNew
 from .in_out import import_series
 from .little_helpers import (minutes_readable, height2rate, delta2min, rate2height, frame_looper, event_caption,
                              duration_steps_readable, get_progress_bar)
@@ -37,6 +38,7 @@ class IntensityDurationFrequencyAnalyse:
         _return_periods_frame (pandas.DataFrame): with return periods of all given durations
         _rain_events (pandas.DataFrame):
         _rainfall_sum_frame (pandas.DataFrame): with rain sums of all given durations
+        _parameters (IdfParametersNew or IdfParameters): interim parameters.
 
     """
 
@@ -59,8 +61,12 @@ class IntensityDurationFrequencyAnalyse:
         self._freq = None
 
         #  how to calculate the idf curves
-        self._parameters = IdfParameters(series_kind=series_kind, worksheet=worksheet,
-                                         extended_durations=extended_durations)
+        if worksheet == METHOD.DWA_2025:
+            self._parameters = IdfParametersNew(series_kind=series_kind, worksheet=worksheet,
+                                                extended_durations=extended_durations)
+        else:
+            self._parameters = IdfParameters(series_kind=series_kind, worksheet=worksheet,
+                                             extended_durations=extended_durations)
 
         self._unit = unit
 
@@ -169,9 +175,9 @@ class IntensityDurationFrequencyAnalyse:
         and read them later with :func:`IntensityDurationFrequencyAnalyse.read_parameters`
 
         Returns:
-            IdfParameters: calculation parameters
+            IdfParameters | IdfParametersNew: calculation parameters
         """
-        if not self._parameters.parameters_series and self._series is not None:
+        if not self._parameters.calculation_done() and self._series is not None:
             self._parameters.calc_from_series(self.series)
         return self._parameters
 
@@ -194,7 +200,7 @@ class IntensityDurationFrequencyAnalyse:
             filename (str, Path): filename of the parameters yaml-file.
             worksheet (str): ['DWA-A_531', 'ATV-A_121', 'DWA-A_531_advektiv']
         """
-        self._parameters = IdfParameters.from_yaml(filename, worksheet)
+        self._parameters = type(self._parameters).from_yaml(filename, worksheet)
 
     def auto_save_parameters(self, filename: str or Path):
         """Auto-save the parameters as a yaml-file to save computation time."""
@@ -219,20 +225,7 @@ class IntensityDurationFrequencyAnalyse:
         Returns:
             int | float | list | numpy.ndarray | pandas.Series: height of the rainfall h in L/m² = mm (respectively the unit of the series)
         """
-        if self.parameters.series_kind == SERIES.ANNUAL:
-            if return_period < 5:
-                print('WARNING: Using an annual series and a return period < 5 a will result in faulty values!')
-
-            if return_period <= 10:
-                return_period = np.exp(1.0 / return_period) / (np.exp(1.0 / return_period) - 1.0)
-
-            log_tn = -np.log(np.log(return_period / (return_period - 1.0)))
-
-        else:
-            log_tn = np.log(return_period)
-
-        u, w = self.parameters.get_u_w(duration)
-        return u + w * log_tn
+        return self.parameters.get_depth_of_rainfall(duration, return_period)
 
     # __________________________________________________________________________________________________________________
     def rain_flow_rate(self, duration, return_period):
@@ -277,8 +270,7 @@ class IntensityDurationFrequencyAnalyse:
         Returns:
             int | float | list | numpy.ndarray | pandas.Series: return period in years
         """
-        u, w = self.parameters.get_u_w(duration)
-        return np.exp((height_of_rainfall - u) / w)
+        return self.parameters.get_return_period(height_of_rainfall, duration)
 
     # __________________________________________________________________________________________________________________
     def get_duration(self, height_of_rainfall, return_period):
@@ -403,10 +395,13 @@ class IntensityDurationFrequencyAnalyse:
             pandas.DataFrame: Return periods depending on the duration per datetime-index.
         """
         sums = self.get_rainfall_sum_frame(series=series, durations=durations)
-        df = pd.DataFrame(index=sums.index)
+        df = pd.DataFrame(index=sums.index, dtype=float)
         # df = {}
         for d in frame_looper(sums.index.size, columns=sums.columns, label='return_periods'):
-            df[d] = self.get_return_period(height_of_rainfall=sums[d][sums[d] >= 0.1], duration=d)
+            _slice = sums[d] >= 0.1
+            df[d] = 0.
+            if _slice.sum() != 0:
+                df.loc[_slice, d] = self.get_return_period(height_of_rainfall=sums[d][_slice], duration=d)
         return df  # .fillna(0)#.round(2)
 
     @property
@@ -855,6 +850,14 @@ class IntensityDurationFrequencyAnalyse:
         l1 = ax.legend(custom_lines, ['< 60 min', '> 60 min'], loc='best', title='max Duration')
         ax.add_artist(l1)
         return fig, ax
+
+    def event_dataframe(self, event: dict) -> pd.DataFrame:
+        table_event = pd.DataFrame(index=self.duration_steps_for_output)
+
+        table_event[COL.MAX_OVERLAPPING_SUM] = self.rainfall_sum_frame[event[COL.START]:event[COL.END]].max()
+        table_event[COL.MAX_PERIOD] = self.return_periods_frame[event[COL.START]:event[COL.END]].max()
+
+        return table_event.rename(minutes_readable)
 
     ####################################################################################################################
     # ############################################### CL TOOL ##########################################################

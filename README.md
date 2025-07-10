@@ -27,6 +27,8 @@ for duration steps up to 12 hours (and more) and return period in a range of '0.
 
 The guideline was used in the application [KOSTRA-DWD](https://www.dwd.de/DE/leistungen/kostra_dwd_rasterwerte/kostra_dwd_rasterwerte.html).
 
+Since version v0.4 the new guidelines of [DWA-A 531 (2025)](https://shop.dwa.de/DWA-A-531-Starkregen-in-Abhaengigkeit-von-Wiederkehrzeit-und-Dauer-Juni-2025/A-531-Hauptprodukt-25-main) are also implemented.
+
 ----
 
 > Heavy rainfall data are among the most important planning parameters in water management and hydraulic engineering practice. In urban areas, for example, they are required as initial parameters for the design of rainwater drainage systems and in watercourses for the dimensioning of hydraulic structures. The accuracy of the target values of the corresponding calculation methods and models depends crucially on their accuracy. Their overestimation can lead to considerable additional costs in the structural implementation, their underestimation to an unacceptable, excessive residual risk of failure during the operation of water management and hydraulic engineering facilities. Despite the area-wide availability of heavy rainfall data through "Coordinated Heavy Rainfall Regionalisation Analyses" (KOSTRA), there is still a need for local station analyses, e.g. to evaluate the now extended data series, to evaluate recent developments or to classify local peculiarities in comparison to the KOSTRA data. However, this is only possible without restrictions if the methodological approach recommended in the worksheet is followed. 
@@ -227,6 +229,8 @@ In these examples you can see the usage in a reproducible way. This examples use
 
 [Example Jupyter notebook for the python api](examples/example_python_api.ipynb) (or in the [docs](https://markuspic.github.io/intensity_duration_frequency_analysis/examples/example_python_api.html))
 
+[Example Jupyter notebook for the python api of the DWA 2025 methodology](examples/example_python_api_2025.ipynb) (or in the [docs](https://markuspic.github.io/intensity_duration_frequency_analysis/examples/example_python_api_2025.html))
+
 [Example python skript](https://github.com/MarkusPic/intensity_duration_frequency_analysis/blob/main/examples/example_python_api.py)
 
 
@@ -234,9 +238,14 @@ In these examples you can see the usage in a reproducible way. This examples use
 
 [Interim Results of the idf analysis](https://github.com/MarkusPic/intensity_duration_frequency_analysis/blob/main/examples/ehyd_112086_idf_data/idf_parameters.yaml)
 
-### Example Plot
+### Example Plot using the DWA 2012 methodology
 
 ![IDF-Curves-Plot](https://raw.githubusercontent.com/MarkusPic/intensity_duration_frequency_analysis/refs/heads/main/examples/ehyd_112086_idf_data/idf_curves_plot.png)
+
+### Example Plot using the DWA 2025 methodology
+
+![IDF-Curves-Plot](https://raw.githubusercontent.com/MarkusPic/intensity_duration_frequency_analysis/refs/heads/main/examples/ehyd_112086_idf_data_new/idf_curves_plot_color_logx.png)
+
 
 ### Example IDF table
 
