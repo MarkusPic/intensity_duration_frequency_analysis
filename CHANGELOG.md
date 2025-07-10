@@ -1,8 +1,11 @@
 # CHANGELOG
 
 
-
 ## v0.4.0 (2025-07-10)
+
+### Feature
+
+* feat: implemented new DWA-A 531 (2025) methodology ([`14f547c`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/14f547c0430d2351b70d4a6286b3df0845b4fbf5))
 
 ### Chore
 
@@ -10,37 +13,23 @@
 
 * chore: simplify script for automatic tests with github automatisation ([`93894e7`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/93894e7894a46f864b46c6fdf5f9e0b5f0e52e11))
 
-* chore: fixed automatic tests with github automatisation ([`6ddd636`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/6ddd6369e7884d5dc1cbea0fc63499c068420f07))
-
-* chore: fixed automatic tests with github automatisation ([`ea26c37`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/ea26c37a534a3d077618feb553fda1a3c021a41c))
-
-* chore: fixed automatic tests with github automatisation ([`d5444b1`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/d5444b1b0fda8f9b1defe7e0c25b023086a31de1))
-
-* chore: fixed automatic tests with github automatisation ([`0a69eda`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/0a69eda2751277f6073d4e681b92e4599762482b))
-
-* chore: fixed automatic tests with github automatisation ([`f25959e`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/f25959e509ec70c6b9658ef0185f32f652eb8e32))
+* chore: fixed automatic tests with github automatisation ([`6ddd636`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/6ddd6369e7884d5dc1cbea0fc63499c068420f07))([`ea26c37`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/ea26c37a534a3d077618feb553fda1a3c021a41c))([`d5444b1`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/d5444b1b0fda8f9b1defe7e0c25b023086a31de1))([`0a69eda`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/0a69eda2751277f6073d4e681b92e4599762482b))([`f25959e`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/f25959e509ec70c6b9658ef0185f32f652eb8e32))
 
 ### Documentation
 
-* docs: readme link update ([`dc05ca0`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/dc05ca00c13aeb12f180e1ed62afda6c7a6a8403))
+* Update README.md ([`a8d1464`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/a8d146469c3c0634a5349291e858251d140c2099))
+  * readme link update ([`dc05ca0`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/dc05ca00c13aeb12f180e1ed62afda6c7a6a8403))
+  * readme fix lost link ([`f3ad236`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/f3ad236eef7524fd831ea7c646093031fd7f411f))
+  * readme rearrange ([`00cab60`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/00cab60acf314bb54f2cfa28121d5ac4b7a69733))
+  * added links to badges ([`491a99c`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/491a99c45b25b80e117964470abcf97249847904))
+  * fixed readme errors ([`9b43253`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/9b43253c1afc7a05598d727ef1487f23a1833343))
+  * new citation template (Update CITATION.cff) ([`c4fb824`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/c4fb82416bd562b9fa6f63788df084093d4c49e8))
 
-* docs: readme fix lost link ([`f3ad236`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/f3ad236eef7524fd831ea7c646093031fd7f411f))
-
-* docs: readme rearrange ([`00cab60`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/00cab60acf314bb54f2cfa28121d5ac4b7a69733))
-
-* docs: added links to badges ([`491a99c`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/491a99c45b25b80e117964470abcf97249847904))
-
-* docs: fixed readme errors ([`9b43253`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/9b43253c1afc7a05598d727ef1487f23a1833343))
-
-### Feature
-
-* feat: implemented new DWA-A 531 (2025) methodology ([`14f547c`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/14f547c0430d2351b70d4a6286b3df0845b4fbf5))
+* JOSS publication ([`8f436df`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/8f436df48c46f595f6774bd170f152637715da16))
 
 ### Style
 
-* style: simplified internal functions ([`4d74f8f`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/4d74f8fae394c6cf064c3f63622f35bd9b1e4322))
-
-* style: simplified internal functions ([`e6f7c98`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/e6f7c9840086c6def0318a7f551b56be46030a9f))
+* style: simplified internal functions ([`4d74f8f`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/4d74f8fae394c6cf064c3f63622f35bd9b1e4322)) ([`e6f7c98`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/e6f7c9840086c6def0318a7f551b56be46030a9f))
 
 * style: added some comments ([`f18e8b3`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/f18e8b3e8f8579e9fc97b3ea57b485c614fe9aa9))
 
@@ -52,25 +41,9 @@
 
 * test: added test for arg_parser and plot_helpers functions ([`788e556`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/788e5565b5305b5796430da5262b5f5bcd64ff01))
 
-* test: added test for sri_class functions ([`e0ed961`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/e0ed961187d4f7b1452882ef7041ba578dfa10cd))
-
-* test: added test for sri_class functions ([`7f73c22`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/7f73c2281017db13965c2c9a398d9f213f3f5d5b))
+* test: added test for sri_class functions ([`e0ed961`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/e0ed961187d4f7b1452882ef7041ba578dfa10cd)) ([`7f73c22`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/7f73c2281017db13965c2c9a398d9f213f3f5d5b))
 
 * test: fixed relative path error ([`f42cb40`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/f42cb40f3b4c15ec4af3048b9258ef68900d1601))
-
-### Unknown
-
-* Update README.md ([`a8d1464`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/a8d146469c3c0634a5349291e858251d140c2099))
-
-* Update README.md
-
-new citation template ([`c4fb824`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/c4fb82416bd562b9fa6f63788df084093d4c49e8))
-
-* Update CITATION.cff
-
-JOSS publication ([`8f436df`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/8f436df48c46f595f6774bd170f152637715da16))
-
-* Merge remote-tracking branch &#39;origin/main&#39; ([`ba10524`](https://github.com/MarkusPic/intensity_duration_frequency_analysis/commit/ba1052444a2a241fe8c1fcf8b5bdde4aa355c7e1))
 
 
 ## v0.3.1 (2025-02-07)
