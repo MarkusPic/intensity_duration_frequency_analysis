@@ -9,6 +9,8 @@ from idf_analysis.definitions import *
 
 # sub-folder for the results
 output_directory = Path('ehyd_112086_idf_data')
+output_directory.mkdir(parents=True, exist_ok=True)
+
 # initialize of the analysis class
 idf = HeavyRainfallIndexAnalyse(series_kind=SERIES.PARTIAL, worksheet=METHOD.KOSTRA, extended_durations=True)
 
@@ -27,7 +29,7 @@ idf.set_series(series)
 
 # --------
 if _ := 0:  # this is just an on/off switch, to only run certain parts of the code.
-    fig = idf.parameters._interims.plot_series()
+    fig = idf.parameters.interim_plot_series()
     fig.set_size_inches(12, 24)
     # fig.savefig(output_directory / 'interims.pdf')
     fig.savefig(output_directory / f'interims_{idf.parameters.series_kind}.png')
@@ -118,7 +120,7 @@ if _ := 0:  # this is just an on/off switch, to only run certain parts of the co
 
 # --------
 # plotting the IDF curves for JOSS paper
-if _ := 1:  # this is just an on/off switch, to only run certain parts of the code.
+if _ := 0:  # this is just an on/off switch, to only run certain parts of the code.
     fig, ax = idf.curve_figure(color=True, logx=True, max_duration=60 * 24 * 6, duration_steps_ticks=True, add_interim=False)
     ax.grid(ls=':', lw=0.5)
     fig.set_size_inches(*fig_size)
