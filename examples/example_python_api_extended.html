@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+
+<html data-content_root="../" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Intensity Duration Frequency Analyse - EXTENDED — Intensity Duration Frequency Analyse 0.4.0 documentation</title>
+<link href="../_static/pygments.css?v=8f2a1f02" rel="stylesheet" type="text/css"/>
+<link href="../_static/nature.css?v=7d325330" rel="stylesheet" type="text/css"/>
+<link href="../_static/sphinx-codeautolink.css?v=b2176991" rel="stylesheet" type="text/css"/>
+<link href="../_static/nbsphinx-code-cells.css?v=2aa19091" rel="stylesheet" type="text/css"/>
+<script src="../_static/documentation_options.js?v=6c02275b"></script>
+<script src="../_static/doctools.js?v=9bcbadda"></script>
+<script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+<script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+<script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+<script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<link href="../genindex.html" rel="index" title="Index"/>
+<link href="../search.html" rel="search" title="Search"/>
+<link href="../CONTRIBUTING.html" rel="next" title="Contributing to This Project"/>
+<link href="example_heavy_rainfall_index.html" rel="prev" title="Example for Heavy Rainfall Index"/>
+</head><body>
+<div aria-label="Related" class="related" role="navigation">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a accesskey="I" href="../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a accesskey="N" href="../CONTRIBUTING.html" title="Contributing to This Project">next</a> |</li>
+<li class="right">
+<a accesskey="P" href="example_heavy_rainfall_index.html" title="Example for Heavy Rainfall Index">previous</a> |</li>
+<li class="nav-item nav-item-0"><a href="../index.html">Intensity Duration Frequency Analyse 0.4.0 documentation</a> »</li>
+<li class="nav-item nav-item-1"><a accesskey="U" href="../examples.html">Examples | Tutorial</a> »</li>
+<li class="nav-item nav-item-this"><a href="">Intensity Duration Frequency Analyse - EXTENDED</a></li>
+</ul>
+</div>
+<div class="document">
+<div class="documentwrapper">
+<div class="bodywrapper">
+<div class="body" role="main">
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">idf_analysis.idf_class</span><span class="w"> </span><span class="kn">import</span> <a class="sphinx-codeautolink-a" href="../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse" title="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse"><span class="n">IntensityDurationFrequencyAnalyse</span></a>
+<span class="kn">from</span><span class="w"> </span><span class="nn">idf_analysis.definitions</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span><span class="w"> </span><a class="sphinx-codeautolink-a" href="https://pandas.pydata.org/docs/index.html#module-pandas" title="pandas"><span class="nn">pandas</span></a><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><a class="sphinx-codeautolink-a" href="https://docs.python.org/3/library/os.html#module-os" title="os"><span class="nn">os</span></a><span class="w"> </span><span class="kn">import</span> <a class="sphinx-codeautolink-a" href="https://docs.python.org/3/library/os.path.html#module-os.path" title="os.path"><span class="n">path</span></a>
+<span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="kn">import</span><span class="w"> </span><a class="sphinx-codeautolink-a" href="https://matplotlib.org/stable/api/pyplot_summary.html#module-matplotlib.pyplot" title="matplotlib.pyplot"><span class="nn">matplotlib.pyplot</span></a><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">'bmh'</span><span class="p">)</span>
+
+<span class="kn">import</span><span class="w"> </span><a class="sphinx-codeautolink-a" href="https://matplotlib.org/stable/index.html#module-matplotlib" title="matplotlib"><span class="nn">matplotlib</span></a>
+<span class="n">matplotlib</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+    <span class="s1">'figure.figsize'</span><span class="p">:</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span>
+    <span class="s1">'figure.dpi'</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+    <span class="s1">'figure.constrained_layout.use'</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+</div>
+<section id="Intensity-Duration-Frequency-Analyse---EXTENDED">
+<h1>Intensity Duration Frequency Analyse - EXTENDED<a class="headerlink" href="#Intensity-Duration-Frequency-Analyse---EXTENDED" title="Link to this heading">¶</a></h1>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># sub-folder for the results</span>
+<span class="n">output_directory</span> <span class="o">=</span> <a class="sphinx-codeautolink-a" href="https://docs.python.org/3/library/os.path.html#os.path.join" title="os.path.join"><span class="n">path</span><span class="o">.</span><span class="n">join</span></a><span class="p">(</span><span class="s1">'ehyd_112086_idf_data'</span><span class="p">)</span>
+
+<span class="c1"># initialize of the analysis class</span>
+<a class="sphinx-codeautolink-a" href="../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse" title="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse"><span class="n">idf</span></a> <span class="o">=</span> <a class="sphinx-codeautolink-a" href="../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse" title="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse"><span class="n">IntensityDurationFrequencyAnalyse</span></a><span class="p">(</span><span class="n">series_kind</span><span class="o">=</span><span class="n">SERIES</span><span class="o">.</span><span class="n">PARTIAL</span><span class="p">,</span> <span class="n">worksheet</span><span class="o">=</span><span class="n">METHOD</span><span class="o">.</span><span class="n">KOSTRA</span><span class="p">,</span> <span class="n">extended_durations</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># reading the pandas series of the precipitation (data from ehyd.gv.at - ID=112086)</span>
+<span class="c1"># You need to install `pyarrow` or `fastparquet` to read and write parquet files.</span>
+<span class="n">series</span> <span class="o">=</span> <a class="sphinx-codeautolink-a" href="https://pandas.pydata.org/docs/reference/api/pandas.read_parquet.html#pandas.read_parquet" title="pandas.read_parquet"><span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span></a><span class="p">(</span><span class="s1">'ehyd_112086.parquet'</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="s1">'columns'</span><span class="p">)</span> <span class="c1"># ['precipitation']</span>
+
+<span class="c1"># setting the series for the analysis</span>
+<a class="sphinx-codeautolink-a" href="../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.set_series" title="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.set_series"><span class="n">idf</span><span class="o">.</span><span class="n">set_series</span></a><span class="p">(</span><span class="n">series</span><span class="p">)</span>
+
+<span class="c1"># auto-save the calculated parameter so save time for a later use</span>
+<a class="sphinx-codeautolink-a" href="../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.auto_save_parameters" title="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.auto_save_parameters"><span class="n">idf</span><span class="o">.</span><span class="n">auto_save_parameters</span></a><span class="p">(</span><a class="sphinx-codeautolink-a" href="https://docs.python.org/3/library/os.path.html#os.path.join" title="os.path.join"><span class="n">path</span><span class="o">.</span><span class="n">join</span></a><span class="p">(</span><span class="n">output_directory</span><span class="p">,</span> <span class="s1">'idf_parameters.yaml'</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+_balance_parameter_change
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><a class="sphinx-codeautolink-a" href="../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.rain_events" title="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.rain_events"><span class="n">events</span></a> <span class="o">=</span> <a class="sphinx-codeautolink-a" href="../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.rain_events" title="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.rain_events"><span class="n">idf</span><span class="o">.</span><span class="n">rain_events</span></a>
+<span class="s2">"Columns: "</span><span class="p">,</span> <span class="n">events</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span>  <span class="s2">"| Number of events: "</span><span class="p">,</span> <span class="n">events</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">size</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+('Columns: ',
+ Index(['start', 'end', 'duration', 'rain_sum', 'last_event'], dtype='object'),
+ '| Number of events: ',
+ 1776)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># reduce number of event by limiting the minimum sum of rainfall</span>
+<span class="n">events</span> <span class="o">=</span> <a class="sphinx-codeautolink-a" href="../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.rain_events" title="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.rain_events"><span class="n">events</span></a><span class="p">[</span><a class="sphinx-codeautolink-a" href="../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.rain_events" title="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.rain_events"><span class="n">events</span></a><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">LP</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="s2">"Columns: "</span><span class="p">,</span> <span class="n">events</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span>  <span class="s2">"| Number of events: "</span><span class="p">,</span> <span class="n">events</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">size</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+('Columns: ',
+ Index(['start', 'end', 'duration', 'rain_sum', 'last_event'], dtype='object'),
+ '| Number of events: ',
+ 311)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># add the maximum return period to the events and at which duration this period occurs</span>
+<span class="n">idf</span><span class="o">.</span><span class="n">add_max_return_periods_to_events</span><span class="p">(</span><span class="n">events</span><span class="p">)</span>
+<span class="s2">"Columns: "</span><span class="p">,</span> <span class="n">events</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span>  <span class="s2">"| Number of events: "</span><span class="p">,</span> <span class="n">events</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">size</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "291e23e444b34c2c9faa6e3938b81b5e", "version_major": 2, "version_minor": 0}</script></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "4e39778f99e242ac885d3e3ee6b725c4", "version_major": 2, "version_minor": 0}</script></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+('Columns: ',
+ Index(['start', 'end', 'duration', 'rain_sum', 'last_event',
+        'max_return_period', 'max_return_period_duration'],
+       dtype='object'),
+ '| Number of events: ',
+ 311)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># reduce number of event by limiting the minimum return period of an event</span>
+<span class="n">events</span> <span class="o">=</span> <span class="n">events</span><span class="p">[</span><span class="n">events</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">MAX_PERIOD</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="s2">"Columns: "</span><span class="p">,</span> <span class="n">events</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span>  <span class="s2">"| Number of events: "</span><span class="p">,</span> <span class="n">events</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">size</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+('Columns: ',
+ Index(['start', 'end', 'duration', 'rain_sum', 'last_event',
+        'max_return_period', 'max_return_period_duration'],
+       dtype='object'),
+ '| Number of events: ',
+ 21)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">events</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>start</th>
+<th>end</th>
+<th>duration</th>
+<th>rain_sum</th>
+<th>last_event</th>
+<th>max_return_period</th>
+<th>max_return_period_duration</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>104</th>
+<td>2008-06-23 19:50:00</td>
+<td>2008-06-23 23:16:00</td>
+<td>0 days 03:26:00</td>
+<td>34.8</td>
+<td>2 days 21:52:00</td>
+<td>5.443256</td>
+<td>15</td>
+</tr>
+<tr>
+<th>124</th>
+<td>2008-07-17 14:14:00</td>
+<td>2008-07-18 06:27:00</td>
+<td>0 days 16:13:00</td>
+<td>74.6</td>
+<td>0 days 04:09:00</td>
+<td>6.296477</td>
+<td>120</td>
+</tr>
+<tr>
+<th>126</th>
+<td>2008-07-20 17:43:00</td>
+<td>2008-07-21 03:55:00</td>
+<td>0 days 10:12:00</td>
+<td>27.7</td>
+<td>2 days 02:48:00</td>
+<td>2.831020</td>
+<td>5760</td>
+</tr>
+<tr>
+<th>271</th>
+<td>2009-07-18 08:55:00</td>
+<td>2009-07-18 13:19:00</td>
+<td>0 days 04:24:00</td>
+<td>58.0</td>
+<td>2 days 01:56:00</td>
+<td>3.379566</td>
+<td>240</td>
+</tr>
+<tr>
+<th>279</th>
+<td>2009-08-21 19:49:00</td>
+<td>2009-08-21 20:29:00</td>
+<td>0 days 00:40:00</td>
+<td>34.2</td>
+<td>4 days 03:04:00</td>
+<td>3.975974</td>
+<td>20</td>
+</tr>
+<tr>
+<th>282</th>
+<td>2009-08-28 23:41:00</td>
+<td>2009-08-29 00:42:00</td>
+<td>0 days 01:01:00</td>
+<td>49.3</td>
+<td>1 days 03:44:00</td>
+<td>19.719853</td>
+<td>20</td>
+</tr>
+<tr>
+<th>284</th>
+<td>2009-09-04 00:31:00</td>
+<td>2009-09-04 18:18:00</td>
+<td>0 days 17:47:00</td>
+<td>69.0</td>
+<td>5 days 11:06:00</td>
+<td>2.605674</td>
+<td>1080</td>
+</tr>
+<tr>
+<th>544</th>
+<td>2011-08-03 19:53:00</td>
+<td>2011-08-04 07:44:00</td>
+<td>0 days 11:51:00</td>
+<td>54.7</td>
+<td>1 days 23:11:00</td>
+<td>12.733190</td>
+<td>20</td>
+</tr>
+<tr>
+<th>662</th>
+<td>2012-07-14 16:54:00</td>
+<td>2012-07-15 13:06:00</td>
+<td>0 days 20:12:00</td>
+<td>59.8</td>
+<td>1 days 01:15:00</td>
+<td>3.719740</td>
+<td>8640</td>
+</tr>
+<tr>
+<th>772</th>
+<td>2013-05-05 20:47:00</td>
+<td>2013-05-07 12:40:00</td>
+<td>1 days 15:53:00</td>
+<td>119.5</td>
+<td>0 days 17:31:00</td>
+<td>30.573431</td>
+<td>2880</td>
+</tr>
+<tr>
+<th>819</th>
+<td>2013-08-27 17:10:00</td>
+<td>2013-08-27 23:48:00</td>
+<td>0 days 06:38:00</td>
+<td>43.3</td>
+<td>0 days 13:58:00</td>
+<td>2.617407</td>
+<td>5</td>
+</tr>
+<tr>
+<th>820</th>
+<td>2013-08-28 11:42:00</td>
+<td>2013-08-28 16:21:00</td>
+<td>0 days 04:39:00</td>
+<td>28.5</td>
+<td>0 days 11:54:00</td>
+<td>3.542479</td>
+<td>2880</td>
+</tr>
+<tr>
+<th>921</th>
+<td>2014-05-11 10:21:00</td>
+<td>2014-05-11 23:17:00</td>
+<td>0 days 12:56:00</td>
+<td>55.6</td>
+<td>0 days 13:17:00</td>
+<td>2.082202</td>
+<td>2880</td>
+</tr>
+<tr>
+<th>922</th>
+<td>2014-05-12 17:22:00</td>
+<td>2014-05-13 17:26:00</td>
+<td>1 days 00:04:00</td>
+<td>20.6</td>
+<td>0 days 18:05:00</td>
+<td>2.797981</td>
+<td>4320</td>
+</tr>
+<tr>
+<th>1111</th>
+<td>2015-07-08 11:50:00</td>
+<td>2015-07-09 00:25:00</td>
+<td>0 days 12:35:00</td>
+<td>77.8</td>
+<td>8 days 13:53:00</td>
+<td>5.981488</td>
+<td>720</td>
+</tr>
+<tr>
+<th>1236</th>
+<td>2016-06-05 11:03:00</td>
+<td>2016-06-05 14:56:00</td>
+<td>0 days 03:53:00</td>
+<td>40.4</td>
+<td>0 days 19:56:00</td>
+<td>6.794841</td>
+<td>5</td>
+</tr>
+<tr>
+<th>1269</th>
+<td>2016-07-21 22:29:00</td>
+<td>2016-07-21 23:21:00</td>
+<td>0 days 00:52:00</td>
+<td>37.2</td>
+<td>5 days 00:05:00</td>
+<td>2.448124</td>
+<td>30</td>
+</tr>
+<tr>
+<th>1273</th>
+<td>2016-07-25 10:18:00</td>
+<td>2016-07-25 15:47:00</td>
+<td>0 days 05:29:00</td>
+<td>33.8</td>
+<td>0 days 19:01:00</td>
+<td>3.399509</td>
+<td>5760</td>
+</tr>
+<tr>
+<th>1275</th>
+<td>2016-07-27 15:25:00</td>
+<td>2016-07-27 20:24:00</td>
+<td>0 days 04:59:00</td>
+<td>12.2</td>
+<td>1 days 01:05:00</td>
+<td>4.663455</td>
+<td>8640</td>
+</tr>
+<tr>
+<th>1531</th>
+<td>2018-06-12 17:00:00</td>
+<td>2018-06-12 17:31:00</td>
+<td>0 days 00:31:00</td>
+<td>21.6</td>
+<td>3 days 16:11:00</td>
+<td>3.070451</td>
+<td>5</td>
+</tr>
+<tr>
+<th>1532</th>
+<td>2018-06-13 14:58:00</td>
+<td>2018-06-13 22:27:00</td>
+<td>0 days 07:29:00</td>
+<td>63.5</td>
+<td>0 days 21:27:00</td>
+<td>11.429391</td>
+<td>15</td>
+</tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># lets pick one event</span>
+<span class="n">event</span> <span class="o">=</span> <span class="n">events</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">124</span><span class="p">]</span>
+<span class="n">event</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+start                         2008-07-17 14:14:00
+end                           2008-07-18 06:27:00
+duration                          0 days 16:13:00
+rain_sum                                     74.6
+last_event                        0 days 04:09:00
+max_return_period                        6.296477
+max_return_period_duration                    120
+Name: 124, dtype: object
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">caption</span> <span class="o">=</span> <span class="n">idf</span><span class="o">.</span><span class="n">event_plot</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/examples_example_python_api_extended_9_0.png" src="../_images/examples_example_python_api_extended_9_0.png"/>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># you can also reduce the displayed duration steps</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">caption</span> <span class="o">=</span> <span class="n">idf</span><span class="o">.</span><span class="n">event_plot</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">durations</span><span class="o">=</span><a class="sphinx-codeautolink-a" href="../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.duration_steps" title="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.duration_steps"><span class="n">idf</span><span class="o">.</span><span class="n">duration_steps</span></a><span class="p">[:</span><span class="mi">11</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/examples_example_python_api_extended_10_0.png" src="../_images/examples_example_python_api_extended_10_0.png"/>
+</div>
+</div>
+</section>
+<div class="clearer"></div>
+</div>
+</div>
+</div>
+<div aria-label="Main" class="sphinxsidebar" role="navigation">
+<div class="sphinxsidebarwrapper">
+<div>
+<h4>Previous topic</h4>
+<p class="topless"><a href="example_heavy_rainfall_index.html" title="previous chapter">Example for Heavy Rainfall Index</a></p>
+</div>
+<div>
+<h4>Next topic</h4>
+<p class="topless"><a href="../CONTRIBUTING.html" title="next chapter">Contributing to This Project</a></p>
+</div>
+<div aria-label="source link" role="note">
+<h3>This Page</h3>
+<ul class="this-page-menu">
+<li><a href="../_sources/examples/example_python_api_extended.ipynb.txt" rel="nofollow">Show Source</a></li>
+</ul>
+</div>
+<search id="searchbox" role="search" style="display: none">
+<h3 id="searchlabel">Quick search</h3>
+<div class="searchformwrapper">
+<form action="../search.html" class="search" method="get">
+<input aria-labelledby="searchlabel" autocapitalize="off" autocomplete="off" autocorrect="off" name="q" spellcheck="false" type="text"/>
+<input type="submit" value="Go"/>
+</form>
+</div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+</div>
+</div>
+<div class="clearer"></div>
+</div>
+<div aria-label="Related" class="related" role="navigation">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a href="../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="../CONTRIBUTING.html" title="Contributing to This Project">next</a> |</li>
+<li class="right">
+<a href="example_heavy_rainfall_index.html" title="Example for Heavy Rainfall Index">previous</a> |</li>
+<li class="nav-item nav-item-0"><a href="../index.html">Intensity Duration Frequency Analyse 0.4.0 documentation</a> »</li>
+<li class="nav-item nav-item-1"><a href="../examples.html">Examples | Tutorial</a> »</li>
+<li class="nav-item nav-item-this"><a href="">Intensity Duration Frequency Analyse - EXTENDED</a></li>
+</ul>
+</div>
+<div class="footer" role="contentinfo">
+    © Copyright 2025, Pichler.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    </div>
+</body>
+</html>

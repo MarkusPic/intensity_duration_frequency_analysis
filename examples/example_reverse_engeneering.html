@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>&lt;no title&gt; &#8212; Intensity Duration Frequency Analyse 0.4.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/nature.css?v=7d325330" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-codeautolink.css?v=b2176991" />
+    <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css?v=2aa19091" />
+    <script src="../_static/documentation_options.js?v=6c02275b"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Intensity Duration Frequency Analyse 0.4.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">&lt;no title&gt;</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">idf_analysis</span><span class="w"> </span><span class="kn">import</span> <span class="n">IntensityDurationFrequencyAnalyse</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">location</span> <span class="o">=</span> <span class="s1">&#39;graz&#39;</span>
+<span class="n">grid_point_number</span> <span class="o">=</span> <span class="mi">5214</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">output_directory</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;design_rain_ehyd_</span><span class="si">{</span><span class="n">grid_point_number</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">output_directory</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">fn_idf_ehyd</span> <span class="o">=</span> <span class="n">output_directory</span> <span class="o">/</span> <span class="s1">&#39;design_rain_ehyd_5214.csv&#39;</span>
+<span class="k">if</span> <span class="n">fn_idf_ehyd</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">fn_idf_ehyd</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">ehyd_tools.design_rainfall</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_max_calculation_method</span><span class="p">,</span> <span class="n">get_ehyd_design_rainfall_offline</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">get_ehyd_design_rainfall_offline</span><span class="p">(</span><span class="n">grid_point_number</span><span class="p">,</span> <span class="n">pth</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="c1"># idf_table = get_max_calculation_method(df)</span>
+<span class="n">df</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th></th>
+      <th>1</th>
+      <th>2</th>
+      <th>3</th>
+      <th>5</th>
+      <th>10</th>
+      <th>20</th>
+      <th>25</th>
+      <th>30</th>
+      <th>50</th>
+      <th>75</th>
+      <th>100</th>
+    </tr>
+    <tr>
+      <th>duration</th>
+      <th>calculation method</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th rowspan="3" valign="top">5</th>
+      <th>MaxModN</th>
+      <td>8.8</td>
+      <td>10.4</td>
+      <td>11.7</td>
+      <td>13.4</td>
+      <td>15.8</td>
+      <td>18.2</td>
+      <td>18.9</td>
+      <td>19.6</td>
+      <td>21.3</td>
+      <td>22.7</td>
+      <td>23.7</td>
+    </tr>
+    <tr>
+      <th>Bemessung</th>
+      <td>8.6</td>
+      <td>10.2</td>
+      <td>11.3</td>
+      <td>12.7</td>
+      <td>14.7</td>
+      <td>16.7</td>
+      <td>17.4</td>
+      <td>18.0</td>
+      <td>19.4</td>
+      <td>20.6</td>
+      <td>21.4</td>
+    </tr>
+    <tr>
+      <th>ÖKOSTRA</th>
+      <td>8.4</td>
+      <td>9.9</td>
+      <td>10.8</td>
+      <td>11.9</td>
+      <td>13.4</td>
+      <td>14.9</td>
+      <td>15.5</td>
+      <td>15.9</td>
+      <td>17.0</td>
+      <td>17.9</td>
+      <td>18.5</td>
+    </tr>
+    <tr>
+      <th rowspan="2" valign="top">10</th>
+      <th>MaxModN</th>
+      <td>14.0</td>
+      <td>16.6</td>
+      <td>18.2</td>
+      <td>20.2</td>
+      <td>24.7</td>
+      <td>29.1</td>
+      <td>30.5</td>
+      <td>31.7</td>
+      <td>35.0</td>
+      <td>37.6</td>
+      <td>39.4</td>
+    </tr>
+    <tr>
+      <th>Bemessung</th>
+      <td>13.7</td>
+      <td>16.3</td>
+      <td>17.8</td>
+      <td>19.7</td>
+      <td>23.3</td>
+      <td>26.8</td>
+      <td>27.8</td>
+      <td>28.8</td>
+      <td>31.4</td>
+      <td>33.5</td>
+      <td>35.0</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th rowspan="2" valign="top">7200</th>
+      <th>Bemessung</th>
+      <td>84.7</td>
+      <td>106.4</td>
+      <td>119.6</td>
+      <td>136.1</td>
+      <td>159.0</td>
+      <td>181.4</td>
+      <td>189.1</td>
+      <td>194.7</td>
+      <td>211.6</td>
+      <td>224.8</td>
+      <td>233.8</td>
+    </tr>
+    <tr>
+      <th>ÖKOSTRA</th>
+      <td>78.3</td>
+      <td>93.6</td>
+      <td>102.2</td>
+      <td>112.9</td>
+      <td>128.3</td>
+      <td>142.7</td>
+      <td>148.2</td>
+      <td>151.6</td>
+      <td>162.9</td>
+      <td>171.5</td>
+      <td>177.0</td>
+    </tr>
+    <tr>
+      <th rowspan="3" valign="top">8640</th>
+      <th>MaxModN</th>
+      <td>96.4</td>
+      <td>123.1</td>
+      <td>141.3</td>
+      <td>164.3</td>
+      <td>195.4</td>
+      <td>226.6</td>
+      <td>236.6</td>
+      <td>244.9</td>
+      <td>267.8</td>
+      <td>286.1</td>
+      <td>299.0</td>
+    </tr>
+    <tr>
+      <th>Bemessung</th>
+      <td>89.6</td>
+      <td>110.8</td>
+      <td>124.4</td>
+      <td>141.8</td>
+      <td>164.9</td>
+      <td>188.6</td>
+      <td>195.9</td>
+      <td>201.9</td>
+      <td>219.2</td>
+      <td>232.9</td>
+      <td>242.9</td>
+    </tr>
+    <tr>
+      <th>ÖKOSTRA</th>
+      <td>82.8</td>
+      <td>98.4</td>
+      <td>107.4</td>
+      <td>119.2</td>
+      <td>134.4</td>
+      <td>150.6</td>
+      <td>155.2</td>
+      <td>158.8</td>
+      <td>170.6</td>
+      <td>179.6</td>
+      <td>186.8</td>
+    </tr>
+  </tbody>
+</table>
+<p>63 rows × 11 columns</p>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">idf_table</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">xs</span><span class="p">(</span><span class="s1">&#39;ÖKOSTRA&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="s1">&#39;calculation method&#39;</span><span class="p">,</span> <span class="n">drop_level</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">idf_table</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>1</th>
+      <th>2</th>
+      <th>3</th>
+      <th>5</th>
+      <th>10</th>
+      <th>20</th>
+      <th>25</th>
+      <th>30</th>
+      <th>50</th>
+      <th>75</th>
+      <th>100</th>
+    </tr>
+    <tr>
+      <th>duration</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>5</th>
+      <td>8.4</td>
+      <td>9.9</td>
+      <td>10.8</td>
+      <td>11.9</td>
+      <td>13.4</td>
+      <td>14.9</td>
+      <td>15.5</td>
+      <td>15.9</td>
+      <td>17.0</td>
+      <td>17.9</td>
+      <td>18.5</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>13.4</td>
+      <td>15.9</td>
+      <td>17.3</td>
+      <td>19.2</td>
+      <td>21.7</td>
+      <td>24.3</td>
+      <td>24.9</td>
+      <td>25.6</td>
+      <td>27.5</td>
+      <td>29.1</td>
+      <td>30.1</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>16.8</td>
+      <td>20.0</td>
+      <td>21.9</td>
+      <td>24.3</td>
+      <td>27.6</td>
+      <td>30.7</td>
+      <td>31.8</td>
+      <td>32.7</td>
+      <td>35.0</td>
+      <td>37.0</td>
+      <td>38.4</td>
+    </tr>
+    <tr>
+      <th>20</th>
+      <td>19.3</td>
+      <td>23.1</td>
+      <td>25.3</td>
+      <td>28.2</td>
+      <td>31.9</td>
+      <td>35.8</td>
+      <td>36.9</td>
+      <td>37.9</td>
+      <td>40.8</td>
+      <td>43.0</td>
+      <td>44.6</td>
+    </tr>
+    <tr>
+      <th>30</th>
+      <td>22.7</td>
+      <td>27.3</td>
+      <td>30.0</td>
+      <td>33.5</td>
+      <td>38.1</td>
+      <td>42.7</td>
+      <td>44.3</td>
+      <td>45.5</td>
+      <td>48.8</td>
+      <td>51.5</td>
+      <td>53.4</td>
+    </tr>
+    <tr>
+      <th>45</th>
+      <td>25.8</td>
+      <td>31.3</td>
+      <td>34.5</td>
+      <td>38.4</td>
+      <td>44.0</td>
+      <td>49.4</td>
+      <td>51.2</td>
+      <td>52.7</td>
+      <td>56.6</td>
+      <td>59.7</td>
+      <td>62.0</td>
+    </tr>
+    <tr>
+      <th>60</th>
+      <td>27.7</td>
+      <td>33.6</td>
+      <td>37.1</td>
+      <td>41.5</td>
+      <td>47.5</td>
+      <td>53.2</td>
+      <td>55.3</td>
+      <td>56.8</td>
+      <td>61.0</td>
+      <td>64.4</td>
+      <td>66.9</td>
+    </tr>
+    <tr>
+      <th>90</th>
+      <td>29.9</td>
+      <td>36.4</td>
+      <td>40.2</td>
+      <td>45.0</td>
+      <td>51.3</td>
+      <td>57.8</td>
+      <td>60.0</td>
+      <td>61.7</td>
+      <td>66.2</td>
+      <td>70.2</td>
+      <td>72.9</td>
+    </tr>
+    <tr>
+      <th>120</th>
+      <td>31.2</td>
+      <td>38.0</td>
+      <td>41.8</td>
+      <td>46.8</td>
+      <td>53.6</td>
+      <td>60.3</td>
+      <td>62.5</td>
+      <td>64.3</td>
+      <td>69.4</td>
+      <td>73.6</td>
+      <td>76.3</td>
+    </tr>
+    <tr>
+      <th>180</th>
+      <td>32.6</td>
+      <td>39.8</td>
+      <td>43.8</td>
+      <td>49.0</td>
+      <td>56.3</td>
+      <td>63.3</td>
+      <td>65.6</td>
+      <td>67.4</td>
+      <td>72.6</td>
+      <td>77.0</td>
+      <td>79.8</td>
+    </tr>
+    <tr>
+      <th>240</th>
+      <td>34.9</td>
+      <td>41.8</td>
+      <td>46.1</td>
+      <td>51.2</td>
+      <td>58.5</td>
+      <td>65.4</td>
+      <td>67.8</td>
+      <td>69.6</td>
+      <td>74.9</td>
+      <td>78.7</td>
+      <td>82.1</td>
+    </tr>
+    <tr>
+      <th>360</th>
+      <td>38.1</td>
+      <td>45.1</td>
+      <td>49.1</td>
+      <td>54.4</td>
+      <td>61.4</td>
+      <td>68.1</td>
+      <td>70.4</td>
+      <td>72.6</td>
+      <td>77.8</td>
+      <td>81.5</td>
+      <td>84.2</td>
+    </tr>
+    <tr>
+      <th>540</th>
+      <td>41.2</td>
+      <td>48.1</td>
+      <td>52.0</td>
+      <td>57.0</td>
+      <td>64.0</td>
+      <td>70.7</td>
+      <td>73.5</td>
+      <td>75.2</td>
+      <td>80.2</td>
+      <td>84.3</td>
+      <td>87.0</td>
+    </tr>
+    <tr>
+      <th>720</th>
+      <td>43.5</td>
+      <td>50.2</td>
+      <td>54.2</td>
+      <td>59.4</td>
+      <td>66.0</td>
+      <td>73.0</td>
+      <td>75.1</td>
+      <td>76.7</td>
+      <td>82.1</td>
+      <td>85.5</td>
+      <td>88.8</td>
+    </tr>
+    <tr>
+      <th>1080</th>
+      <td>48.1</td>
+      <td>56.1</td>
+      <td>61.0</td>
+      <td>67.1</td>
+      <td>75.0</td>
+      <td>83.6</td>
+      <td>85.9</td>
+      <td>88.2</td>
+      <td>94.3</td>
+      <td>98.7</td>
+      <td>102.4</td>
+    </tr>
+    <tr>
+      <th>1440</th>
+      <td>53.5</td>
+      <td>62.7</td>
+      <td>68.1</td>
+      <td>74.6</td>
+      <td>83.3</td>
+      <td>92.6</td>
+      <td>95.7</td>
+      <td>97.4</td>
+      <td>104.3</td>
+      <td>109.9</td>
+      <td>112.9</td>
+    </tr>
+    <tr>
+      <th>2880</th>
+      <td>61.8</td>
+      <td>73.4</td>
+      <td>80.2</td>
+      <td>88.6</td>
+      <td>100.6</td>
+      <td>111.9</td>
+      <td>115.4</td>
+      <td>119.0</td>
+      <td>127.5</td>
+      <td>134.6</td>
+      <td>139.3</td>
+    </tr>
+    <tr>
+      <th>4320</th>
+      <td>68.1</td>
+      <td>81.2</td>
+      <td>89.2</td>
+      <td>98.6</td>
+      <td>112.0</td>
+      <td>124.8</td>
+      <td>128.6</td>
+      <td>132.6</td>
+      <td>142.5</td>
+      <td>150.1</td>
+      <td>155.2</td>
+    </tr>
+    <tr>
+      <th>5760</th>
+      <td>73.8</td>
+      <td>87.8</td>
+      <td>95.9</td>
+      <td>106.7</td>
+      <td>120.4</td>
+      <td>135.0</td>
+      <td>139.2</td>
+      <td>143.4</td>
+      <td>153.0</td>
+      <td>162.3</td>
+      <td>167.5</td>
+    </tr>
+    <tr>
+      <th>7200</th>
+      <td>78.3</td>
+      <td>93.6</td>
+      <td>102.2</td>
+      <td>112.9</td>
+      <td>128.3</td>
+      <td>142.7</td>
+      <td>148.2</td>
+      <td>151.6</td>
+      <td>162.9</td>
+      <td>171.5</td>
+      <td>177.0</td>
+    </tr>
+    <tr>
+      <th>8640</th>
+      <td>82.8</td>
+      <td>98.4</td>
+      <td>107.4</td>
+      <td>119.2</td>
+      <td>134.4</td>
+      <td>150.6</td>
+      <td>155.2</td>
+      <td>158.8</td>
+      <td>170.6</td>
+      <td>179.6</td>
+      <td>186.8</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">idf_reverse</span> <span class="o">=</span> <span class="n">IntensityDurationFrequencyAnalyse</span><span class="o">.</span><span class="n">from_idf_table</span><span class="p">(</span><span class="n">idf_table</span><span class="p">,</span> <span class="n">linear_interpolation</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">idf_reverse</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">interim_plot_parameters</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/examples_example_reverse_engeneering_6_0.png" src="../_images/examples_example_reverse_engeneering_6_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">max_duration</span> <span class="o">=</span> <span class="mi">2880</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">idf_reverse</span><span class="o">.</span><span class="n">curve_figure</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">logx</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_duration</span><span class="o">=</span><span class="n">max_duration</span><span class="p">,</span> <span class="n">duration_steps_ticks</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">ax</span> <span class="o">=</span> <span class="n">idf_table</span><span class="o">.</span><span class="n">loc</span><span class="p">[:</span><span class="n">max_duration</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">100</span><span class="p">]]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">legend</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/examples_example_reverse_engeneering_7_0.png" src="../_images/examples_example_reverse_engeneering_7_0.png" />
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">idf_reverse</span> <span class="o">=</span> <span class="n">IntensityDurationFrequencyAnalyse</span><span class="o">.</span><span class="n">from_idf_table</span><span class="p">(</span><span class="n">idf_table</span><span class="p">,</span> <span class="n">linear_interpolation</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">idf_reverse</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">interim_plot_parameters</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/examples_example_reverse_engeneering_9_0.png" src="../_images/examples_example_reverse_engeneering_9_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">max_duration</span> <span class="o">=</span> <span class="mi">2880</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">idf_reverse</span><span class="o">.</span><span class="n">curve_figure</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">logx</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_duration</span><span class="o">=</span><span class="n">max_duration</span><span class="p">,</span> <span class="n">duration_steps_ticks</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">ax</span> <span class="o">=</span> <span class="n">idf_table</span><span class="o">.</span><span class="n">loc</span><span class="p">[:</span><span class="n">max_duration</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">100</span><span class="p">]]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">legend</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/examples_example_reverse_engeneering_10_0.png" src="../_images/examples_example_reverse_engeneering_10_0.png" />
+</div>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/examples/example_reverse_engeneering.ipynb.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Intensity Duration Frequency Analyse 0.4.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">&lt;no title&gt;</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2025, Pichler.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    </div>
+  </body>
+</html>

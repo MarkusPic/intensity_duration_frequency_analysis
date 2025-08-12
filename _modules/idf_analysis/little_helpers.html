@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>idf_analysis.little_helpers &#8212; Intensity Duration Frequency Analyse 0.4.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/nature.css?v=7d325330" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-codeautolink.css?v=b2176991" />
+    <script src="../../_static/documentation_options.js?v=6c02275b"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Intensity Duration Frequency Analyse 0.4.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">idf_analysis.little_helpers</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for idf_analysis.little_helpers</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.definitions</span><span class="w"> </span><span class="kn">import</span> <span class="n">COL</span>
+
+
+<div class="viewcode-block" id="delta2min">
+<a class="viewcode-back" href="../../base_functions.html#idf_analysis.little_helpers.delta2min">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">delta2min</span><span class="p">(</span><span class="n">time_delta</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    convert timedelta to float in minutes</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        time_delta (pandas.Timedelta, pandas.DateOffset):</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        float: the timedelta in minutes</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">time_delta</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DateOffset</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">time_delta</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="n">time_delta</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">time_delta</span> <span class="o">=</span> <span class="n">time_delta</span><span class="o">.</span><span class="n">_pd_timedelta</span>
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">time_delta</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span> <span class="o">/</span> <span class="mi">60</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="minutes_readable">
+<a class="viewcode-back" href="../../base_functions.html#idf_analysis.little_helpers.minutes_readable">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">minutes_readable</span><span class="p">(</span><span class="n">minutes</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    convert the duration in minutes to a more readable form</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        minutes (float | int): duration in minutes</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: duration as a string</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">one_hour</span> <span class="o">=</span> <span class="mi">60</span>
+    <span class="n">one_day</span> <span class="o">=</span> <span class="n">one_hour</span> <span class="o">*</span> <span class="mi">24</span>
+    <span class="k">if</span> <span class="n">minutes</span> <span class="o">&lt;=</span> <span class="n">one_hour</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">minutes</span><span class="si">:</span><span class="s1">0.0f</span><span class="si">}</span><span class="s1"> min&#39;</span>
+    <span class="k">elif</span> <span class="n">one_hour</span> <span class="o">&lt;</span> <span class="n">minutes</span> <span class="o">&lt;</span> <span class="n">one_day</span><span class="p">:</span>
+        <span class="n">hours</span> <span class="o">=</span> <span class="n">minutes</span> <span class="o">/</span> <span class="n">one_hour</span>
+        <span class="k">if</span> <span class="n">hours</span> <span class="o">%</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># has decimals</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">hours</span><span class="si">:</span><span class="s1">0.1f</span><span class="si">}</span><span class="s1"> h&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">hours</span><span class="si">:</span><span class="s1">0.0f</span><span class="si">}</span><span class="s1"> h&#39;</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># 60 * 24 &lt;= minutes</span>
+        <span class="n">days</span> <span class="o">=</span> <span class="n">minutes</span> <span class="o">/</span> <span class="n">one_day</span>
+        <span class="k">if</span> <span class="n">days</span> <span class="o">%</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># has decimals</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">days</span><span class="si">:</span><span class="s1">0.1f</span><span class="si">}</span><span class="s1"> d&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">days</span><span class="si">:</span><span class="s1">0.0f</span><span class="si">}</span><span class="s1"> d&#39;</span></div>
+
+
+
+<div class="viewcode-block" id="duration_steps_readable">
+<a class="viewcode-back" href="../../base_functions.html#idf_analysis.little_helpers.duration_steps_readable">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">duration_steps_readable</span><span class="p">(</span><span class="n">durations</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    convert the durations to a more readable form</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        durations (list[int | float]): in minutes</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list[str]: of the readable duration list</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">minutes_readable</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">durations</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="height2rate">
+<a class="viewcode-back" href="../../base_functions.html#idf_analysis.little_helpers.height2rate">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">height2rate</span><span class="p">(</span><span class="n">height_of_rainfall</span><span class="p">,</span> <span class="n">duration</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    calculate the specific rain flow rate in [l/(s*ha)]</span>
+
+<span class="sd">    if 2 array-like parameters are give, an element-wise calculation will be made.</span>
+<span class="sd">    So the length of the array must be the same.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        height_of_rainfall (float | np.ndarray | pd.Series): height_of_rainfall: in [mm]</span>
+<span class="sd">        duration (float | np.ndarray | pd.Series): in minutes</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        float | np.ndarray | pd.Series: specific rain flow rate in [l/(s*ha)]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">height_of_rainfall</span> <span class="o">/</span> <span class="n">duration</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1000</span> <span class="o">/</span> <span class="mi">6</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="rate2height">
+<a class="viewcode-back" href="../../base_functions.html#idf_analysis.little_helpers.rate2height">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">rate2height</span><span class="p">(</span><span class="n">rain_flow_rate</span><span class="p">,</span> <span class="n">duration</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    convert the rain flow rate to the height of rainfall in [mm]</span>
+
+<span class="sd">    if 2 array-like parameters are give, an element-wise calculation will be made.</span>
+<span class="sd">    So the length of the array must be the same.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        rain_flow_rate (float | np.ndarray | pd.Series): in [l/(s*ha)]</span>
+<span class="sd">        duration (float | np.ndarray | pd.Series): in minutes</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        float | np.ndarray | pd.Series: height of rainfall in [mm]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">rain_flow_rate</span> <span class="o">*</span> <span class="n">duration</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1000</span> <span class="o">/</span> <span class="mi">6</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">get_progress_bar</span><span class="p">(</span><span class="n">iterator</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">tqdm.auto</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
+        <span class="k">return</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">iterator</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="n">desc</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ModuleNotFoundError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">iterator</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">frame_looper</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">columns</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;return periods&#39;</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">size</span> <span class="o">&gt;</span> <span class="mi">30000</span><span class="p">:</span>  <span class="c1"># if &gt; 3 weeks, use a progressbar</span>
+        <span class="k">return</span> <span class="n">get_progress_bar</span><span class="p">(</span><span class="n">columns</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;calculating </span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s1"> data-frame&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">columns</span>
+
+
+<div class="viewcode-block" id="event_caption">
+<a class="viewcode-back" href="../../base_functions.html#idf_analysis.little_helpers.event_caption">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">event_caption</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;mm&#39;</span><span class="p">,</span> <span class="n">lang</span><span class="o">=</span><span class="s1">&#39;en&#39;</span><span class="p">,</span> <span class="n">detailed_short_return_period</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generates a human-readable caption for a rain event in English or German.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        event (dict or pandas.Series): A dictionary or Series containing event details. Expected keys include:</span>
+<span class="sd">            - COL.START: Start time of the event.</span>
+<span class="sd">            - COL.END: End time of the event.</span>
+<span class="sd">            - COL.LP: Total rainfall sum (optional).</span>
+<span class="sd">            - COL.DUR: Duration of the event (optional).</span>
+<span class="sd">            - COL.MAX_PERIOD: Maximum return period (optional).</span>
+<span class="sd">            - COL.MAX_PERIOD_DURATION: Duration of the maximum return period in minutes (optional).</span>
+<span class="sd">        unit (str, optional): Unit for rainfall (default: &#39;mm&#39;).</span>
+<span class="sd">        lang (str, optional): Language (&#39;en&#39; for English, &#39;de&#39; for German, default: &#39;en&#39;).</span>
+<span class="sd">        detailed_short_return_period (bool): Whether a return period of &lt; 1 should be formatted as 1/n.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: A formatted string describing the rain event.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        Given an event with:</span>
+<span class="sd">            - COL.START = pd.Timestamp(&#39;2023-01-01 12:00&#39;)</span>
+<span class="sd">            - COL.END = pd.Timestamp(&#39;2023-01-01 14:00&#39;)</span>
+<span class="sd">            - COL.LP = 15.5</span>
+<span class="sd">            - COL.DUR = pd.Timedelta(hours=2)</span>
+<span class="sd">            - COL.MAX_PERIOD = 10</span>
+<span class="sd">            - COL.MAX_PERIOD_DURATION = 30</span>
+
+<span class="sd">        The german output might look like:</span>
+<span class="sd">            &quot;Regenereignis</span>
+<span class="sd">             von 01.01.2023 12:00 bis 14:00</span>
+<span class="sd">             mit einer Regensumme von 15.5 mm</span>
+<span class="sd">             und einer Dauer von 2 Stunden.</span>
+<span class="sd">             Die maximale Wiederkehrperiode war 10 a</span>
+<span class="sd">             bei einer Dauerstufe von 30 minutes.&quot;</span>
+
+<span class="sd">        The english output might look like:</span>
+<span class="sd">            &quot;rain event</span>
+<span class="sd">             between 2023-01-01 12:00 and 14:00</span>
+<span class="sd">             with a total sum of 15.5 mm</span>
+<span class="sd">             and a duration of 2 hours.</span>
+<span class="sd">             The maximum return period was 10 years</span>
+<span class="sd">             at a duration of 30 minutes.&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">di_caption_strings</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;en&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;event&#39;</span><span class="p">:</span> <span class="s1">&#39;rain event&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;with_total&#39;</span><span class="p">:</span> <span class="s1">&#39;with a total sum of&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;and_duration&#39;</span><span class="p">:</span> <span class="s1">&#39;and a duration of&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;max_period&#39;</span><span class="p">:</span> <span class="s1">&#39;The maximum return period was&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;at_duration&#39;</span><span class="p">:</span> <span class="s1">&#39;at a duration of&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;years&#39;</span><span class="p">:</span> <span class="s1">&#39;years&#39;</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;de&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;event&#39;</span><span class="p">:</span> <span class="s1">&#39;Regenereignis&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;with_total&#39;</span><span class="p">:</span> <span class="s1">&#39;mit einer Regensumme von&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;and_duration&#39;</span><span class="p">:</span> <span class="s1">&#39;und einer Dauer von&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;max_period&#39;</span><span class="p">:</span> <span class="s1">&#39;Die maximale Wiederkehrperiode war&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;at_duration&#39;</span><span class="p">:</span> <span class="s1">&#39;bei einer Dauerstufe von&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;years&#39;</span><span class="p">:</span> <span class="s1">&#39;a&#39;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="n">cap</span> <span class="o">=</span> <span class="n">di_caption_strings</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="n">di_caption_strings</span><span class="p">[</span><span class="s1">&#39;en&#39;</span><span class="p">])</span>
+    <span class="n">caption</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">cap</span><span class="p">[</span><span class="s1">&#39;event&#39;</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">COL</span><span class="o">.</span><span class="n">START</span> <span class="ow">in</span> <span class="n">event</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">COL</span><span class="o">.</span><span class="n">END</span> <span class="ow">in</span> <span class="n">event</span><span class="p">):</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">START</span><span class="p">]</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">END</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">lang</span> <span class="o">==</span> <span class="s1">&#39;de&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">start</span><span class="o">.</span><span class="n">date</span><span class="p">()</span> <span class="o">==</span> <span class="n">end</span><span class="o">.</span><span class="n">date</span><span class="p">():</span>
+                <span class="c1"># Beide Zeitpunkte sind am selben Tag</span>
+                <span class="n">caption</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;am </span><span class="si">{</span><span class="n">start</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%d</span><span class="s1">.%m.%Y von %H:%M&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2"> bis </span><span class="si">{</span><span class="n">end</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%H:%M&#39;</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="k">elif</span> <span class="n">start</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">end</span><span class="o">.</span><span class="n">year</span><span class="p">:</span>
+                <span class="c1"># Beide Zeitpunkte im selben Jahr</span>
+                <span class="k">if</span> <span class="n">start</span><span class="o">.</span><span class="n">month</span> <span class="o">==</span> <span class="n">end</span><span class="o">.</span><span class="n">month</span><span class="p">:</span>
+                    <span class="c1"># Beide Zeitpunkte im selben Jahr und Monat</span>
+                    <span class="n">caption</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;von </span><span class="si">{</span><span class="n">start</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%d</span><span class="s1">.%m.%Y %H:%M&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2"> bis </span><span class="si">{</span><span class="n">end</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%d</span><span class="s1">. %H:%M&#39;</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">caption</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;von </span><span class="si">{</span><span class="n">start</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%d</span><span class="s1">.%m.%Y %H:%M&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2"> bis </span><span class="si">{</span><span class="n">end</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%d</span><span class="s1">.%m. %H:%M&#39;</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Unterschiedliche Jahre</span>
+                <span class="n">caption</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;von </span><span class="si">{</span><span class="n">start</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%d</span><span class="s1">.%m.%Y %H:%M&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2"> bis </span><span class="si">{</span><span class="n">end</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%d</span><span class="s1">.%m.%Y %H:%M&#39;</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">caption</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;between </span><span class="si">{</span><span class="n">start</span><span class="si">:</span><span class="s1">%Y-%m-%d %H:%M</span><span class="si">}</span><span class="s1"> and &#39;</span>
+            <span class="k">if</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">start</span><span class="si">:</span><span class="s1">%Y-%m-%d</span><span class="si">}</span><span class="s1">&#39;</span> <span class="o">==</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">end</span><span class="si">:</span><span class="s1">%Y-%m-%d</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">:</span>
+                <span class="c1"># same day</span>
+                <span class="n">caption</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">end</span><span class="si">:</span><span class="s1">%H:%M</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span>
+            <span class="k">elif</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">start</span><span class="si">:</span><span class="s1">%Y-%m-</span><span class="si">}</span><span class="s1">&#39;</span> <span class="o">==</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">end</span><span class="si">:</span><span class="s1">%Y-%m-</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">:</span>
+                <span class="c1"># same month</span>
+                <span class="n">caption</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">end</span><span class="si">:</span><span class="s1">%d %H:%M</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># different month</span>
+                <span class="n">caption</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">end</span><span class="si">:</span><span class="s1">%Y-%m-%d %H:%M</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span>
+
+    <span class="k">if</span> <span class="n">COL</span><span class="o">.</span><span class="n">LP</span> <span class="ow">in</span> <span class="n">event</span><span class="p">:</span>
+        <span class="n">caption</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">cap</span><span class="p">[</span><span class="s1">&#39;with_total&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">event</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">LP</span><span class="p">]</span><span class="si">:</span><span class="s2">0.1f</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">unit</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+    <span class="k">if</span> <span class="n">COL</span><span class="o">.</span><span class="n">DUR</span> <span class="ow">in</span> <span class="n">event</span><span class="p">:</span>
+        <span class="n">caption</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">cap</span><span class="p">[</span><span class="s1">&#39;and_duration&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">timedelta_readable</span><span class="p">(</span><span class="n">event</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">DUR</span><span class="p">],</span><span class="w"> </span><span class="n">lang</span><span class="o">=</span><span class="n">lang</span><span class="p">)</span><span class="si">}</span><span class="s2">.</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+    <span class="k">if</span> <span class="n">COL</span><span class="o">.</span><span class="n">MAX_PERIOD</span> <span class="ow">in</span> <span class="n">event</span><span class="p">:</span>
+        <span class="n">caption</span> <span class="o">+=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">cap</span><span class="p">[</span><span class="s1">&#39;max_period&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">return_period_formatter</span><span class="p">(</span><span class="n">event</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">MAX_PERIOD</span><span class="p">],</span><span class="w"> </span><span class="n">smaller_detail</span><span class="o">=</span><span class="n">detailed_short_return_period</span><span class="p">)</span><span class="si">}</span><span class="s2"> &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">cap</span><span class="p">[</span><span class="s1">&#39;years&#39;</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">COL</span><span class="o">.</span><span class="n">MAX_PERIOD_DURATION</span> <span class="ow">in</span> <span class="n">event</span><span class="p">:</span>
+            <span class="n">caption</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">cap</span><span class="p">[</span><span class="s1">&#39;at_duration&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">minutes_readable</span><span class="p">(</span><span class="n">event</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">MAX_PERIOD_DURATION</span><span class="p">])</span><span class="si">}</span><span class="s2">.&quot;</span>
+
+    <span class="k">return</span> <span class="n">caption</span></div>
+
+
+
+<div class="viewcode-block" id="return_period_formatter">
+<a class="viewcode-back" href="../../base_functions.html#idf_analysis.little_helpers.return_period_formatter">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">return_period_formatter</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">smaller_detail</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Formats a return period value into a human-readable string.</span>
+
+<span class="sd">    The function categorizes the return period value into specific ranges and returns a formatted string</span>
+<span class="sd">    based on the range. This is useful for displaying return periods in a clear and concise manner.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        t (float): The return period value to format.</span>
+<span class="sd">        smaller_detail (bool): Whether a return period of &lt; 1 should be formatted as 1/n.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: A formatted string representing the return period. The formatting rules are:</span>
+<span class="sd">             - If t &lt; 1: Returns &quot;&lt; 1&quot;.</span>
+<span class="sd">             - If t &gt; 200: Returns &quot;$\\gg$ 100&quot; (indicating much greater than 100).</span>
+<span class="sd">             - If t &gt; 100: Returns &quot;&gt; 100&quot;.</span>
+<span class="sd">             - Otherwise: Returns the value formatted to one decimal place (e.g., &quot;50.0&quot;).</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; return_period_formatter(0.5)</span>
+<span class="sd">        &#39;&lt; 1&#39;</span>
+<span class="sd">        &gt;&gt;&gt; return_period_formatter(150)</span>
+<span class="sd">        &#39;&gt; 100&#39;</span>
+<span class="sd">        &gt;&gt;&gt; return_period_formatter(250)</span>
+<span class="sd">        &#39;$\\gg$ 100&#39;</span>
+<span class="sd">        &gt;&gt;&gt; return_period_formatter(50.123)</span>
+<span class="sd">        &#39;50.1&#39;</span>
+<span class="sd">        &gt;&gt;&gt; return_period_formatter(0.5, smaller_detail=True)</span>
+<span class="sd">        &#39;1/2&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">t</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">smaller_detail</span><span class="p">:</span>
+            <span class="n">n</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">t</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">return</span> <span class="s1">&#39;&lt; 1&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;1/</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;&lt; 1&#39;</span>
+    <span class="k">elif</span> <span class="n">t</span> <span class="o">&gt;</span> <span class="mi">200</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;$</span><span class="se">\\</span><span class="s1">gg$ 100&#39;</span>
+    <span class="k">elif</span> <span class="n">t</span> <span class="o">&gt;</span> <span class="mi">100</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;&gt; 100&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">t</span><span class="si">:</span><span class="s1">0.1f</span><span class="si">}</span><span class="s1">&#39;</span></div>
+
+
+
+<div class="viewcode-block" id="timedelta_components_plus">
+<a class="viewcode-back" href="../../base_functions.html#idf_analysis.little_helpers.timedelta_components_plus">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">timedelta_components_plus</span><span class="p">(</span><span class="n">td</span><span class="p">,</span> <span class="n">min_freq</span><span class="o">=</span><span class="s1">&#39;min&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Decomposes a timedelta into its components, approximating years and weeks.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        td (datetime.timedelta or pandas.Timedelta): The time difference to decompose.</span>
+<span class="sd">        min_freq (str, optional): The minimum frequency for rounding (e.g., &#39;min&#39;, &#39;s&#39;). Defaults to &#39;min&#39;.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list: A list of lists, where each sublist contains a numerical value and its corresponding time unit.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        Leap years are not considered in year calculations.</span>
+<span class="sd">        Possible components: [years, weeks, days, hours, minutes, seconds, milliseconds, microseconds, nanoseconds]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">list_of_components</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">td</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">):</span>
+        <span class="n">td</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_timedelta</span><span class="p">(</span><span class="n">td</span><span class="p">)</span>
+
+    <span class="c1"># years, weeks</span>
+    <span class="n">days_year</span> <span class="o">=</span> <span class="mi">365</span>
+    <span class="n">days_week</span> <span class="o">=</span> <span class="mi">7</span>
+
+    <span class="k">for</span> <span class="n">label_component</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">td</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">min_freq</span><span class="p">)</span><span class="o">.</span><span class="n">components</span><span class="o">.</span><span class="n">_asdict</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">label_component</span> <span class="o">==</span> <span class="s1">&#39;days&#39;</span><span class="p">:</span>
+            <span class="n">years</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">value</span> <span class="o">//</span> <span class="n">days_year</span><span class="p">,</span> <span class="n">value</span> <span class="o">%</span> <span class="n">days_year</span>
+            <span class="n">list_of_components</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="n">years</span><span class="p">),</span> <span class="s1">&#39;years&#39;</span><span class="p">])</span>
+
+            <span class="n">value</span> <span class="o">-=</span> <span class="n">years</span> <span class="o">//</span> <span class="mi">4</span>
+
+            <span class="n">weeks</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">value</span> <span class="o">//</span> <span class="n">days_week</span><span class="p">,</span> <span class="n">value</span> <span class="o">%</span> <span class="n">days_week</span>
+            <span class="n">list_of_components</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="n">weeks</span><span class="p">),</span> <span class="s1">&#39;weeks&#39;</span><span class="p">])</span>
+
+        <span class="n">list_of_components</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">value</span><span class="p">,</span> <span class="n">label_component</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">list_of_components</span></div>
+
+
+
+<span class="c1"># Dictionary with English time units as keys and their German translations as values</span>
+<span class="n">time_units</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;years&quot;</span><span class="p">:</span> <span class="s2">&quot;Jahre&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="s2">&quot;Jahr&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;weeks&quot;</span><span class="p">:</span> <span class="s2">&quot;Wochen&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;week&quot;</span><span class="p">:</span> <span class="s2">&quot;Woche&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;days&quot;</span><span class="p">:</span> <span class="s2">&quot;Tage&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;day&quot;</span><span class="p">:</span> <span class="s2">&quot;Tag&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;hours&quot;</span><span class="p">:</span> <span class="s2">&quot;Stunden&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;hour&quot;</span><span class="p">:</span> <span class="s2">&quot;Stunde&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;minutes&quot;</span><span class="p">:</span> <span class="s2">&quot;Minuten&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;minute&quot;</span><span class="p">:</span> <span class="s2">&quot;Minute&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;seconds&quot;</span><span class="p">:</span> <span class="s2">&quot;Sekunden&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;second&quot;</span><span class="p">:</span> <span class="s2">&quot;Sekunde&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;milliseconds&quot;</span><span class="p">:</span> <span class="s2">&quot;Millisekunden&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;millisecond&quot;</span><span class="p">:</span> <span class="s2">&quot;Millisekunde&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;microseconds&quot;</span><span class="p">:</span> <span class="s2">&quot;Mikrosekunden&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;microsecond&quot;</span><span class="p">:</span> <span class="s2">&quot;Mikrosekunde&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;nanoseconds&quot;</span><span class="p">:</span> <span class="s2">&quot;Nanosekunden&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;nanosecond&quot;</span><span class="p">:</span> <span class="s2">&quot;Nanosekunde&quot;</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="timedelta_components_readable">
+<a class="viewcode-back" href="../../base_functions.html#idf_analysis.little_helpers.timedelta_components_readable">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">timedelta_components_readable</span><span class="p">(</span><span class="n">list_of_components</span><span class="p">,</span> <span class="n">short</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;, &#39;</span><span class="p">,</span> <span class="n">lang</span><span class="o">=</span><span class="s1">&#39;en&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts a list of time components into a human-readable string.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        list_of_components (list): A list of [value, unit] pairs representing time components.</span>
+<span class="sd">        short (bool, optional): If True, uses abbreviated unit names (e.g., &#39;y&#39; for years). Defaults to False.</span>
+<span class="sd">        sep (str, optional): Separator between components. Defaults to &#39;, &#39;.</span>
+<span class="sd">        lang (str, optional): Language (&#39;en&#39; for English, &#39;de&#39; for German, default: &#39;en&#39;).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: A formatted string representing the time components, with the last component joined by &quot;and&quot;.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        - Singular units (e.g., &quot;1 year&quot; instead of &quot;1 years&quot;) are handled automatically.</span>
+<span class="sd">        - The last separator is replaced with &quot;and&quot; for better readability unless short mode is enabled.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        timedelta_components_readable([(2, &#39;days&#39;), (3, &#39;hours&#39;)]) -&gt; &#39;2 days and 3 hours&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">value</span><span class="p">,</span> <span class="n">label_component</span> <span class="ow">in</span> <span class="n">list_of_components</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">short</span><span class="p">:</span>
+                <span class="n">unit_sep</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+                <span class="n">unit</span> <span class="o">=</span> <span class="n">label_component</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">unit_sep</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span>
+                <span class="n">unit</span> <span class="o">=</span> <span class="n">label_component</span>
+                <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">unit</span> <span class="o">=</span> <span class="n">label_component</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">lang</span> <span class="o">==</span> <span class="s1">&#39;de&#39;</span><span class="p">:</span>
+                <span class="n">unit</span> <span class="o">=</span> <span class="n">time_units</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">unit</span><span class="p">,</span> <span class="n">unit</span><span class="p">)</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">value</span><span class="si">}{</span><span class="n">unit_sep</span><span class="si">}{</span><span class="n">unit</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="n">s</span> <span class="o">=</span> <span class="n">sep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">short</span><span class="p">:</span>
+        <span class="c1"># replace last &quot;,&quot; with &quot;and&quot;</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="s1">&#39; and &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="n">sep</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">s</span></div>
+
+
+
+<div class="viewcode-block" id="timedelta_readable">
+<a class="viewcode-back" href="../../base_functions.html#idf_analysis.little_helpers.timedelta_readable">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">timedelta_readable</span><span class="p">(</span><span class="n">td</span><span class="p">,</span> <span class="n">min_freq</span><span class="o">=</span><span class="s1">&#39;min&#39;</span><span class="p">,</span> <span class="n">short</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;, &#39;</span><span class="p">,</span> <span class="n">lang</span><span class="o">=</span><span class="s1">&#39;en&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts a timedelta into a human-readable string.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        td (datetime.timedelta or pandas.Timedelta): The time difference to format.</span>
+<span class="sd">        min_freq (str, optional): The minimum frequency for rounding (e.g., &#39;min&#39;, &#39;s&#39;). Defaults to &#39;min&#39;.</span>
+<span class="sd">        short (bool, optional): Whether to use abbreviated unit names (e.g., &#39;h&#39; for hours). Defaults to False.</span>
+<span class="sd">        sep (str, optional): Separator used between components in the output string. Defaults to &#39;, &#39;.</span>
+<span class="sd">        lang (str, optional): Language (&#39;en&#39; for English, &#39;de&#39; for German, default: &#39;en&#39;).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: A formatted string representing the time duration.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        Leap years are not considered in year calculations.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        timedelta_readable(pd.Timedelta(days=400, hours=5)) -&gt; &#39;1 year, 5 weeks and 5 hours&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">timedelta_components_readable</span><span class="p">(</span><span class="n">timedelta_components_plus</span><span class="p">(</span><span class="n">td</span><span class="p">,</span> <span class="n">min_freq</span><span class="p">),</span> <span class="n">short</span><span class="o">=</span><span class="n">short</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="n">sep</span><span class="p">,</span> <span class="n">lang</span><span class="o">=</span><span class="n">lang</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="timedelta_readable2">
+<a class="viewcode-back" href="../../base_functions.html#idf_analysis.little_helpers.timedelta_readable2">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">timedelta_readable2</span><span class="p">(</span><span class="n">d1</span><span class="p">,</span> <span class="n">d2</span><span class="p">,</span> <span class="n">min_freq</span><span class="o">=</span><span class="s1">&#39;min&#39;</span><span class="p">,</span> <span class="n">short</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;, &#39;</span><span class="p">,</span> <span class="n">lang</span><span class="o">=</span><span class="s1">&#39;en&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes the difference between two dates and returns a human-readable string.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        d1 (datetime-like): The start date.</span>
+<span class="sd">        d2 (datetime-like): The end date.</span>
+<span class="sd">        min_freq (str, optional): The minimum frequency for rounding (e.g., &#39;min&#39;, &#39;s&#39;). Defaults to &#39;min&#39;.</span>
+<span class="sd">        short (bool, optional): Whether to use abbreviated unit names (e.g., &#39;h&#39; for hours). Defaults to False.</span>
+<span class="sd">        sep (str, optional): Separator used between components in the output string. Defaults to &#39;, &#39;.</span>
+<span class="sd">        lang (str, optional): Language (&#39;en&#39; for English, &#39;de&#39; for German, default: &#39;en&#39;).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: A formatted string representing the time difference.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        - Approximates the number of years by adjusting for the closest full year.</span>
+<span class="sd">        - Leap years are not considered in year calculations.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        timedelta_readable2(pd.Timestamp(&#39;2020-01-01&#39;), pd.Timestamp(&#39;2023-06-15&#39;))</span>
+<span class="sd">        -&gt; &#39;3 years, 5 months and 14 days&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">td</span> <span class="o">=</span> <span class="n">d2</span> <span class="o">-</span> <span class="n">d1</span>
+
+    <span class="n">years</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">td</span> <span class="o">&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">365</span><span class="p">):</span>
+        <span class="c1"># date of d2 but year of d1</span>
+        <span class="n">d2_new</span> <span class="o">=</span> <span class="n">d2</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">year</span><span class="o">=</span><span class="n">d1</span><span class="o">.</span><span class="n">year</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">d2_new</span> <span class="o">&lt;</span> <span class="n">d1</span><span class="p">:</span>
+            <span class="c1"># if day of d2 is earlier in the year ad day of d1</span>
+            <span class="n">d2_new</span> <span class="o">=</span> <span class="n">d2_new</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">year</span><span class="o">=</span><span class="n">d1</span><span class="o">.</span><span class="n">year</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">years</span> <span class="o">=</span> <span class="n">d2</span><span class="o">.</span><span class="n">year</span> <span class="o">-</span> <span class="n">d2_new</span><span class="o">.</span><span class="n">year</span>
+
+        <span class="n">td</span> <span class="o">=</span> <span class="n">d2_new</span> <span class="o">-</span> <span class="n">d1</span>
+
+    <span class="n">l</span> <span class="o">=</span> <span class="n">timedelta_components_plus</span><span class="p">(</span><span class="n">td</span><span class="p">,</span> <span class="n">min_freq</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">years</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">l</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">years</span>
+
+    <span class="k">return</span> <span class="n">timedelta_components_readable</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">short</span><span class="o">=</span><span class="n">short</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="n">sep</span><span class="p">,</span> <span class="n">lang</span><span class="o">=</span><span class="n">lang</span><span class="p">)</span></div>
+
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Intensity Duration Frequency Analyse 0.4.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">idf_analysis.little_helpers</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2025, Pichler.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    </div>
+  </body>
+</html>
