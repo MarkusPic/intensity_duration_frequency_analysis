@@ -26,9 +26,9 @@ jobs:
 #          show-channel-urls: true
       # ------------------------------
       - name: Setup Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: '3.11'
       - name: Installing the Documentation requirements
         run: |
           pip3 install .[docs]
