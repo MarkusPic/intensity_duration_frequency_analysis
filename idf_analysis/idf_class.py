@@ -186,7 +186,7 @@ class IntensityDurationFrequencyAnalyse:
         save parameters as yaml-file to save computation time.
 
         Args:
-            filename (str): filename for the parameters yaml-file
+            filename (str or Path): filename for the parameters yaml-file
         """
         self.parameters.to_yaml(filename)
 
@@ -197,7 +197,7 @@ class IntensityDurationFrequencyAnalyse:
         Extract interim results from parameters.
 
         Args:
-            filename (str, Path): filename of the parameters yaml-file.
+            filename (str or Path): filename of the parameters yaml-file.
             worksheet (str): ['DWA-A_531', 'ATV-A_121', 'DWA-A_531_advektiv']
         """
         self._parameters = type(self._parameters).from_yaml(filename, worksheet)
