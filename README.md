@@ -20,14 +20,14 @@
 [![PyPI - Downloads](https://img.shields.io/pypi/dw/idf-analysis)](https://pypi.python.org/pypi/idf-analysis)
 [![PyPI - Downloads](https://img.shields.io/pypi/dm/idf-analysis)](https://pypi.python.org/pypi/idf-analysis)
 
-Heavy rainfall intensity as a function of duration and return period acc. to [DWA-A 531 (2012)](https://shop.dwa.de/DWA-A-531-Starkregen-in-Abhaengigkeit-von-Wiederkehrzeit-und-Dauer-September-2012-Stand-korrigierte-Fassung-Mai-2017/A-531-Hauptprodukt-12-main).
-This program reads the measurement data of the rainfall
-and calculates the distribution of the design rainfall as a function of the return period and the duration
-for duration steps up to 12 hours (and more) and return period in a range of '0.5a &le; T_n &le; 100a'.
+Heavy rainfall intensity as a function of duration and return period is defined according to [DWA-A 531 (2012)](https://shop.dwa.de/DWA-A-531-Starkregen-in-Abhaengigkeit-von-Wiederkehrzeit-und-Dauer-September-2012-Stand-korrigierte-Fassung-Mai-2017/A-531-Hauptprodukt-12-main).
+This program reads rainfall measurement data 
+and calculates the distribution of design rainfall as a function of both return period and duration, for durations 
+up to 12 hours (and beyond) and return periods in the range 0.5 a ≤ Tₙ ≤ 100 a.
 
-The guideline was used in the application [KOSTRA-DWD](https://www.dwd.de/DE/leistungen/kostra_dwd_rasterwerte/kostra_dwd_rasterwerte.html).
+The guideline was also applied in the [KOSTRA-DWD](https://www.dwd.de/DE/leistungen/kostra_dwd_rasterwerte/kostra_dwd_rasterwerte.html) application.
 
-Since version v0.4 the new guidelines of [DWA-A 531 (2025)](https://shop.dwa.de/DWA-A-531-Starkregen-in-Abhaengigkeit-von-Wiederkehrzeit-und-Dauer-Juni-2025/A-531-Hauptprodukt-25-main) are also implemented.
+Since version 0.4, the updated guidelines of [DWA-A 531 (2025)](https://shop.dwa.de/DWA-A-531-Starkregen-in-Abhaengigkeit-von-Wiederkehrzeit-und-Dauer-Juni-2025/A-531-Hauptprodukt-25-main) have also been implemented.
 
 ----
 
@@ -129,7 +129,7 @@ flowchart TD
 
 ## Usage
 
-The documentation of the python-package can be found [here](https://markuspic.github.io/intensity_duration_frequency_analysis/api.html).
+The documentation of the Python-package can be found [here](https://markuspic.github.io/intensity_duration_frequency_analysis/api.html).
 
 One basic usage could be:
 
