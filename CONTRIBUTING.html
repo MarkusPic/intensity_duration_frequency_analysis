@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Contributing to This Project &#8212; Intensity Duration Frequency Analyse 0.4.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="_static/nature.css?v=7d325330" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-codeautolink.css?v=b2176991" />
+    <script src="_static/documentation_options.js?v=6c02275b"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Intensity Duration Frequency Analyse - EXTENDED" href="examples/example_python_api_extended.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="examples/example_python_api_extended.html" title="Intensity Duration Frequency Analyse - EXTENDED"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Intensity Duration Frequency Analyse 0.4.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Contributing to This Project</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="contributing-to-this-project">
+<h1>Contributing to This Project<a class="headerlink" href="#contributing-to-this-project" title="Link to this heading">¶</a></h1>
+<p>Thank you for considering contributing to this project! Your help is greatly appreciated.</p>
+<section id="how-to-contribute">
+<h2>How to Contribute<a class="headerlink" href="#how-to-contribute" title="Link to this heading">¶</a></h2>
+<section id="reporting-issues">
+<h3>Reporting Issues<a class="headerlink" href="#reporting-issues" title="Link to this heading">¶</a></h3>
+<p>If you encounter a bug, have a feature request, or need clarification, please open an issue in the <a class="reference external" href="https://github.com/MarkusPic/intensity_duration_frequency_analysis/issues">GitHub Issues</a> section. When reporting a bug, include:</p>
+<ul class="simple">
+<li><p>A clear description of the issue</p></li>
+<li><p>Steps to reproduce</p></li>
+<li><p>Expected vs. actual behavior</p></li>
+<li><p>Any relevant error messages or logs</p></li>
+</ul>
+</section>
+<section id="submitting-code-changes">
+<h3>Submitting Code Changes<a class="headerlink" href="#submitting-code-changes" title="Link to this heading">¶</a></h3>
+<ol class="arabic">
+<li><p><strong>Fork the repository</strong> and clone it locally.</p></li>
+<li><p><strong>Create a new branch</strong> for your feature or fix:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>checkout<span class="w"> </span>-b<span class="w"> </span>feature-name
+</pre></div>
+</div>
+</li>
+<li><p><strong>Make your changes</strong> and ensure they follow the project’s coding style.</p></li>
+<li><p><strong>Run tests</strong> to verify your changes:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>pytest<span class="w"> </span>tests
+</pre></div>
+</div>
+</li>
+<li><p><strong>Commit your changes</strong> with a meaningful message:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;Describe your change briefly&quot;</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Push the branch</strong> to your fork:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>feature-name
+</pre></div>
+</div>
+</li>
+<li><p><strong>Create a Pull Request (PR)</strong> from your branch to the <code class="docutils literal notranslate"><span class="pre">main</span></code> branch.</p></li>
+</ol>
+<section id="code-style">
+<h4>Code Style<a class="headerlink" href="#code-style" title="Link to this heading">¶</a></h4>
+<p>This project follows standard Python best practices (<a class="reference external" href="https://pep8.org">PEP 8</a>).</p>
+<p>Please ensure your code is typed where applicable using type hints.</p>
+<p>Make sure that every function has a docstring with types. We use the <a class="reference external" href="https://google.github.io/styleguide/pyguide.html#s3.8-comments-and-docstrings">Google style docstring format</a>. Here is an <a class="reference external" href="https://www.sphinx-doc.org/en/master/usage/extensions/example_google.html">example for a Google style docstring</a>.</p>
+</section>
+</section>
+<section id="writing-tests">
+<h3>Writing Tests<a class="headerlink" href="#writing-tests" title="Link to this heading">¶</a></h3>
+<p>If your contribution includes code changes, please add or update tests to maintain high code quality. We use <code class="docutils literal notranslate"><span class="pre">pytest</span></code> for testing. All tests are located in the tests folder:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>pytest<span class="w"> </span>tests
+</pre></div>
+</div>
+<p>Ensure all tests pass before submitting your PR.</p>
+</section>
+<section id="reviewing-pull-requests">
+<h3>Reviewing Pull Requests<a class="headerlink" href="#reviewing-pull-requests" title="Link to this heading">¶</a></h3>
+<p>We encourage contributors to review open PRs and provide constructive feedback.</p>
+</section>
+<section id="donate">
+<h3>Donate<a class="headerlink" href="#donate" title="Link to this heading">¶</a></h3>
+<p>If you find this project useful, consider supporting it by <a class="reference external" href="https://www.buymeacoffee.com/MarkusP">buying me a coffee</a>.</p>
+</section>
+<section id="other-ways-to-contribute">
+<h3>Other Ways to Contribute<a class="headerlink" href="#other-ways-to-contribute" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Writing tutorials or examples using <a class="reference external" href="https://docs.github.com/en/get-started/writing-on-github/editing-and-sharing-content-with-gists/creating-gists">GitHub Gists</a> and referencing them in <a class="reference external" href="https://github.com/MarkusPic/intensity_duration_frequency_analysis/discussions/categories/show-and-tell">discussions</a>.</p></li>
+<li><p>Fixing typos and improving the documentation by opening issues or creating pull requests.</p></li>
+</ul>
+</section>
+</section>
+<section id="getting-help">
+<h2>Getting Help<a class="headerlink" href="#getting-help" title="Link to this heading">¶</a></h2>
+<p>If you have any questions, feel free to open a discussion in the <a class="reference external" href="https://github.com/MarkusPic/intensity_duration_frequency_analysis/discussions">GitHub Discussions</a> or comment on an open issue.</p>
+</section>
+<section id="ground-rules">
+<h2>Ground Rules<a class="headerlink" href="#ground-rules" title="Link to this heading">¶</a></h2>
+<p>The goal is to maintain a diverse community that’s pleasant for everyone.
+<strong>Please be considerate and respectful of others</strong>. Everyone must abide by our
+<a class="reference external" href="https://github.com/MarkusPic/intensity_duration_frequency_analysis/blob/main/CODE_OF_CONDUCT.md">Code of Conduct</a>
+and we encourage all to read it carefully.</p>
+</section>
+<section id="miscellaneous">
+<h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Link to this heading">¶</a></h2>
+<p>For more information on contributing to open source projects,
+<a class="reference external" href="https://opensource.guide/how-to-contribute">GitHub’s own guide</a>
+is a great starting point if you are new to version control. Also, checkout the
+<a class="reference external" href="https://jrleeman.github.io/ScientificSoftwareMaintenance/">Zen of Scientific Software Maintenance</a>
+for some guiding principles on how to create high quality scientific software
+contributions.</p>
+<p>Thank you for contributing!</p>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Contributing to This Project</a><ul>
+<li><a class="reference internal" href="#how-to-contribute">How to Contribute</a><ul>
+<li><a class="reference internal" href="#reporting-issues">Reporting Issues</a></li>
+<li><a class="reference internal" href="#submitting-code-changes">Submitting Code Changes</a><ul>
+<li><a class="reference internal" href="#code-style">Code Style</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#writing-tests">Writing Tests</a></li>
+<li><a class="reference internal" href="#reviewing-pull-requests">Reviewing Pull Requests</a></li>
+<li><a class="reference internal" href="#donate">Donate</a></li>
+<li><a class="reference internal" href="#other-ways-to-contribute">Other Ways to Contribute</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#getting-help">Getting Help</a></li>
+<li><a class="reference internal" href="#ground-rules">Ground Rules</a></li>
+<li><a class="reference internal" href="#miscellaneous">Miscellaneous</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="examples/example_python_api_extended.html"
+                          title="previous chapter">Intensity Duration Frequency Analyse - EXTENDED</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/CONTRIBUTING.md.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="examples/example_python_api_extended.html" title="Intensity Duration Frequency Analyse - EXTENDED"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Intensity Duration Frequency Analyse 0.4.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Contributing to This Project</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2025, Pichler.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    </div>
+  </body>
+</html>

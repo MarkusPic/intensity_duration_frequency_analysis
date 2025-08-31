@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+
+<html data-content_root="../" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Example Commandline Use — Intensity Duration Frequency Analyse 0.4.0 documentation</title>
+<link href="../_static/pygments.css?v=8f2a1f02" rel="stylesheet" type="text/css"/>
+<link href="../_static/nature.css?v=7d325330" rel="stylesheet" type="text/css"/>
+<link href="../_static/sphinx-codeautolink.css?v=b2176991" rel="stylesheet" type="text/css"/>
+<link href="../_static/nbsphinx-code-cells.css?v=2aa19091" rel="stylesheet" type="text/css"/>
+<script src="../_static/documentation_options.js?v=6c02275b"></script>
+<script src="../_static/doctools.js?v=9bcbadda"></script>
+<script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+<script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+<script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+<script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<link href="../genindex.html" rel="index" title="Index"/>
+<link href="../search.html" rel="search" title="Search"/>
+<link href="example_python_api.html" rel="next" title="Intensity Duration Frequency Analyse (DWA, 2012)"/>
+<link href="../examples.html" rel="prev" title="Examples | Tutorial"/>
+</head><body>
+<div aria-label="Related" class="related" role="navigation">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a accesskey="I" href="../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a accesskey="N" href="example_python_api.html" title="Intensity Duration Frequency Analyse (DWA, 2012)">next</a> |</li>
+<li class="right">
+<a accesskey="P" href="../examples.html" title="Examples | Tutorial">previous</a> |</li>
+<li class="nav-item nav-item-0"><a href="../index.html">Intensity Duration Frequency Analyse 0.4.0 documentation</a> »</li>
+<li class="nav-item nav-item-1"><a accesskey="U" href="../examples.html">Examples | Tutorial</a> »</li>
+<li class="nav-item nav-item-this"><a href="">Example Commandline Use</a></li>
+</ul>
+</div>
+<div class="document">
+<div class="documentwrapper">
+<div class="bodywrapper">
+<div class="body" role="main">
+<section id="Example-Commandline-Use">
+<h1>Example Commandline Use<a class="headerlink" href="#Example-Commandline-Use" title="Link to this heading">¶</a></h1>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span><span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>idf_analysis<span class="w"> </span>-h
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+usage: __main__.py [-h] -i INPUT
+                   [-ws {KOSTRA,convective_vs_advective,ATV-A_121}]
+                   [-kind {partial,annual}] [-t {&gt;= 0.5 a and &lt;= 100 a}]
+                   [-d {&gt;= 5 min and &lt;= 8640 min}] [-r {&gt;= 0 L/(s*ha)}]
+                   [-h_N {&gt;= 0 mm}] [--r_720_1] [--plot] [--export_table]
+
+heavy rain as a function of the duration and the return period acc. to DWA-A
+531 (2012) All files will be saved in the same directory of the input file but
+in a subfolder called like the inputfile + "_idf_data". Inside this folder a
+file called "idf_parameter.yaml"-file will be saved and contains interim-
+calculation-results and will be automatically reloaded on the next call.
+
+options:
+  -h, --help            show this help message and exit
+  -i INPUT, --input INPUT
+                        input file with the rain time-series (csv or parquet)
+  -ws {KOSTRA,convective_vs_advective,ATV-A_121}, --worksheet {KOSTRA,convective_vs_advective,ATV-A_121}
+                        From which worksheet the recommendations for
+                        calculating the parameters should be taken.
+  -kind {partial,annual}, --series_kind {partial,annual}
+                        The kind of series used for the calculation.
+                        (Calculation with partial series is more precise and
+                        recommended.)
+  -t {&gt;= 0.5 a and &lt;= 100 a}, --return_period {&gt;= 0.5 a and &lt;= 100 a}
+                        return period in years (If two of the three variables
+                        (rainfall (height or flow-rate), duration, return
+                        period) are given, the third variable is calculated.)
+  -d {&gt;= 5 min and &lt;= 8640 min}, --duration {&gt;= 5 min and &lt;= 8640 min}
+                        duration in minutes (If two of the three variables
+                        (rainfall (height or flow-rate), duration, return
+                        period) are given, the third variable is calculated.)
+  -r {&gt;= 0 L/(s*ha)}, --flow_rate_of_rainfall {&gt;= 0 L/(s*ha)}
+                        rainfall in Liter/(s * ha) (If two of the three
+                        variables (rainfall (height or flow-rate), duration,
+                        return period) are given, the third variable is
+                        calculated.)
+  -h_N {&gt;= 0 mm}, --height_of_rainfall {&gt;= 0 mm}
+                        rainfall in mm or Liter/m^2 (If two of the three
+                        variables (rainfall (height or flow-rate), duration,
+                        return period) are given, the third variable is
+                        calculated.)
+  --r_720_1             design rainfall with a duration of 720 minutes (=12 h)
+                        and a return period of 1 year
+  --plot                get a plot of the idf relationship
+  --export_table        get a table of the most frequent used values
+</pre></div></div>
+</div>
+<p>I used the rain-time-series from ehyd.gv.at with the ID 112086 (Graz-Andritz)</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span><span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>idf_analysis<span class="w"> </span>-i<span class="w"> </span>ehyd_112086.parquet
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Using the subfolder "ehyd_112086_idf_data" for the interim- and final-results.
+Found existing interim-results in "ehyd_112086_idf_data/idf_parameters.yaml" and using them for calculations.
+_balance_parameter_change
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span><span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>idf_analysis<span class="w"> </span>-i<span class="w"> </span>ehyd_112086.parquet<span class="w"> </span>--r_720_1
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Using the subfolder "ehyd_112086_idf_data" for the interim- and final-results.
+Found existing interim-results in "ehyd_112086_idf_data/idf_parameters.yaml" and using them for calculations.
+_balance_parameter_change
+Resultierende Regenhöhe h_N(T_n=1.0a, D=720.0min) = 49.41 mm
+Resultierende Regenspende r_N(T_n=1.0a, D=720.0min) = 11.44 L/(s*ha)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span><span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>idf_analysis<span class="w"> </span>-i<span class="w"> </span>ehyd_112086.parquet<span class="w"> </span>-d<span class="w"> </span><span class="m">720</span><span class="w"> </span>-t<span class="w"> </span><span class="m">1</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Using the subfolder "ehyd_112086_idf_data" for the interim- and final-results.
+Found existing interim-results in "ehyd_112086_idf_data/idf_parameters.yaml" and using them for calculations.
+_balance_parameter_change
+Resultierende Regenhöhe h_N(T_n=1.0a, D=720.0min) = 49.41 mm
+Resultierende Regenspende r_N(T_n=1.0a, D=720.0min) = 11.44 L/(s*ha)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span><span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>idf_analysis<span class="w"> </span>-i<span class="w"> </span>ehyd_112086.parquet<span class="w"> </span>-d<span class="w"> </span><span class="m">720</span><span class="w"> </span>-h_N<span class="w"> </span><span class="m">60</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Using the subfolder "ehyd_112086_idf_data" for the interim- and final-results.
+Found existing interim-results in "ehyd_112086_idf_data/idf_parameters.yaml" and using them for calculations.
+_balance_parameter_change
+The return period is 2.0 years.
+Resultierende Regenhöhe h_N(T_n=2.0a, D=720.0min) = 60.00 mm
+Resultierende Regenspende r_N(T_n=2.0a, D=720.0min) = 13.89 L/(s*ha)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span><span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>idf_analysis<span class="w"> </span>-i<span class="w"> </span>ehyd_112086.parquet<span class="w"> </span>-d<span class="w"> </span><span class="m">5</span><span class="w"> </span>-t<span class="w"> </span><span class="m">15</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Using the subfolder "ehyd_112086_idf_data" for the interim- and final-results.
+Found existing interim-results in "ehyd_112086_idf_data/idf_parameters.yaml" and using them for calculations.
+_balance_parameter_change
+Resultierende Regenhöhe h_N(T_n=15.0a, D=5.0min) = 15.50 mm
+Resultierende Regenspende r_N(T_n=15.0a, D=5.0min) = 516.54 L/(s*ha)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span><span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>idf_analysis<span class="w"> </span>-i<span class="w"> </span>ehyd_112086.parquet<span class="w"> </span>--plot
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Using the subfolder "ehyd_112086_idf_data" for the interim- and final-results.
+Found existing interim-results in "ehyd_112086_idf_data/idf_parameters.yaml" and using them for calculations.
+_balance_parameter_change
+Created the IDF-curves-plot and saved the file as "ehyd_112086_idf_data/idf_curves_plot.png".
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span><span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>idf_analysis<span class="w"> </span>-i<span class="w"> </span>ehyd_112086.parquet<span class="w"> </span>--export_table
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Using the subfolder "ehyd_112086_idf_data" for the interim- and final-results.
+Found existing interim-results in "ehyd_112086_idf_data/idf_parameters.yaml" and using them for calculations.
+_balance_parameter_change
+return period (a)    1       2       3       5       10      20      25      30      50      75      100
+frequency (1/a)    1.000   0.500   0.333   0.200   0.100   0.050   0.040   0.033   0.020   0.013   0.010
+duration (min)
+5.0                 9.19   10.80   11.75   12.94   14.55   16.17   16.69   17.11   18.30   19.25   19.92
+10.0               14.88   17.42   18.90   20.77   23.31   25.84   26.66   27.33   29.20   30.68   31.73
+15.0               18.76   22.06   23.99   26.43   29.73   33.03   34.09   34.96   37.40   39.33   40.70
+20.0               21.57   25.55   27.88   30.82   34.80   38.78   40.06   41.11   44.05   46.37   48.03
+30.0               25.37   30.56   33.59   37.41   42.59   47.78   49.45   50.81   54.63   57.67   59.82
+45.0               28.75   35.50   39.45   44.42   51.17   57.92   60.10   61.87   66.85   70.80   73.60
+60.0               30.80   38.94   43.70   49.70   57.84   65.98   68.60   70.75   76.75   81.51   84.89
+90.0               33.27   41.80   46.79   53.08   61.61   70.15   72.90   75.14   81.43   86.42   89.96
+120.0              35.14   43.96   49.12   55.63   64.45   73.27   76.11   78.43   84.94   90.10   93.76
+180.0              37.96   47.20   52.61   59.43   68.68   77.93   80.90   83.34   90.15   95.56   99.40
+240.0              40.09   49.65   55.25   62.29   71.86   81.42   84.50   87.01   94.06   99.65  103.62
+360.0              43.31   53.33   59.19   66.58   76.60   86.62   89.85   92.49   99.87  105.74  109.90
+540.0              46.78   57.29   63.43   71.17   81.68   92.18   95.57   98.33  106.07  112.22  116.58
+720.0              49.41   60.27   66.63   74.63   85.50   96.36   99.85  102.71  110.72  117.07  121.58
+1080.0             54.41   64.97   71.15   78.94   89.50  100.06  103.46  106.24  114.02  120.20  124.58
+1440.0             58.02   67.72   73.39   80.54   90.24   99.93  103.05  105.61  112.75  118.42  122.45
+2880.0             66.70   77.41   83.68   91.57  102.28  113.00  116.44  119.26  127.16  133.42  137.87
+4320.0             71.93   85.72   93.78  103.95  117.73  131.52  135.96  139.58  149.75  157.81  163.53
+5760.0             78.95   95.65  105.42  117.72  134.42  151.13  156.50  160.89  173.20  182.97  189.90
+7200.0             83.53  101.38  111.82  124.98  142.83  160.68  166.43  171.12  184.28  194.72  202.13
+8640.0             85.38  104.95  116.40  130.82  150.39  169.95  176.25  181.40  195.82  207.27  215.39
+Created the IDF-curves-plot and saved the file as "ehyd_112086_idf_data/idf_table.csv".
+</pre></div></div>
+</div>
+</section>
+<div class="clearer"></div>
+</div>
+</div>
+</div>
+<div aria-label="Main" class="sphinxsidebar" role="navigation">
+<div class="sphinxsidebarwrapper">
+<div>
+<h4>Previous topic</h4>
+<p class="topless"><a href="../examples.html" title="previous chapter">Examples | Tutorial</a></p>
+</div>
+<div>
+<h4>Next topic</h4>
+<p class="topless"><a href="example_python_api.html" title="next chapter">Intensity Duration Frequency Analyse (DWA, 2012)</a></p>
+</div>
+<div aria-label="source link" role="note">
+<h3>This Page</h3>
+<ul class="this-page-menu">
+<li><a href="../_sources/examples/example_commandline.ipynb.txt" rel="nofollow">Show Source</a></li>
+</ul>
+</div>
+<search id="searchbox" role="search" style="display: none">
+<h3 id="searchlabel">Quick search</h3>
+<div class="searchformwrapper">
+<form action="../search.html" class="search" method="get">
+<input aria-labelledby="searchlabel" autocapitalize="off" autocomplete="off" autocorrect="off" name="q" spellcheck="false" type="text"/>
+<input type="submit" value="Go"/>
+</form>
+</div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+</div>
+</div>
+<div class="clearer"></div>
+</div>
+<div aria-label="Related" class="related" role="navigation">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a href="../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="example_python_api.html" title="Intensity Duration Frequency Analyse (DWA, 2012)">next</a> |</li>
+<li class="right">
+<a href="../examples.html" title="Examples | Tutorial">previous</a> |</li>
+<li class="nav-item nav-item-0"><a href="../index.html">Intensity Duration Frequency Analyse 0.4.0 documentation</a> »</li>
+<li class="nav-item nav-item-1"><a href="../examples.html">Examples | Tutorial</a> »</li>
+<li class="nav-item nav-item-this"><a href="">Example Commandline Use</a></li>
+</ul>
+</div>
+<div class="footer" role="contentinfo">
+    © Copyright 2025, Pichler.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    </div>
+</body>
+</html>

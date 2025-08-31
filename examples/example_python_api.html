@@ -1,0 +1,1380 @@
+<!DOCTYPE html>
+
+<html data-content_root="../" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Intensity Duration Frequency Analyse (DWA, 2012) — Intensity Duration Frequency Analyse 0.4.0 documentation</title>
+<link href="../_static/pygments.css?v=8f2a1f02" rel="stylesheet" type="text/css"/>
+<link href="../_static/nature.css?v=7d325330" rel="stylesheet" type="text/css"/>
+<link href="../_static/sphinx-codeautolink.css?v=b2176991" rel="stylesheet" type="text/css"/>
+<link href="../_static/nbsphinx-code-cells.css?v=2aa19091" rel="stylesheet" type="text/css"/>
+<script src="../_static/documentation_options.js?v=6c02275b"></script>
+<script src="../_static/doctools.js?v=9bcbadda"></script>
+<script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+<script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+<script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+<script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<link href="../genindex.html" rel="index" title="Index"/>
+<link href="../search.html" rel="search" title="Search"/>
+<link href="example_python_api_2025.html" rel="next" title="Intensity Duration Frequency Analyse (DWA, 2025)"/>
+<link href="example_commandline.html" rel="prev" title="Example Commandline Use"/>
+</head><body>
+<div aria-label="Related" class="related" role="navigation">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a accesskey="I" href="../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a accesskey="N" href="example_python_api_2025.html" title="Intensity Duration Frequency Analyse (DWA, 2025)">next</a> |</li>
+<li class="right">
+<a accesskey="P" href="example_commandline.html" title="Example Commandline Use">previous</a> |</li>
+<li class="nav-item nav-item-0"><a href="../index.html">Intensity Duration Frequency Analyse 0.4.0 documentation</a> »</li>
+<li class="nav-item nav-item-1"><a accesskey="U" href="../examples.html">Examples | Tutorial</a> »</li>
+<li class="nav-item nav-item-this"><a href="">Intensity Duration Frequency Analyse (DWA, 2012)</a></li>
+</ul>
+</div>
+<div class="document">
+<div class="documentwrapper">
+<div class="bodywrapper">
+<div class="body" role="main">
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><a class="sphinx-codeautolink-a" href="https://docs.python.org/3/library/pathlib.html#module-pathlib" title="pathlib"><span class="nn">pathlib</span></a><span class="w"> </span><span class="kn">import</span> <a class="sphinx-codeautolink-a" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="pathlib.Path"><span class="n">Path</span></a>
+<span class="kn">import</span><span class="w"> </span><a class="sphinx-codeautolink-a" href="https://pandas.pydata.org/docs/index.html#module-pandas" title="pandas"><span class="nn">pandas</span></a><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">idf_analysis.idf_class</span><span class="w"> </span><span class="kn">import</span> <a class="sphinx-codeautolink-a" href="../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse" title="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse"><span class="n">IntensityDurationFrequencyAnalyse</span></a>
+<span class="kn">from</span><span class="w"> </span><span class="nn">idf_analysis.definitions</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">idf_analysis</span><span class="w"> </span><span class="kn">import</span> <span class="n">__version__</span>
+<a class="sphinx-codeautolink-a" href="https://docs.python.org/3/library/functions.html#print" title="print"><span class="nb">print</span></a><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">__version__</span><span class="si">=}</span><span class="s1">'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+__version__='0.2.9'
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="o">%</span><span class="k">load_ext</span> autoreload
+<span class="o">%</span><span class="k">autoreload</span> 2
+</pre></div>
+</div>
+</div>
+<section id="Intensity-Duration-Frequency-Analyse-(DWA,-2012)">
+<h1>Intensity Duration Frequency Analyse (DWA, 2012)<a class="headerlink" href="#Intensity-Duration-Frequency-Analyse-(DWA,-2012)" title="Link to this heading">¶</a></h1>
+<section id="Parameter">
+<h2>Parameter<a class="headerlink" href="#Parameter" title="Link to this heading">¶</a></h2>
+<p><strong>series_kind</strong>:</p>
+<p><code class="docutils literal notranslate"><span class="pre">SERIES.PARTIAL</span></code> = Partielle Serie (partial duration series, PDS) (peak over threshold, POT)</p>
+<p><code class="docutils literal notranslate"><span class="pre">SERIES.ANNUAL</span></code> = Jährliche Serie (annual maximum series, AMS)</p>
+<p><strong>worksheet</strong>:</p>
+<p><code class="docutils literal notranslate"><span class="pre">METHOD.KOSTRA</span></code>:</p>
+<ul class="simple">
+<li><p>DWA-A 531</p></li>
+<li><p>KOSTRA - recommented</p></li>
+<li><p>Parameter formula change at 60 min and 12 h</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">METHOD.CONVECTIVE_ADVECTIVE</span></code>:</p>
+<ul class="simple">
+<li><p>DWA-A 531</p></li>
+<li><p>Unterscheidung in überwiegend konvektiv und advektiv verursachte Starkregen</p></li>
+<li><p>Parameter formula change at 3 h and 24 h</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">METHOD.ATV</span></code>:</p>
+<ul class="simple">
+<li><p>ATV-A 121</p></li>
+<li><p>Parameter formula change at 3 h and 48 h</p></li>
+</ul>
+<p><strong>extended_durations</strong> = Includes the durations steps <code class="docutils literal notranslate"><span class="pre">[0.75d,</span> <span class="pre">1d,</span> <span class="pre">2d,</span> <span class="pre">3d,</span> <span class="pre">4d,</span> <span class="pre">5d,</span> <span class="pre">6d]</span></code> in the analysis (d=days)</p>
+<p>Default duration steps <code class="docutils literal notranslate"><span class="pre">[5m,</span> <span class="pre">10m,</span> <span class="pre">15m,</span> <span class="pre">20m,</span> <span class="pre">30m,</span> <span class="pre">45m,</span> <span class="pre">60m,</span> <span class="pre">1.5h,</span> <span class="pre">3h,</span> <span class="pre">4.5h,</span> <span class="pre">6h,</span> <span class="pre">7.5h,</span> <span class="pre">10h,</span> <span class="pre">12h]</span></code></p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><a class="sphinx-codeautolink-a" href="../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse" title="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse"><span class="n">idf</span></a> <span class="o">=</span> <a class="sphinx-codeautolink-a" href="../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse" title="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse"><span class="n">IntensityDurationFrequencyAnalyse</span></a><span class="p">(</span><span class="n">series_kind</span><span class="o">=</span><span class="n">SERIES</span><span class="o">.</span><span class="n">PARTIAL</span><span class="p">,</span> <span class="n">worksheet</span><span class="o">=</span><span class="n">METHOD</span><span class="o">.</span><span class="n">KOSTRA</span><span class="p">,</span> <span class="n">extended_durations</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>The data used for this calculation is a timeseries of precipitation observations. The data can be passed in mm or inch. The series should contain measured volumes and not intensities. The intervall of the series can be chosen freely, but should ideally be already time equidistant. But the results will only show duration steps that are greater or equal to the intervall.</p>
+<p>I used the rain-time-series from ehyd.gv.at with the ID 112086 (Graz-Andritz) <a class="reference external" href="https://github.com/MarkusPic/ehyd_tools/blob/main/example/example_python_api.ipynb">created with the ehyd-tools package</a>.</p>
+<p>You need to install <code class="docutils literal notranslate"><span class="pre">pyarrow</span></code> or <code class="docutils literal notranslate"><span class="pre">fastparquet</span></code> to read and write parquet files.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <a class="sphinx-codeautolink-a" href="https://pandas.pydata.org/docs/reference/api/pandas.read_parquet.html#pandas.read_parquet" title="pandas.read_parquet"><span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span></a><span class="p">(</span><span class="s1">'ehyd_112086.parquet'</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="s1">'columns'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Get a look at the time-series</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+datetime
+2007-09-17 13:56:00    0.0
+2007-09-17 13:57:00    0.0
+2007-09-17 13:58:00    0.0
+2007-09-17 13:59:00    0.0
+2007-09-17 14:00:00    0.0
+Name: N-Minutensummen-112086, dtype: float64
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+datetime
+2019-12-31 23:56:00    0.0
+2019-12-31 23:57:00    0.0
+2019-12-31 23:58:00    0.0
+2019-12-31 23:59:00    0.0
+2020-01-01 00:00:00    NaN
+Name: N-Minutensummen-112086, dtype: float64
+</pre></div></div>
+</div>
+<p>Set the time-series to be used for the calculation of the IDF parameters</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><a class="sphinx-codeautolink-a" href="../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.set_series" title="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.set_series"><span class="n">idf</span><span class="o">.</span><span class="n">set_series</span></a><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>define a working directory to save some plots and interim results</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><a class="sphinx-codeautolink-a" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="pathlib.Path"><span class="n">output_directory</span></a> <span class="o">=</span> <a class="sphinx-codeautolink-a" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="pathlib.Path"><span class="n">Path</span></a><span class="p">(</span><span class="s1">'ehyd_112086_idf_data'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>create a plot for the interim parameters of the partial series.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">idf</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">interim_plot_series</span><span class="p">(</span><span class="n">ncols</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">(</span><span class="mi">21</span><span class="p">,</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">set_dpi</span><span class="p">(</span><span class="mi">60</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "4f140380fa584427a73b1824bf743d77"}</script></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/examples_example_python_api_15_1.png" src="../_images/examples_example_python_api_15_1.png"/>
+</div>
+</div>
+<p>Intermediate results are created for each new calculation, which are only dependent on the selected series <code class="docutils literal notranslate"><span class="pre">series_kind</span></code> and the specified/required duration steps. This process takes a few seconds. In addition, these intermediate results contain the parameters required to calculate the rainfall height. The calculation methods and formula-change-durations according to the selected <code class="docutils literal notranslate"><span class="pre">worksheet</span></code> are already taken into account here.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><a class="sphinx-codeautolink-a" href="../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.write_parameters" title="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.write_parameters"><span class="n">idf</span><span class="o">.</span><span class="n">write_parameters</span></a><span class="p">(</span><a class="sphinx-codeautolink-a" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="pathlib.Path"><span class="n">output_directory</span></a> <span class="o">/</span> <span class="s1">'idf_parameters.yaml'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>To save time, it is possible to save the parameters temporarily and when the script is called up again, these parameters are no longer calculated but read from the file.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><a class="sphinx-codeautolink-a" href="../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.auto_save_parameters" title="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.auto_save_parameters"><span class="n">idf</span><span class="o">.</span><span class="n">auto_save_parameters</span></a><span class="p">(</span><a class="sphinx-codeautolink-a" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="pathlib.Path"><span class="n">output_directory</span></a> <span class="o">/</span> <span class="s1">'idf_parameters.yaml'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>These interim results can be called up with:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">idf</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">pprint</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+{'durations': [5.0,
+               10.0,
+               15.0,
+               20.0,
+               30.0,
+               45.0,
+               60.0,
+               90.0,
+               120.0,
+               180.0,
+               240.0,
+               360.0,
+               540.0,
+               720.0,
+               1080.0,
+               1440.0,
+               2880.0,
+               4320.0,
+               5760.0,
+               7200.0,
+               8640.0],
+ 'parameters_final': {0: {'u': HyperbolicAuto(38.04, 16.10),
+                          'w': DoubleLogNormAuto(0.16, 0.55)},
+                      60: {'u': DoubleLogNormAuto(2.65, 0.18),
+                           'w': DoubleLogNormAuto(1.88, 0.13)},
+                      720: {'u': Linear(), 'w': Linear()}},
+ 'parameters_series': {'u': [9.2852,
+                             14.4656,
+                             18.2676,
+                             21.223,
+                             24.6312,
+                             27.6473,
+                             29.8823,
+                             32.5402,
+                             34.2917,
+                             36.8614,
+                             39.1387,
+                             41.8902,
+                             44.9288,
+                             46.8465,
+                             51.6007,
+                             55.8142,
+                             64.2187,
+                             69.2324,
+                             74.7885,
+                             80.7697,
+                             82.4165],
+                       'w': [2.109,
+                             3.3818,
+                             5.3372,
+                             7.022,
+                             8.6112,
+                             9.1709,
+                             10.5036,
+                             11.9877,
+                             12.7487,
+                             13.3321,
+                             13.7618,
+                             14.2992,
+                             14.698,
+                             15.0692,
+                             14.9139,
+                             14.3355,
+                             15.2022,
+                             18.6616,
+                             22.6725,
+                             23.8148,
+                             26.0658]},
+ 'series_kind': 'partial'}
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><a class="sphinx-codeautolink-a" href="../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.parameters" title="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.parameters"><span class="n">idf</span><span class="o">.</span><span class="n">parameters</span></a>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;idf_analysis.idf_backend.IdfParameters at 0x321aa8770&gt;
+</pre></div></div>
+</div>
+<p>plot the interim results for the final parameters of the function to calculate the rainfall height depending on duration and return periods.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">idf</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">interim_plot_parameters</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/examples_example_python_api_24_0.png" src="../_images/examples_example_python_api_24_0.png"/>
+</div>
+</div>
+<p>test also other formulas for the IDF function (According to the older guideline ATV-A 121 (till 2012))</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">idf</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">set_parameter_approaches_from_worksheet</span><span class="p">(</span><span class="n">METHOD</span><span class="o">.</span><span class="n">ATV</span><span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">idf</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">interim_plot_parameters</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/examples_example_python_api_26_0.png" src="../_images/examples_example_python_api_26_0.png"/>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">idf</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">set_parameter_approaches_from_worksheet</span><span class="p">(</span><span class="n">METHOD</span><span class="o">.</span><span class="n">CONVECTIVE_ADVECTIVE</span><span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">idf</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">interim_plot_parameters</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/examples_example_python_api_27_0.png" src="../_images/examples_example_python_api_27_0.png"/>
+</div>
+</div>
+</section>
+<section id="Calculations">
+<h2>Calculations<a class="headerlink" href="#Calculations" title="Link to this heading">¶</a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><a class="sphinx-codeautolink-a" href="../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.depth_of_rainfall" title="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.depth_of_rainfall"><span class="n">idf</span><span class="o">.</span><span class="n">depth_of_rainfall</span></a><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">return_period</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+18.042501067209535
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><a class="sphinx-codeautolink-a" href="https://docs.python.org/3/library/functions.html#print" title="print"><span class="nb">print</span></a><span class="p">(</span><span class="s1">'Resulting rainfall height h_N(T_n=</span><span class="si">{t:0.1f}</span><span class="s1">a, D=</span><span class="si">{d:0.1f}</span><span class="s1">min) = </span><span class="si">{h:0.2f}</span><span class="s1"> mm'</span>
+      <span class="s1">''</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><a class="sphinx-codeautolink-a" href="../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.depth_of_rainfall" title="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.depth_of_rainfall"><span class="n">idf</span><span class="o">.</span><span class="n">depth_of_rainfall</span></a><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Resulting rainfall height h_N(T_n=1.0a, D=15.0min) = 18.04 mm
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><a class="sphinx-codeautolink-a" href="../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.rain_flow_rate" title="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.rain_flow_rate"><span class="n">idf</span><span class="o">.</span><span class="n">rain_flow_rate</span></a><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">return_period</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+200.47223408010595
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><a class="sphinx-codeautolink-a" href="https://docs.python.org/3/library/functions.html#print" title="print"><span class="nb">print</span></a><span class="p">(</span><span class="s1">'Resulting rainfall flow rate r_N(T_n=</span><span class="si">{t:0.1f}</span><span class="s1">a, D=</span><span class="si">{d:0.1f}</span><span class="s1">min) = </span><span class="si">{r:0.2f}</span><span class="s1"> L/(s*ha)'</span>
+      <span class="s1">''</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><a class="sphinx-codeautolink-a" href="../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.rain_flow_rate" title="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.rain_flow_rate"><span class="n">idf</span><span class="o">.</span><span class="n">rain_flow_rate</span></a><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Resulting rainfall flow rate r_N(T_n=1.0a, D=15.0min) = 200.47 L/(s*ha)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><a class="sphinx-codeautolink-a" href="../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.r_720_1" title="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.r_720_1"><span class="n">idf</span><span class="o">.</span><span class="n">r_720_1</span></a><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+11.05568516972672
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><a class="sphinx-codeautolink-a" href="../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.get_return_period" title="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.get_return_period"><span class="n">idf</span><span class="o">.</span><span class="n">get_return_period</span></a><span class="p">(</span><span class="n">height_of_rainfall</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+0.24641175384609787
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><a class="sphinx-codeautolink-a" href="../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.get_duration" title="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.get_duration"><span class="n">idf</span><span class="o">.</span><span class="n">get_duration</span></a><span class="p">(</span><span class="n">height_of_rainfall</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">return_period</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+6.073216157634265
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><a class="sphinx-codeautolink-a" href="../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.result_table" title="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.result_table"><span class="n">idf</span><span class="o">.</span><span class="n">result_table</span></a><span class="p">()</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>5</th>
+<th>10</th>
+<th>20</th>
+<th>25</th>
+<th>30</th>
+<th>50</th>
+<th>75</th>
+<th>100</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>5</th>
+<td>8.61</td>
+<td>11.28</td>
+<td>12.84</td>
+<td>14.80</td>
+<td>17.47</td>
+<td>20.13</td>
+<td>20.99</td>
+<td>21.69</td>
+<td>23.66</td>
+<td>25.22</td>
+<td>26.32</td>
+</tr>
+<tr>
+<th>10</th>
+<td>14.17</td>
+<td>17.60</td>
+<td>19.61</td>
+<td>22.14</td>
+<td>25.57</td>
+<td>29.00</td>
+<td>30.11</td>
+<td>31.01</td>
+<td>33.54</td>
+<td>35.55</td>
+<td>36.97</td>
+</tr>
+<tr>
+<th>15</th>
+<td>18.04</td>
+<td>22.02</td>
+<td>24.35</td>
+<td>27.28</td>
+<td>31.26</td>
+<td>35.24</td>
+<td>36.52</td>
+<td>37.57</td>
+<td>40.50</td>
+<td>42.83</td>
+<td>44.48</td>
+</tr>
+<tr>
+<th>20</th>
+<td>20.90</td>
+<td>25.32</td>
+<td>27.91</td>
+<td>31.17</td>
+<td>35.59</td>
+<td>40.01</td>
+<td>41.43</td>
+<td>42.59</td>
+<td>45.85</td>
+<td>48.44</td>
+<td>50.27</td>
+</tr>
+<tr>
+<th>30</th>
+<td>24.84</td>
+<td>29.96</td>
+<td>32.96</td>
+<td>36.74</td>
+<td>41.86</td>
+<td>46.99</td>
+<td>48.64</td>
+<td>49.99</td>
+<td>53.76</td>
+<td>56.76</td>
+<td>58.89</td>
+</tr>
+<tr>
+<th>45</th>
+<td>28.40</td>
+<td>34.35</td>
+<td>37.82</td>
+<td>42.20</td>
+<td>48.15</td>
+<td>54.09</td>
+<td>56.00</td>
+<td>57.56</td>
+<td>61.94</td>
+<td>65.42</td>
+<td>67.89</td>
+</tr>
+<tr>
+<th>60</th>
+<td>30.60</td>
+<td>37.20</td>
+<td>41.06</td>
+<td>45.93</td>
+<td>52.53</td>
+<td>59.13</td>
+<td>61.25</td>
+<td>62.99</td>
+<td>67.85</td>
+<td>71.72</td>
+<td>74.46</td>
+</tr>
+<tr>
+<th>90</th>
+<td>33.16</td>
+<td>40.82</td>
+<td>45.30</td>
+<td>50.94</td>
+<td>58.59</td>
+<td>66.24</td>
+<td>68.71</td>
+<td>70.72</td>
+<td>76.36</td>
+<td>80.84</td>
+<td>84.01</td>
+</tr>
+<tr>
+<th>120</th>
+<td>34.61</td>
+<td>43.12</td>
+<td>48.09</td>
+<td>54.35</td>
+<td>62.86</td>
+<td>71.36</td>
+<td>74.09</td>
+<td>76.33</td>
+<td>82.59</td>
+<td>87.57</td>
+<td>91.10</td>
+</tr>
+<tr>
+<th>180</th>
+<td>36.20</td>
+<td>46.06</td>
+<td>51.82</td>
+<td>59.09</td>
+<td>68.94</td>
+<td>78.80</td>
+<td>81.97</td>
+<td>84.57</td>
+<td>91.83</td>
+<td>97.60</td>
+<td>101.69</td>
+</tr>
+<tr>
+<th>240</th>
+<td>38.34</td>
+<td>48.27</td>
+<td>54.08</td>
+<td>61.39</td>
+<td>71.32</td>
+<td>81.25</td>
+<td>84.45</td>
+<td>87.06</td>
+<td>94.38</td>
+<td>100.18</td>
+<td>104.30</td>
+</tr>
+<tr>
+<th>360</th>
+<td>41.58</td>
+<td>51.61</td>
+<td>57.48</td>
+<td>64.87</td>
+<td>74.90</td>
+<td>84.93</td>
+<td>88.15</td>
+<td>90.79</td>
+<td>98.18</td>
+<td>104.05</td>
+<td>108.21</td>
+</tr>
+<tr>
+<th>540</th>
+<td>45.09</td>
+<td>55.22</td>
+<td>61.15</td>
+<td>68.62</td>
+<td>78.75</td>
+<td>88.88</td>
+<td>92.14</td>
+<td>94.81</td>
+<td>102.27</td>
+<td>108.20</td>
+<td>112.40</td>
+</tr>
+<tr>
+<th>720</th>
+<td>47.76</td>
+<td>57.97</td>
+<td>63.93</td>
+<td>71.46</td>
+<td>81.66</td>
+<td>91.87</td>
+<td>95.15</td>
+<td>97.83</td>
+<td>105.36</td>
+<td>111.33</td>
+<td>115.56</td>
+</tr>
+<tr>
+<th>1080</th>
+<td>51.79</td>
+<td>62.10</td>
+<td>68.13</td>
+<td>75.73</td>
+<td>86.04</td>
+<td>96.35</td>
+<td>99.67</td>
+<td>102.38</td>
+<td>109.98</td>
+<td>116.01</td>
+<td>120.28</td>
+</tr>
+<tr>
+<th>1440</th>
+<td>54.86</td>
+<td>65.24</td>
+<td>71.32</td>
+<td>78.97</td>
+<td>89.35</td>
+<td>99.74</td>
+<td>103.08</td>
+<td>105.81</td>
+<td>113.46</td>
+<td>119.54</td>
+<td>123.85</td>
+</tr>
+<tr>
+<th>2880</th>
+<td>64.22</td>
+<td>74.76</td>
+<td>80.92</td>
+<td>88.69</td>
+<td>99.22</td>
+<td>109.76</td>
+<td>113.15</td>
+<td>115.92</td>
+<td>123.69</td>
+<td>129.85</td>
+<td>134.23</td>
+</tr>
+<tr>
+<th>4320</th>
+<td>69.23</td>
+<td>82.17</td>
+<td>89.73</td>
+<td>99.27</td>
+<td>112.20</td>
+<td>125.14</td>
+<td>129.30</td>
+<td>132.70</td>
+<td>142.24</td>
+<td>149.80</td>
+<td>155.17</td>
+</tr>
+<tr>
+<th>5760</th>
+<td>74.79</td>
+<td>90.50</td>
+<td>99.70</td>
+<td>111.28</td>
+<td>126.99</td>
+<td>142.71</td>
+<td>147.77</td>
+<td>151.90</td>
+<td>163.48</td>
+<td>172.68</td>
+<td>179.20</td>
+</tr>
+<tr>
+<th>7200</th>
+<td>80.77</td>
+<td>97.28</td>
+<td>106.93</td>
+<td>119.10</td>
+<td>135.61</td>
+<td>152.11</td>
+<td>157.43</td>
+<td>161.77</td>
+<td>173.93</td>
+<td>183.59</td>
+<td>190.44</td>
+</tr>
+<tr>
+<th>8640</th>
+<td>82.42</td>
+<td>100.48</td>
+<td>111.05</td>
+<td>124.37</td>
+<td>142.44</td>
+<td>160.50</td>
+<td>166.32</td>
+<td>171.07</td>
+<td>184.39</td>
+<td>194.96</td>
+<td>202.45</td>
+</tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><a class="sphinx-codeautolink-a" href="../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.result_table" title="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.result_table"><span class="n">idf</span><span class="o">.</span><span class="n">result_table</span></a><span class="p">(</span><span class="n">add_names</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead tr th {
+        text-align: left;
+    }
+
+    .dataframe thead tr:last-of-type th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+<thead>
+<tr>
+<th>return period (a)</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>5</th>
+<th>10</th>
+<th>20</th>
+<th>25</th>
+<th>30</th>
+<th>50</th>
+<th>75</th>
+<th>100</th>
+</tr>
+<tr>
+<th>frequency (1/a)</th>
+<th>1.000</th>
+<th>0.500</th>
+<th>0.333</th>
+<th>0.200</th>
+<th>0.100</th>
+<th>0.050</th>
+<th>0.040</th>
+<th>0.033</th>
+<th>0.020</th>
+<th>0.013</th>
+<th>0.010</th>
+</tr>
+<tr>
+<th>duration (min)</th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>5</th>
+<td>8.61</td>
+<td>11.28</td>
+<td>12.84</td>
+<td>14.80</td>
+<td>17.47</td>
+<td>20.13</td>
+<td>20.99</td>
+<td>21.69</td>
+<td>23.66</td>
+<td>25.22</td>
+<td>26.32</td>
+</tr>
+<tr>
+<th>10</th>
+<td>14.17</td>
+<td>17.60</td>
+<td>19.61</td>
+<td>22.14</td>
+<td>25.57</td>
+<td>29.00</td>
+<td>30.11</td>
+<td>31.01</td>
+<td>33.54</td>
+<td>35.55</td>
+<td>36.97</td>
+</tr>
+<tr>
+<th>15</th>
+<td>18.04</td>
+<td>22.02</td>
+<td>24.35</td>
+<td>27.28</td>
+<td>31.26</td>
+<td>35.24</td>
+<td>36.52</td>
+<td>37.57</td>
+<td>40.50</td>
+<td>42.83</td>
+<td>44.48</td>
+</tr>
+<tr>
+<th>20</th>
+<td>20.90</td>
+<td>25.32</td>
+<td>27.91</td>
+<td>31.17</td>
+<td>35.59</td>
+<td>40.01</td>
+<td>41.43</td>
+<td>42.59</td>
+<td>45.85</td>
+<td>48.44</td>
+<td>50.27</td>
+</tr>
+<tr>
+<th>30</th>
+<td>24.84</td>
+<td>29.96</td>
+<td>32.96</td>
+<td>36.74</td>
+<td>41.86</td>
+<td>46.99</td>
+<td>48.64</td>
+<td>49.99</td>
+<td>53.76</td>
+<td>56.76</td>
+<td>58.89</td>
+</tr>
+<tr>
+<th>45</th>
+<td>28.40</td>
+<td>34.35</td>
+<td>37.82</td>
+<td>42.20</td>
+<td>48.15</td>
+<td>54.09</td>
+<td>56.00</td>
+<td>57.56</td>
+<td>61.94</td>
+<td>65.42</td>
+<td>67.89</td>
+</tr>
+<tr>
+<th>60</th>
+<td>30.60</td>
+<td>37.20</td>
+<td>41.06</td>
+<td>45.93</td>
+<td>52.53</td>
+<td>59.13</td>
+<td>61.25</td>
+<td>62.99</td>
+<td>67.85</td>
+<td>71.72</td>
+<td>74.46</td>
+</tr>
+<tr>
+<th>90</th>
+<td>33.16</td>
+<td>40.82</td>
+<td>45.30</td>
+<td>50.94</td>
+<td>58.59</td>
+<td>66.24</td>
+<td>68.71</td>
+<td>70.72</td>
+<td>76.36</td>
+<td>80.84</td>
+<td>84.01</td>
+</tr>
+<tr>
+<th>120</th>
+<td>34.61</td>
+<td>43.12</td>
+<td>48.09</td>
+<td>54.35</td>
+<td>62.86</td>
+<td>71.36</td>
+<td>74.09</td>
+<td>76.33</td>
+<td>82.59</td>
+<td>87.57</td>
+<td>91.10</td>
+</tr>
+<tr>
+<th>180</th>
+<td>36.20</td>
+<td>46.06</td>
+<td>51.82</td>
+<td>59.09</td>
+<td>68.94</td>
+<td>78.80</td>
+<td>81.97</td>
+<td>84.57</td>
+<td>91.83</td>
+<td>97.60</td>
+<td>101.69</td>
+</tr>
+<tr>
+<th>240</th>
+<td>38.34</td>
+<td>48.27</td>
+<td>54.08</td>
+<td>61.39</td>
+<td>71.32</td>
+<td>81.25</td>
+<td>84.45</td>
+<td>87.06</td>
+<td>94.38</td>
+<td>100.18</td>
+<td>104.30</td>
+</tr>
+<tr>
+<th>360</th>
+<td>41.58</td>
+<td>51.61</td>
+<td>57.48</td>
+<td>64.87</td>
+<td>74.90</td>
+<td>84.93</td>
+<td>88.15</td>
+<td>90.79</td>
+<td>98.18</td>
+<td>104.05</td>
+<td>108.21</td>
+</tr>
+<tr>
+<th>540</th>
+<td>45.09</td>
+<td>55.22</td>
+<td>61.15</td>
+<td>68.62</td>
+<td>78.75</td>
+<td>88.88</td>
+<td>92.14</td>
+<td>94.81</td>
+<td>102.27</td>
+<td>108.20</td>
+<td>112.40</td>
+</tr>
+<tr>
+<th>720</th>
+<td>47.76</td>
+<td>57.97</td>
+<td>63.93</td>
+<td>71.46</td>
+<td>81.66</td>
+<td>91.87</td>
+<td>95.15</td>
+<td>97.83</td>
+<td>105.36</td>
+<td>111.33</td>
+<td>115.56</td>
+</tr>
+<tr>
+<th>1080</th>
+<td>51.79</td>
+<td>62.10</td>
+<td>68.13</td>
+<td>75.73</td>
+<td>86.04</td>
+<td>96.35</td>
+<td>99.67</td>
+<td>102.38</td>
+<td>109.98</td>
+<td>116.01</td>
+<td>120.28</td>
+</tr>
+<tr>
+<th>1440</th>
+<td>54.86</td>
+<td>65.24</td>
+<td>71.32</td>
+<td>78.97</td>
+<td>89.35</td>
+<td>99.74</td>
+<td>103.08</td>
+<td>105.81</td>
+<td>113.46</td>
+<td>119.54</td>
+<td>123.85</td>
+</tr>
+<tr>
+<th>2880</th>
+<td>64.22</td>
+<td>74.76</td>
+<td>80.92</td>
+<td>88.69</td>
+<td>99.22</td>
+<td>109.76</td>
+<td>113.15</td>
+<td>115.92</td>
+<td>123.69</td>
+<td>129.85</td>
+<td>134.23</td>
+</tr>
+<tr>
+<th>4320</th>
+<td>69.23</td>
+<td>82.17</td>
+<td>89.73</td>
+<td>99.27</td>
+<td>112.20</td>
+<td>125.14</td>
+<td>129.30</td>
+<td>132.70</td>
+<td>142.24</td>
+<td>149.80</td>
+<td>155.17</td>
+</tr>
+<tr>
+<th>5760</th>
+<td>74.79</td>
+<td>90.50</td>
+<td>99.70</td>
+<td>111.28</td>
+<td>126.99</td>
+<td>142.71</td>
+<td>147.77</td>
+<td>151.90</td>
+<td>163.48</td>
+<td>172.68</td>
+<td>179.20</td>
+</tr>
+<tr>
+<th>7200</th>
+<td>80.77</td>
+<td>97.28</td>
+<td>106.93</td>
+<td>119.10</td>
+<td>135.61</td>
+<td>152.11</td>
+<td>157.43</td>
+<td>161.77</td>
+<td>173.93</td>
+<td>183.59</td>
+<td>190.44</td>
+</tr>
+<tr>
+<th>8640</th>
+<td>82.42</td>
+<td>100.48</td>
+<td>111.05</td>
+<td>124.37</td>
+<td>142.44</td>
+<td>160.50</td>
+<td>166.32</td>
+<td>171.07</td>
+<td>184.39</td>
+<td>194.96</td>
+<td>202.45</td>
+</tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>To save the table as a csv:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><a class="sphinx-codeautolink-a" href="../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.result_table" title="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.result_table"><span class="n">idf</span><span class="o">.</span><span class="n">result_table</span></a><span class="p">(</span><span class="n">add_names</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><a class="sphinx-codeautolink-a" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="pathlib.Path"><span class="n">output_directory</span></a> <span class="o">/</span> <span class="s1">'idf_table_UNIX.csv'</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">','</span><span class="p">,</span> <span class="n">decimal</span><span class="o">=</span><span class="s1">'.'</span><span class="p">,</span> <span class="n">float_format</span><span class="o">=</span><span class="s1">'</span><span class="si">%0.2f</span><span class="s1">'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><a class="sphinx-codeautolink-a" href="https://docs.python.org/3/library/functions.html#print" title="print"><span class="nb">print</span></a><span class="p">(</span><a class="sphinx-codeautolink-a" href="../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.result_table" title="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.result_table"><span class="n">idf</span><span class="o">.</span><span class="n">result_table</span></a><span class="p">(</span><span class="n">add_names</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">to_string</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+return period (a)    1       2       3       5       10      20      25      30      50      75      100
+frequency (1/a)    1.000   0.500   0.333   0.200   0.100   0.050   0.040   0.033   0.020   0.013   0.010
+duration (min)
+5                   8.61   11.28   12.84   14.80   17.47   20.13   20.99   21.69   23.66   25.22   26.32
+10                 14.17   17.60   19.61   22.14   25.57   29.00   30.11   31.01   33.54   35.55   36.97
+15                 18.04   22.02   24.35   27.28   31.26   35.24   36.52   37.57   40.50   42.83   44.48
+20                 20.90   25.32   27.91   31.17   35.59   40.01   41.43   42.59   45.85   48.44   50.27
+30                 24.84   29.96   32.96   36.74   41.86   46.99   48.64   49.99   53.76   56.76   58.89
+45                 28.40   34.35   37.82   42.20   48.15   54.09   56.00   57.56   61.94   65.42   67.89
+60                 30.60   37.20   41.06   45.93   52.53   59.13   61.25   62.99   67.85   71.72   74.46
+90                 33.16   40.82   45.30   50.94   58.59   66.24   68.71   70.72   76.36   80.84   84.01
+120                34.61   43.12   48.09   54.35   62.86   71.36   74.09   76.33   82.59   87.57   91.10
+180                36.20   46.06   51.82   59.09   68.94   78.80   81.97   84.57   91.83   97.60  101.69
+240                38.34   48.27   54.08   61.39   71.32   81.25   84.45   87.06   94.38  100.18  104.30
+360                41.58   51.61   57.48   64.87   74.90   84.93   88.15   90.79   98.18  104.05  108.21
+540                45.09   55.22   61.15   68.62   78.75   88.88   92.14   94.81  102.27  108.20  112.40
+720                47.76   57.97   63.93   71.46   81.66   91.87   95.15   97.83  105.36  111.33  115.56
+1080               51.79   62.10   68.13   75.73   86.04   96.35   99.67  102.38  109.98  116.01  120.28
+1440               54.86   65.24   71.32   78.97   89.35   99.74  103.08  105.81  113.46  119.54  123.85
+2880               64.22   74.76   80.92   88.69   99.22  109.76  113.15  115.92  123.69  129.85  134.23
+4320               69.23   82.17   89.73   99.27  112.20  125.14  129.30  132.70  142.24  149.80  155.17
+5760               74.79   90.50   99.70  111.28  126.99  142.71  147.77  151.90  163.48  172.68  179.20
+7200               80.77   97.28  106.93  119.10  135.61  152.11  157.43  161.77  173.93  183.59  190.44
+8640               82.42  100.48  111.05  124.37  142.44  160.50  166.32  171.07  184.39  194.96  202.45
+</pre></div></div>
+</div>
+<p>To create a color plot of the IDF curves:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <a class="sphinx-codeautolink-a" href="../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.curve_figure" title="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.curve_figure"><span class="n">idf</span><span class="o">.</span><span class="n">curve_figure</span></a><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">add_interim</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/examples_example_python_api_42_0.png" src="../_images/examples_example_python_api_42_0.png"/>
+</div>
+</div>
+<p>To create a black/white plot of the IDF curves:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <a class="sphinx-codeautolink-a" href="../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.curve_figure" title="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.curve_figure"><span class="n">idf</span><span class="o">.</span><span class="n">curve_figure</span></a><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">add_interim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/examples_example_python_api_44_0.png" src="../_images/examples_example_python_api_44_0.png"/>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <a class="sphinx-codeautolink-a" href="../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.curve_figure" title="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.curve_figure"><span class="n">idf</span><span class="o">.</span><span class="n">curve_figure</span></a><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">add_interim</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">logx</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">duration_steps_ticks</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/examples_example_python_api_45_0.png" src="../_images/examples_example_python_api_45_0.png"/>
+</div>
+</div>
+</section>
+</section>
+<div class="clearer"></div>
+</div>
+</div>
+</div>
+<div aria-label="Main" class="sphinxsidebar" role="navigation">
+<div class="sphinxsidebarwrapper">
+<div>
+<h3><a href="../index.html">Table of Contents</a></h3>
+<ul>
+<li><a class="reference internal" href="#">Intensity Duration Frequency Analyse (DWA, 2012)</a><ul>
+<li><a class="reference internal" href="#Parameter">Parameter</a></li>
+<li><a class="reference internal" href="#Calculations">Calculations</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div>
+<h4>Previous topic</h4>
+<p class="topless"><a href="example_commandline.html" title="previous chapter">Example Commandline Use</a></p>
+</div>
+<div>
+<h4>Next topic</h4>
+<p class="topless"><a href="example_python_api_2025.html" title="next chapter">Intensity Duration Frequency Analyse (DWA, 2025)</a></p>
+</div>
+<div aria-label="source link" role="note">
+<h3>This Page</h3>
+<ul class="this-page-menu">
+<li><a href="../_sources/examples/example_python_api.ipynb.txt" rel="nofollow">Show Source</a></li>
+</ul>
+</div>
+<search id="searchbox" role="search" style="display: none">
+<h3 id="searchlabel">Quick search</h3>
+<div class="searchformwrapper">
+<form action="../search.html" class="search" method="get">
+<input aria-labelledby="searchlabel" autocapitalize="off" autocomplete="off" autocorrect="off" name="q" spellcheck="false" type="text"/>
+<input type="submit" value="Go"/>
+</form>
+</div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+</div>
+</div>
+<div class="clearer"></div>
+</div>
+<div aria-label="Related" class="related" role="navigation">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a href="../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="example_python_api_2025.html" title="Intensity Duration Frequency Analyse (DWA, 2025)">next</a> |</li>
+<li class="right">
+<a href="example_commandline.html" title="Example Commandline Use">previous</a> |</li>
+<li class="nav-item nav-item-0"><a href="../index.html">Intensity Duration Frequency Analyse 0.4.0 documentation</a> »</li>
+<li class="nav-item nav-item-1"><a href="../examples.html">Examples | Tutorial</a> »</li>
+<li class="nav-item nav-item-this"><a href="">Intensity Duration Frequency Analyse (DWA, 2012)</a></li>
+</ul>
+</div>
+<div class="footer" role="contentinfo">
+    © Copyright 2025, Pichler.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    </div>
+</body>
+</html>

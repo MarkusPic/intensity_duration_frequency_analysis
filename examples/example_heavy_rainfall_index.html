@@ -1,0 +1,2569 @@
+<!DOCTYPE html>
+
+<html data-content_root="../" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Example for Heavy Rainfall Index — Intensity Duration Frequency Analyse 0.4.0 documentation</title>
+<link href="../_static/pygments.css?v=8f2a1f02" rel="stylesheet" type="text/css"/>
+<link href="../_static/nature.css?v=7d325330" rel="stylesheet" type="text/css"/>
+<link href="../_static/sphinx-codeautolink.css?v=b2176991" rel="stylesheet" type="text/css"/>
+<link href="../_static/nbsphinx-code-cells.css?v=2aa19091" rel="stylesheet" type="text/css"/>
+<script src="../_static/documentation_options.js?v=6c02275b"></script>
+<script src="../_static/doctools.js?v=9bcbadda"></script>
+<script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+<script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+<script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+<script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<link href="../genindex.html" rel="index" title="Index"/>
+<link href="../search.html" rel="search" title="Search"/>
+<link href="example_python_api_extended.html" rel="next" title="Intensity Duration Frequency Analyse - EXTENDED"/>
+<link href="example_python_api_2025.html" rel="prev" title="Intensity Duration Frequency Analyse (DWA, 2025)"/>
+</head><body>
+<div aria-label="Related" class="related" role="navigation">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a accesskey="I" href="../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a accesskey="N" href="example_python_api_extended.html" title="Intensity Duration Frequency Analyse - EXTENDED">next</a> |</li>
+<li class="right">
+<a accesskey="P" href="example_python_api_2025.html" title="Intensity Duration Frequency Analyse (DWA, 2025)">previous</a> |</li>
+<li class="nav-item nav-item-0"><a href="../index.html">Intensity Duration Frequency Analyse 0.4.0 documentation</a> »</li>
+<li class="nav-item nav-item-1"><a accesskey="U" href="../examples.html">Examples | Tutorial</a> »</li>
+<li class="nav-item nav-item-this"><a href="">Example for Heavy Rainfall Index</a></li>
+</ul>
+</div>
+<div class="document">
+<div class="documentwrapper">
+<div class="bodywrapper">
+<div class="body" role="main">
+<section id="Example-for-Heavy-Rainfall-Index">
+<h1>Example for Heavy Rainfall Index<a class="headerlink" href="#Example-for-Heavy-Rainfall-Index" title="Link to this heading">¶</a></h1>
+<p>Based on the IntensityDurationFrequencyAnalysis, the HeavyRainIndexAnalysis enables the creation of location-dependent heavy rain indices according to the methods of Schmitt, Mudersbach and also those of Krüger and Pfister. Furthermore, the possibility of creating heavy rain index curves according to the Krüger and Pfister method was included and implemented for the other two methods. Thus, heavy rainfall index curves can be compared with each other. Furthermore, it is possible to assign
+individual rain events to a heavy rain index using existing rain data.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><a class="sphinx-codeautolink-a" href="https://docs.python.org/3/library/pathlib.html#module-pathlib" title="pathlib"><span class="nn">pathlib</span></a><span class="w"> </span><span class="kn">import</span> <a class="sphinx-codeautolink-a" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="pathlib.Path"><span class="n">Path</span></a>
+
+<span class="kn">import</span><span class="w"> </span><a class="sphinx-codeautolink-a" href="https://matplotlib.org/stable/api/pyplot_summary.html#module-matplotlib.pyplot" title="matplotlib.pyplot"><span class="nn">matplotlib.pyplot</span></a><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><a class="sphinx-codeautolink-a" href="https://pandas.pydata.org/docs/index.html#module-pandas" title="pandas"><span class="nn">pandas</span></a><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><a class="sphinx-codeautolink-a" href="https://matplotlib.org/stable/api/colors_api.html#module-matplotlib.colors" title="matplotlib.colors"><span class="nn">matplotlib.colors</span></a><span class="w"> </span><span class="kn">import</span> <a class="sphinx-codeautolink-a" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.colors.ListedColormap.html#matplotlib.colors.ListedColormap" title="matplotlib.colors.ListedColormap"><span class="n">ListedColormap</span></a>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">idf_analysis.definitions</span><span class="w"> </span><span class="kn">import</span> <span class="n">METHOD</span><span class="p">,</span> <span class="n">SERIES</span><span class="p">,</span> <span class="n">COL</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">idf_analysis.heavy_rainfall_index</span><span class="w"> </span><span class="kn">import</span> <span class="n">HeavyRainfallIndexAnalyse</span>
+<span class="kn">from</span><span class="w"> </span><a class="sphinx-codeautolink-a" href="../base_functions.html#module-idf_analysis.little_helpers" title="idf_analysis.little_helpers"><span class="nn">idf_analysis.little_helpers</span></a><span class="w"> </span><span class="kn">import</span> <a class="sphinx-codeautolink-a" href="../base_functions.html#idf_analysis.little_helpers.minutes_readable" title="idf_analysis.little_helpers.minutes_readable"><span class="n">minutes_readable</span></a>
+<span class="kn">from</span><span class="w"> </span><a class="sphinx-codeautolink-a" href="../base_functions.html#module-idf_analysis.sww_utils" title="idf_analysis.sww_utils"><span class="nn">idf_analysis.sww_utils</span></a><span class="w"> </span><span class="kn">import</span> <a class="sphinx-codeautolink-a" href="../base_functions.html#idf_analysis.sww_utils.rain_events" title="idf_analysis.sww_utils.rain_events"><span class="n">rain_events</span></a><span class="p">,</span> <a class="sphinx-codeautolink-a" href="../base_functions.html#idf_analysis.sww_utils.event_duration" title="idf_analysis.sww_utils.event_duration"><span class="n">event_duration</span></a><span class="p">,</span> <a class="sphinx-codeautolink-a" href="../base_functions.html#idf_analysis.sww_utils.agg_events" title="idf_analysis.sww_utils.agg_events"><span class="n">agg_events</span></a>
+<span class="kn">from</span><span class="w"> </span><span class="nn">idf_analysis</span><span class="w"> </span><span class="kn">import</span> <span class="n">__version__</span>
+<a class="sphinx-codeautolink-a" href="https://docs.python.org/3/library/functions.html#print" title="print"><span class="nb">print</span></a><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">__version__</span><span class="si">=}</span><span class="s1">'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+__version__='0.2.9'
+</pre></div></div>
+</div>
+<div class="line-block">
+<div class="line">Implemented Methods for the HeavyRainIndexAnalysis:</div>
+<div class="line">SCHMITT = ‘Schmitt’</div>
+<div class="line">KRUEGER_PFISTER = ‘KruegerPfister’</div>
+<div class="line">MUDERSBACH = ‘Mudersbach’</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">hri</span> <span class="o">=</span> <span class="n">HeavyRainfallIndexAnalyse</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="n">HeavyRainfallIndexAnalyse</span><span class="o">.</span><span class="n">METHODS</span><span class="o">.</span><span class="n">KRUEGER_PFISTER</span><span class="p">,</span>
+                                <span class="n">series_kind</span><span class="o">=</span><span class="n">SERIES</span><span class="o">.</span><span class="n">PARTIAL</span><span class="p">,</span> <span class="n">worksheet</span><span class="o">=</span><span class="n">METHOD</span><span class="o">.</span><span class="n">KOSTRA</span><span class="p">,</span> <span class="n">extended_durations</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><a class="sphinx-codeautolink-a" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.colors.ListedColormap.html#matplotlib.colors.ListedColormap" title="matplotlib.colors.ListedColormap"><span class="n">cmap</span></a> <span class="o">=</span> <a class="sphinx-codeautolink-a" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.colors.ListedColormap.html#matplotlib.colors.ListedColormap" title="matplotlib.colors.ListedColormap"><span class="n">ListedColormap</span></a><span class="p">([(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)]</span> <span class="o">+</span> <a class="sphinx-codeautolink-a" href="https://docs.python.org/3/library/stdtypes.html#list" title="list"><span class="nb">list</span></a><span class="p">(</span><span class="n">hri</span><span class="o">.</span><span class="n">indices_color</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+</pre></div>
+</div>
+</div>
+<p>You need to install <code class="docutils literal notranslate"><span class="pre">pyarrow</span></code> or <code class="docutils literal notranslate"><span class="pre">fastparquet</span></code> to read and write parquet files.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <a class="sphinx-codeautolink-a" href="https://pandas.pydata.org/docs/reference/api/pandas.read_parquet.html#pandas.read_parquet" title="pandas.read_parquet"><span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span></a><span class="p">(</span><span class="s1">'ehyd_112086.parquet'</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="s1">'columns'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><a class="sphinx-codeautolink-a" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="pathlib.Path"><span class="n">output_directory</span></a> <span class="o">=</span> <a class="sphinx-codeautolink-a" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="pathlib.Path"><span class="n">Path</span></a><span class="p">(</span><span class="s1">'hri_results'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><a class="sphinx-codeautolink-a" href="../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.set_series" title="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.set_series"><span class="n">hri</span><span class="o">.</span><span class="n">set_series</span></a><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><a class="sphinx-codeautolink-a" href="../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.auto_save_parameters" title="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.auto_save_parameters"><span class="n">hri</span><span class="o">.</span><span class="n">auto_save_parameters</span></a><span class="p">(</span><a class="sphinx-codeautolink-a" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="pathlib.Path"><span class="n">output_directory</span></a> <span class="o">/</span> <span class="s1">'idf_parameters.yaml'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Heavy rainfall index-matrix is created with regard to the individual procedures for SRI generation</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">hri</span><span class="o">.</span><span class="n">interim_sri_table</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th>Return Period in a</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>5</th>
+<th>10</th>
+<th>20</th>
+<th>25</th>
+<th>30</th>
+<th>50</th>
+<th>75</th>
+<th>100</th>
+</tr>
+<tr>
+<th>duration in min</th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>5</th>
+<td>1</td>
+<td>1</td>
+<td>2</td>
+<td>2</td>
+<td>3</td>
+<td>4</td>
+<td>4</td>
+<td>5</td>
+<td>6</td>
+<td>6</td>
+<td>7</td>
+</tr>
+<tr>
+<th>10</th>
+<td>1</td>
+<td>1</td>
+<td>2</td>
+<td>2</td>
+<td>3</td>
+<td>4</td>
+<td>4</td>
+<td>5</td>
+<td>6</td>
+<td>6</td>
+<td>7</td>
+</tr>
+<tr>
+<th>15</th>
+<td>1</td>
+<td>1</td>
+<td>2</td>
+<td>2</td>
+<td>3</td>
+<td>4</td>
+<td>4</td>
+<td>5</td>
+<td>6</td>
+<td>6</td>
+<td>7</td>
+</tr>
+<tr>
+<th>20</th>
+<td>1</td>
+<td>1</td>
+<td>2</td>
+<td>2</td>
+<td>3</td>
+<td>4</td>
+<td>4</td>
+<td>5</td>
+<td>6</td>
+<td>6</td>
+<td>7</td>
+</tr>
+<tr>
+<th>30</th>
+<td>1</td>
+<td>1</td>
+<td>2</td>
+<td>2</td>
+<td>3</td>
+<td>4</td>
+<td>4</td>
+<td>5</td>
+<td>6</td>
+<td>6</td>
+<td>7</td>
+</tr>
+<tr>
+<th>45</th>
+<td>1</td>
+<td>1</td>
+<td>2</td>
+<td>2</td>
+<td>3</td>
+<td>4</td>
+<td>4</td>
+<td>5</td>
+<td>6</td>
+<td>6</td>
+<td>7</td>
+</tr>
+<tr>
+<th>60</th>
+<td>1</td>
+<td>1</td>
+<td>2</td>
+<td>2</td>
+<td>3</td>
+<td>4</td>
+<td>4</td>
+<td>5</td>
+<td>6</td>
+<td>6</td>
+<td>7</td>
+</tr>
+<tr>
+<th>90</th>
+<td>1</td>
+<td>1</td>
+<td>2</td>
+<td>2</td>
+<td>3</td>
+<td>4</td>
+<td>4</td>
+<td>5</td>
+<td>6</td>
+<td>6</td>
+<td>7</td>
+</tr>
+<tr>
+<th>120</th>
+<td>1</td>
+<td>1</td>
+<td>2</td>
+<td>2</td>
+<td>3</td>
+<td>4</td>
+<td>4</td>
+<td>5</td>
+<td>6</td>
+<td>6</td>
+<td>7</td>
+</tr>
+<tr>
+<th>180</th>
+<td>1</td>
+<td>1</td>
+<td>2</td>
+<td>2</td>
+<td>3</td>
+<td>4</td>
+<td>4</td>
+<td>5</td>
+<td>6</td>
+<td>6</td>
+<td>7</td>
+</tr>
+<tr>
+<th>240</th>
+<td>1</td>
+<td>1</td>
+<td>2</td>
+<td>2</td>
+<td>3</td>
+<td>4</td>
+<td>4</td>
+<td>5</td>
+<td>6</td>
+<td>6</td>
+<td>7</td>
+</tr>
+<tr>
+<th>360</th>
+<td>1</td>
+<td>1</td>
+<td>2</td>
+<td>2</td>
+<td>3</td>
+<td>4</td>
+<td>4</td>
+<td>5</td>
+<td>6</td>
+<td>6</td>
+<td>7</td>
+</tr>
+<tr>
+<th>540</th>
+<td>1</td>
+<td>1</td>
+<td>2</td>
+<td>2</td>
+<td>3</td>
+<td>4</td>
+<td>4</td>
+<td>5</td>
+<td>6</td>
+<td>6</td>
+<td>7</td>
+</tr>
+<tr>
+<th>720</th>
+<td>1</td>
+<td>1</td>
+<td>2</td>
+<td>2</td>
+<td>3</td>
+<td>4</td>
+<td>4</td>
+<td>5</td>
+<td>6</td>
+<td>6</td>
+<td>7</td>
+</tr>
+<tr>
+<th>1080</th>
+<td>1</td>
+<td>1</td>
+<td>2</td>
+<td>2</td>
+<td>3</td>
+<td>4</td>
+<td>4</td>
+<td>5</td>
+<td>6</td>
+<td>6</td>
+<td>7</td>
+</tr>
+<tr>
+<th>1440</th>
+<td>1</td>
+<td>1</td>
+<td>2</td>
+<td>2</td>
+<td>3</td>
+<td>4</td>
+<td>4</td>
+<td>5</td>
+<td>6</td>
+<td>6</td>
+<td>7</td>
+</tr>
+<tr>
+<th>2880</th>
+<td>1</td>
+<td>1</td>
+<td>2</td>
+<td>2</td>
+<td>3</td>
+<td>4</td>
+<td>4</td>
+<td>5</td>
+<td>6</td>
+<td>6</td>
+<td>7</td>
+</tr>
+<tr>
+<th>4320</th>
+<td>1</td>
+<td>1</td>
+<td>2</td>
+<td>2</td>
+<td>3</td>
+<td>4</td>
+<td>4</td>
+<td>5</td>
+<td>6</td>
+<td>6</td>
+<td>7</td>
+</tr>
+<tr>
+<th>5760</th>
+<td>1</td>
+<td>1</td>
+<td>2</td>
+<td>2</td>
+<td>3</td>
+<td>4</td>
+<td>4</td>
+<td>5</td>
+<td>6</td>
+<td>6</td>
+<td>7</td>
+</tr>
+<tr>
+<th>7200</th>
+<td>1</td>
+<td>1</td>
+<td>2</td>
+<td>2</td>
+<td>3</td>
+<td>4</td>
+<td>4</td>
+<td>5</td>
+<td>6</td>
+<td>6</td>
+<td>7</td>
+</tr>
+<tr>
+<th>8640</th>
+<td>1</td>
+<td>1</td>
+<td>2</td>
+<td>2</td>
+<td>3</td>
+<td>4</td>
+<td>4</td>
+<td>5</td>
+<td>6</td>
+<td>6</td>
+<td>7</td>
+</tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">hri</span><span class="o">.</span><span class="n">interim_sri_table</span><span class="p">()</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">background_gradient</span><span class="p">(</span><span class="n">cmap</span><span class="o">=</span><a class="sphinx-codeautolink-a" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.colors.ListedColormap.html#matplotlib.colors.ListedColormap" title="matplotlib.colors.ListedColormap"><span class="n">cmap</span></a><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<style type="text/css">
+#T_f76b4_row0_col0, #T_f76b4_row0_col1, #T_f76b4_row0_col2, #T_f76b4_row0_col3, #T_f76b4_row0_col4, #T_f76b4_row0_col5, #T_f76b4_row0_col6, #T_f76b4_row0_col7, #T_f76b4_row0_col8, #T_f76b4_row0_col9, #T_f76b4_row0_col10, #T_f76b4_row1_col0, #T_f76b4_row1_col1, #T_f76b4_row1_col2, #T_f76b4_row1_col3, #T_f76b4_row1_col4, #T_f76b4_row1_col5, #T_f76b4_row1_col6, #T_f76b4_row1_col7, #T_f76b4_row2_col0, #T_f76b4_row2_col1, #T_f76b4_row2_col2, #T_f76b4_row2_col3, #T_f76b4_row2_col4, #T_f76b4_row2_col5, #T_f76b4_row3_col0, #T_f76b4_row3_col1, #T_f76b4_row3_col2, #T_f76b4_row3_col3, #T_f76b4_row3_col4, #T_f76b4_row4_col0, #T_f76b4_row4_col1, #T_f76b4_row4_col2, #T_f76b4_row4_col3, #T_f76b4_row4_col4, #T_f76b4_row5_col0, #T_f76b4_row5_col1, #T_f76b4_row5_col2, #T_f76b4_row5_col3, #T_f76b4_row6_col0, #T_f76b4_row6_col1, #T_f76b4_row6_col2, #T_f76b4_row6_col3, #T_f76b4_row7_col0, #T_f76b4_row7_col1, #T_f76b4_row7_col2, #T_f76b4_row7_col3, #T_f76b4_row8_col0, #T_f76b4_row8_col1, #T_f76b4_row8_col2, #T_f76b4_row8_col3, #T_f76b4_row9_col0, #T_f76b4_row9_col1, #T_f76b4_row9_col2, #T_f76b4_row9_col3, #T_f76b4_row10_col0, #T_f76b4_row10_col1, #T_f76b4_row10_col2, #T_f76b4_row11_col0, #T_f76b4_row11_col1, #T_f76b4_row11_col2, #T_f76b4_row12_col0, #T_f76b4_row12_col1, #T_f76b4_row12_col2, #T_f76b4_row13_col0, #T_f76b4_row13_col1, #T_f76b4_row13_col2, #T_f76b4_row14_col0, #T_f76b4_row14_col1, #T_f76b4_row14_col2, #T_f76b4_row15_col0, #T_f76b4_row15_col1, #T_f76b4_row16_col0, #T_f76b4_row16_col1, #T_f76b4_row17_col0, #T_f76b4_row17_col1, #T_f76b4_row18_col0, #T_f76b4_row18_col1, #T_f76b4_row19_col0, #T_f76b4_row20_col0 {
+  background-color: #ffffff;
+  color: #000000;
+}
+#T_f76b4_row1_col8, #T_f76b4_row1_col9, #T_f76b4_row1_col10, #T_f76b4_row2_col6, #T_f76b4_row2_col7, #T_f76b4_row2_col8, #T_f76b4_row2_col9, #T_f76b4_row3_col5, #T_f76b4_row3_col6, #T_f76b4_row3_col7, #T_f76b4_row3_col8, #T_f76b4_row4_col5, #T_f76b4_row4_col6, #T_f76b4_row4_col7, #T_f76b4_row5_col4, #T_f76b4_row5_col5, #T_f76b4_row6_col4, #T_f76b4_row7_col4, #T_f76b4_row8_col4, #T_f76b4_row9_col4, #T_f76b4_row10_col3, #T_f76b4_row10_col4, #T_f76b4_row11_col3, #T_f76b4_row12_col3, #T_f76b4_row13_col3, #T_f76b4_row14_col3, #T_f76b4_row15_col2, #T_f76b4_row15_col3, #T_f76b4_row16_col2, #T_f76b4_row16_col3, #T_f76b4_row17_col2, #T_f76b4_row18_col2, #T_f76b4_row19_col1, #T_f76b4_row19_col2, #T_f76b4_row20_col1, #T_f76b4_row20_col2 {
+  background-color: #b0e61a;
+  color: #000000;
+}
+#T_f76b4_row2_col10, #T_f76b4_row3_col9, #T_f76b4_row3_col10, #T_f76b4_row4_col8, #T_f76b4_row4_col9, #T_f76b4_row5_col6, #T_f76b4_row5_col7, #T_f76b4_row6_col5, #T_f76b4_row6_col6, #T_f76b4_row6_col7, #T_f76b4_row7_col5, #T_f76b4_row7_col6, #T_f76b4_row7_col7, #T_f76b4_row8_col5, #T_f76b4_row8_col6, #T_f76b4_row9_col5, #T_f76b4_row10_col5, #T_f76b4_row11_col4, #T_f76b4_row12_col4, #T_f76b4_row13_col4, #T_f76b4_row14_col4, #T_f76b4_row15_col4, #T_f76b4_row17_col3, #T_f76b4_row18_col3, #T_f76b4_row19_col3, #T_f76b4_row20_col3 {
+  background-color: #ccff99;
+  color: #000000;
+}
+#T_f76b4_row4_col10, #T_f76b4_row5_col8, #T_f76b4_row5_col9, #T_f76b4_row6_col8, #T_f76b4_row7_col8, #T_f76b4_row8_col7, #T_f76b4_row8_col8, #T_f76b4_row9_col6, #T_f76b4_row9_col7, #T_f76b4_row10_col6, #T_f76b4_row10_col7, #T_f76b4_row11_col5, #T_f76b4_row11_col6, #T_f76b4_row11_col7, #T_f76b4_row12_col5, #T_f76b4_row12_col6, #T_f76b4_row13_col5, #T_f76b4_row13_col6, #T_f76b4_row14_col5, #T_f76b4_row15_col5, #T_f76b4_row16_col4, #T_f76b4_row17_col4, #T_f76b4_row18_col4 {
+  background-color: #e6ff4c;
+  color: #000000;
+}
+#T_f76b4_row5_col10, #T_f76b4_row6_col9, #T_f76b4_row6_col10, #T_f76b4_row7_col9, #T_f76b4_row7_col10, #T_f76b4_row8_col9, #T_f76b4_row9_col8, #T_f76b4_row9_col9, #T_f76b4_row10_col8, #T_f76b4_row11_col8, #T_f76b4_row12_col7, #T_f76b4_row13_col7, #T_f76b4_row14_col6, #T_f76b4_row14_col7, #T_f76b4_row15_col6, #T_f76b4_row15_col7, #T_f76b4_row16_col5, #T_f76b4_row16_col6, #T_f76b4_row17_col5, #T_f76b4_row19_col4, #T_f76b4_row20_col4 {
+  background-color: #fff500;
+  color: #000000;
+}
+#T_f76b4_row8_col10, #T_f76b4_row9_col10, #T_f76b4_row10_col9, #T_f76b4_row10_col10, #T_f76b4_row11_col9, #T_f76b4_row12_col8, #T_f76b4_row12_col9, #T_f76b4_row13_col8, #T_f76b4_row14_col8, #T_f76b4_row15_col8, #T_f76b4_row16_col7, #T_f76b4_row17_col6, #T_f76b4_row17_col7, #T_f76b4_row18_col5 {
+  background-color: #ffa100;
+  color: #000000;
+}
+#T_f76b4_row11_col10, #T_f76b4_row12_col10, #T_f76b4_row13_col9, #T_f76b4_row13_col10, #T_f76b4_row14_col9, #T_f76b4_row15_col9, #T_f76b4_row16_col8, #T_f76b4_row18_col6, #T_f76b4_row18_col7, #T_f76b4_row19_col5, #T_f76b4_row19_col6, #T_f76b4_row20_col5 {
+  background-color: #ff2900;
+  color: #f1f1f1;
+}
+#T_f76b4_row14_col10, #T_f76b4_row15_col10, #T_f76b4_row16_col9, #T_f76b4_row16_col10, #T_f76b4_row17_col8, #T_f76b4_row19_col7, #T_f76b4_row20_col6, #T_f76b4_row20_col7 {
+  background-color: #f71f3d;
+  color: #f1f1f1;
+}
+#T_f76b4_row17_col9, #T_f76b4_row18_col8, #T_f76b4_row19_col8 {
+  background-color: #ff1a63;
+  color: #f1f1f1;
+}
+#T_f76b4_row17_col10, #T_f76b4_row18_col9, #T_f76b4_row20_col8 {
+  background-color: #f70882;
+  color: #f1f1f1;
+}
+#T_f76b4_row18_col10, #T_f76b4_row19_col9 {
+  background-color: #eb14bf;
+  color: #f1f1f1;
+}
+#T_f76b4_row19_col10, #T_f76b4_row20_col9, #T_f76b4_row20_col10 {
+  background-color: #a81cdb;
+  color: #f1f1f1;
+}
+</style>
+<table id="T_f76b4">
+<thead>
+<tr>
+<th class="index_name level0">Return Period in a</th>
+<th class="col_heading level0 col0" id="T_f76b4_level0_col0">1</th>
+<th class="col_heading level0 col1" id="T_f76b4_level0_col1">2</th>
+<th class="col_heading level0 col2" id="T_f76b4_level0_col2">3</th>
+<th class="col_heading level0 col3" id="T_f76b4_level0_col3">5</th>
+<th class="col_heading level0 col4" id="T_f76b4_level0_col4">10</th>
+<th class="col_heading level0 col5" id="T_f76b4_level0_col5">20</th>
+<th class="col_heading level0 col6" id="T_f76b4_level0_col6">25</th>
+<th class="col_heading level0 col7" id="T_f76b4_level0_col7">30</th>
+<th class="col_heading level0 col8" id="T_f76b4_level0_col8">50</th>
+<th class="col_heading level0 col9" id="T_f76b4_level0_col9">75</th>
+<th class="col_heading level0 col10" id="T_f76b4_level0_col10">100</th>
+</tr>
+<tr>
+<th class="index_name level0">duration in min</th>
+<th class="blank col0"> </th>
+<th class="blank col1"> </th>
+<th class="blank col2"> </th>
+<th class="blank col3"> </th>
+<th class="blank col4"> </th>
+<th class="blank col5"> </th>
+<th class="blank col6"> </th>
+<th class="blank col7"> </th>
+<th class="blank col8"> </th>
+<th class="blank col9"> </th>
+<th class="blank col10"> </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th class="row_heading level0 row0" id="T_f76b4_level0_row0">5</th>
+<td class="data row0 col0" id="T_f76b4_row0_col0">0</td>
+<td class="data row0 col1" id="T_f76b4_row0_col1">0</td>
+<td class="data row0 col2" id="T_f76b4_row0_col2">0</td>
+<td class="data row0 col3" id="T_f76b4_row0_col3">0</td>
+<td class="data row0 col4" id="T_f76b4_row0_col4">1</td>
+<td class="data row0 col5" id="T_f76b4_row0_col5">1</td>
+<td class="data row0 col6" id="T_f76b4_row0_col6">1</td>
+<td class="data row0 col7" id="T_f76b4_row0_col7">1</td>
+<td class="data row0 col8" id="T_f76b4_row0_col8">1</td>
+<td class="data row0 col9" id="T_f76b4_row0_col9">1</td>
+<td class="data row0 col10" id="T_f76b4_row0_col10">1</td>
+</tr>
+<tr>
+<th class="row_heading level0 row1" id="T_f76b4_level0_row1">10</th>
+<td class="data row1 col0" id="T_f76b4_row1_col0">0</td>
+<td class="data row1 col1" id="T_f76b4_row1_col1">0</td>
+<td class="data row1 col2" id="T_f76b4_row1_col2">0</td>
+<td class="data row1 col3" id="T_f76b4_row1_col3">1</td>
+<td class="data row1 col4" id="T_f76b4_row1_col4">1</td>
+<td class="data row1 col5" id="T_f76b4_row1_col5">1</td>
+<td class="data row1 col6" id="T_f76b4_row1_col6">1</td>
+<td class="data row1 col7" id="T_f76b4_row1_col7">1</td>
+<td class="data row1 col8" id="T_f76b4_row1_col8">2</td>
+<td class="data row1 col9" id="T_f76b4_row1_col9">2</td>
+<td class="data row1 col10" id="T_f76b4_row1_col10">2</td>
+</tr>
+<tr>
+<th class="row_heading level0 row2" id="T_f76b4_level0_row2">15</th>
+<td class="data row2 col0" id="T_f76b4_row2_col0">0</td>
+<td class="data row2 col1" id="T_f76b4_row2_col1">0</td>
+<td class="data row2 col2" id="T_f76b4_row2_col2">0</td>
+<td class="data row2 col3" id="T_f76b4_row2_col3">1</td>
+<td class="data row2 col4" id="T_f76b4_row2_col4">1</td>
+<td class="data row2 col5" id="T_f76b4_row2_col5">1</td>
+<td class="data row2 col6" id="T_f76b4_row2_col6">2</td>
+<td class="data row2 col7" id="T_f76b4_row2_col7">2</td>
+<td class="data row2 col8" id="T_f76b4_row2_col8">2</td>
+<td class="data row2 col9" id="T_f76b4_row2_col9">2</td>
+<td class="data row2 col10" id="T_f76b4_row2_col10">3</td>
+</tr>
+<tr>
+<th class="row_heading level0 row3" id="T_f76b4_level0_row3">20</th>
+<td class="data row3 col0" id="T_f76b4_row3_col0">0</td>
+<td class="data row3 col1" id="T_f76b4_row3_col1">0</td>
+<td class="data row3 col2" id="T_f76b4_row3_col2">1</td>
+<td class="data row3 col3" id="T_f76b4_row3_col3">1</td>
+<td class="data row3 col4" id="T_f76b4_row3_col4">1</td>
+<td class="data row3 col5" id="T_f76b4_row3_col5">2</td>
+<td class="data row3 col6" id="T_f76b4_row3_col6">2</td>
+<td class="data row3 col7" id="T_f76b4_row3_col7">2</td>
+<td class="data row3 col8" id="T_f76b4_row3_col8">2</td>
+<td class="data row3 col9" id="T_f76b4_row3_col9">3</td>
+<td class="data row3 col10" id="T_f76b4_row3_col10">3</td>
+</tr>
+<tr>
+<th class="row_heading level0 row4" id="T_f76b4_level0_row4">30</th>
+<td class="data row4 col0" id="T_f76b4_row4_col0">0</td>
+<td class="data row4 col1" id="T_f76b4_row4_col1">0</td>
+<td class="data row4 col2" id="T_f76b4_row4_col2">1</td>
+<td class="data row4 col3" id="T_f76b4_row4_col3">1</td>
+<td class="data row4 col4" id="T_f76b4_row4_col4">1</td>
+<td class="data row4 col5" id="T_f76b4_row4_col5">2</td>
+<td class="data row4 col6" id="T_f76b4_row4_col6">2</td>
+<td class="data row4 col7" id="T_f76b4_row4_col7">2</td>
+<td class="data row4 col8" id="T_f76b4_row4_col8">3</td>
+<td class="data row4 col9" id="T_f76b4_row4_col9">3</td>
+<td class="data row4 col10" id="T_f76b4_row4_col10">4</td>
+</tr>
+<tr>
+<th class="row_heading level0 row5" id="T_f76b4_level0_row5">45</th>
+<td class="data row5 col0" id="T_f76b4_row5_col0">0</td>
+<td class="data row5 col1" id="T_f76b4_row5_col1">1</td>
+<td class="data row5 col2" id="T_f76b4_row5_col2">1</td>
+<td class="data row5 col3" id="T_f76b4_row5_col3">1</td>
+<td class="data row5 col4" id="T_f76b4_row5_col4">2</td>
+<td class="data row5 col5" id="T_f76b4_row5_col5">2</td>
+<td class="data row5 col6" id="T_f76b4_row5_col6">3</td>
+<td class="data row5 col7" id="T_f76b4_row5_col7">3</td>
+<td class="data row5 col8" id="T_f76b4_row5_col8">4</td>
+<td class="data row5 col9" id="T_f76b4_row5_col9">4</td>
+<td class="data row5 col10" id="T_f76b4_row5_col10">5</td>
+</tr>
+<tr>
+<th class="row_heading level0 row6" id="T_f76b4_level0_row6">60</th>
+<td class="data row6 col0" id="T_f76b4_row6_col0">0</td>
+<td class="data row6 col1" id="T_f76b4_row6_col1">1</td>
+<td class="data row6 col2" id="T_f76b4_row6_col2">1</td>
+<td class="data row6 col3" id="T_f76b4_row6_col3">1</td>
+<td class="data row6 col4" id="T_f76b4_row6_col4">2</td>
+<td class="data row6 col5" id="T_f76b4_row6_col5">3</td>
+<td class="data row6 col6" id="T_f76b4_row6_col6">3</td>
+<td class="data row6 col7" id="T_f76b4_row6_col7">3</td>
+<td class="data row6 col8" id="T_f76b4_row6_col8">4</td>
+<td class="data row6 col9" id="T_f76b4_row6_col9">5</td>
+<td class="data row6 col10" id="T_f76b4_row6_col10">5</td>
+</tr>
+<tr>
+<th class="row_heading level0 row7" id="T_f76b4_level0_row7">90</th>
+<td class="data row7 col0" id="T_f76b4_row7_col0">0</td>
+<td class="data row7 col1" id="T_f76b4_row7_col1">1</td>
+<td class="data row7 col2" id="T_f76b4_row7_col2">1</td>
+<td class="data row7 col3" id="T_f76b4_row7_col3">1</td>
+<td class="data row7 col4" id="T_f76b4_row7_col4">2</td>
+<td class="data row7 col5" id="T_f76b4_row7_col5">3</td>
+<td class="data row7 col6" id="T_f76b4_row7_col6">3</td>
+<td class="data row7 col7" id="T_f76b4_row7_col7">3</td>
+<td class="data row7 col8" id="T_f76b4_row7_col8">4</td>
+<td class="data row7 col9" id="T_f76b4_row7_col9">5</td>
+<td class="data row7 col10" id="T_f76b4_row7_col10">5</td>
+</tr>
+<tr>
+<th class="row_heading level0 row8" id="T_f76b4_level0_row8">120</th>
+<td class="data row8 col0" id="T_f76b4_row8_col0">0</td>
+<td class="data row8 col1" id="T_f76b4_row8_col1">1</td>
+<td class="data row8 col2" id="T_f76b4_row8_col2">1</td>
+<td class="data row8 col3" id="T_f76b4_row8_col3">1</td>
+<td class="data row8 col4" id="T_f76b4_row8_col4">2</td>
+<td class="data row8 col5" id="T_f76b4_row8_col5">3</td>
+<td class="data row8 col6" id="T_f76b4_row8_col6">3</td>
+<td class="data row8 col7" id="T_f76b4_row8_col7">4</td>
+<td class="data row8 col8" id="T_f76b4_row8_col8">4</td>
+<td class="data row8 col9" id="T_f76b4_row8_col9">5</td>
+<td class="data row8 col10" id="T_f76b4_row8_col10">6</td>
+</tr>
+<tr>
+<th class="row_heading level0 row9" id="T_f76b4_level0_row9">180</th>
+<td class="data row9 col0" id="T_f76b4_row9_col0">0</td>
+<td class="data row9 col1" id="T_f76b4_row9_col1">1</td>
+<td class="data row9 col2" id="T_f76b4_row9_col2">1</td>
+<td class="data row9 col3" id="T_f76b4_row9_col3">1</td>
+<td class="data row9 col4" id="T_f76b4_row9_col4">2</td>
+<td class="data row9 col5" id="T_f76b4_row9_col5">3</td>
+<td class="data row9 col6" id="T_f76b4_row9_col6">4</td>
+<td class="data row9 col7" id="T_f76b4_row9_col7">4</td>
+<td class="data row9 col8" id="T_f76b4_row9_col8">5</td>
+<td class="data row9 col9" id="T_f76b4_row9_col9">5</td>
+<td class="data row9 col10" id="T_f76b4_row9_col10">6</td>
+</tr>
+<tr>
+<th class="row_heading level0 row10" id="T_f76b4_level0_row10">240</th>
+<td class="data row10 col0" id="T_f76b4_row10_col0">0</td>
+<td class="data row10 col1" id="T_f76b4_row10_col1">1</td>
+<td class="data row10 col2" id="T_f76b4_row10_col2">1</td>
+<td class="data row10 col3" id="T_f76b4_row10_col3">2</td>
+<td class="data row10 col4" id="T_f76b4_row10_col4">2</td>
+<td class="data row10 col5" id="T_f76b4_row10_col5">3</td>
+<td class="data row10 col6" id="T_f76b4_row10_col6">4</td>
+<td class="data row10 col7" id="T_f76b4_row10_col7">4</td>
+<td class="data row10 col8" id="T_f76b4_row10_col8">5</td>
+<td class="data row10 col9" id="T_f76b4_row10_col9">6</td>
+<td class="data row10 col10" id="T_f76b4_row10_col10">6</td>
+</tr>
+<tr>
+<th class="row_heading level0 row11" id="T_f76b4_level0_row11">360</th>
+<td class="data row11 col0" id="T_f76b4_row11_col0">0</td>
+<td class="data row11 col1" id="T_f76b4_row11_col1">1</td>
+<td class="data row11 col2" id="T_f76b4_row11_col2">1</td>
+<td class="data row11 col3" id="T_f76b4_row11_col3">2</td>
+<td class="data row11 col4" id="T_f76b4_row11_col4">3</td>
+<td class="data row11 col5" id="T_f76b4_row11_col5">4</td>
+<td class="data row11 col6" id="T_f76b4_row11_col6">4</td>
+<td class="data row11 col7" id="T_f76b4_row11_col7">4</td>
+<td class="data row11 col8" id="T_f76b4_row11_col8">5</td>
+<td class="data row11 col9" id="T_f76b4_row11_col9">6</td>
+<td class="data row11 col10" id="T_f76b4_row11_col10">7</td>
+</tr>
+<tr>
+<th class="row_heading level0 row12" id="T_f76b4_level0_row12">540</th>
+<td class="data row12 col0" id="T_f76b4_row12_col0">0</td>
+<td class="data row12 col1" id="T_f76b4_row12_col1">1</td>
+<td class="data row12 col2" id="T_f76b4_row12_col2">1</td>
+<td class="data row12 col3" id="T_f76b4_row12_col3">2</td>
+<td class="data row12 col4" id="T_f76b4_row12_col4">3</td>
+<td class="data row12 col5" id="T_f76b4_row12_col5">4</td>
+<td class="data row12 col6" id="T_f76b4_row12_col6">4</td>
+<td class="data row12 col7" id="T_f76b4_row12_col7">5</td>
+<td class="data row12 col8" id="T_f76b4_row12_col8">6</td>
+<td class="data row12 col9" id="T_f76b4_row12_col9">6</td>
+<td class="data row12 col10" id="T_f76b4_row12_col10">7</td>
+</tr>
+<tr>
+<th class="row_heading level0 row13" id="T_f76b4_level0_row13">720</th>
+<td class="data row13 col0" id="T_f76b4_row13_col0">0</td>
+<td class="data row13 col1" id="T_f76b4_row13_col1">1</td>
+<td class="data row13 col2" id="T_f76b4_row13_col2">1</td>
+<td class="data row13 col3" id="T_f76b4_row13_col3">2</td>
+<td class="data row13 col4" id="T_f76b4_row13_col4">3</td>
+<td class="data row13 col5" id="T_f76b4_row13_col5">4</td>
+<td class="data row13 col6" id="T_f76b4_row13_col6">4</td>
+<td class="data row13 col7" id="T_f76b4_row13_col7">5</td>
+<td class="data row13 col8" id="T_f76b4_row13_col8">6</td>
+<td class="data row13 col9" id="T_f76b4_row13_col9">7</td>
+<td class="data row13 col10" id="T_f76b4_row13_col10">7</td>
+</tr>
+<tr>
+<th class="row_heading level0 row14" id="T_f76b4_level0_row14">1080</th>
+<td class="data row14 col0" id="T_f76b4_row14_col0">0</td>
+<td class="data row14 col1" id="T_f76b4_row14_col1">1</td>
+<td class="data row14 col2" id="T_f76b4_row14_col2">1</td>
+<td class="data row14 col3" id="T_f76b4_row14_col3">2</td>
+<td class="data row14 col4" id="T_f76b4_row14_col4">3</td>
+<td class="data row14 col5" id="T_f76b4_row14_col5">4</td>
+<td class="data row14 col6" id="T_f76b4_row14_col6">5</td>
+<td class="data row14 col7" id="T_f76b4_row14_col7">5</td>
+<td class="data row14 col8" id="T_f76b4_row14_col8">6</td>
+<td class="data row14 col9" id="T_f76b4_row14_col9">7</td>
+<td class="data row14 col10" id="T_f76b4_row14_col10">8</td>
+</tr>
+<tr>
+<th class="row_heading level0 row15" id="T_f76b4_level0_row15">1440</th>
+<td class="data row15 col0" id="T_f76b4_row15_col0">0</td>
+<td class="data row15 col1" id="T_f76b4_row15_col1">1</td>
+<td class="data row15 col2" id="T_f76b4_row15_col2">2</td>
+<td class="data row15 col3" id="T_f76b4_row15_col3">2</td>
+<td class="data row15 col4" id="T_f76b4_row15_col4">3</td>
+<td class="data row15 col5" id="T_f76b4_row15_col5">4</td>
+<td class="data row15 col6" id="T_f76b4_row15_col6">5</td>
+<td class="data row15 col7" id="T_f76b4_row15_col7">5</td>
+<td class="data row15 col8" id="T_f76b4_row15_col8">6</td>
+<td class="data row15 col9" id="T_f76b4_row15_col9">7</td>
+<td class="data row15 col10" id="T_f76b4_row15_col10">8</td>
+</tr>
+<tr>
+<th class="row_heading level0 row16" id="T_f76b4_level0_row16">2880</th>
+<td class="data row16 col0" id="T_f76b4_row16_col0">1</td>
+<td class="data row16 col1" id="T_f76b4_row16_col1">1</td>
+<td class="data row16 col2" id="T_f76b4_row16_col2">2</td>
+<td class="data row16 col3" id="T_f76b4_row16_col3">2</td>
+<td class="data row16 col4" id="T_f76b4_row16_col4">4</td>
+<td class="data row16 col5" id="T_f76b4_row16_col5">5</td>
+<td class="data row16 col6" id="T_f76b4_row16_col6">5</td>
+<td class="data row16 col7" id="T_f76b4_row16_col7">6</td>
+<td class="data row16 col8" id="T_f76b4_row16_col8">7</td>
+<td class="data row16 col9" id="T_f76b4_row16_col9">8</td>
+<td class="data row16 col10" id="T_f76b4_row16_col10">8</td>
+</tr>
+<tr>
+<th class="row_heading level0 row17" id="T_f76b4_level0_row17">4320</th>
+<td class="data row17 col0" id="T_f76b4_row17_col0">1</td>
+<td class="data row17 col1" id="T_f76b4_row17_col1">1</td>
+<td class="data row17 col2" id="T_f76b4_row17_col2">2</td>
+<td class="data row17 col3" id="T_f76b4_row17_col3">3</td>
+<td class="data row17 col4" id="T_f76b4_row17_col4">4</td>
+<td class="data row17 col5" id="T_f76b4_row17_col5">5</td>
+<td class="data row17 col6" id="T_f76b4_row17_col6">6</td>
+<td class="data row17 col7" id="T_f76b4_row17_col7">6</td>
+<td class="data row17 col8" id="T_f76b4_row17_col8">8</td>
+<td class="data row17 col9" id="T_f76b4_row17_col9">9</td>
+<td class="data row17 col10" id="T_f76b4_row17_col10">10</td>
+</tr>
+<tr>
+<th class="row_heading level0 row18" id="T_f76b4_level0_row18">5760</th>
+<td class="data row18 col0" id="T_f76b4_row18_col0">1</td>
+<td class="data row18 col1" id="T_f76b4_row18_col1">1</td>
+<td class="data row18 col2" id="T_f76b4_row18_col2">2</td>
+<td class="data row18 col3" id="T_f76b4_row18_col3">3</td>
+<td class="data row18 col4" id="T_f76b4_row18_col4">4</td>
+<td class="data row18 col5" id="T_f76b4_row18_col5">6</td>
+<td class="data row18 col6" id="T_f76b4_row18_col6">7</td>
+<td class="data row18 col7" id="T_f76b4_row18_col7">7</td>
+<td class="data row18 col8" id="T_f76b4_row18_col8">9</td>
+<td class="data row18 col9" id="T_f76b4_row18_col9">10</td>
+<td class="data row18 col10" id="T_f76b4_row18_col10">11</td>
+</tr>
+<tr>
+<th class="row_heading level0 row19" id="T_f76b4_level0_row19">7200</th>
+<td class="data row19 col0" id="T_f76b4_row19_col0">1</td>
+<td class="data row19 col1" id="T_f76b4_row19_col1">2</td>
+<td class="data row19 col2" id="T_f76b4_row19_col2">2</td>
+<td class="data row19 col3" id="T_f76b4_row19_col3">3</td>
+<td class="data row19 col4" id="T_f76b4_row19_col4">5</td>
+<td class="data row19 col5" id="T_f76b4_row19_col5">7</td>
+<td class="data row19 col6" id="T_f76b4_row19_col6">7</td>
+<td class="data row19 col7" id="T_f76b4_row19_col7">8</td>
+<td class="data row19 col8" id="T_f76b4_row19_col8">9</td>
+<td class="data row19 col9" id="T_f76b4_row19_col9">11</td>
+<td class="data row19 col10" id="T_f76b4_row19_col10">12</td>
+</tr>
+<tr>
+<th class="row_heading level0 row20" id="T_f76b4_level0_row20">8640</th>
+<td class="data row20 col0" id="T_f76b4_row20_col0">1</td>
+<td class="data row20 col1" id="T_f76b4_row20_col1">2</td>
+<td class="data row20 col2" id="T_f76b4_row20_col2">2</td>
+<td class="data row20 col3" id="T_f76b4_row20_col3">3</td>
+<td class="data row20 col4" id="T_f76b4_row20_col4">5</td>
+<td class="data row20 col5" id="T_f76b4_row20_col5">7</td>
+<td class="data row20 col6" id="T_f76b4_row20_col6">8</td>
+<td class="data row20 col7" id="T_f76b4_row20_col7">8</td>
+<td class="data row20 col8" id="T_f76b4_row20_col8">10</td>
+<td class="data row20 col9" id="T_f76b4_row20_col9">12</td>
+<td class="data row20 col10" id="T_f76b4_row20_col10">12</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<p>An auxiliary table must be generated for the creation of the heavy rain index-curves. Here, the rainfall heights are shown depending on the duration and the heavy rain index.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">hri</span><span class="o">.</span><span class="n">result_sri_table</span><span class="p">()</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">background_gradient</span><span class="p">(</span><span class="n">cmap</span><span class="o">=</span><a class="sphinx-codeautolink-a" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.colors.ListedColormap.html#matplotlib.colors.ListedColormap" title="matplotlib.colors.ListedColormap"><span class="n">cmap</span></a><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">700</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">"</span><span class="si">{:.1f}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<style type="text/css">
+#T_5714f_row0_col0, #T_5714f_row0_col1, #T_5714f_row0_col2, #T_5714f_row0_col3, #T_5714f_row0_col4, #T_5714f_row0_col5, #T_5714f_row0_col6, #T_5714f_row0_col7, #T_5714f_row1_col0, #T_5714f_row1_col1, #T_5714f_row1_col2, #T_5714f_row1_col3, #T_5714f_row1_col4, #T_5714f_row2_col0, #T_5714f_row2_col1, #T_5714f_row2_col2, #T_5714f_row2_col3, #T_5714f_row3_col0, #T_5714f_row3_col1, #T_5714f_row3_col2, #T_5714f_row4_col0, #T_5714f_row4_col1, #T_5714f_row4_col2, #T_5714f_row5_col0, #T_5714f_row5_col1, #T_5714f_row6_col0, #T_5714f_row6_col1, #T_5714f_row7_col0, #T_5714f_row7_col1, #T_5714f_row8_col0, #T_5714f_row8_col1, #T_5714f_row9_col0, #T_5714f_row10_col0, #T_5714f_row11_col0, #T_5714f_row12_col0, #T_5714f_row13_col0, #T_5714f_row14_col0, #T_5714f_row15_col0, #T_5714f_row16_col0, #T_5714f_row17_col0, #T_5714f_row18_col0 {
+  background-color: #ffffff;
+  color: #000000;
+}
+#T_5714f_row0_col8, #T_5714f_row0_col9, #T_5714f_row0_col10, #T_5714f_row0_col11, #T_5714f_row1_col5, #T_5714f_row1_col6, #T_5714f_row1_col7, #T_5714f_row1_col8, #T_5714f_row1_col9, #T_5714f_row1_col10, #T_5714f_row1_col11, #T_5714f_row2_col4, #T_5714f_row2_col5, #T_5714f_row2_col6, #T_5714f_row2_col7, #T_5714f_row2_col8, #T_5714f_row2_col9, #T_5714f_row2_col10, #T_5714f_row2_col11, #T_5714f_row3_col3, #T_5714f_row3_col4, #T_5714f_row3_col5, #T_5714f_row3_col6, #T_5714f_row3_col7, #T_5714f_row3_col8, #T_5714f_row3_col9, #T_5714f_row3_col10, #T_5714f_row3_col11, #T_5714f_row4_col3, #T_5714f_row4_col4, #T_5714f_row4_col5, #T_5714f_row4_col6, #T_5714f_row4_col7, #T_5714f_row4_col8, #T_5714f_row4_col9, #T_5714f_row4_col10, #T_5714f_row4_col11, #T_5714f_row5_col2, #T_5714f_row5_col3, #T_5714f_row5_col4, #T_5714f_row5_col5, #T_5714f_row5_col6, #T_5714f_row5_col7, #T_5714f_row5_col8, #T_5714f_row5_col9, #T_5714f_row6_col2, #T_5714f_row6_col3, #T_5714f_row6_col4, #T_5714f_row6_col5, #T_5714f_row6_col6, #T_5714f_row6_col7, #T_5714f_row7_col2, #T_5714f_row7_col3, #T_5714f_row7_col4, #T_5714f_row7_col5, #T_5714f_row7_col6, #T_5714f_row7_col7, #T_5714f_row8_col2, #T_5714f_row8_col3, #T_5714f_row8_col4, #T_5714f_row8_col5, #T_5714f_row8_col6, #T_5714f_row8_col7, #T_5714f_row9_col1, #T_5714f_row9_col2, #T_5714f_row9_col3, #T_5714f_row9_col4, #T_5714f_row9_col5, #T_5714f_row9_col6, #T_5714f_row10_col1, #T_5714f_row10_col2, #T_5714f_row10_col3, #T_5714f_row10_col4, #T_5714f_row10_col5, #T_5714f_row10_col6, #T_5714f_row11_col1, #T_5714f_row11_col2, #T_5714f_row11_col3, #T_5714f_row11_col4, #T_5714f_row11_col5, #T_5714f_row12_col1, #T_5714f_row12_col2, #T_5714f_row12_col3, #T_5714f_row12_col4, #T_5714f_row12_col5, #T_5714f_row13_col1, #T_5714f_row13_col2, #T_5714f_row13_col3, #T_5714f_row13_col4, #T_5714f_row13_col5, #T_5714f_row14_col1, #T_5714f_row14_col2, #T_5714f_row14_col3, #T_5714f_row14_col4, #T_5714f_row14_col5, #T_5714f_row15_col1, #T_5714f_row15_col2, #T_5714f_row15_col3, #T_5714f_row15_col4, #T_5714f_row16_col1, #T_5714f_row16_col2, #T_5714f_row16_col3, #T_5714f_row16_col4, #T_5714f_row17_col1, #T_5714f_row17_col2, #T_5714f_row17_col3, #T_5714f_row18_col1, #T_5714f_row18_col2, #T_5714f_row18_col3, #T_5714f_row19_col0, #T_5714f_row19_col1, #T_5714f_row19_col2, #T_5714f_row20_col0, #T_5714f_row20_col1, #T_5714f_row20_col2 {
+  background-color: #b0e61a;
+  color: #000000;
+}
+#T_5714f_row5_col10, #T_5714f_row5_col11, #T_5714f_row6_col8, #T_5714f_row6_col9, #T_5714f_row6_col10, #T_5714f_row6_col11, #T_5714f_row7_col8, #T_5714f_row7_col9, #T_5714f_row7_col10, #T_5714f_row7_col11, #T_5714f_row8_col8, #T_5714f_row8_col9, #T_5714f_row8_col10, #T_5714f_row8_col11, #T_5714f_row9_col7, #T_5714f_row9_col8, #T_5714f_row9_col9, #T_5714f_row9_col10, #T_5714f_row9_col11, #T_5714f_row10_col7, #T_5714f_row10_col8, #T_5714f_row10_col9, #T_5714f_row10_col10, #T_5714f_row10_col11, #T_5714f_row11_col6, #T_5714f_row11_col7, #T_5714f_row11_col8, #T_5714f_row11_col9, #T_5714f_row11_col10, #T_5714f_row11_col11, #T_5714f_row12_col6, #T_5714f_row12_col7, #T_5714f_row12_col8, #T_5714f_row12_col9, #T_5714f_row12_col10, #T_5714f_row12_col11, #T_5714f_row13_col6, #T_5714f_row13_col7, #T_5714f_row13_col8, #T_5714f_row13_col9, #T_5714f_row13_col10, #T_5714f_row13_col11, #T_5714f_row14_col6, #T_5714f_row14_col7, #T_5714f_row14_col8, #T_5714f_row14_col9, #T_5714f_row14_col10, #T_5714f_row14_col11, #T_5714f_row15_col5, #T_5714f_row15_col6, #T_5714f_row15_col7, #T_5714f_row15_col8, #T_5714f_row15_col9, #T_5714f_row15_col10, #T_5714f_row15_col11, #T_5714f_row16_col5, #T_5714f_row16_col6, #T_5714f_row16_col7, #T_5714f_row16_col8, #T_5714f_row16_col9, #T_5714f_row16_col10, #T_5714f_row16_col11, #T_5714f_row17_col4, #T_5714f_row17_col5, #T_5714f_row17_col6, #T_5714f_row17_col7, #T_5714f_row17_col8, #T_5714f_row17_col9, #T_5714f_row18_col4, #T_5714f_row18_col5, #T_5714f_row18_col6, #T_5714f_row18_col7, #T_5714f_row18_col8, #T_5714f_row19_col3, #T_5714f_row19_col4, #T_5714f_row19_col5, #T_5714f_row19_col6, #T_5714f_row19_col7, #T_5714f_row20_col3, #T_5714f_row20_col4, #T_5714f_row20_col5, #T_5714f_row20_col6, #T_5714f_row20_col7 {
+  background-color: #ccff99;
+  color: #000000;
+}
+#T_5714f_row17_col10, #T_5714f_row17_col11, #T_5714f_row18_col9, #T_5714f_row18_col10, #T_5714f_row18_col11, #T_5714f_row19_col8, #T_5714f_row19_col9, #T_5714f_row19_col10, #T_5714f_row19_col11, #T_5714f_row20_col8, #T_5714f_row20_col9, #T_5714f_row20_col10, #T_5714f_row20_col11 {
+  background-color: #e6ff4c;
+  color: #000000;
+}
+</style>
+<table id="T_5714f">
+<thead>
+<tr>
+<th class="index_name level0">SRI</th>
+<th class="col_heading level0 col0" id="T_5714f_level0_col0">1</th>
+<th class="col_heading level0 col1" id="T_5714f_level0_col1">2</th>
+<th class="col_heading level0 col2" id="T_5714f_level0_col2">3</th>
+<th class="col_heading level0 col3" id="T_5714f_level0_col3">4</th>
+<th class="col_heading level0 col4" id="T_5714f_level0_col4">5</th>
+<th class="col_heading level0 col5" id="T_5714f_level0_col5">6</th>
+<th class="col_heading level0 col6" id="T_5714f_level0_col6">7</th>
+<th class="col_heading level0 col7" id="T_5714f_level0_col7">8</th>
+<th class="col_heading level0 col8" id="T_5714f_level0_col8">9</th>
+<th class="col_heading level0 col9" id="T_5714f_level0_col9">10</th>
+<th class="col_heading level0 col10" id="T_5714f_level0_col10">11</th>
+<th class="col_heading level0 col11" id="T_5714f_level0_col11">12</th>
+</tr>
+<tr>
+<th class="index_name level0">duration in min</th>
+<th class="blank col0"> </th>
+<th class="blank col1"> </th>
+<th class="blank col2"> </th>
+<th class="blank col3"> </th>
+<th class="blank col4"> </th>
+<th class="blank col5"> </th>
+<th class="blank col6"> </th>
+<th class="blank col7"> </th>
+<th class="blank col8"> </th>
+<th class="blank col9"> </th>
+<th class="blank col10"> </th>
+<th class="blank col11"> </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th class="row_heading level0 row0" id="T_5714f_level0_row0">5</th>
+<td class="data row0 col0" id="T_5714f_row0_col0">18.8</td>
+<td class="data row0 col1" id="T_5714f_row0_col1">26.6</td>
+<td class="data row0 col2" id="T_5714f_row0_col2">32.5</td>
+<td class="data row0 col3" id="T_5714f_row0_col3">37.6</td>
+<td class="data row0 col4" id="T_5714f_row0_col4">42.0</td>
+<td class="data row0 col5" id="T_5714f_row0_col5">46.0</td>
+<td class="data row0 col6" id="T_5714f_row0_col6">49.7</td>
+<td class="data row0 col7" id="T_5714f_row0_col7">53.1</td>
+<td class="data row0 col8" id="T_5714f_row0_col8">56.4</td>
+<td class="data row0 col9" id="T_5714f_row0_col9">59.4</td>
+<td class="data row0 col10" id="T_5714f_row0_col10">62.3</td>
+<td class="data row0 col11" id="T_5714f_row0_col11">65.1</td>
+</tr>
+<tr>
+<th class="row_heading level0 row1" id="T_5714f_level0_row1">10</th>
+<td class="data row1 col0" id="T_5714f_row1_col0">23.2</td>
+<td class="data row1 col1" id="T_5714f_row1_col1">32.8</td>
+<td class="data row1 col2" id="T_5714f_row1_col2">40.2</td>
+<td class="data row1 col3" id="T_5714f_row1_col3">46.4</td>
+<td class="data row1 col4" id="T_5714f_row1_col4">51.9</td>
+<td class="data row1 col5" id="T_5714f_row1_col5">56.8</td>
+<td class="data row1 col6" id="T_5714f_row1_col6">61.4</td>
+<td class="data row1 col7" id="T_5714f_row1_col7">65.6</td>
+<td class="data row1 col8" id="T_5714f_row1_col8">69.6</td>
+<td class="data row1 col9" id="T_5714f_row1_col9">73.4</td>
+<td class="data row1 col10" id="T_5714f_row1_col10">77.0</td>
+<td class="data row1 col11" id="T_5714f_row1_col11">80.4</td>
+</tr>
+<tr>
+<th class="row_heading level0 row2" id="T_5714f_level0_row2">15</th>
+<td class="data row2 col0" id="T_5714f_row2_col0">26.0</td>
+<td class="data row2 col1" id="T_5714f_row2_col1">36.7</td>
+<td class="data row2 col2" id="T_5714f_row2_col2">45.0</td>
+<td class="data row2 col3" id="T_5714f_row2_col3">52.0</td>
+<td class="data row2 col4" id="T_5714f_row2_col4">58.1</td>
+<td class="data row2 col5" id="T_5714f_row2_col5">63.7</td>
+<td class="data row2 col6" id="T_5714f_row2_col6">68.8</td>
+<td class="data row2 col7" id="T_5714f_row2_col7">73.5</td>
+<td class="data row2 col8" id="T_5714f_row2_col8">78.0</td>
+<td class="data row2 col9" id="T_5714f_row2_col9">82.2</td>
+<td class="data row2 col10" id="T_5714f_row2_col10">86.2</td>
+<td class="data row2 col11" id="T_5714f_row2_col11">90.0</td>
+</tr>
+<tr>
+<th class="row_heading level0 row3" id="T_5714f_level0_row3">20</th>
+<td class="data row3 col0" id="T_5714f_row3_col0">28.0</td>
+<td class="data row3 col1" id="T_5714f_row3_col1">39.6</td>
+<td class="data row3 col2" id="T_5714f_row3_col2">48.5</td>
+<td class="data row3 col3" id="T_5714f_row3_col3">56.0</td>
+<td class="data row3 col4" id="T_5714f_row3_col4">62.6</td>
+<td class="data row3 col5" id="T_5714f_row3_col5">68.6</td>
+<td class="data row3 col6" id="T_5714f_row3_col6">74.1</td>
+<td class="data row3 col7" id="T_5714f_row3_col7">79.2</td>
+<td class="data row3 col8" id="T_5714f_row3_col8">84.0</td>
+<td class="data row3 col9" id="T_5714f_row3_col9">88.6</td>
+<td class="data row3 col10" id="T_5714f_row3_col10">92.9</td>
+<td class="data row3 col11" id="T_5714f_row3_col11">97.0</td>
+</tr>
+<tr>
+<th class="row_heading level0 row4" id="T_5714f_level0_row4">30</th>
+<td class="data row4 col0" id="T_5714f_row4_col0">30.9</td>
+<td class="data row4 col1" id="T_5714f_row4_col1">43.7</td>
+<td class="data row4 col2" id="T_5714f_row4_col2">53.5</td>
+<td class="data row4 col3" id="T_5714f_row4_col3">61.8</td>
+<td class="data row4 col4" id="T_5714f_row4_col4">69.1</td>
+<td class="data row4 col5" id="T_5714f_row4_col5">75.7</td>
+<td class="data row4 col6" id="T_5714f_row4_col6">81.8</td>
+<td class="data row4 col7" id="T_5714f_row4_col7">87.4</td>
+<td class="data row4 col8" id="T_5714f_row4_col8">92.7</td>
+<td class="data row4 col9" id="T_5714f_row4_col9">97.7</td>
+<td class="data row4 col10" id="T_5714f_row4_col10">102.5</td>
+<td class="data row4 col11" id="T_5714f_row4_col11">107.0</td>
+</tr>
+<tr>
+<th class="row_heading level0 row5" id="T_5714f_level0_row5">45</th>
+<td class="data row5 col0" id="T_5714f_row5_col0">33.9</td>
+<td class="data row5 col1" id="T_5714f_row5_col1">47.9</td>
+<td class="data row5 col2" id="T_5714f_row5_col2">58.7</td>
+<td class="data row5 col3" id="T_5714f_row5_col3">67.7</td>
+<td class="data row5 col4" id="T_5714f_row5_col4">75.7</td>
+<td class="data row5 col5" id="T_5714f_row5_col5">83.0</td>
+<td class="data row5 col6" id="T_5714f_row5_col6">89.6</td>
+<td class="data row5 col7" id="T_5714f_row5_col7">95.8</td>
+<td class="data row5 col8" id="T_5714f_row5_col8">101.6</td>
+<td class="data row5 col9" id="T_5714f_row5_col9">107.1</td>
+<td class="data row5 col10" id="T_5714f_row5_col10">112.3</td>
+<td class="data row5 col11" id="T_5714f_row5_col11">117.3</td>
+</tr>
+<tr>
+<th class="row_heading level0 row6" id="T_5714f_level0_row6">60</th>
+<td class="data row6 col0" id="T_5714f_row6_col0">36.0</td>
+<td class="data row6 col1" id="T_5714f_row6_col1">51.0</td>
+<td class="data row6 col2" id="T_5714f_row6_col2">62.4</td>
+<td class="data row6 col3" id="T_5714f_row6_col3">72.1</td>
+<td class="data row6 col4" id="T_5714f_row6_col4">80.6</td>
+<td class="data row6 col5" id="T_5714f_row6_col5">88.3</td>
+<td class="data row6 col6" id="T_5714f_row6_col6">95.3</td>
+<td class="data row6 col7" id="T_5714f_row6_col7">101.9</td>
+<td class="data row6 col8" id="T_5714f_row6_col8">108.1</td>
+<td class="data row6 col9" id="T_5714f_row6_col9">113.9</td>
+<td class="data row6 col10" id="T_5714f_row6_col10">119.5</td>
+<td class="data row6 col11" id="T_5714f_row6_col11">124.8</td>
+</tr>
+<tr>
+<th class="row_heading level0 row7" id="T_5714f_level0_row7">90</th>
+<td class="data row7 col0" id="T_5714f_row7_col0">37.1</td>
+<td class="data row7 col1" id="T_5714f_row7_col1">52.5</td>
+<td class="data row7 col2" id="T_5714f_row7_col2">64.3</td>
+<td class="data row7 col3" id="T_5714f_row7_col3">74.3</td>
+<td class="data row7 col4" id="T_5714f_row7_col4">83.0</td>
+<td class="data row7 col5" id="T_5714f_row7_col5">91.0</td>
+<td class="data row7 col6" id="T_5714f_row7_col6">98.3</td>
+<td class="data row7 col7" id="T_5714f_row7_col7">105.0</td>
+<td class="data row7 col8" id="T_5714f_row7_col8">111.4</td>
+<td class="data row7 col9" id="T_5714f_row7_col9">117.4</td>
+<td class="data row7 col10" id="T_5714f_row7_col10">123.2</td>
+<td class="data row7 col11" id="T_5714f_row7_col11">128.6</td>
+</tr>
+<tr>
+<th class="row_heading level0 row8" id="T_5714f_level0_row8">120</th>
+<td class="data row8 col0" id="T_5714f_row8_col0">37.9</td>
+<td class="data row8 col1" id="T_5714f_row8_col1">53.7</td>
+<td class="data row8 col2" id="T_5714f_row8_col2">65.7</td>
+<td class="data row8 col3" id="T_5714f_row8_col3">75.9</td>
+<td class="data row8 col4" id="T_5714f_row8_col4">84.8</td>
+<td class="data row8 col5" id="T_5714f_row8_col5">92.9</td>
+<td class="data row8 col6" id="T_5714f_row8_col6">100.4</td>
+<td class="data row8 col7" id="T_5714f_row8_col7">107.3</td>
+<td class="data row8 col8" id="T_5714f_row8_col8">113.8</td>
+<td class="data row8 col9" id="T_5714f_row8_col9">120.0</td>
+<td class="data row8 col10" id="T_5714f_row8_col10">125.8</td>
+<td class="data row8 col11" id="T_5714f_row8_col11">131.4</td>
+</tr>
+<tr>
+<th class="row_heading level0 row9" id="T_5714f_level0_row9">180</th>
+<td class="data row9 col0" id="T_5714f_row9_col0">39.1</td>
+<td class="data row9 col1" id="T_5714f_row9_col1">55.3</td>
+<td class="data row9 col2" id="T_5714f_row9_col2">67.7</td>
+<td class="data row9 col3" id="T_5714f_row9_col3">78.2</td>
+<td class="data row9 col4" id="T_5714f_row9_col4">87.5</td>
+<td class="data row9 col5" id="T_5714f_row9_col5">95.8</td>
+<td class="data row9 col6" id="T_5714f_row9_col6">103.5</td>
+<td class="data row9 col7" id="T_5714f_row9_col7">110.6</td>
+<td class="data row9 col8" id="T_5714f_row9_col8">117.3</td>
+<td class="data row9 col9" id="T_5714f_row9_col9">123.7</td>
+<td class="data row9 col10" id="T_5714f_row9_col10">129.7</td>
+<td class="data row9 col11" id="T_5714f_row9_col11">135.5</td>
+</tr>
+<tr>
+<th class="row_heading level0 row10" id="T_5714f_level0_row10">240</th>
+<td class="data row10 col0" id="T_5714f_row10_col0">40.0</td>
+<td class="data row10 col1" id="T_5714f_row10_col1">56.5</td>
+<td class="data row10 col2" id="T_5714f_row10_col2">69.2</td>
+<td class="data row10 col3" id="T_5714f_row10_col3">79.9</td>
+<td class="data row10 col4" id="T_5714f_row10_col4">89.4</td>
+<td class="data row10 col5" id="T_5714f_row10_col5">97.9</td>
+<td class="data row10 col6" id="T_5714f_row10_col6">105.7</td>
+<td class="data row10 col7" id="T_5714f_row10_col7">113.0</td>
+<td class="data row10 col8" id="T_5714f_row10_col8">119.9</td>
+<td class="data row10 col9" id="T_5714f_row10_col9">126.4</td>
+<td class="data row10 col10" id="T_5714f_row10_col10">132.5</td>
+<td class="data row10 col11" id="T_5714f_row10_col11">138.4</td>
+</tr>
+<tr>
+<th class="row_heading level0 row11" id="T_5714f_level0_row11">360</th>
+<td class="data row11 col0" id="T_5714f_row11_col0">41.2</td>
+<td class="data row11 col1" id="T_5714f_row11_col1">58.3</td>
+<td class="data row11 col2" id="T_5714f_row11_col2">71.4</td>
+<td class="data row11 col3" id="T_5714f_row11_col3">82.4</td>
+<td class="data row11 col4" id="T_5714f_row11_col4">92.1</td>
+<td class="data row11 col5" id="T_5714f_row11_col5">100.9</td>
+<td class="data row11 col6" id="T_5714f_row11_col6">109.0</td>
+<td class="data row11 col7" id="T_5714f_row11_col7">116.5</td>
+<td class="data row11 col8" id="T_5714f_row11_col8">123.6</td>
+<td class="data row11 col9" id="T_5714f_row11_col9">130.3</td>
+<td class="data row11 col10" id="T_5714f_row11_col10">136.6</td>
+<td class="data row11 col11" id="T_5714f_row11_col11">142.7</td>
+</tr>
+<tr>
+<th class="row_heading level0 row12" id="T_5714f_level0_row12">540</th>
+<td class="data row12 col0" id="T_5714f_row12_col0">42.5</td>
+<td class="data row12 col1" id="T_5714f_row12_col1">60.1</td>
+<td class="data row12 col2" id="T_5714f_row12_col2">73.6</td>
+<td class="data row12 col3" id="T_5714f_row12_col3">84.9</td>
+<td class="data row12 col4" id="T_5714f_row12_col4">95.0</td>
+<td class="data row12 col5" id="T_5714f_row12_col5">104.0</td>
+<td class="data row12 col6" id="T_5714f_row12_col6">112.4</td>
+<td class="data row12 col7" id="T_5714f_row12_col7">120.1</td>
+<td class="data row12 col8" id="T_5714f_row12_col8">127.4</td>
+<td class="data row12 col9" id="T_5714f_row12_col9">134.3</td>
+<td class="data row12 col10" id="T_5714f_row12_col10">140.9</td>
+<td class="data row12 col11" id="T_5714f_row12_col11">147.1</td>
+</tr>
+<tr>
+<th class="row_heading level0 row13" id="T_5714f_level0_row13">720</th>
+<td class="data row13 col0" id="T_5714f_row13_col0">43.4</td>
+<td class="data row13 col1" id="T_5714f_row13_col1">61.4</td>
+<td class="data row13 col2" id="T_5714f_row13_col2">75.2</td>
+<td class="data row13 col3" id="T_5714f_row13_col3">86.8</td>
+<td class="data row13 col4" id="T_5714f_row13_col4">97.1</td>
+<td class="data row13 col5" id="T_5714f_row13_col5">106.3</td>
+<td class="data row13 col6" id="T_5714f_row13_col6">114.8</td>
+<td class="data row13 col7" id="T_5714f_row13_col7">122.8</td>
+<td class="data row13 col8" id="T_5714f_row13_col8">130.2</td>
+<td class="data row13 col9" id="T_5714f_row13_col9">137.3</td>
+<td class="data row13 col10" id="T_5714f_row13_col10">144.0</td>
+<td class="data row13 col11" id="T_5714f_row13_col11">150.4</td>
+</tr>
+<tr>
+<th class="row_heading level0 row14" id="T_5714f_level0_row14">1080</th>
+<td class="data row14 col0" id="T_5714f_row14_col0">43.8</td>
+<td class="data row14 col1" id="T_5714f_row14_col1">61.9</td>
+<td class="data row14 col2" id="T_5714f_row14_col2">75.8</td>
+<td class="data row14 col3" id="T_5714f_row14_col3">87.6</td>
+<td class="data row14 col4" id="T_5714f_row14_col4">97.9</td>
+<td class="data row14 col5" id="T_5714f_row14_col5">107.3</td>
+<td class="data row14 col6" id="T_5714f_row14_col6">115.8</td>
+<td class="data row14 col7" id="T_5714f_row14_col7">123.8</td>
+<td class="data row14 col8" id="T_5714f_row14_col8">131.4</td>
+<td class="data row14 col9" id="T_5714f_row14_col9">138.5</td>
+<td class="data row14 col10" id="T_5714f_row14_col10">145.2</td>
+<td class="data row14 col11" id="T_5714f_row14_col11">151.7</td>
+</tr>
+<tr>
+<th class="row_heading level0 row15" id="T_5714f_level0_row15">1440</th>
+<td class="data row15 col0" id="T_5714f_row15_col0">44.1</td>
+<td class="data row15 col1" id="T_5714f_row15_col1">62.3</td>
+<td class="data row15 col2" id="T_5714f_row15_col2">76.3</td>
+<td class="data row15 col3" id="T_5714f_row15_col3">88.1</td>
+<td class="data row15 col4" id="T_5714f_row15_col4">98.5</td>
+<td class="data row15 col5" id="T_5714f_row15_col5">107.9</td>
+<td class="data row15 col6" id="T_5714f_row15_col6">116.6</td>
+<td class="data row15 col7" id="T_5714f_row15_col7">124.6</td>
+<td class="data row15 col8" id="T_5714f_row15_col8">132.2</td>
+<td class="data row15 col9" id="T_5714f_row15_col9">139.3</td>
+<td class="data row15 col10" id="T_5714f_row15_col10">146.2</td>
+<td class="data row15 col11" id="T_5714f_row15_col11">152.6</td>
+</tr>
+<tr>
+<th class="row_heading level0 row16" id="T_5714f_level0_row16">2880</th>
+<td class="data row16 col0" id="T_5714f_row16_col0">46.3</td>
+<td class="data row16 col1" id="T_5714f_row16_col1">65.4</td>
+<td class="data row16 col2" id="T_5714f_row16_col2">80.1</td>
+<td class="data row16 col3" id="T_5714f_row16_col3">92.5</td>
+<td class="data row16 col4" id="T_5714f_row16_col4">103.4</td>
+<td class="data row16 col5" id="T_5714f_row16_col5">113.3</td>
+<td class="data row16 col6" id="T_5714f_row16_col6">122.4</td>
+<td class="data row16 col7" id="T_5714f_row16_col7">130.8</td>
+<td class="data row16 col8" id="T_5714f_row16_col8">138.8</td>
+<td class="data row16 col9" id="T_5714f_row16_col9">146.3</td>
+<td class="data row16 col10" id="T_5714f_row16_col10">153.4</td>
+<td class="data row16 col11" id="T_5714f_row16_col11">160.2</td>
+</tr>
+<tr>
+<th class="row_heading level0 row17" id="T_5714f_level0_row17">4320</th>
+<td class="data row17 col0" id="T_5714f_row17_col0">49.7</td>
+<td class="data row17 col1" id="T_5714f_row17_col1">70.3</td>
+<td class="data row17 col2" id="T_5714f_row17_col2">86.1</td>
+<td class="data row17 col3" id="T_5714f_row17_col3">99.5</td>
+<td class="data row17 col4" id="T_5714f_row17_col4">111.2</td>
+<td class="data row17 col5" id="T_5714f_row17_col5">121.8</td>
+<td class="data row17 col6" id="T_5714f_row17_col6">131.6</td>
+<td class="data row17 col7" id="T_5714f_row17_col7">140.7</td>
+<td class="data row17 col8" id="T_5714f_row17_col8">149.2</td>
+<td class="data row17 col9" id="T_5714f_row17_col9">157.3</td>
+<td class="data row17 col10" id="T_5714f_row17_col10">164.9</td>
+<td class="data row17 col11" id="T_5714f_row17_col11">172.3</td>
+</tr>
+<tr>
+<th class="row_heading level0 row18" id="T_5714f_level0_row18">5760</th>
+<td class="data row18 col0" id="T_5714f_row18_col0">53.4</td>
+<td class="data row18 col1" id="T_5714f_row18_col1">75.6</td>
+<td class="data row18 col2" id="T_5714f_row18_col2">92.6</td>
+<td class="data row18 col3" id="T_5714f_row18_col3">106.9</td>
+<td class="data row18 col4" id="T_5714f_row18_col4">119.5</td>
+<td class="data row18 col5" id="T_5714f_row18_col5">130.9</td>
+<td class="data row18 col6" id="T_5714f_row18_col6">141.4</td>
+<td class="data row18 col7" id="T_5714f_row18_col7">151.2</td>
+<td class="data row18 col8" id="T_5714f_row18_col8">160.3</td>
+<td class="data row18 col9" id="T_5714f_row18_col9">169.0</td>
+<td class="data row18 col10" id="T_5714f_row18_col10">177.3</td>
+<td class="data row18 col11" id="T_5714f_row18_col11">185.1</td>
+</tr>
+<tr>
+<th class="row_heading level0 row19" id="T_5714f_level0_row19">7200</th>
+<td class="data row19 col0" id="T_5714f_row19_col0">55.1</td>
+<td class="data row19 col1" id="T_5714f_row19_col1">77.9</td>
+<td class="data row19 col2" id="T_5714f_row19_col2">95.4</td>
+<td class="data row19 col3" id="T_5714f_row19_col3">110.2</td>
+<td class="data row19 col4" id="T_5714f_row19_col4">123.2</td>
+<td class="data row19 col5" id="T_5714f_row19_col5">135.0</td>
+<td class="data row19 col6" id="T_5714f_row19_col6">145.8</td>
+<td class="data row19 col7" id="T_5714f_row19_col7">155.8</td>
+<td class="data row19 col8" id="T_5714f_row19_col8">165.3</td>
+<td class="data row19 col9" id="T_5714f_row19_col9">174.2</td>
+<td class="data row19 col10" id="T_5714f_row19_col10">182.7</td>
+<td class="data row19 col11" id="T_5714f_row19_col11">190.9</td>
+</tr>
+<tr>
+<th class="row_heading level0 row20" id="T_5714f_level0_row20">8640</th>
+<td class="data row20 col0" id="T_5714f_row20_col0">56.8</td>
+<td class="data row20 col1" id="T_5714f_row20_col1">80.3</td>
+<td class="data row20 col2" id="T_5714f_row20_col2">98.4</td>
+<td class="data row20 col3" id="T_5714f_row20_col3">113.6</td>
+<td class="data row20 col4" id="T_5714f_row20_col4">127.0</td>
+<td class="data row20 col5" id="T_5714f_row20_col5">139.1</td>
+<td class="data row20 col6" id="T_5714f_row20_col6">150.3</td>
+<td class="data row20 col7" id="T_5714f_row20_col7">160.7</td>
+<td class="data row20 col8" id="T_5714f_row20_col8">170.4</td>
+<td class="data row20 col9" id="T_5714f_row20_col9">179.6</td>
+<td class="data row20 col10" id="T_5714f_row20_col10">188.4</td>
+<td class="data row20 col11" id="T_5714f_row20_col11">196.8</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<p>Using heavy rainfall index curves, the necessary rainfall heights can be read off depending on the respective index.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">hri</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="n">hri</span><span class="o">.</span><span class="n">METHODS</span><span class="o">.</span><span class="n">KRUEGER_PFISTER</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">hri</span><span class="o">.</span><span class="n">result_sri_figure</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">'upper left'</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">'grey'</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">':'</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">230</span><span class="p">)</span>
+<span class="n">old_labels</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_xticklabels</span><span class="p">()</span>
+<span class="n">old_labels</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="s1">''</span>
+<span class="n">old_labels</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="s1">''</span>
+<span class="n">old_labels</span><span class="p">[</span><span class="mi">19</span><span class="p">]</span> <span class="o">=</span> <span class="s1">''</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">old_labels</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">90</span><span class="p">)</span>
+<span class="n">handles</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_legend_handles_labels</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">handles</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">labels</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">title</span><span class="o">=</span><span class="s1">'SRI'</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s1">'upper left'</span><span class="p">)</span>
+<a class="sphinx-codeautolink-a" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.savefig.html#matplotlib.pyplot.savefig" title="matplotlib.pyplot.savefig"><span class="n">plt</span><span class="o">.</span><span class="n">savefig</span></a><span class="p">(</span><a class="sphinx-codeautolink-a" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="pathlib.Path"><span class="n">output_directory</span></a> <span class="o">/</span> <span class="s2">"kruegerpfister.svg"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/examples_example_heavy_rainfall_index_17_0.png" src="../_images/examples_example_heavy_rainfall_index_17_0.png"/>
+</div>
+</div>
+<p>Heavy rain index allocation of a specific rain event</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">events</span> <span class="o">=</span> <a class="sphinx-codeautolink-a" href="../base_functions.html#idf_analysis.sww_utils.rain_events" title="idf_analysis.sww_utils.rain_events"><span class="n">rain_events</span></a><span class="p">(</span><span class="n">hri</span><span class="o">.</span><span class="n">series</span><span class="p">,</span> <span class="n">min_gap</span><span class="o">=</span><a class="sphinx-codeautolink-a" href="https://pandas.pydata.org/docs/reference/api/pandas.Timedelta.html#pandas.Timedelta" title="pandas._libs.tslibs.timedeltas.Timedelta"><span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span></a><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+<span class="n">events</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">DUR</span><span class="p">]</span> <span class="o">=</span> <a class="sphinx-codeautolink-a" href="../base_functions.html#idf_analysis.sww_utils.event_duration" title="idf_analysis.sww_utils.event_duration"><span class="n">event_duration</span></a><span class="p">(</span><span class="n">events</span><span class="p">)</span>
+<span class="n">events</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">LP</span><span class="p">]</span> <span class="o">=</span> <a class="sphinx-codeautolink-a" href="../base_functions.html#idf_analysis.sww_utils.agg_events" title="idf_analysis.sww_utils.agg_events"><span class="n">agg_events</span></a><span class="p">(</span><span class="n">events</span><span class="p">,</span> <span class="n">hri</span><span class="o">.</span><span class="n">series</span><span class="p">,</span> <span class="s1">'sum'</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">events</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">LAST</span><span class="p">]</span> <span class="o">=</span> <span class="n">events</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">START</span><span class="p">]</span> <span class="o">-</span> <span class="n">events</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">END</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">()</span>
+
+<span class="n">hri</span><span class="o">.</span><span class="n">add_max_return_periods_to_events</span><span class="p">(</span><span class="n">events</span><span class="p">)</span>
+
+<span class="n">events</span> <span class="o">=</span> <span class="n">events</span><span class="p">[</span><span class="n">events</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">LP</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">]</span>
+<span class="n">events</span> <span class="o">=</span> <span class="n">events</span><span class="p">[</span><span class="n">events</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">MAX_PERIOD</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">]</span>
+
+<span class="n">events</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">COL</span><span class="o">.</span><span class="n">LP</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "c46ff479a3934830bc8f4e7b3e1112d3"}</script></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "afff24997ec04db384145370fd536a43"}</script></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/Users/markus/PycharmProjects/intensity_duration_frequency_analysis/idf_analysis/idf_class.py:654: FutureWarning: The behavior of DataFrame.idxmax with all-NA values, or any-NA and skipna=False, is deprecated. In a future version this will raise ValueError
+  events[COL.MAX_PERIOD_DURATION] = return_periods_frame.loc[datetime_max].idxmax(axis=1, skipna=True).values
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>start</th>
+<th>end</th>
+<th>duration</th>
+<th>rain_sum</th>
+<th>last_event</th>
+<th>max_return_period</th>
+<th>max_return_period_duration</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>40</th>
+<td>2008-07-20 17:43:00</td>
+<td>2008-07-21 08:57:00</td>
+<td>0 days 15:14:00</td>
+<td>28.0</td>
+<td>2 days 02:48:00</td>
+<td>3.630220</td>
+<td>5760.0</td>
+</tr>
+<tr>
+<th>36</th>
+<td>2008-06-23 19:50:00</td>
+<td>2008-06-24 19:48:00</td>
+<td>0 days 23:58:00</td>
+<td>35.8</td>
+<td>2 days 21:52:00</td>
+<td>5.087283</td>
+<td>15.0</td>
+</tr>
+<tr>
+<th>94</th>
+<td>2009-08-27 19:52:00</td>
+<td>2009-08-29 13:25:00</td>
+<td>1 days 17:33:00</td>
+<td>55.1</td>
+<td>4 days 23:06:00</td>
+<td>17.905569</td>
+<td>20.0</td>
+</tr>
+<tr>
+<th>520</th>
+<td>2018-04-15 21:33:00</td>
+<td>2018-04-17 05:39:00</td>
+<td>1 days 08:06:00</td>
+<td>55.9</td>
+<td>2 days 18:30:00</td>
+<td>2.004036</td>
+<td>360.0</td>
+</tr>
+<tr>
+<th>86</th>
+<td>2009-07-18 08:55:00</td>
+<td>2009-07-18 13:19:00</td>
+<td>0 days 04:24:00</td>
+<td>58.0</td>
+<td>2 days 01:56:00</td>
+<td>3.917100</td>
+<td>240.0</td>
+</tr>
+<tr>
+<th>93</th>
+<td>2009-08-21 19:49:00</td>
+<td>2009-08-22 20:46:00</td>
+<td>1 days 00:57:00</td>
+<td>64.2</td>
+<td>4 days 03:04:00</td>
+<td>3.971078</td>
+<td>20.0</td>
+</tr>
+<tr>
+<th>425</th>
+<td>2016-05-30 12:38:00</td>
+<td>2016-06-06 12:54:00</td>
+<td>7 days 00:16:00</td>
+<td>66.4</td>
+<td>4 days 17:44:00</td>
+<td>5.084535</td>
+<td>5.0</td>
+</tr>
+<tr>
+<th>95</th>
+<td>2009-09-04 00:31:00</td>
+<td>2009-09-05 01:32:00</td>
+<td>1 days 01:01:00</td>
+<td>69.8</td>
+<td>5 days 11:06:00</td>
+<td>3.212078</td>
+<td>1080.0</td>
+</tr>
+<tr>
+<th>186</th>
+<td>2011-07-27 20:38:00</td>
+<td>2011-08-04 07:44:00</td>
+<td>7 days 11:06:00</td>
+<td>70.5</td>
+<td>3 days 05:30:00</td>
+<td>11.866560</td>
+<td>20.0</td>
+</tr>
+<tr>
+<th>383</th>
+<td>2015-07-08 11:50:00</td>
+<td>2015-07-09 00:25:00</td>
+<td>0 days 12:35:00</td>
+<td>77.8</td>
+<td>8 days 13:53:00</td>
+<td>7.104642</td>
+<td>720.0</td>
+</tr>
+<tr>
+<th>528</th>
+<td>2018-06-12 17:00:00</td>
+<td>2018-06-13 22:27:00</td>
+<td>1 days 05:27:00</td>
+<td>85.1</td>
+<td>3 days 16:11:00</td>
+<td>10.040058</td>
+<td>20.0</td>
+</tr>
+<tr>
+<th>388</th>
+<td>2015-08-16 19:26:00</td>
+<td>2015-08-19 23:38:00</td>
+<td>3 days 04:12:00</td>
+<td>85.5</td>
+<td>13 days 18:23:00</td>
+<td>2.365394</td>
+<td>4320.0</td>
+</tr>
+<tr>
+<th>129</th>
+<td>2010-06-13 20:35:00</td>
+<td>2010-06-25 19:12:00</td>
+<td>11 days 22:37:00</td>
+<td>99.6</td>
+<td>18 days 20:30:00</td>
+<td>2.137450</td>
+<td>4320.0</td>
+</tr>
+<tr>
+<th>323</th>
+<td>2014-05-07 16:50:00</td>
+<td>2014-05-18 20:02:00</td>
+<td>11 days 03:12:00</td>
+<td>109.9</td>
+<td>4 days 03:31:00</td>
+<td>3.486477</td>
+<td>5760.0</td>
+</tr>
+<tr>
+<th>294</th>
+<td>2013-08-24 01:34:00</td>
+<td>2013-08-29 08:19:00</td>
+<td>5 days 06:45:00</td>
+<td>114.1</td>
+<td>9 days 12:53:00</td>
+<td>4.260903</td>
+<td>2880.0</td>
+</tr>
+<tr>
+<th>342</th>
+<td>2014-09-09 12:34:00</td>
+<td>2014-09-16 23:56:00</td>
+<td>7 days 11:22:00</td>
+<td>114.5</td>
+<td>2 days 22:04:00</td>
+<td>2.423020</td>
+<td>5760.0</td>
+</tr>
+<tr>
+<th>39</th>
+<td>2008-07-12 22:10:00</td>
+<td>2008-07-18 14:55:00</td>
+<td>5 days 16:45:00</td>
+<td>122.8</td>
+<td>2 days 11:12:00</td>
+<td>7.432810</td>
+<td>120.0</td>
+</tr>
+<tr>
+<th>237</th>
+<td>2012-07-09 18:49:00</td>
+<td>2012-07-16 05:42:00</td>
+<td>6 days 10:53:00</td>
+<td>123.1</td>
+<td>5 days 23:08:00</td>
+<td>4.649434</td>
+<td>8640.0</td>
+</tr>
+<tr>
+<th>433</th>
+<td>2016-07-21 22:29:00</td>
+<td>2016-07-28 14:13:00</td>
+<td>6 days 15:44:00</td>
+<td>136.6</td>
+<td>5 days 00:05:00</td>
+<td>5.938593</td>
+<td>8640.0</td>
+</tr>
+<tr>
+<th>279</th>
+<td>2013-05-02 02:46:00</td>
+<td>2013-05-07 21:37:00</td>
+<td>5 days 18:51:00</td>
+<td>148.2</td>
+<td>9 days 05:08:00</td>
+<td>40.647772</td>
+<td>2880.0</td>
+</tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">hri</span><span class="o">.</span><span class="n">add_max_return_periods_to_events</span><span class="p">(</span><a class="sphinx-codeautolink-a" href="../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.rain_events" title="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.rain_events"><span class="n">hri</span><span class="o">.</span><span class="n">rain_events</span></a><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/Users/markus/PycharmProjects/intensity_duration_frequency_analysis/idf_analysis/idf_class.py:654: FutureWarning: The behavior of DataFrame.idxmax with all-NA values, or any-NA and skipna=False, is deprecated. In a future version this will raise ValueError
+  events[COL.MAX_PERIOD_DURATION] = return_periods_frame.loc[datetime_max].idxmax(axis=1, skipna=True).values
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">hri</span><span class="o">.</span><span class="n">rain_events</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">'max_return_period'</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>start</th>
+<th>end</th>
+<th>duration</th>
+<th>rain_sum</th>
+<th>last_event</th>
+<th>max_return_period</th>
+<th>max_return_period_duration</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>773</th>
+<td>2013-05-07 20:58:00</td>
+<td>2013-05-07 21:37:00</td>
+<td>0 days 00:40:00</td>
+<td>2.0</td>
+<td>0 days 08:18:00</td>
+<td>40.647772</td>
+<td>2880.0</td>
+</tr>
+<tr>
+<th>772</th>
+<td>2013-05-05 20:47:00</td>
+<td>2013-05-07 12:40:00</td>
+<td>1 days 15:54:00</td>
+<td>119.5</td>
+<td>0 days 17:31:00</td>
+<td>38.092568</td>
+<td>2880.0</td>
+</tr>
+<tr>
+<th>282</th>
+<td>2009-08-28 23:41:00</td>
+<td>2009-08-29 00:42:00</td>
+<td>0 days 01:02:00</td>
+<td>49.3</td>
+<td>1 days 03:44:00</td>
+<td>17.905569</td>
+<td>20.0</td>
+</tr>
+<tr>
+<th>544</th>
+<td>2011-08-03 19:53:00</td>
+<td>2011-08-04 07:44:00</td>
+<td>0 days 11:52:00</td>
+<td>54.7</td>
+<td>1 days 23:11:00</td>
+<td>11.866560</td>
+<td>20.0</td>
+</tr>
+<tr>
+<th>1532</th>
+<td>2018-06-13 14:58:00</td>
+<td>2018-06-13 22:27:00</td>
+<td>0 days 07:30:00</td>
+<td>63.5</td>
+<td>0 days 21:27:00</td>
+<td>10.040058</td>
+<td>20.0</td>
+</tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">event</span> <span class="o">=</span> <span class="n">hri</span><span class="o">.</span><span class="n">rain_events</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">797</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+<span class="n">event</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">START</span><span class="p">]</span> <span class="o">=</span> <a class="sphinx-codeautolink-a" href="https://pandas.pydata.org/docs/reference/api/pandas.to_datetime.html#pandas.to_datetime" title="pandas.to_datetime"><span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span></a><span class="p">(</span><span class="s1">'2013-05-06 20:00:00'</span><span class="p">)</span>
+<span class="n">event</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+start                         2013-05-06 20:00:00
+end                           2013-06-22 15:59:00
+duration                          0 days 01:00:00
+rain_sum                                      1.6
+last_event                        6 days 13:51:00
+max_return_period                        0.078798
+max_return_period_duration                   60.0
+Name: 797, dtype: object
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rainfall_sum_frame</span> <span class="o">=</span> <a class="sphinx-codeautolink-a" href="../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.rainfall_sum_frame" title="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.rainfall_sum_frame"><span class="n">hri</span><span class="o">.</span><span class="n">rainfall_sum_frame</span></a><span class="p">[</span><span class="n">event</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">START</span><span class="p">]:</span><span class="n">event</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">END</span><span class="p">]]</span>
+<span class="n">return_periods_frame</span> <span class="o">=</span> <a class="sphinx-codeautolink-a" href="../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.return_periods_frame" title="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.return_periods_frame"><span class="n">hri</span><span class="o">.</span><span class="n">return_periods_frame</span></a><span class="p">[</span><span class="n">event</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">START</span><span class="p">]:</span><span class="n">event</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">END</span><span class="p">]]</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "f124eac65b8f42668b850e446d6c3537"}</script></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rainfall_sum_frame</span><span class="o">.</span>\
+    <span class="nb">max</span><span class="p">()</span><span class="o">.</span>\
+    <span class="n">rename</span><span class="p">(</span><span class="s1">'max. Regensumme'</span><span class="p">)</span><span class="o">.</span>\
+    <span class="n">to_frame</span><span class="p">()</span><span class="o">.</span>\
+    <span class="n">rename</span><span class="p">(</span><a class="sphinx-codeautolink-a" href="../base_functions.html#idf_analysis.little_helpers.minutes_readable" title="idf_analysis.little_helpers.minutes_readable"><span class="n">minutes_readable</span></a><span class="p">)</span><span class="o">.</span>\
+    <span class="n">style</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">"</span><span class="si">{:.1f}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<style type="text/css">
+#T_1e8f0_row0_col0 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 9.9%, transparent 9.9%);
+}
+#T_1e8f0_row1_col0 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 16.3%, transparent 16.3%);
+}
+#T_1e8f0_row2_col0 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 21.9%, transparent 21.9%);
+}
+#T_1e8f0_row3_col0 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 28.2%, transparent 28.2%);
+}
+#T_1e8f0_row4_col0 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 40.7%, transparent 40.7%);
+}
+#T_1e8f0_row5_col0 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 46.3%, transparent 46.3%);
+}
+#T_1e8f0_row6_col0 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 57.0%, transparent 57.0%);
+}
+#T_1e8f0_row7_col0 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 69.6%, transparent 69.6%);
+}
+#T_1e8f0_row8_col0 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 74.3%, transparent 74.3%);
+}
+#T_1e8f0_row9_col0 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 76.5%, transparent 76.5%);
+}
+#T_1e8f0_row10_col0 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 78.7%, transparent 78.7%);
+}
+#T_1e8f0_row11_col0 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 89.6%, transparent 89.6%);
+}
+#T_1e8f0_row12_col0 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 92.8%, transparent 92.8%);
+}
+#T_1e8f0_row13_col0 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 93.0%, transparent 93.0%);
+}
+#T_1e8f0_row14_col0 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 96.4%, transparent 96.4%);
+}
+#T_1e8f0_row15_col0 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 98.2%, transparent 98.2%);
+}
+#T_1e8f0_row16_col0, #T_1e8f0_row17_col0, #T_1e8f0_row18_col0, #T_1e8f0_row19_col0, #T_1e8f0_row20_col0 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 100.0%, transparent 100.0%);
+}
+</style>
+<table id="T_1e8f0">
+<thead>
+<tr>
+<th class="blank level0"> </th>
+<th class="col_heading level0 col0" id="T_1e8f0_level0_col0">max. Regensumme</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th class="row_heading level0 row0" id="T_1e8f0_level0_row0">5 min</th>
+<td class="data row0 col0" id="T_1e8f0_row0_col0">9.9</td>
+</tr>
+<tr>
+<th class="row_heading level0 row1" id="T_1e8f0_level0_row1">10 min</th>
+<td class="data row1 col0" id="T_1e8f0_row1_col0">16.3</td>
+</tr>
+<tr>
+<th class="row_heading level0 row2" id="T_1e8f0_level0_row2">15 min</th>
+<td class="data row2 col0" id="T_1e8f0_row2_col0">21.9</td>
+</tr>
+<tr>
+<th class="row_heading level0 row3" id="T_1e8f0_level0_row3">20 min</th>
+<td class="data row3 col0" id="T_1e8f0_row3_col0">28.2</td>
+</tr>
+<tr>
+<th class="row_heading level0 row4" id="T_1e8f0_level0_row4">30 min</th>
+<td class="data row4 col0" id="T_1e8f0_row4_col0">40.7</td>
+</tr>
+<tr>
+<th class="row_heading level0 row5" id="T_1e8f0_level0_row5">45 min</th>
+<td class="data row5 col0" id="T_1e8f0_row5_col0">46.3</td>
+</tr>
+<tr>
+<th class="row_heading level0 row6" id="T_1e8f0_level0_row6">60 min</th>
+<td class="data row6 col0" id="T_1e8f0_row6_col0">57.0</td>
+</tr>
+<tr>
+<th class="row_heading level0 row7" id="T_1e8f0_level0_row7">1.5 h</th>
+<td class="data row7 col0" id="T_1e8f0_row7_col0">69.6</td>
+</tr>
+<tr>
+<th class="row_heading level0 row8" id="T_1e8f0_level0_row8">2 h</th>
+<td class="data row8 col0" id="T_1e8f0_row8_col0">74.3</td>
+</tr>
+<tr>
+<th class="row_heading level0 row9" id="T_1e8f0_level0_row9">3 h</th>
+<td class="data row9 col0" id="T_1e8f0_row9_col0">76.5</td>
+</tr>
+<tr>
+<th class="row_heading level0 row10" id="T_1e8f0_level0_row10">4 h</th>
+<td class="data row10 col0" id="T_1e8f0_row10_col0">78.7</td>
+</tr>
+<tr>
+<th class="row_heading level0 row11" id="T_1e8f0_level0_row11">6 h</th>
+<td class="data row11 col0" id="T_1e8f0_row11_col0">89.6</td>
+</tr>
+<tr>
+<th class="row_heading level0 row12" id="T_1e8f0_level0_row12">9 h</th>
+<td class="data row12 col0" id="T_1e8f0_row12_col0">92.8</td>
+</tr>
+<tr>
+<th class="row_heading level0 row13" id="T_1e8f0_level0_row13">12 h</th>
+<td class="data row13 col0" id="T_1e8f0_row13_col0">93.0</td>
+</tr>
+<tr>
+<th class="row_heading level0 row14" id="T_1e8f0_level0_row14">18 h</th>
+<td class="data row14 col0" id="T_1e8f0_row14_col0">96.4</td>
+</tr>
+<tr>
+<th class="row_heading level0 row15" id="T_1e8f0_level0_row15">1 d</th>
+<td class="data row15 col0" id="T_1e8f0_row15_col0">98.2</td>
+</tr>
+<tr>
+<th class="row_heading level0 row16" id="T_1e8f0_level0_row16">2 d</th>
+<td class="data row16 col0" id="T_1e8f0_row16_col0">120.5</td>
+</tr>
+<tr>
+<th class="row_heading level0 row17" id="T_1e8f0_level0_row17">3 d</th>
+<td class="data row17 col0" id="T_1e8f0_row17_col0">138.0</td>
+</tr>
+<tr>
+<th class="row_heading level0 row18" id="T_1e8f0_level0_row18">4 d</th>
+<td class="data row18 col0" id="T_1e8f0_row18_col0">138.0</td>
+</tr>
+<tr>
+<th class="row_heading level0 row19" id="T_1e8f0_level0_row19">5 d</th>
+<td class="data row19 col0" id="T_1e8f0_row19_col0">143.7</td>
+</tr>
+<tr>
+<th class="row_heading level0 row20" id="T_1e8f0_level0_row20">6 d</th>
+<td class="data row20 col0" id="T_1e8f0_row20_col0">148.2</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">return_periods_frame</span><span class="o">.</span>\
+    <span class="nb">max</span><span class="p">()</span><span class="o">.</span>\
+    <span class="n">rename</span><span class="p">(</span><span class="s1">'max. Wiederkehrperiode'</span><span class="p">)</span><span class="o">.</span>\
+    <span class="n">to_frame</span><span class="p">()</span><span class="o">.</span>\
+    <span class="n">rename</span><span class="p">(</span><a class="sphinx-codeautolink-a" href="../base_functions.html#idf_analysis.little_helpers.minutes_readable" title="idf_analysis.little_helpers.minutes_readable"><span class="n">minutes_readable</span></a><span class="p">)</span><span class="o">.</span>\
+    <span class="n">style</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">"</span><span class="si">{:.1f}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<style type="text/css">
+#T_69372_row0_col0 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 1.4%, transparent 1.4%);
+}
+#T_69372_row1_col0 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 1.5%, transparent 1.5%);
+}
+#T_69372_row2_col0 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 2.0%, transparent 2.0%);
+}
+#T_69372_row3_col0 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 3.2%, transparent 3.2%);
+}
+#T_69372_row4_col0 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 8.0%, transparent 8.0%);
+}
+#T_69372_row5_col0 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 6.8%, transparent 6.8%);
+}
+#T_69372_row6_col0 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 11.2%, transparent 11.2%);
+}
+#T_69372_row7_col0 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 23.7%, transparent 23.7%);
+}
+#T_69372_row8_col0 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 26.9%, transparent 26.9%);
+}
+#T_69372_row9_col0 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 22.0%, transparent 22.0%);
+}
+#T_69372_row10_col0 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 20.0%, transparent 20.0%);
+}
+#T_69372_row11_col0 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 30.2%, transparent 30.2%);
+}
+#T_69372_row12_col0 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 25.3%, transparent 25.3%);
+}
+#T_69372_row13_col0 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 19.5%, transparent 19.5%);
+}
+#T_69372_row14_col0 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 20.2%, transparent 20.2%);
+}
+#T_69372_row15_col0 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 19.3%, transparent 19.3%);
+}
+#T_69372_row16_col0 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 40.7%, transparent 40.7%);
+}
+#T_69372_row17_col0 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 39.8%, transparent 39.8%);
+}
+#T_69372_row18_col0 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 16.2%, transparent 16.2%);
+}
+#T_69372_row19_col0 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 14.0%, transparent 14.0%);
+}
+#T_69372_row20_col0 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 12.5%, transparent 12.5%);
+}
+</style>
+<table id="T_69372">
+<thead>
+<tr>
+<th class="blank level0"> </th>
+<th class="col_heading level0 col0" id="T_69372_level0_col0">max. Wiederkehrperiode</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th class="row_heading level0 row0" id="T_69372_level0_row0">5 min</th>
+<td class="data row0 col0" id="T_69372_row0_col0">1.4</td>
+</tr>
+<tr>
+<th class="row_heading level0 row1" id="T_69372_level0_row1">10 min</th>
+<td class="data row1 col0" id="T_69372_row1_col0">1.5</td>
+</tr>
+<tr>
+<th class="row_heading level0 row2" id="T_69372_level0_row2">15 min</th>
+<td class="data row2 col0" id="T_69372_row2_col0">2.0</td>
+</tr>
+<tr>
+<th class="row_heading level0 row3" id="T_69372_level0_row3">20 min</th>
+<td class="data row3 col0" id="T_69372_row3_col0">3.2</td>
+</tr>
+<tr>
+<th class="row_heading level0 row4" id="T_69372_level0_row4">30 min</th>
+<td class="data row4 col0" id="T_69372_row4_col0">8.0</td>
+</tr>
+<tr>
+<th class="row_heading level0 row5" id="T_69372_level0_row5">45 min</th>
+<td class="data row5 col0" id="T_69372_row5_col0">6.8</td>
+</tr>
+<tr>
+<th class="row_heading level0 row6" id="T_69372_level0_row6">60 min</th>
+<td class="data row6 col0" id="T_69372_row6_col0">11.2</td>
+</tr>
+<tr>
+<th class="row_heading level0 row7" id="T_69372_level0_row7">1.5 h</th>
+<td class="data row7 col0" id="T_69372_row7_col0">23.7</td>
+</tr>
+<tr>
+<th class="row_heading level0 row8" id="T_69372_level0_row8">2 h</th>
+<td class="data row8 col0" id="T_69372_row8_col0">26.9</td>
+</tr>
+<tr>
+<th class="row_heading level0 row9" id="T_69372_level0_row9">3 h</th>
+<td class="data row9 col0" id="T_69372_row9_col0">22.0</td>
+</tr>
+<tr>
+<th class="row_heading level0 row10" id="T_69372_level0_row10">4 h</th>
+<td class="data row10 col0" id="T_69372_row10_col0">20.0</td>
+</tr>
+<tr>
+<th class="row_heading level0 row11" id="T_69372_level0_row11">6 h</th>
+<td class="data row11 col0" id="T_69372_row11_col0">30.2</td>
+</tr>
+<tr>
+<th class="row_heading level0 row12" id="T_69372_level0_row12">9 h</th>
+<td class="data row12 col0" id="T_69372_row12_col0">25.3</td>
+</tr>
+<tr>
+<th class="row_heading level0 row13" id="T_69372_level0_row13">12 h</th>
+<td class="data row13 col0" id="T_69372_row13_col0">19.5</td>
+</tr>
+<tr>
+<th class="row_heading level0 row14" id="T_69372_level0_row14">18 h</th>
+<td class="data row14 col0" id="T_69372_row14_col0">20.2</td>
+</tr>
+<tr>
+<th class="row_heading level0 row15" id="T_69372_level0_row15">1 d</th>
+<td class="data row15 col0" id="T_69372_row15_col0">19.3</td>
+</tr>
+<tr>
+<th class="row_heading level0 row16" id="T_69372_level0_row16">2 d</th>
+<td class="data row16 col0" id="T_69372_row16_col0">40.7</td>
+</tr>
+<tr>
+<th class="row_heading level0 row17" id="T_69372_level0_row17">3 d</th>
+<td class="data row17 col0" id="T_69372_row17_col0">39.8</td>
+</tr>
+<tr>
+<th class="row_heading level0 row18" id="T_69372_level0_row18">4 d</th>
+<td class="data row18 col0" id="T_69372_row18_col0">16.2</td>
+</tr>
+<tr>
+<th class="row_heading level0 row19" id="T_69372_level0_row19">5 d</th>
+<td class="data row19 col0" id="T_69372_row19_col0">14.0</td>
+</tr>
+<tr>
+<th class="row_heading level0 row20" id="T_69372_level0_row20">6 d</th>
+<td class="data row20 col0" id="T_69372_row20_col0">12.5</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><a class="sphinx-codeautolink-a" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="pandas.core.frame.DataFrame"><span class="n">sri_table_event</span></a> <span class="o">=</span> <a class="sphinx-codeautolink-a" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="pandas.core.frame.DataFrame"><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span></a><span class="p">(</span><span class="n">index</span><span class="o">=</span><a class="sphinx-codeautolink-a" href="../api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.duration_steps" title="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.duration_steps"><span class="n">hri</span><span class="o">.</span><span class="n">duration_steps</span></a><span class="p">)</span>
+
+<span class="n">hri</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="n">hri</span><span class="o">.</span><span class="n">METHODS</span><span class="o">.</span><span class="n">KRUEGER_PFISTER</span>
+<a class="sphinx-codeautolink-a" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="pandas.core.frame.DataFrame"><span class="n">sri_table_event</span></a><span class="p">[</span><span class="n">hri</span><span class="o">.</span><span class="n">METHODS</span><span class="o">.</span><span class="n">KRUEGER_PFISTER</span><span class="p">]</span> <span class="o">=</span> <span class="n">hri</span><span class="o">.</span><span class="n">get_event_sri_max</span><span class="p">(</span><span class="n">event</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">START</span><span class="p">],</span> <span class="n">event</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">END</span><span class="p">])</span>
+
+<span class="n">hri</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="n">hri</span><span class="o">.</span><span class="n">METHODS</span><span class="o">.</span><span class="n">MUDERSBACH</span>
+<a class="sphinx-codeautolink-a" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="pandas.core.frame.DataFrame"><span class="n">sri_table_event</span></a><span class="p">[</span><span class="n">hri</span><span class="o">.</span><span class="n">METHODS</span><span class="o">.</span><span class="n">MUDERSBACH</span><span class="p">]</span> <span class="o">=</span> <span class="n">hri</span><span class="o">.</span><span class="n">get_event_sri_max</span><span class="p">(</span><span class="n">event</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">START</span><span class="p">],</span> <span class="n">event</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">END</span><span class="p">])</span>
+
+<span class="n">hri</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="n">hri</span><span class="o">.</span><span class="n">METHODS</span><span class="o">.</span><span class="n">SCHMITT</span>
+<a class="sphinx-codeautolink-a" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="pandas.core.frame.DataFrame"><span class="n">sri_table_event</span></a><span class="p">[</span><span class="n">hri</span><span class="o">.</span><span class="n">METHODS</span><span class="o">.</span><span class="n">SCHMITT</span><span class="p">]</span> <span class="o">=</span> <span class="n">hri</span><span class="o">.</span><span class="n">get_event_sri_max</span><span class="p">(</span><span class="n">event</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">START</span><span class="p">],</span> <span class="n">event</span><span class="p">[</span><span class="n">COL</span><span class="o">.</span><span class="n">END</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<p>Specific rain event with allocation of heavy rain indices depending on the method and duration.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><a class="sphinx-codeautolink-a" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.colors.ListedColormap.html#matplotlib.colors.ListedColormap" title="matplotlib.colors.ListedColormap"><span class="n">cmap</span></a> <span class="o">=</span> <a class="sphinx-codeautolink-a" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.colors.ListedColormap.html#matplotlib.colors.ListedColormap" title="matplotlib.colors.ListedColormap"><span class="n">ListedColormap</span></a><span class="p">([(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)]</span> <span class="o">+</span> <a class="sphinx-codeautolink-a" href="https://docs.python.org/3/library/stdtypes.html#list" title="list"><span class="nb">list</span></a><span class="p">(</span><span class="n">hri</span><span class="o">.</span><span class="n">indices_color</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+<span class="n">_df</span> <span class="o">=</span> <span class="n">sri_table_event</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><a class="sphinx-codeautolink-a" href="https://docs.python.org/3/library/functions.html#int" title="int"><span class="nb">int</span></a><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">_df</span><span class="p">[</span><span class="s1">'max. Wiederkehrperiode'</span><span class="p">]</span> <span class="o">=</span> <span class="n">return_periods_frame</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+<span class="n">_df</span><span class="p">[</span><span class="s1">'max. Regensumme'</span><span class="p">]</span> <span class="o">=</span> <span class="n">rainfall_sum_frame</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+<span class="n">_df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><a class="sphinx-codeautolink-a" href="../base_functions.html#idf_analysis.little_helpers.minutes_readable" title="idf_analysis.little_helpers.minutes_readable"><span class="n">minutes_readable</span></a><span class="p">)</span><span class="o">.</span><span class="n">style</span><span class="o">.</span>\
+    <span class="n">background_gradient</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="n">hri</span><span class="o">.</span><span class="n">METHODS</span><span class="o">.</span><span class="n">SCHMITT</span><span class="p">,</span>
+                                <span class="n">hri</span><span class="o">.</span><span class="n">METHODS</span><span class="o">.</span><span class="n">KRUEGER_PFISTER</span><span class="p">,</span>
+                                <span class="n">hri</span><span class="o">.</span><span class="n">METHODS</span><span class="o">.</span><span class="n">MUDERSBACH</span><span class="p">],</span> <span class="n">cmap</span><span class="o">=</span><a class="sphinx-codeautolink-a" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.colors.ListedColormap.html#matplotlib.colors.ListedColormap" title="matplotlib.colors.ListedColormap"><span class="n">cmap</span></a><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span><span class="o">.</span>\
+    <span class="n">bar</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">'max. Wiederkehrperiode'</span><span class="p">,</span> <span class="s1">'max. Regensumme'</span><span class="p">],</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">"</span><span class="si">{:.1f}</span><span class="s2">"</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">'max. Wiederkehrperiode'</span><span class="p">,</span> <span class="s1">'max. Regensumme'</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<style type="text/css">
+#T_d0ea2_row0_col0, #T_d0ea2_row0_col1, #T_d0ea2_row0_col2, #T_d0ea2_row1_col0, #T_d0ea2_row1_col2, #T_d0ea2_row2_col0, #T_d0ea2_row2_col2, #T_d0ea2_row3_col0 {
+  background-color: #b0e61a;
+  color: #000000;
+}
+#T_d0ea2_row0_col3 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 1.4%, transparent 1.4%);
+}
+#T_d0ea2_row0_col4 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 9.9%, transparent 9.9%);
+}
+#T_d0ea2_row1_col1, #T_d0ea2_row2_col1, #T_d0ea2_row3_col2, #T_d0ea2_row4_col0, #T_d0ea2_row5_col0, #T_d0ea2_row6_col0 {
+  background-color: #ccff99;
+  color: #000000;
+}
+#T_d0ea2_row1_col3 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 1.5%, transparent 1.5%);
+}
+#T_d0ea2_row1_col4 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 16.3%, transparent 16.3%);
+}
+#T_d0ea2_row2_col3 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 2.0%, transparent 2.0%);
+}
+#T_d0ea2_row2_col4 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 21.9%, transparent 21.9%);
+}
+#T_d0ea2_row3_col1, #T_d0ea2_row4_col2, #T_d0ea2_row5_col2 {
+  background-color: #e6ff4c;
+  color: #000000;
+}
+#T_d0ea2_row3_col3 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 3.2%, transparent 3.2%);
+}
+#T_d0ea2_row3_col4 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 28.2%, transparent 28.2%);
+}
+#T_d0ea2_row4_col1, #T_d0ea2_row5_col1, #T_d0ea2_row6_col2, #T_d0ea2_row7_col0, #T_d0ea2_row7_col2, #T_d0ea2_row8_col0, #T_d0ea2_row9_col0, #T_d0ea2_row9_col2, #T_d0ea2_row10_col0, #T_d0ea2_row10_col2, #T_d0ea2_row13_col0, #T_d0ea2_row13_col2, #T_d0ea2_row14_col2, #T_d0ea2_row15_col2, #T_d0ea2_row18_col2, #T_d0ea2_row19_col2, #T_d0ea2_row20_col2 {
+  background-color: #fff500;
+  color: #000000;
+}
+#T_d0ea2_row4_col3 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 8.0%, transparent 8.0%);
+}
+#T_d0ea2_row4_col4, #T_d0ea2_row16_col3 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 40.7%, transparent 40.7%);
+}
+#T_d0ea2_row5_col3 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 6.8%, transparent 6.8%);
+}
+#T_d0ea2_row5_col4 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 46.3%, transparent 46.3%);
+}
+#T_d0ea2_row6_col1, #T_d0ea2_row8_col2, #T_d0ea2_row11_col0, #T_d0ea2_row12_col0, #T_d0ea2_row12_col2, #T_d0ea2_row14_col0, #T_d0ea2_row15_col0 {
+  background-color: #ffa100;
+  color: #000000;
+}
+#T_d0ea2_row6_col3 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 11.2%, transparent 11.2%);
+}
+#T_d0ea2_row6_col4 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 57.0%, transparent 57.0%);
+}
+#T_d0ea2_row7_col1, #T_d0ea2_row8_col1, #T_d0ea2_row9_col1, #T_d0ea2_row10_col1, #T_d0ea2_row11_col1, #T_d0ea2_row12_col1, #T_d0ea2_row13_col1, #T_d0ea2_row14_col1, #T_d0ea2_row15_col1, #T_d0ea2_row16_col0, #T_d0ea2_row20_col1 {
+  background-color: #ff2900;
+  color: #f1f1f1;
+}
+#T_d0ea2_row7_col3 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 23.7%, transparent 23.7%);
+}
+#T_d0ea2_row7_col4 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 69.6%, transparent 69.6%);
+}
+#T_d0ea2_row8_col3 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 26.9%, transparent 26.9%);
+}
+#T_d0ea2_row8_col4 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 74.3%, transparent 74.3%);
+}
+#T_d0ea2_row9_col3 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 22.0%, transparent 22.0%);
+}
+#T_d0ea2_row9_col4 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 76.5%, transparent 76.5%);
+}
+#T_d0ea2_row10_col3 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 20.0%, transparent 20.0%);
+}
+#T_d0ea2_row10_col4 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 78.7%, transparent 78.7%);
+}
+#T_d0ea2_row11_col2, #T_d0ea2_row16_col2, #T_d0ea2_row17_col2, #T_d0ea2_row18_col0, #T_d0ea2_row19_col0, #T_d0ea2_row20_col0 {
+  background-color: #ff5700;
+  color: #f1f1f1;
+}
+#T_d0ea2_row11_col3 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 30.2%, transparent 30.2%);
+}
+#T_d0ea2_row11_col4 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 89.6%, transparent 89.6%);
+}
+#T_d0ea2_row12_col3 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 25.3%, transparent 25.3%);
+}
+#T_d0ea2_row12_col4 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 92.8%, transparent 92.8%);
+}
+#T_d0ea2_row13_col3 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 19.5%, transparent 19.5%);
+}
+#T_d0ea2_row13_col4 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 93.0%, transparent 93.0%);
+}
+#T_d0ea2_row14_col3 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 20.2%, transparent 20.2%);
+}
+#T_d0ea2_row14_col4 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 96.4%, transparent 96.4%);
+}
+#T_d0ea2_row15_col3 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 19.3%, transparent 19.3%);
+}
+#T_d0ea2_row15_col4 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 98.2%, transparent 98.2%);
+}
+#T_d0ea2_row16_col1, #T_d0ea2_row17_col1 {
+  background-color: #ff1a63;
+  color: #f1f1f1;
+}
+#T_d0ea2_row16_col4, #T_d0ea2_row17_col4, #T_d0ea2_row18_col4, #T_d0ea2_row19_col4, #T_d0ea2_row20_col4 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 100.0%, transparent 100.0%);
+}
+#T_d0ea2_row17_col0, #T_d0ea2_row18_col1, #T_d0ea2_row19_col1 {
+  background-color: #f71f3d;
+  color: #f1f1f1;
+}
+#T_d0ea2_row17_col3 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 39.8%, transparent 39.8%);
+}
+#T_d0ea2_row18_col3 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 16.2%, transparent 16.2%);
+}
+#T_d0ea2_row19_col3 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 14.0%, transparent 14.0%);
+}
+#T_d0ea2_row20_col3 {
+  width: 10em;
+  background: linear-gradient(90deg, #d65f5f 12.5%, transparent 12.5%);
+}
+</style>
+<table id="T_d0ea2">
+<thead>
+<tr>
+<th class="blank level0"> </th>
+<th class="col_heading level0 col0" id="T_d0ea2_level0_col0">KruegerPfister</th>
+<th class="col_heading level0 col1" id="T_d0ea2_level0_col1">Mudersbach</th>
+<th class="col_heading level0 col2" id="T_d0ea2_level0_col2">Schmitt</th>
+<th class="col_heading level0 col3" id="T_d0ea2_level0_col3">max. Wiederkehrperiode</th>
+<th class="col_heading level0 col4" id="T_d0ea2_level0_col4">max. Regensumme</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th class="row_heading level0 row0" id="T_d0ea2_level0_row0">5 min</th>
+<td class="data row0 col0" id="T_d0ea2_row0_col0">1</td>
+<td class="data row0 col1" id="T_d0ea2_row0_col1">1</td>
+<td class="data row0 col2" id="T_d0ea2_row0_col2">1</td>
+<td class="data row0 col3" id="T_d0ea2_row0_col3">1.4</td>
+<td class="data row0 col4" id="T_d0ea2_row0_col4">9.9</td>
+</tr>
+<tr>
+<th class="row_heading level0 row1" id="T_d0ea2_level0_row1">10 min</th>
+<td class="data row1 col0" id="T_d0ea2_row1_col0">1</td>
+<td class="data row1 col1" id="T_d0ea2_row1_col1">2</td>
+<td class="data row1 col2" id="T_d0ea2_row1_col2">1</td>
+<td class="data row1 col3" id="T_d0ea2_row1_col3">1.5</td>
+<td class="data row1 col4" id="T_d0ea2_row1_col4">16.3</td>
+</tr>
+<tr>
+<th class="row_heading level0 row2" id="T_d0ea2_level0_row2">15 min</th>
+<td class="data row2 col0" id="T_d0ea2_row2_col0">1</td>
+<td class="data row2 col1" id="T_d0ea2_row2_col1">2</td>
+<td class="data row2 col2" id="T_d0ea2_row2_col2">1</td>
+<td class="data row2 col3" id="T_d0ea2_row2_col3">2.0</td>
+<td class="data row2 col4" id="T_d0ea2_row2_col4">21.9</td>
+</tr>
+<tr>
+<th class="row_heading level0 row3" id="T_d0ea2_level0_row3">20 min</th>
+<td class="data row3 col0" id="T_d0ea2_row3_col0">1</td>
+<td class="data row3 col1" id="T_d0ea2_row3_col1">3</td>
+<td class="data row3 col2" id="T_d0ea2_row3_col2">2</td>
+<td class="data row3 col3" id="T_d0ea2_row3_col3">3.2</td>
+<td class="data row3 col4" id="T_d0ea2_row3_col4">28.2</td>
+</tr>
+<tr>
+<th class="row_heading level0 row4" id="T_d0ea2_level0_row4">30 min</th>
+<td class="data row4 col0" id="T_d0ea2_row4_col0">2</td>
+<td class="data row4 col1" id="T_d0ea2_row4_col1">4</td>
+<td class="data row4 col2" id="T_d0ea2_row4_col2">3</td>
+<td class="data row4 col3" id="T_d0ea2_row4_col3">8.0</td>
+<td class="data row4 col4" id="T_d0ea2_row4_col4">40.7</td>
+</tr>
+<tr>
+<th class="row_heading level0 row5" id="T_d0ea2_level0_row5">45 min</th>
+<td class="data row5 col0" id="T_d0ea2_row5_col0">2</td>
+<td class="data row5 col1" id="T_d0ea2_row5_col1">4</td>
+<td class="data row5 col2" id="T_d0ea2_row5_col2">3</td>
+<td class="data row5 col3" id="T_d0ea2_row5_col3">6.8</td>
+<td class="data row5 col4" id="T_d0ea2_row5_col4">46.3</td>
+</tr>
+<tr>
+<th class="row_heading level0 row6" id="T_d0ea2_level0_row6">60 min</th>
+<td class="data row6 col0" id="T_d0ea2_row6_col0">2</td>
+<td class="data row6 col1" id="T_d0ea2_row6_col1">5</td>
+<td class="data row6 col2" id="T_d0ea2_row6_col2">4</td>
+<td class="data row6 col3" id="T_d0ea2_row6_col3">11.2</td>
+<td class="data row6 col4" id="T_d0ea2_row6_col4">57.0</td>
+</tr>
+<tr>
+<th class="row_heading level0 row7" id="T_d0ea2_level0_row7">1.5 h</th>
+<td class="data row7 col0" id="T_d0ea2_row7_col0">4</td>
+<td class="data row7 col1" id="T_d0ea2_row7_col1">7</td>
+<td class="data row7 col2" id="T_d0ea2_row7_col2">4</td>
+<td class="data row7 col3" id="T_d0ea2_row7_col3">23.7</td>
+<td class="data row7 col4" id="T_d0ea2_row7_col4">69.6</td>
+</tr>
+<tr>
+<th class="row_heading level0 row8" id="T_d0ea2_level0_row8">2 h</th>
+<td class="data row8 col0" id="T_d0ea2_row8_col0">4</td>
+<td class="data row8 col1" id="T_d0ea2_row8_col1">7</td>
+<td class="data row8 col2" id="T_d0ea2_row8_col2">5</td>
+<td class="data row8 col3" id="T_d0ea2_row8_col3">26.9</td>
+<td class="data row8 col4" id="T_d0ea2_row8_col4">74.3</td>
+</tr>
+<tr>
+<th class="row_heading level0 row9" id="T_d0ea2_level0_row9">3 h</th>
+<td class="data row9 col0" id="T_d0ea2_row9_col0">4</td>
+<td class="data row9 col1" id="T_d0ea2_row9_col1">7</td>
+<td class="data row9 col2" id="T_d0ea2_row9_col2">4</td>
+<td class="data row9 col3" id="T_d0ea2_row9_col3">22.0</td>
+<td class="data row9 col4" id="T_d0ea2_row9_col4">76.5</td>
+</tr>
+<tr>
+<th class="row_heading level0 row10" id="T_d0ea2_level0_row10">4 h</th>
+<td class="data row10 col0" id="T_d0ea2_row10_col0">4</td>
+<td class="data row10 col1" id="T_d0ea2_row10_col1">7</td>
+<td class="data row10 col2" id="T_d0ea2_row10_col2">4</td>
+<td class="data row10 col3" id="T_d0ea2_row10_col3">20.0</td>
+<td class="data row10 col4" id="T_d0ea2_row10_col4">78.7</td>
+</tr>
+<tr>
+<th class="row_heading level0 row11" id="T_d0ea2_level0_row11">6 h</th>
+<td class="data row11 col0" id="T_d0ea2_row11_col0">5</td>
+<td class="data row11 col1" id="T_d0ea2_row11_col1">7</td>
+<td class="data row11 col2" id="T_d0ea2_row11_col2">6</td>
+<td class="data row11 col3" id="T_d0ea2_row11_col3">30.2</td>
+<td class="data row11 col4" id="T_d0ea2_row11_col4">89.6</td>
+</tr>
+<tr>
+<th class="row_heading level0 row12" id="T_d0ea2_level0_row12">9 h</th>
+<td class="data row12 col0" id="T_d0ea2_row12_col0">5</td>
+<td class="data row12 col1" id="T_d0ea2_row12_col1">7</td>
+<td class="data row12 col2" id="T_d0ea2_row12_col2">5</td>
+<td class="data row12 col3" id="T_d0ea2_row12_col3">25.3</td>
+<td class="data row12 col4" id="T_d0ea2_row12_col4">92.8</td>
+</tr>
+<tr>
+<th class="row_heading level0 row13" id="T_d0ea2_level0_row13">12 h</th>
+<td class="data row13 col0" id="T_d0ea2_row13_col0">4</td>
+<td class="data row13 col1" id="T_d0ea2_row13_col1">7</td>
+<td class="data row13 col2" id="T_d0ea2_row13_col2">4</td>
+<td class="data row13 col3" id="T_d0ea2_row13_col3">19.5</td>
+<td class="data row13 col4" id="T_d0ea2_row13_col4">93.0</td>
+</tr>
+<tr>
+<th class="row_heading level0 row14" id="T_d0ea2_level0_row14">18 h</th>
+<td class="data row14 col0" id="T_d0ea2_row14_col0">5</td>
+<td class="data row14 col1" id="T_d0ea2_row14_col1">7</td>
+<td class="data row14 col2" id="T_d0ea2_row14_col2">4</td>
+<td class="data row14 col3" id="T_d0ea2_row14_col3">20.2</td>
+<td class="data row14 col4" id="T_d0ea2_row14_col4">96.4</td>
+</tr>
+<tr>
+<th class="row_heading level0 row15" id="T_d0ea2_level0_row15">1 d</th>
+<td class="data row15 col0" id="T_d0ea2_row15_col0">5</td>
+<td class="data row15 col1" id="T_d0ea2_row15_col1">7</td>
+<td class="data row15 col2" id="T_d0ea2_row15_col2">4</td>
+<td class="data row15 col3" id="T_d0ea2_row15_col3">19.3</td>
+<td class="data row15 col4" id="T_d0ea2_row15_col4">98.2</td>
+</tr>
+<tr>
+<th class="row_heading level0 row16" id="T_d0ea2_level0_row16">2 d</th>
+<td class="data row16 col0" id="T_d0ea2_row16_col0">7</td>
+<td class="data row16 col1" id="T_d0ea2_row16_col1">9</td>
+<td class="data row16 col2" id="T_d0ea2_row16_col2">6</td>
+<td class="data row16 col3" id="T_d0ea2_row16_col3">40.7</td>
+<td class="data row16 col4" id="T_d0ea2_row16_col4">120.5</td>
+</tr>
+<tr>
+<th class="row_heading level0 row17" id="T_d0ea2_level0_row17">3 d</th>
+<td class="data row17 col0" id="T_d0ea2_row17_col0">8</td>
+<td class="data row17 col1" id="T_d0ea2_row17_col1">9</td>
+<td class="data row17 col2" id="T_d0ea2_row17_col2">6</td>
+<td class="data row17 col3" id="T_d0ea2_row17_col3">39.8</td>
+<td class="data row17 col4" id="T_d0ea2_row17_col4">138.0</td>
+</tr>
+<tr>
+<th class="row_heading level0 row18" id="T_d0ea2_level0_row18">4 d</th>
+<td class="data row18 col0" id="T_d0ea2_row18_col0">6</td>
+<td class="data row18 col1" id="T_d0ea2_row18_col1">8</td>
+<td class="data row18 col2" id="T_d0ea2_row18_col2">4</td>
+<td class="data row18 col3" id="T_d0ea2_row18_col3">16.2</td>
+<td class="data row18 col4" id="T_d0ea2_row18_col4">138.0</td>
+</tr>
+<tr>
+<th class="row_heading level0 row19" id="T_d0ea2_level0_row19">5 d</th>
+<td class="data row19 col0" id="T_d0ea2_row19_col0">6</td>
+<td class="data row19 col1" id="T_d0ea2_row19_col1">8</td>
+<td class="data row19 col2" id="T_d0ea2_row19_col2">4</td>
+<td class="data row19 col3" id="T_d0ea2_row19_col3">14.0</td>
+<td class="data row19 col4" id="T_d0ea2_row19_col4">143.7</td>
+</tr>
+<tr>
+<th class="row_heading level0 row20" id="T_d0ea2_level0_row20">6 d</th>
+<td class="data row20 col0" id="T_d0ea2_row20_col0">6</td>
+<td class="data row20 col1" id="T_d0ea2_row20_col1">7</td>
+<td class="data row20 col2" id="T_d0ea2_row20_col2">4</td>
+<td class="data row20 col3" id="T_d0ea2_row20_col3">12.5</td>
+<td class="data row20 col4" id="T_d0ea2_row20_col4">148.2</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</section>
+<div class="clearer"></div>
+</div>
+</div>
+</div>
+<div aria-label="Main" class="sphinxsidebar" role="navigation">
+<div class="sphinxsidebarwrapper">
+<div>
+<h4>Previous topic</h4>
+<p class="topless"><a href="example_python_api_2025.html" title="previous chapter">Intensity Duration Frequency Analyse (DWA, 2025)</a></p>
+</div>
+<div>
+<h4>Next topic</h4>
+<p class="topless"><a href="example_python_api_extended.html" title="next chapter">Intensity Duration Frequency Analyse - EXTENDED</a></p>
+</div>
+<div aria-label="source link" role="note">
+<h3>This Page</h3>
+<ul class="this-page-menu">
+<li><a href="../_sources/examples/example_heavy_rainfall_index.ipynb.txt" rel="nofollow">Show Source</a></li>
+</ul>
+</div>
+<search id="searchbox" role="search" style="display: none">
+<h3 id="searchlabel">Quick search</h3>
+<div class="searchformwrapper">
+<form action="../search.html" class="search" method="get">
+<input aria-labelledby="searchlabel" autocapitalize="off" autocomplete="off" autocorrect="off" name="q" spellcheck="false" type="text"/>
+<input type="submit" value="Go"/>
+</form>
+</div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+</div>
+</div>
+<div class="clearer"></div>
+</div>
+<div aria-label="Related" class="related" role="navigation">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a href="../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="example_python_api_extended.html" title="Intensity Duration Frequency Analyse - EXTENDED">next</a> |</li>
+<li class="right">
+<a href="example_python_api_2025.html" title="Intensity Duration Frequency Analyse (DWA, 2025)">previous</a> |</li>
+<li class="nav-item nav-item-0"><a href="../index.html">Intensity Duration Frequency Analyse 0.4.0 documentation</a> »</li>
+<li class="nav-item nav-item-1"><a href="../examples.html">Examples | Tutorial</a> »</li>
+<li class="nav-item nav-item-this"><a href="">Example for Heavy Rainfall Index</a></li>
+</ul>
+</div>
+<div class="footer" role="contentinfo">
+    © Copyright 2025, Pichler.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    </div>
+</body>
+</html>

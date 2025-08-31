@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+
+<html data-content_root="./" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Intensity duration frequency analysis (based on KOSTRA) — Intensity Duration Frequency Analyse 0.4.0 documentation</title>
+<link href="_static/pygments.css?v=8f2a1f02" rel="stylesheet" type="text/css"/>
+<link href="_static/nature.css?v=7d325330" rel="stylesheet" type="text/css"/>
+<link href="_static/sphinx-codeautolink.css?v=b2176991" rel="stylesheet" type="text/css"/>
+<script src="_static/documentation_options.js?v=6c02275b"></script>
+<script src="_static/doctools.js?v=9bcbadda"></script>
+<script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+<script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+<link href="genindex.html" rel="index" title="Index"/>
+<link href="search.html" rel="search" title="Search"/>
+<link href="api.html" rel="next" title="API"/>
+<link href="index.html" rel="prev" title="Welcome to Intensity Duration Frequency Analyse’s documentation!"/>
+</head><body>
+<div aria-label="Related" class="related" role="navigation">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a accesskey="I" href="genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a accesskey="N" href="api.html" title="API">next</a> |</li>
+<li class="right">
+<a accesskey="P" href="index.html" title="Welcome to Intensity Duration Frequency Analyse’s documentation!">previous</a> |</li>
+<li class="nav-item nav-item-0"><a href="index.html">Intensity Duration Frequency Analyse 0.4.0 documentation</a> »</li>
+<li class="nav-item nav-item-this"><a href="">Intensity duration frequency analysis (based on KOSTRA)</a></li>
+</ul>
+</div>
+<div class="document">
+<div class="documentwrapper">
+<div class="bodywrapper">
+<div class="body" role="main">
+<p>© <a class="reference external" href="https://www.sww.tugraz.at">Institute of Urban Water Management and Landscape Water Engineering</a>, <a class="reference external" href="https://www.tugraz.at/home/">Graz University of Technology</a> and <a class="reference external" href="mailto:markus.pichler%40tugraz.at">Markus Pichler</a></p>
+<section id="intensity-duration-frequency-analysis-based-on-kostra">
+<h1>Intensity duration frequency analysis (based on KOSTRA)<a class="headerlink" href="#intensity-duration-frequency-analysis-based-on-kostra" title="Link to this heading">¶</a></h1>
+<p><a class="reference external" href="https://github.com/MarkusPic/intensity_duration_frequency_analysis/blob/main/LICENSE"><img alt="license" src="https://img.shields.io/github/license/markuspic/intensity_duration_frequency_analysis.svg?style=flat"/></a>
+<a class="reference external" href="https://pypi.python.org/pypi/idf-analysis"><img alt="PyPI" src="https://img.shields.io/pypi/v/idf-analysis"/></a>
+<a class="reference external" href="https://zenodo.org/doi/10.5281/zenodo.10559991"><img alt="DOI" src="https://zenodo.org/badge/142560436.svg"/></a>
+<a class="reference external" href="https://www.buymeacoffee.com/MarkusP"><img alt="Buymeacoffee" src="https://badgen.net/badge/icon/buymeacoffee?icon=buymeacoffee&amp;label=donate"/></a>
+<a class="reference external" href="https://doi.org/10.21105/joss.07607"><img alt="JOSS" src="https://joss.theoj.org/papers/10.21105/joss.07607/status.svg"/></a>
+<a class="reference external" href="https://github.com/MarkusPic/intensity_duration_frequency_analysis/blob/main/CONTRIBUTING.md"><img alt="contributing" src="https://img.shields.io/badge/Contributing-red?style=flat"/></a>
+<a class="reference external" href="https://markuspic.github.io/intensity_duration_frequency_analysis/"><img alt="docs" src="https://img.shields.io/badge/Documentation-purple?style=flat&amp;logo=readthedocs"/></a>
+<a class="reference external" href="https://github.com/MarkusPic/intensity_duration_frequency_analysis/blob/main/CODE_OF_CONDUCT.md"><img alt="code-of-conduct" src="https://img.shields.io/badge/Code_of_Conduct-grey?style=flat"/></a>
+<a class="reference external" href="https://github.com/MarkusPic/intensity_duration_frequency_analysis/actions/workflows/tests.yaml"><img alt="Tests" src="https://github.com/MarkusPic/intensity_duration_frequency_analysis/actions/workflows/tests.yaml/badge.svg"/></a>
+<a class="reference external" href="https://codecov.io/gh/MarkusPic/intensity_duration_frequency_analysis"><img alt="Coverage" src="https://codecov.io/gh/MarkusPic/intensity_duration_frequency_analysis/branch/main/graph/badge.svg"/></a>
+<a class="reference external" href="https://github.com/MarkusPic/intensity_duration_frequency_analysis/actions/workflows/sphinx_docs_to_gh_pages.yaml"><img alt="documentation build" src="https://github.com/MarkusPic/intensity_duration_frequency_analysis/actions/workflows/sphinx_docs_to_gh_pages.yaml/badge.svg"/></a></p>
+<p><a class="reference external" href="https://pypi.python.org/pypi/idf-analysis"><img alt="PyPI - Downloads" src="https://img.shields.io/pypi/dd/idf-analysis"/></a>
+<a class="reference external" href="https://pypi.python.org/pypi/idf-analysis"><img alt="PyPI - Downloads" src="https://img.shields.io/pypi/dw/idf-analysis"/></a>
+<a class="reference external" href="https://pypi.python.org/pypi/idf-analysis"><img alt="PyPI - Downloads" src="https://img.shields.io/pypi/dm/idf-analysis"/></a></p>
+<p>Heavy rainfall intensity as a function of duration and return period is defined according to <a class="reference external" href="https://shop.dwa.de/DWA-A-531-Starkregen-in-Abhaengigkeit-von-Wiederkehrzeit-und-Dauer-September-2012-Stand-korrigierte-Fassung-Mai-2017/A-531-Hauptprodukt-12-main">DWA-A 531 (2012)</a>.
+This program reads rainfall measurement data
+and calculates the distribution of design rainfall as a function of both return period and duration, for durations
+up to 12 hours (and beyond) and return periods in the range 0.5 a ≤ Tₙ ≤ 100 a.</p>
+<p>The guideline was also applied in the <a class="reference external" href="https://www.dwd.de/DE/leistungen/kostra_dwd_rasterwerte/kostra_dwd_rasterwerte.html">KOSTRA-DWD</a> application.</p>
+<p>Since version 0.4, the updated guidelines of <a class="reference external" href="https://shop.dwa.de/DWA-A-531-Starkregen-in-Abhaengigkeit-von-Wiederkehrzeit-und-Dauer-Juni-2025/A-531-Hauptprodukt-25-main">DWA-A 531 (2025)</a> have also been implemented.</p>
+<hr class="docutils"/>
+<blockquote>
+<div><p>Heavy rainfall data are among the most important planning parameters in water management and hydraulic engineering practice. In urban areas, for example, they are required as initial parameters for the design of rainwater drainage systems and in watercourses for the dimensioning of hydraulic structures. The accuracy of the target values of the corresponding calculation methods and models depends crucially on their accuracy. Their overestimation can lead to considerable additional costs in the structural implementation, their underestimation to an unacceptable, excessive residual risk of failure during the operation of water management and hydraulic engineering facilities. Despite the area-wide availability of heavy rainfall data through “Coordinated Heavy Rainfall Regionalisation Analyses” (KOSTRA), there is still a need for local station analyses, e.g. to evaluate the now extended data series, to evaluate recent developments or to classify local peculiarities in comparison to the KOSTRA data. However, this is only possible without restrictions if the methodological approach recommended in the worksheet is followed.</p>
+</div></blockquote>
+<p><strong><a class="reference external" href="http://www.dwa.de/dwa/shop/shop.nsf/Produktanzeige?openform&amp;amp;produktid=P-DWAA-8XMUY2">DWA-A 531 (2012)</a> Translated with www.DeepL.com/Translator</strong></p>
+<hr class="docutils"/>
+<blockquote>
+<div><p>An intensity-duration-frequency (IDF) curve is a mathematical function that relates the rainfall intensity with its duration and frequency of occurrence. These curves are commonly used in hydrology for flood forecasting and civil engineering for urban drainage design. However, the IDF curves are also analysed in hydrometeorology because of the interest in the time concentration or time-structure of the rainfall.</p>
+</div></blockquote>
+<p><strong><a class="reference external" href="https://en.wikipedia.org/wiki/Intensity-duration-frequency_curve">Wikipedia</a></strong></p>
+<hr class="docutils"/>
+<p>This package was developed by <a class="reference external" href="mailto:markus.pichler%40tugraz.at">Markus Pichler</a> during his bachelor thesis and finalised it in the course of his employment at the <a class="reference external" href="https://www.sww.tugraz.at">Institute of Urban Water Management and Landscape Water Engineering</a>.</p>
+<section id="documentation">
+<h2>Documentation<a class="headerlink" href="#documentation" title="Link to this heading">¶</a></h2>
+<p>Read the docs <a class="reference external" href="https://markuspic.github.io/intensity_duration_frequency_analysis">here 📖</a>.</p>
+</section>
+<section id="please-cite-as">
+<h2>Please cite as<a class="headerlink" href="#please-cite-as" title="Link to this heading">¶</a></h2>
+<p>Pichler, M. (2025). idf-analysis: Heavy rainfall intensity as a function of duration and return period. Journal of Open Source Software, 10(106), 7607. https://doi.org/10.21105/joss.07607</p>
+</section>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">¶</a></h2>
+<p>This package is written in Python3. (use a version &gt; 3.5)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">idf</span><span class="o">-</span><span class="n">analysis</span>
+</pre></div>
+</div>
+<p>Add the following tags to the command for special options:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--user</span></code>: To install the package only for the local user account (no admin rights needed)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--upgrade</span></code>: To update the package</p></li>
+</ul>
+<section id="windows">
+<h3>Windows<a class="headerlink" href="#windows" title="Link to this heading">¶</a></h3>
+<p>You have to install python first (i.e. the original python from the <a class="reference external" href="https://www.python.org/downloads/">website</a>).</p>
+<p>To use the command-line-tool, it is advisable to add the path to your Python binary to the environment variables <a class="footnote-reference brackets" href="#path1" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.
+There is also an option during the installation to add python to the PATH automatically. <a class="footnote-reference brackets" href="#path2" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a></p>
+</section>
+<section id="linux-unix">
+<h3>Linux/Unix<a class="headerlink" href="#linux-unix" title="Link to this heading">¶</a></h3>
+<p>Python is pre-installed on most operating systems (as you probably knew).</p>
+</section>
+<section id="dependencies">
+<h3>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading">¶</a></h3>
+<p>Packages required for this program will be installed with pip during the installation process and can be seen
+in the <a class="reference external" href="https://github.com/MarkusPic/intensity_duration_frequency_analysis/blob/main/requirements.txt"><code class="docutils literal notranslate"><span class="pre">requirements.txt</span></code></a> file.</p>
+<div class="highlight-mermaid notranslate"><div class="highlight"><pre><span></span>flowchart TD
+    contourpy["contourpy&lt;br&gt;1.3.1"]
+    cycler["cycler&lt;br&gt;0.12.1"]
+    fonttools["fonttools&lt;br&gt;4.54.1"]
+    kiwisolver["kiwisolver&lt;br&gt;1.4.7"]
+    matplotlib["matplotlib&lt;br&gt;3.9.2"]
+    mpmath["mpmath&lt;br&gt;1.3.0"]
+    numpy["numpy&lt;br&gt;2.1.3"]
+    packaging["packaging&lt;br&gt;24.2"]
+    pandas["pandas&lt;br&gt;2.2.3"]
+    pillow["pillow&lt;br&gt;11.0.0"]
+    pyparsing["pyparsing&lt;br&gt;3.2.0"]
+    python-dateutil["python-dateutil&lt;br&gt;2.9.0.post0"]
+    pytz["pytz&lt;br&gt;2024.2"]
+    pyyaml["PyYAML&lt;br&gt;6.0.2"]
+    scipy["scipy&lt;br&gt;1.14.1"]
+    six["six&lt;br&gt;1.16.0"]
+    sympy["sympy&lt;br&gt;1.13.3"]
+    tqdm["tqdm&lt;br&gt;4.67.0"]
+    tzdata["tzdata&lt;br&gt;2024.2"]
+    contourpy -- "&amp;ge;1.23" --&gt; numpy
+    matplotlib -- "&amp;ge;0.10" --&gt; cycler
+    matplotlib -- "&amp;ge;1.0.1" --&gt; contourpy
+    matplotlib -- "&amp;ge;1.23" --&gt; numpy
+    matplotlib -- "&amp;ge;1.3.1" --&gt; kiwisolver
+    matplotlib -- "&amp;ge;2.3.1" --&gt; pyparsing
+    matplotlib -- "&amp;ge;2.7" --&gt; python-dateutil
+    matplotlib -- "&amp;ge;20.0" --&gt; packaging
+    matplotlib -- "&amp;ge;4.22.0" --&gt; fonttools
+    matplotlib -- "&amp;ge;8" --&gt; pillow
+    pandas -- "&amp;ge;1.26.0" --&gt; numpy
+    pandas -- "&amp;ge;2.8.2" --&gt; python-dateutil
+    pandas -- "&amp;ge;2020.1" --&gt; pytz
+    pandas -- "&amp;ge;2022.7" --&gt; tzdata
+    python-dateutil -- "&amp;ge;1.5" --&gt; six
+    scipy -- "&amp;ge;1.23.5,&amp;lt;2.3" --&gt; numpy
+    sympy -- "&amp;ge;1.1.0,&amp;lt;1.4" --&gt; mpmath
+</pre></div>
+</div>
+</section>
+</section>
+<section id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">¶</a></h2>
+<p>The documentation of the Python-package can be found <a class="reference external" href="https://markuspic.github.io/intensity_duration_frequency_analysis/api.html">here</a>.</p>
+<p>One basic usage could be:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><a class="sphinx-codeautolink-a" href="https://pandas.pydata.org/docs/index.html#module-pandas" title="pandas"><span class="nn">pandas</span></a><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">idf_analysis</span><span class="w"> </span><span class="kn">import</span> <a class="sphinx-codeautolink-a" href="api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse" title="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse"><span class="n">IntensityDurationFrequencyAnalyse</span></a>
+<span class="kn">from</span><span class="w"> </span><span class="nn">idf_analysis.definitions</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+
+<span class="c1"># initialize of the analysis class</span>
+<a class="sphinx-codeautolink-a" href="api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse" title="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse"><span class="n">idf</span></a> <span class="o">=</span> <a class="sphinx-codeautolink-a" href="api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse" title="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse"><span class="n">IntensityDurationFrequencyAnalyse</span></a><span class="p">(</span><span class="n">series_kind</span><span class="o">=</span><span class="n">SERIES</span><span class="o">.</span><span class="n">PARTIAL</span><span class="p">,</span> <span class="n">worksheet</span><span class="o">=</span><span class="n">METHOD</span><span class="o">.</span><span class="n">KOSTRA</span><span class="p">,</span> <span class="n">extended_durations</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<a class="sphinx-codeautolink-a" href="https://pandas.pydata.org/docs/reference/api/pandas.Series.html#pandas.Series" title="pandas.core.series.Series"><span class="n">series</span></a> <span class="o">=</span> <a class="sphinx-codeautolink-a" href="https://pandas.pydata.org/docs/reference/api/pandas.Series.html#pandas.Series" title="pandas.core.series.Series"><span class="n">pd</span><span class="o">.</span><span class="n">Series</span></a><span class="p">(</span><span class="n">index</span><span class="o">=</span><a class="sphinx-codeautolink-a" href="https://pandas.pydata.org/docs/reference/api/pandas.DatetimeIndex.html#pandas.DatetimeIndex" title="pandas.core.indexes.datetimes.DatetimeIndex"><span class="n">pd</span><span class="o">.</span><span class="n">DatetimeIndex</span></a><span class="p">(</span><span class="o">...</span><span class="p">),</span> <span class="n">data</span><span class="o">=...</span><span class="p">)</span>  <span class="c1"># this is just a placeholder</span>
+
+<span class="c1"># setting the series for the analysis</span>
+<a class="sphinx-codeautolink-a" href="api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.set_series" title="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.set_series"><span class="n">idf</span><span class="o">.</span><span class="n">set_series</span></a><span class="p">(</span><a class="sphinx-codeautolink-a" href="https://pandas.pydata.org/docs/reference/api/pandas.Series.html#pandas.Series" title="pandas.core.series.Series"><span class="n">series</span></a><span class="p">)</span>
+<span class="c1"># auto-save the calculated parameter so save time for a later use, as the parameters doesn't have to be calculated again.</span>
+<a class="sphinx-codeautolink-a" href="api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.auto_save_parameters" title="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.auto_save_parameters"><span class="n">idf</span><span class="o">.</span><span class="n">auto_save_parameters</span></a><span class="p">(</span><span class="s1">'idf_parameters.yaml'</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If you only want to analyse an already existing IDF-table</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><a class="sphinx-codeautolink-a" href="https://pandas.pydata.org/docs/index.html#module-pandas" title="pandas"><span class="nn">pandas</span></a><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">idf_analysis</span><span class="w"> </span><span class="kn">import</span> <a class="sphinx-codeautolink-a" href="api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse" title="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse"><span class="n">IntensityDurationFrequencyAnalyse</span></a>
+
+<a class="sphinx-codeautolink-a" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="pandas.core.frame.DataFrame"><span class="n">idf_table</span></a> <span class="o">=</span> <a class="sphinx-codeautolink-a" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="pandas.core.frame.DataFrame"><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span></a><span class="p">(</span><span class="o">...</span><span class="p">)</span>  <span class="c1"># this is just a placeholder</span>
+<span class="c1"># index: Duration Steps in minutes as int or float</span>
+<span class="c1"># columns: Return Periods in years as int or float</span>
+<span class="c1"># values: rainfall height in mm</span>
+<span class="n">idf</span> <span class="o">=</span> <a class="sphinx-codeautolink-a" href="api.html#idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.from_idf_table" title="idf_analysis.idf_class.IntensityDurationFrequencyAnalyse.from_idf_table"><span class="n">IntensityDurationFrequencyAnalyse</span><span class="o">.</span><span class="n">from_idf_table</span></a><span class="p">(</span><a class="sphinx-codeautolink-a" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="pandas.core.frame.DataFrame"><span class="n">idf_table</span></a><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="commandline-tool">
+<h2>Commandline tool<a class="headerlink" href="#commandline-tool" title="Link to this heading">¶</a></h2>
+<p>The following commands show the usage for Linux/Unix systems.
+To use these features on Windows you have to add <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-m</span></code> before each command.</p>
+<p>To start the script use following commands in the terminal/Prompt</p>
+<p><code class="docutils literal notranslate"><span class="pre">idf_analysis</span></code></p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">idf_analysis</span> <span class="pre">-h</span></code></p>
+</div></blockquote>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">__main__</span><span class="o">.</span><span class="n">py</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="o">-</span><span class="n">i</span> <span class="n">INPUT</span>
+                   <span class="p">[</span><span class="o">-</span><span class="n">ws</span> <span class="p">{</span><span class="n">ATV</span><span class="o">-</span><span class="n">A_121</span><span class="p">,</span><span class="n">KOSTRA</span><span class="p">,</span><span class="n">convective_vs_advective</span><span class="p">}]</span>
+                   <span class="p">[</span><span class="o">-</span><span class="n">kind</span> <span class="p">{</span><span class="n">partial</span><span class="p">,</span><span class="n">annual</span><span class="p">}]</span> <span class="p">[</span><span class="o">-</span><span class="n">t</span> <span class="p">{</span><span class="o">&gt;=</span> <span class="mf">0.5</span> <span class="n">a</span> <span class="ow">and</span> <span class="o">&lt;=</span> <span class="mi">100</span> <span class="n">a</span><span class="p">}]</span>
+                   <span class="p">[</span><span class="o">-</span><span class="n">d</span> <span class="p">{</span><span class="o">&gt;=</span> <span class="mi">5</span> <span class="nb">min</span> <span class="ow">and</span> <span class="o">&lt;=</span> <span class="mi">8640</span> <span class="nb">min</span><span class="p">}]</span> <span class="p">[</span><span class="o">-</span><span class="n">r</span> <span class="p">{</span><span class="o">&gt;=</span> <span class="mi">0</span> <span class="n">L</span><span class="o">/</span><span class="n">s</span><span class="o">*</span><span class="n">ha</span><span class="p">}]</span>
+                   <span class="p">[</span><span class="o">-</span><span class="n">h_N</span> <span class="p">{</span><span class="o">&gt;=</span> <span class="mi">0</span> <span class="n">mm</span><span class="p">}]</span> <span class="p">[</span><span class="o">--</span><span class="n">r_720_1</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">plot</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">export_table</span><span class="p">]</span>
+
+<span class="n">heavy</span> <span class="n">rain</span> <span class="k">as</span> <span class="n">a</span> <span class="n">function</span> <span class="n">of</span> <span class="n">the</span> <span class="n">duration</span> <span class="ow">and</span> <span class="n">the</span> <span class="k">return</span> <span class="n">period</span> <span class="n">acc</span><span class="o">.</span> <span class="n">to</span> <span class="n">DWA</span><span class="o">-</span><span class="n">A</span>
+<span class="mi">531</span> <span class="p">(</span><span class="mi">2012</span><span class="p">)</span> <span class="n">All</span> <span class="n">files</span> <span class="n">will</span> <span class="n">be</span> <span class="n">saved</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">same</span> <span class="n">directory</span> <span class="n">of</span> <span class="n">the</span> <span class="nb">input</span> <span class="n">file</span> <span class="n">but</span>
+<span class="ow">in</span> <span class="n">a</span> <span class="n">subfolder</span> <span class="n">called</span> <span class="n">like</span> <span class="n">the</span> <span class="n">inputfile</span> <span class="o">+</span> <span class="s2">"_idf_data"</span><span class="o">.</span> <span class="n">Inside</span> <span class="n">this</span> <span class="n">folder</span> <span class="n">a</span>
+<span class="n">file</span> <span class="n">called</span> <span class="s2">"idf_parameter.yaml"</span><span class="o">-</span><span class="n">file</span> <span class="n">will</span> <span class="n">be</span> <span class="n">saved</span> <span class="ow">and</span> <span class="n">contains</span> <span class="n">interim</span><span class="o">-</span>
+<span class="n">calculation</span><span class="o">-</span><span class="n">results</span> <span class="ow">and</span> <span class="n">will</span> <span class="n">be</span> <span class="n">automatically</span> <span class="n">reloaded</span> <span class="n">on</span> <span class="n">the</span> <span class="nb">next</span> <span class="n">call</span><span class="o">.</span>
+
+<span class="n">optional</span> <span class="n">arguments</span><span class="p">:</span>
+  <span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="o">--</span><span class="n">help</span>            <span class="n">show</span> <span class="n">this</span> <span class="n">help</span> <span class="n">message</span> <span class="ow">and</span> <span class="n">exit</span>
+  <span class="o">-</span><span class="n">i</span> <span class="n">INPUT</span><span class="p">,</span> <span class="o">--</span><span class="nb">input</span> <span class="n">INPUT</span>
+                        <span class="nb">input</span> <span class="n">file</span> <span class="k">with</span> <span class="n">the</span> <span class="n">rain</span> <span class="n">time</span><span class="o">-</span><span class="n">series</span> <span class="p">(</span><span class="n">csv</span> <span class="ow">or</span> <span class="n">parquet</span><span class="p">)</span>
+  <span class="o">-</span><span class="n">ws</span> <span class="p">{</span><span class="n">ATV</span><span class="o">-</span><span class="n">A_121</span><span class="p">,</span><span class="n">KOSTRA</span><span class="p">,</span><span class="n">convective_vs_advective</span><span class="p">},</span> <span class="o">--</span><span class="n">worksheet</span> <span class="p">{</span><span class="n">ATV</span><span class="o">-</span><span class="n">A_121</span><span class="p">,</span><span class="n">KOSTRA</span><span class="p">,</span><span class="n">convective_vs_advective</span><span class="p">}</span>
+                        <span class="n">From</span> <span class="n">which</span> <span class="n">worksheet</span> <span class="n">the</span> <span class="n">recommendations</span> <span class="k">for</span>
+                        <span class="n">calculating</span> <span class="n">the</span> <span class="n">parameters</span> <span class="n">should</span> <span class="n">be</span> <span class="n">taken</span><span class="o">.</span>
+  <span class="o">-</span><span class="n">kind</span> <span class="p">{</span><span class="n">partial</span><span class="p">,</span><span class="n">annual</span><span class="p">},</span> <span class="o">--</span><span class="n">series_kind</span> <span class="p">{</span><span class="n">partial</span><span class="p">,</span><span class="n">annual</span><span class="p">}</span>
+                        <span class="n">The</span> <span class="n">kind</span> <span class="n">of</span> <span class="n">series</span> <span class="n">used</span> <span class="k">for</span> <span class="n">the</span> <span class="n">calculation</span><span class="o">.</span>
+                        <span class="p">(</span><span class="n">Calculation</span> <span class="k">with</span> <span class="n">partial</span> <span class="n">series</span> <span class="ow">is</span> <span class="n">more</span> <span class="n">precise</span> <span class="ow">and</span>
+                        <span class="n">recommended</span><span class="o">.</span><span class="p">)</span>
+  <span class="o">-</span><span class="n">t</span> <span class="p">{</span><span class="o">&gt;=</span> <span class="mf">0.5</span> <span class="n">a</span> <span class="ow">and</span> <span class="o">&lt;=</span> <span class="mi">100</span> <span class="n">a</span><span class="p">},</span> <span class="o">--</span><span class="n">return_period</span> <span class="p">{</span><span class="o">&gt;=</span> <span class="mf">0.5</span> <span class="n">a</span> <span class="ow">and</span> <span class="o">&lt;=</span> <span class="mi">100</span> <span class="n">a</span><span class="p">}</span>
+                        <span class="k">return</span> <span class="n">period</span> <span class="ow">in</span> <span class="n">years</span> <span class="p">(</span><span class="n">If</span> <span class="n">two</span> <span class="n">of</span> <span class="n">the</span> <span class="n">three</span> <span class="n">variables</span>
+                        <span class="p">(</span><span class="n">rainfall</span> <span class="p">(</span><span class="n">height</span> <span class="ow">or</span> <span class="n">flow</span><span class="o">-</span><span class="n">rate</span><span class="p">),</span> <span class="n">duration</span><span class="p">,</span> <span class="k">return</span>
+                        <span class="n">period</span><span class="p">)</span> <span class="n">are</span> <span class="n">given</span><span class="p">,</span> <span class="n">the</span> <span class="n">third</span> <span class="n">variable</span> <span class="ow">is</span> <span class="n">calculated</span><span class="o">.</span><span class="p">)</span>
+  <span class="o">-</span><span class="n">d</span> <span class="p">{</span><span class="o">&gt;=</span> <span class="mi">5</span> <span class="nb">min</span> <span class="ow">and</span> <span class="o">&lt;=</span> <span class="mi">8640</span> <span class="nb">min</span><span class="p">},</span> <span class="o">--</span><span class="n">duration</span> <span class="p">{</span><span class="o">&gt;=</span> <span class="mi">5</span> <span class="nb">min</span> <span class="ow">and</span> <span class="o">&lt;=</span> <span class="mi">8640</span> <span class="nb">min</span><span class="p">}</span>
+                        <span class="n">duration</span> <span class="ow">in</span> <span class="n">minutes</span> <span class="p">(</span><span class="n">If</span> <span class="n">two</span> <span class="n">of</span> <span class="n">the</span> <span class="n">three</span> <span class="n">variables</span>
+                        <span class="p">(</span><span class="n">rainfall</span> <span class="p">(</span><span class="n">height</span> <span class="ow">or</span> <span class="n">flow</span><span class="o">-</span><span class="n">rate</span><span class="p">),</span> <span class="n">duration</span><span class="p">,</span> <span class="k">return</span>
+                        <span class="n">period</span><span class="p">)</span> <span class="n">are</span> <span class="n">given</span><span class="p">,</span> <span class="n">the</span> <span class="n">third</span> <span class="n">variable</span> <span class="ow">is</span> <span class="n">calculated</span><span class="o">.</span><span class="p">)</span>
+  <span class="o">-</span><span class="n">r</span> <span class="p">{</span><span class="o">&gt;=</span> <span class="mi">0</span> <span class="n">L</span><span class="o">/</span><span class="p">(</span><span class="n">s</span><span class="o">*</span><span class="n">ha</span><span class="p">)},</span> <span class="o">--</span><span class="n">flow_rate_of_rainfall</span> <span class="p">{</span><span class="o">&gt;=</span> <span class="mi">0</span> <span class="n">L</span><span class="o">/</span><span class="p">(</span><span class="n">s</span><span class="o">*</span><span class="n">ha</span><span class="p">)}</span>
+                        <span class="n">rainfall</span> <span class="ow">in</span> <span class="n">Liter</span><span class="o">/</span><span class="p">(</span><span class="n">s</span> <span class="o">*</span> <span class="n">ha</span><span class="p">)</span> <span class="p">(</span><span class="n">If</span> <span class="n">two</span> <span class="n">of</span> <span class="n">the</span> <span class="n">three</span>
+                        <span class="n">variables</span> <span class="p">(</span><span class="n">rainfall</span> <span class="p">(</span><span class="n">height</span> <span class="ow">or</span> <span class="n">flow</span><span class="o">-</span><span class="n">rate</span><span class="p">),</span> <span class="n">duration</span><span class="p">,</span>
+                        <span class="k">return</span> <span class="n">period</span><span class="p">)</span> <span class="n">are</span> <span class="n">given</span><span class="p">,</span> <span class="n">the</span> <span class="n">third</span> <span class="n">variable</span> <span class="ow">is</span>
+                        <span class="n">calculated</span><span class="o">.</span><span class="p">)</span>
+  <span class="o">-</span><span class="n">h_N</span> <span class="p">{</span><span class="o">&gt;=</span> <span class="mi">0</span> <span class="n">mm</span><span class="p">},</span> <span class="o">--</span><span class="n">height_of_rainfall</span> <span class="p">{</span><span class="o">&gt;=</span> <span class="mi">0</span> <span class="n">mm</span><span class="p">}</span>
+                        <span class="n">rainfall</span> <span class="ow">in</span> <span class="n">mm</span> <span class="ow">or</span> <span class="n">Liter</span><span class="o">/</span><span class="n">m</span><span class="o">^</span><span class="mi">2</span> <span class="p">(</span><span class="n">If</span> <span class="n">two</span> <span class="n">of</span> <span class="n">the</span> <span class="n">three</span>
+                        <span class="n">variables</span> <span class="p">(</span><span class="n">rainfall</span> <span class="p">(</span><span class="n">height</span> <span class="ow">or</span> <span class="n">flow</span><span class="o">-</span><span class="n">rate</span><span class="p">),</span> <span class="n">duration</span><span class="p">,</span>
+                        <span class="k">return</span> <span class="n">period</span><span class="p">)</span> <span class="n">are</span> <span class="n">given</span><span class="p">,</span> <span class="n">the</span> <span class="n">third</span> <span class="n">variable</span> <span class="ow">is</span>
+                        <span class="n">calculated</span><span class="o">.</span><span class="p">)</span>
+  <span class="o">--</span><span class="n">r_720_1</span>             <span class="n">design</span> <span class="n">rainfall</span> <span class="k">with</span> <span class="n">a</span> <span class="n">duration</span> <span class="n">of</span> <span class="mi">720</span> <span class="n">minutes</span> <span class="p">(</span><span class="o">=</span><span class="mi">12</span> <span class="n">h</span><span class="p">)</span>
+                        <span class="ow">and</span> <span class="n">a</span> <span class="k">return</span> <span class="n">period</span> <span class="n">of</span> <span class="mi">1</span> <span class="n">year</span>
+  <span class="o">--</span><span class="n">plot</span>                <span class="n">get</span> <span class="n">a</span> <span class="n">plot</span> <span class="n">of</span> <span class="n">the</span> <span class="n">idf</span> <span class="n">relationship</span>
+  <span class="o">--</span><span class="n">export_table</span>        <span class="n">get</span> <span class="n">a</span> <span class="n">table</span> <span class="n">of</span> <span class="n">the</span> <span class="n">most</span> <span class="n">frequent</span> <span class="n">used</span> <span class="n">values</span>
+</pre></div>
+</div>
+</section>
+<section id="example">
+<h2>Example<a class="headerlink" href="#example" title="Link to this heading">¶</a></h2>
+<p>In these examples you can see the usage in a reproducible way. This examples uses open data provided from the Austrian government. You can also find a link to the script used to download this data.</p>
+<p><a class="reference external" href="https://markuspic.github.io/intensity_duration_frequency_analysis/examples/example_commandline">Example Jupyter notebook for the commandline</a> (or in the <a class="reference external" href="https://markuspic.github.io/intensity_duration_frequency_analysis/examples/example_python_api.html">docs</a>)</p>
+<p><a class="reference external" href="https://markuspic.github.io/intensity_duration_frequency_analysis/examples/example_python_api">Example Jupyter notebook for the python api</a> (or in the <a class="reference external" href="https://markuspic.github.io/intensity_duration_frequency_analysis/examples/example_python_api.html">docs</a>)</p>
+<p><a class="reference external" href="https://markuspic.github.io/intensity_duration_frequency_analysis/examples/example_python_api_2025">Example Jupyter notebook for the python api of the DWA 2025 methodology</a> (or in the <a class="reference external" href="https://markuspic.github.io/intensity_duration_frequency_analysis/examples/example_python_api_2025.html">docs</a>)</p>
+<p><a class="reference external" href="https://github.com/MarkusPic/intensity_duration_frequency_analysis/blob/main/examples/example_python_api.py">Example python skript</a></p>
+<section id="example-files">
+<h3>Example Files<a class="headerlink" href="#example-files" title="Link to this heading">¶</a></h3>
+<p><a class="reference external" href="https://github.com/MarkusPic/intensity_duration_frequency_analysis/blob/main/examples/ehyd_112086_idf_data/idf_parameters.yaml">Interim Results of the idf analysis</a></p>
+</section>
+<section id="example-plot-using-the-dwa-2012-methodology">
+<h3>Example Plot using the DWA 2012 methodology<a class="headerlink" href="#example-plot-using-the-dwa-2012-methodology" title="Link to this heading">¶</a></h3>
+<p><img alt="IDF-Curves-Plot" src="https://raw.githubusercontent.com/MarkusPic/intensity_duration_frequency_analysis/refs/heads/main/examples/ehyd_112086_idf_data/idf_curves_plot.png"/></p>
+</section>
+<section id="example-plot-using-the-dwa-2025-methodology">
+<h3>Example Plot using the DWA 2025 methodology<a class="headerlink" href="#example-plot-using-the-dwa-2025-methodology" title="Link to this heading">¶</a></h3>
+<p><img alt="IDF-Curves-Plot" src="https://raw.githubusercontent.com/MarkusPic/intensity_duration_frequency_analysis/refs/heads/main/examples/ehyd_112086_idf_data_new/idf_curves_plot_color_logx.png"/></p>
+</section>
+<section id="example-idf-table">
+<h3>Example IDF table<a class="headerlink" href="#example-idf-table" title="Link to this heading">¶</a></h3>
+<p><a class="reference external" href="https://github.com/MarkusPic/intensity_duration_frequency_analysis/blob/main/examples/ehyd_112086_idf_data/idf_table_UNIX.csv">IDF-Table</a></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head text-right"><p>return period in a<br/>duration in min</p></th>
+<th class="head text-right"><p>1</p></th>
+<th class="head text-right"><p>2</p></th>
+<th class="head text-right"><p>3</p></th>
+<th class="head text-right"><p>5</p></th>
+<th class="head text-right"><p>10</p></th>
+<th class="head text-right"><p>20</p></th>
+<th class="head text-right"><p>25</p></th>
+<th class="head text-right"><p>30</p></th>
+<th class="head text-right"><p>50</p></th>
+<th class="head text-right"><p>75</p></th>
+<th class="head text-right"><p>100</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-right"><p>5</p></td>
+<td class="text-right"><p>9.39</p></td>
+<td class="text-right"><p>10.97</p></td>
+<td class="text-right"><p>11.89</p></td>
+<td class="text-right"><p>13.04</p></td>
+<td class="text-right"><p>14.61</p></td>
+<td class="text-right"><p>16.19</p></td>
+<td class="text-right"><p>16.69</p></td>
+<td class="text-right"><p>17.11</p></td>
+<td class="text-right"><p>18.26</p></td>
+<td class="text-right"><p>19.18</p></td>
+<td class="text-right"><p>19.83</p></td>
+</tr>
+<tr class="row-odd"><td class="text-right"><p>10</p></td>
+<td class="text-right"><p>15.15</p></td>
+<td class="text-right"><p>17.62</p></td>
+<td class="text-right"><p>19.06</p></td>
+<td class="text-right"><p>20.88</p></td>
+<td class="text-right"><p>23.35</p></td>
+<td class="text-right"><p>25.82</p></td>
+<td class="text-right"><p>26.62</p></td>
+<td class="text-right"><p>27.27</p></td>
+<td class="text-right"><p>29.09</p></td>
+<td class="text-right"><p>30.54</p></td>
+<td class="text-right"><p>31.56</p></td>
+</tr>
+<tr class="row-even"><td class="text-right"><p>15</p></td>
+<td class="text-right"><p>19.03</p></td>
+<td class="text-right"><p>22.25</p></td>
+<td class="text-right"><p>24.13</p></td>
+<td class="text-right"><p>26.51</p></td>
+<td class="text-right"><p>29.72</p></td>
+<td class="text-right"><p>32.94</p></td>
+<td class="text-right"><p>33.98</p></td>
+<td class="text-right"><p>34.83</p></td>
+<td class="text-right"><p>37.20</p></td>
+<td class="text-right"><p>39.08</p></td>
+<td class="text-right"><p>40.42</p></td>
+</tr>
+<tr class="row-odd"><td class="text-right"><p>20</p></td>
+<td class="text-right"><p>21.83</p></td>
+<td class="text-right"><p>25.71</p></td>
+<td class="text-right"><p>27.99</p></td>
+<td class="text-right"><p>30.85</p></td>
+<td class="text-right"><p>34.73</p></td>
+<td class="text-right"><p>38.62</p></td>
+<td class="text-right"><p>39.87</p></td>
+<td class="text-right"><p>40.89</p></td>
+<td class="text-right"><p>43.75</p></td>
+<td class="text-right"><p>46.02</p></td>
+<td class="text-right"><p>47.63</p></td>
+</tr>
+<tr class="row-even"><td class="text-right"><p>30</p></td>
+<td class="text-right"><p>25.60</p></td>
+<td class="text-right"><p>30.66</p></td>
+<td class="text-right"><p>33.62</p></td>
+<td class="text-right"><p>37.35</p></td>
+<td class="text-right"><p>42.41</p></td>
+<td class="text-right"><p>47.47</p></td>
+<td class="text-right"><p>49.10</p></td>
+<td class="text-right"><p>50.43</p></td>
+<td class="text-right"><p>54.16</p></td>
+<td class="text-right"><p>57.12</p></td>
+<td class="text-right"><p>59.22</p></td>
+</tr>
+<tr class="row-odd"><td class="text-right"><p>45</p></td>
+<td class="text-right"><p>28.92</p></td>
+<td class="text-right"><p>35.51</p></td>
+<td class="text-right"><p>39.37</p></td>
+<td class="text-right"><p>44.23</p></td>
+<td class="text-right"><p>50.83</p></td>
+<td class="text-right"><p>57.42</p></td>
+<td class="text-right"><p>59.54</p></td>
+<td class="text-right"><p>61.28</p></td>
+<td class="text-right"><p>66.14</p></td>
+<td class="text-right"><p>69.99</p></td>
+<td class="text-right"><p>72.73</p></td>
+</tr>
+<tr class="row-even"><td class="text-right"><p>60</p></td>
+<td class="text-right"><p>30.93</p></td>
+<td class="text-right"><p>38.89</p></td>
+<td class="text-right"><p>43.54</p></td>
+<td class="text-right"><p>49.40</p></td>
+<td class="text-right"><p>57.36</p></td>
+<td class="text-right"><p>65.31</p></td>
+<td class="text-right"><p>67.88</p></td>
+<td class="text-right"><p>69.97</p></td>
+<td class="text-right"><p>75.83</p></td>
+<td class="text-right"><p>80.49</p></td>
+<td class="text-right"><p>83.79</p></td>
+</tr>
+<tr class="row-odd"><td class="text-right"><p>90</p></td>
+<td class="text-right"><p>33.37</p></td>
+<td class="text-right"><p>41.74</p></td>
+<td class="text-right"><p>46.64</p></td>
+<td class="text-right"><p>52.80</p></td>
+<td class="text-right"><p>61.17</p></td>
+<td class="text-right"><p>69.54</p></td>
+<td class="text-right"><p>72.23</p></td>
+<td class="text-right"><p>74.43</p></td>
+<td class="text-right"><p>80.60</p></td>
+<td class="text-right"><p>85.49</p></td>
+<td class="text-right"><p>88.96</p></td>
+</tr>
+<tr class="row-even"><td class="text-right"><p>180</p></td>
+<td class="text-right"><p>38.01</p></td>
+<td class="text-right"><p>47.13</p></td>
+<td class="text-right"><p>52.46</p></td>
+<td class="text-right"><p>59.18</p></td>
+<td class="text-right"><p>68.30</p></td>
+<td class="text-right"><p>77.42</p></td>
+<td class="text-right"><p>80.36</p></td>
+<td class="text-right"><p>82.76</p></td>
+<td class="text-right"><p>89.48</p></td>
+<td class="text-right"><p>94.81</p></td>
+<td class="text-right"><p>98.60</p></td>
+</tr>
+<tr class="row-odd"><td class="text-right"><p>270</p></td>
+<td class="text-right"><p>41.01</p></td>
+<td class="text-right"><p>50.60</p></td>
+<td class="text-right"><p>56.21</p></td>
+<td class="text-right"><p>63.28</p></td>
+<td class="text-right"><p>72.87</p></td>
+<td class="text-right"><p>82.46</p></td>
+<td class="text-right"><p>85.55</p></td>
+<td class="text-right"><p>88.07</p></td>
+<td class="text-right"><p>95.14</p></td>
+<td class="text-right"><p>100.75</p></td>
+<td class="text-right"><p>104.73</p></td>
+</tr>
+<tr class="row-even"><td class="text-right"><p>360</p></td>
+<td class="text-right"><p>43.29</p></td>
+<td class="text-right"><p>53.23</p></td>
+<td class="text-right"><p>59.04</p></td>
+<td class="text-right"><p>66.37</p></td>
+<td class="text-right"><p>76.31</p></td>
+<td class="text-right"><p>86.25</p></td>
+<td class="text-right"><p>89.45</p></td>
+<td class="text-right"><p>92.06</p></td>
+<td class="text-right"><p>99.39</p></td>
+<td class="text-right"><p>105.20</p></td>
+<td class="text-right"><p>109.33</p></td>
+</tr>
+<tr class="row-odd"><td class="text-right"><p>450</p></td>
+<td class="text-right"><p>45.14</p></td>
+<td class="text-right"><p>55.36</p></td>
+<td class="text-right"><p>61.33</p></td>
+<td class="text-right"><p>68.87</p></td>
+<td class="text-right"><p>79.08</p></td>
+<td class="text-right"><p>89.30</p></td>
+<td class="text-right"><p>92.59</p></td>
+<td class="text-right"><p>95.28</p></td>
+<td class="text-right"><p>102.81</p></td>
+<td class="text-right"><p>108.79</p></td>
+<td class="text-right"><p>113.03</p></td>
+</tr>
+<tr class="row-even"><td class="text-right"><p>600</p></td>
+<td class="text-right"><p>47.64</p></td>
+<td class="text-right"><p>58.23</p></td>
+<td class="text-right"><p>64.43</p></td>
+<td class="text-right"><p>72.23</p></td>
+<td class="text-right"><p>82.82</p></td>
+<td class="text-right"><p>93.41</p></td>
+<td class="text-right"><p>96.82</p></td>
+<td class="text-right"><p>99.61</p></td>
+<td class="text-right"><p>107.42</p></td>
+<td class="text-right"><p>113.61</p></td>
+<td class="text-right"><p>118.01</p></td>
+</tr>
+<tr class="row-odd"><td class="text-right"><p>720</p></td>
+<td class="text-right"><p>49.29</p></td>
+<td class="text-right"><p>60.13</p></td>
+<td class="text-right"><p>66.47</p></td>
+<td class="text-right"><p>74.45</p></td>
+<td class="text-right"><p>85.29</p></td>
+<td class="text-right"><p>96.12</p></td>
+<td class="text-right"><p>99.61</p></td>
+<td class="text-right"><p>102.46</p></td>
+<td class="text-right"><p>110.44</p></td>
+<td class="text-right"><p>116.78</p></td>
+<td class="text-right"><p>121.28</p></td>
+</tr>
+<tr class="row-even"><td class="text-right"><p>1080</p></td>
+<td class="text-right"><p>54.41</p></td>
+<td class="text-right"><p>64.97</p></td>
+<td class="text-right"><p>71.15</p></td>
+<td class="text-right"><p>78.94</p></td>
+<td class="text-right"><p>89.50</p></td>
+<td class="text-right"><p>100.06</p></td>
+<td class="text-right"><p>103.46</p></td>
+<td class="text-right"><p>106.24</p></td>
+<td class="text-right"><p>114.02</p></td>
+<td class="text-right"><p>120.20</p></td>
+<td class="text-right"><p>124.58</p></td>
+</tr>
+<tr class="row-odd"><td class="text-right"><p>1440</p></td>
+<td class="text-right"><p>58.02</p></td>
+<td class="text-right"><p>67.72</p></td>
+<td class="text-right"><p>73.39</p></td>
+<td class="text-right"><p>80.54</p></td>
+<td class="text-right"><p>90.24</p></td>
+<td class="text-right"><p>99.93</p></td>
+<td class="text-right"><p>103.05</p></td>
+<td class="text-right"><p>105.61</p></td>
+<td class="text-right"><p>112.75</p></td>
+<td class="text-right"><p>118.42</p></td>
+<td class="text-right"><p>122.45</p></td>
+</tr>
+<tr class="row-even"><td class="text-right"><p>2880</p></td>
+<td class="text-right"><p>66.70</p></td>
+<td class="text-right"><p>77.41</p></td>
+<td class="text-right"><p>83.68</p></td>
+<td class="text-right"><p>91.57</p></td>
+<td class="text-right"><p>102.29</p></td>
+<td class="text-right"><p>113.00</p></td>
+<td class="text-right"><p>116.45</p></td>
+<td class="text-right"><p>119.26</p></td>
+<td class="text-right"><p>127.16</p></td>
+<td class="text-right"><p>133.42</p></td>
+<td class="text-right"><p>137.87</p></td>
+</tr>
+<tr class="row-odd"><td class="text-right"><p>4320</p></td>
+<td class="text-right"><p>71.93</p></td>
+<td class="text-right"><p>85.72</p></td>
+<td class="text-right"><p>93.78</p></td>
+<td class="text-right"><p>103.95</p></td>
+<td class="text-right"><p>117.73</p></td>
+<td class="text-right"><p>131.52</p></td>
+<td class="text-right"><p>135.96</p></td>
+<td class="text-right"><p>139.58</p></td>
+<td class="text-right"><p>149.75</p></td>
+<td class="text-right"><p>157.81</p></td>
+<td class="text-right"><p>163.53</p></td>
+</tr>
+<tr class="row-even"><td class="text-right"><p>5760</p></td>
+<td class="text-right"><p>78.95</p></td>
+<td class="text-right"><p>95.65</p></td>
+<td class="text-right"><p>105.42</p></td>
+<td class="text-right"><p>117.72</p></td>
+<td class="text-right"><p>134.43</p></td>
+<td class="text-right"><p>151.13</p></td>
+<td class="text-right"><p>156.50</p></td>
+<td class="text-right"><p>160.89</p></td>
+<td class="text-right"><p>173.20</p></td>
+<td class="text-right"><p>182.97</p></td>
+<td class="text-right"><p>189.90</p></td>
+</tr>
+<tr class="row-odd"><td class="text-right"><p>7200</p></td>
+<td class="text-right"><p>83.53</p></td>
+<td class="text-right"><p>101.38</p></td>
+<td class="text-right"><p>111.82</p></td>
+<td class="text-right"><p>124.98</p></td>
+<td class="text-right"><p>142.83</p></td>
+<td class="text-right"><p>160.68</p></td>
+<td class="text-right"><p>166.43</p></td>
+<td class="text-right"><p>171.12</p></td>
+<td class="text-right"><p>184.28</p></td>
+<td class="text-right"><p>194.72</p></td>
+<td class="text-right"><p>202.13</p></td>
+</tr>
+<tr class="row-even"><td class="text-right"><p>8640</p></td>
+<td class="text-right"><p>85.38</p></td>
+<td class="text-right"><p>104.95</p></td>
+<td class="text-right"><p>116.40</p></td>
+<td class="text-right"><p>130.82</p></td>
+<td class="text-right"><p>150.38</p></td>
+<td class="text-right"><p>169.95</p></td>
+<td class="text-right"><p>176.25</p></td>
+<td class="text-right"><p>181.40</p></td>
+<td class="text-right"><p>195.82</p></td>
+<td class="text-right"><p>207.27</p></td>
+<td class="text-right"><p>215.39</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="contributing-and-support">
+<h2>Contributing and Support<a class="headerlink" href="#contributing-and-support" title="Link to this heading">¶</a></h2>
+<p>If you’re interested in contributing or need help, check out the <a class="reference external" href="https://github.com/MarkusPic/intensity_duration_frequency_analysis/blob/main/CONTRIBUTING.md">CONTRIBUTING.md</a> file for guidelines.</p>
+</section>
+<section id="testing">
+<h2>Testing<a class="headerlink" href="#testing" title="Link to this heading">¶</a></h2>
+<p>The code is written in pure python so no compiling is needed.</p>
+<p>Most of the code is (or at least will be) automatically tested using the test suite in the <a class="reference internal" href="#./tests"><span class="xref myst">./tests</span></a> folder. To run the tests, use:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>pytest<span class="w"> </span>tests
+</pre></div>
+</div>
+</section>
+<section id="background">
+<h2>Background<a class="headerlink" href="#background" title="Link to this heading">¶</a></h2>
+<p>Pseudocode for the parameter calculation.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">For</span> <span class="n">every</span> <span class="n">duration</span> <span class="n">step</span>
+    <span class="n">calculating</span> <span class="n">maximum</span> <span class="n">rainfall</span> <span class="n">intensity</span> <span class="k">for</span> <span class="n">each</span> <span class="n">event</span> <span class="k">for</span> <span class="n">the</span> <span class="n">corresponding</span> <span class="n">duration</span> <span class="n">step</span>
+    
+    <span class="k">if</span> <span class="n">using</span> <span class="n">annual</span> <span class="n">event</span> <span class="n">series</span><span class="p">:</span>  <span class="c1"># only recommeded for measurements longer than 20 year</span>
+        <span class="n">converting</span> <span class="nb">max</span> <span class="n">event</span> <span class="n">rainfall</span> <span class="n">intensities</span> <span class="n">per</span> <span class="n">year</span> <span class="n">to</span> <span class="n">a</span> <span class="n">series</span>
+        <span class="n">calculating</span> <span class="n">parameters</span> <span class="n">u</span> <span class="ow">and</span> <span class="n">w</span> <span class="n">using</span> <span class="n">the</span> <span class="n">gumbel</span> <span class="n">distribution</span>
+        
+    <span class="k">elif</span> <span class="n">using</span> <span class="n">partial</span> <span class="n">event</span> <span class="n">series</span><span class="p">:</span>
+        <span class="n">converting</span> <span class="n">the</span> <span class="n">n</span> <span class="p">(</span><span class="n">approximatly</span> <span class="mf">2.72</span> <span class="n">x</span> <span class="n">measurement</span> <span class="n">duration</span> <span class="ow">in</span> <span class="n">years</span><span class="p">)</span> <span class="n">biggest</span> <span class="n">event</span> <span class="n">rainfall</span> <span class="n">intensities</span> <span class="n">to</span> <span class="n">a</span> <span class="n">series</span>
+        <span class="n">calculating</span> <span class="n">parameters</span> <span class="n">u</span> <span class="ow">and</span> <span class="n">w</span> <span class="n">using</span> <span class="n">the</span> <span class="n">exponential</span> <span class="n">distribution</span>
+    
+<span class="n">Splitting</span> <span class="n">IDF</span> <span class="n">curve</span> <span class="n">formulation</span> <span class="ow">in</span> <span class="n">to</span> <span class="n">several</span> <span class="n">duration</span> <span class="n">ranges</span>
+<span class="n">For</span> <span class="n">each</span> <span class="n">duration</span> <span class="nb">range</span><span class="p">:</span>
+    <span class="n">For</span> <span class="n">each</span> <span class="n">parameter</span> <span class="p">(</span><span class="n">u</span> <span class="ow">and</span> <span class="n">w</span><span class="p">):</span>
+        <span class="n">balancing</span> <span class="n">the</span> <span class="n">parameter</span> <span class="n">over</span> <span class="nb">all</span> <span class="n">duation</span> <span class="n">steps</span> <span class="p">(</span><span class="ow">in</span> <span class="n">the</span> <span class="nb">range</span><span class="p">)</span> <span class="n">using</span> <span class="n">a</span> <span class="n">given</span> <span class="n">formulation</span> <span class="p">(</span><span class="n">creating</span> <span class="n">parameters</span> <span class="n">a</span> <span class="ow">and</span> <span class="n">b</span><span class="p">)</span>
+        <span class="c1"># one-folded-logaritmic | two-folded-logarithmic | hyperbolic</span>
+
+<span class="n">u</span><span class="p">(</span><span class="n">D</span><span class="p">)</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">a_u</span><span class="p">,</span> <span class="n">b_u</span><span class="p">,</span> <span class="n">D</span><span class="p">)</span>
+<span class="n">w</span><span class="p">(</span><span class="n">D</span><span class="p">)</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">a_w</span><span class="p">,</span> <span class="n">b_w</span><span class="p">,</span> <span class="n">D</span><span class="p">)</span>
+
+<span class="n">h</span><span class="p">(</span><span class="n">D</span><span class="p">,</span><span class="n">Tn</span><span class="p">)</span> <span class="o">=</span> <span class="n">u</span><span class="p">(</span><span class="n">D</span><span class="p">)</span> <span class="o">+</span> <span class="n">w</span><span class="p">(</span><span class="n">D</span><span class="p">)</span> <span class="o">*</span> <span class="n">ln</span><span class="p">(</span><span class="n">Tn</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="footnotes docutils"/>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="path1" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a href="#id1" role="doc-backlink">1</a><span class="fn-bracket">]</span></span>
+<p>https://geek-university.com/python/add-python-to-the-windows-path/</p>
+</aside>
+<aside class="footnote brackets" id="path2" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a href="#id2" role="doc-backlink">2</a><span class="fn-bracket">]</span></span>
+<p>https://datatofish.com/add-python-to-windows-path/</p>
+</aside>
+</aside>
+<div class="clearer"></div>
+</div>
+</div>
+</div>
+<div aria-label="Main" class="sphinxsidebar" role="navigation">
+<div class="sphinxsidebarwrapper">
+<div>
+<h3><a href="index.html">Table of Contents</a></h3>
+<ul>
+<li><a class="reference internal" href="#">Intensity duration frequency analysis (based on KOSTRA)</a><ul>
+<li><a class="reference internal" href="#documentation">Documentation</a></li>
+<li><a class="reference internal" href="#please-cite-as">Please cite as</a></li>
+<li><a class="reference internal" href="#installation">Installation</a><ul>
+<li><a class="reference internal" href="#windows">Windows</a></li>
+<li><a class="reference internal" href="#linux-unix">Linux/Unix</a></li>
+<li><a class="reference internal" href="#dependencies">Dependencies</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#usage">Usage</a></li>
+<li><a class="reference internal" href="#commandline-tool">Commandline tool</a></li>
+<li><a class="reference internal" href="#example">Example</a><ul>
+<li><a class="reference internal" href="#example-files">Example Files</a></li>
+<li><a class="reference internal" href="#example-plot-using-the-dwa-2012-methodology">Example Plot using the DWA 2012 methodology</a></li>
+<li><a class="reference internal" href="#example-plot-using-the-dwa-2025-methodology">Example Plot using the DWA 2025 methodology</a></li>
+<li><a class="reference internal" href="#example-idf-table">Example IDF table</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#contributing-and-support">Contributing and Support</a></li>
+<li><a class="reference internal" href="#testing">Testing</a></li>
+<li><a class="reference internal" href="#background">Background</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div>
+<h4>Previous topic</h4>
+<p class="topless"><a href="index.html" title="previous chapter">Welcome to Intensity Duration Frequency Analyse’s documentation!</a></p>
+</div>
+<div>
+<h4>Next topic</h4>
+<p class="topless"><a href="api.html" title="next chapter">API</a></p>
+</div>
+<div aria-label="source link" role="note">
+<h3>This Page</h3>
+<ul class="this-page-menu">
+<li><a href="_sources/README.md.txt" rel="nofollow">Show Source</a></li>
+</ul>
+</div>
+<search id="searchbox" role="search" style="display: none">
+<h3 id="searchlabel">Quick search</h3>
+<div class="searchformwrapper">
+<form action="search.html" class="search" method="get">
+<input aria-labelledby="searchlabel" autocapitalize="off" autocomplete="off" autocorrect="off" name="q" spellcheck="false" type="text"/>
+<input type="submit" value="Go"/>
+</form>
+</div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+</div>
+</div>
+<div class="clearer"></div>
+</div>
+<div aria-label="Related" class="related" role="navigation">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a href="genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="api.html" title="API">next</a> |</li>
+<li class="right">
+<a href="index.html" title="Welcome to Intensity Duration Frequency Analyse’s documentation!">previous</a> |</li>
+<li class="nav-item nav-item-0"><a href="index.html">Intensity Duration Frequency Analyse 0.4.0 documentation</a> »</li>
+<li class="nav-item nav-item-this"><a href="">Intensity duration frequency analysis (based on KOSTRA)</a></li>
+</ul>
+</div>
+<div class="footer" role="contentinfo">
+    © Copyright 2025, Pichler.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    </div>
+</body>
+</html>
