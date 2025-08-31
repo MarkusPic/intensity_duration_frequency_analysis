@@ -37,7 +37,7 @@ jobs:
         shell: bash -l {0}
         run: |
           pip3 install "setuptools>=77" --upgrade
-          python setup.py install
+          python -m build
       - name: Installing pandoc
 #        shell: bash -l {0}
         run: |
