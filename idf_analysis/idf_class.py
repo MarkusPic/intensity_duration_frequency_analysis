@@ -87,6 +87,11 @@ class IntensityDurationFrequencyAnalyse:
     def series(self, series: pd.Series):
         self._series = series
 
+    def _reset_interim_results(self):
+        self._return_periods_frame = None
+        self._rain_events = None
+        self._rainfall_sum_frame = None
+
     def set_series(self, series, unit='mm'):
         """
         set the series for the analysis
@@ -108,9 +113,7 @@ class IntensityDurationFrequencyAnalyse:
         freq_minutes = delta2min(self._freq)
         self._parameters.filter_durations(freq_minutes)
         self.series = series.replace(0, np.nan).dropna()
-        self._return_periods_frame = None
-        self._rain_events = None
-        self._rainfall_sum_frame = None
+        self._reset_interim_results()
         self._unit = unit
 
     # __________________________________________________________________________________________________________________
