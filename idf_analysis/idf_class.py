@@ -527,10 +527,12 @@ class IntensityDurationFrequencyAnalyse:
         return pd.concat([events, self.get_max_event_intensities_frame(events).rename(columns=column_format.format)],
                          axis=1)
 
-    def get_max_return_periods_per_durations_frame(self, events):
+    def get_max_return_periods_per_durations_frame(self, events, duration_steps=None):
         return_periods_frame = self.return_periods_frame
         di = {}
-        for duration in self.duration_steps:
+        if duration_steps is None:
+            duration_steps = self.duration_steps
+        for duration in duration_steps:
             di[duration] = agg_events(events, return_periods_frame[duration], 'max').round(2)
         return pd.DataFrame(di, index=events.index)
 
