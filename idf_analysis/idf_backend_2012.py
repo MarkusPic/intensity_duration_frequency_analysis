@@ -59,7 +59,7 @@ class IdfParameters(IdfParametersABC):
         # --
         w = []
         for dur in durations:
-            dat = w_dat.loc[dur]
+            dat = w_dat.loc[dur].dropna()
             log_tn_i = np.log(dat.index.values)
             w.append(sum(dat.values * log_tn_i) / sum(log_tn_i ** 2))
 
